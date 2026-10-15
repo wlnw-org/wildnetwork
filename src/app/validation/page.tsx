@@ -161,8 +161,8 @@ export default function Validation() {
 
         <H2>Reproduce it</H2>
         <p>
-          The comparison is one script, <a className="text-cyan-400 hover:underline" href="https://github.com/arunrajiah/wildnetwork/blob/main/scripts/validate.mts">scripts/validate.mts</a>, and every pair is in{" "}
-          <a className="text-cyan-400 hover:underline" href="https://github.com/arunrajiah/wildnetwork/blob/main/src/data/validation.json">src/data/validation.json</a>. Arrival dates for any species can be downloaded as CSV from{" "}
+          The comparison is one script, <a className="text-cyan-400 hover:underline" href="https://github.com/wlnw-org/wildnetwork/blob/main/scripts/validate.mts">scripts/validate.mts</a>, and every pair is in{" "}
+          <a className="text-cyan-400 hover:underline" href="https://github.com/wlnw-org/wildnetwork/blob/main/src/data/validation.json">src/data/validation.json</a>. Arrival dates for any species can be downloaded as CSV from{" "}
           <code className="text-slate-200">/api/v1/arrivals?species=Hirundo rustica&amp;format=csv</code>.
         </p>
       </div>

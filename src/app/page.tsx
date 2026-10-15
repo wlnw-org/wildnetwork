@@ -12,7 +12,7 @@ const jsonLd = {
       publisher: { "@type": "Person", name: "Arun Rajiah", url: "https://www.arunrajiah.com" } },
     { "@type": "WebApplication", name: SITE_NAME, url: SITE, applicationCategory: "EducationalApplication", operatingSystem: "Any",
       description: SITE_DESCRIPTION, offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, isAccessibleForFree: true,
-      codeRepository: "https://github.com/arunrajiah/wildnetwork", license: "https://www.gnu.org/licenses/agpl-3.0.html" },
+      codeRepository: "https://github.com/wlnw-org/wildnetwork", license: "https://www.gnu.org/licenses/agpl-3.0.html" },
   ],
 };
 

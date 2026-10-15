@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "How WildNetwork measures wildlife movement, how it corrects for observation effort, and what its limits are.",
 };
 
-const GH = "https://github.com/arunrajiah/wildnetwork/blob/main";
+const GH = "https://github.com/wlnw-org/wildnetwork/blob/main";
 
 export default function Methods() {
   return (
@@ -301,7 +301,7 @@ export default function Methods() {
         </p>
         <p className="mt-3">
           Found a result that is wrong for a species you know? That is the most useful report we can get. Please{" "}
-          <a href="https://github.com/arunrajiah/wildnetwork/issues/new?template=misleading_insight.md" className="text-cyan-400 hover:underline">open a &quot;misleading insight&quot; issue</a>.
+          <a href="https://github.com/wlnw-org/wildnetwork/issues/new?template=misleading_insight.md" className="text-cyan-400 hover:underline">open a &quot;misleading insight&quot; issue</a>.
         </p>
 
         <p className="mt-3">
@@ -326,7 +326,7 @@ export default function Methods() {
 
         <p className="mt-10 text-sm text-slate-500">
           Made by <a href="https://www.arunrajiah.com" className="text-cyan-400 hover:underline">Arun Rajiah</a>. Code and this page are open:{" "}
-          <a href="https://github.com/arunrajiah/wildnetwork" className="text-cyan-400 hover:underline">github.com/arunrajiah/wildnetwork</a>.
+          <a href="https://github.com/wlnw-org/wildnetwork" className="text-cyan-400 hover:underline">github.com/wlnw-org/wildnetwork</a>.
           Free, no ads; you can <a href="https://github.com/sponsors/arunrajiah" className="text-cyan-400 hover:underline">support it on GitHub Sponsors</a>.
         </p>
       </div>

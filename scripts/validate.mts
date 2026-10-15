@@ -31,7 +31,7 @@ for (const [i, c] of candidates.entries()) {
     swlat: String(c.cell_lat), swlng: String(c.cell_lon), nelat: String(c.cell_lat + 5), nelng: String(c.cell_lon + 5),
   }).toString();
   try {
-    const r = await fetch(u, { headers: { "user-agent": "wildnetwork-validation/0.2 (https://github.com/arunrajiah/wildnetwork)" } });
+    const r = await fetch(u, { headers: { "user-agent": "wildnetwork-validation/0.2 (https://github.com/wlnw-org/wildnetwork)" } });
     if (!r.ok) throw new Error(String(r.status));
     const hist = ((await r.json()) as { results: { week: Record<string, number> } }).results.week;
     const series: WeekPoint[] = weeks.map((w) => ({ week: w, n: hist[w] ?? 0, value: hist[w] ?? 0 }));

@@ -13,8 +13,8 @@ export const DATA_CONCEPT_DOI = "10.5281/zenodo.23193453";
 export const DATA_RELEASES: { date: string; url: string; zip: string; weeks: string; rows: { weekly: number; effort: number; arrivals: number; datasets: number; taxa?: number }; doi?: string; notes?: string }[] = [
   {
     date: "2026-10-07",
-    url: "https://github.com/arunrajiah/wildnetwork/releases/tag/data-2026-10-07",
-    zip: "https://github.com/arunrajiah/wildnetwork/releases/download/data-2026-10-07/wildnetwork-open-2026-10-07.zip",
+    url: "https://github.com/wlnw-org/wildnetwork/releases/tag/data-2026-10-07",
+    zip: "https://github.com/wlnw-org/wildnetwork/releases/download/data-2026-10-07/wildnetwork-open-2026-10-07.zip",
     weeks: "6 Oct 2025 to 21 Sep 2026",
     rows: { weekly: 376243, effort: 16874, arrivals: 4693, datasets: 284, taxa: 17549 },
     doi: "10.5281/zenodo.23206867",
@@ -22,8 +22,8 @@ export const DATA_RELEASES: { date: string; url: string; zip: string; weeks: str
   },
   {
     date: "2026-10-06",
-    url: "https://github.com/arunrajiah/wildnetwork/releases/tag/data-2026-10-06",
-    zip: "https://github.com/arunrajiah/wildnetwork/releases/download/data-2026-10-06/wildnetwork-open-2026-10-06.zip",
+    url: "https://github.com/wlnw-org/wildnetwork/releases/tag/data-2026-10-06",
+    zip: "https://github.com/wlnw-org/wildnetwork/releases/download/data-2026-10-06/wildnetwork-open-2026-10-06.zip",
     weeks: "6 Oct 2025 to 21 Sep 2026",
     rows: { weekly: 376243, effort: 16874, arrivals: 4693, datasets: 284 },
     doi: "10.5281/zenodo.23193454",

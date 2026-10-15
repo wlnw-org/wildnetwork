@@ -4,7 +4,7 @@
     "title": "WildNetwork open API",
     "version": "1",
     "description": "Read access to WildNetwork's live map and effort-corrected measures, and authenticated push of WDX detection events. Responses mix sources, including BirdWeather detections shown with BirdWeather's agreement for display only: use the API to view and explore, and the citable open data releases (https://wildnetwork.arunrajiah.com/data) for analysis and redistribution. No key is needed to read; please keep to about one request per second.",
-    "license": { "name": "AGPL-3.0 (code)", "url": "https://github.com/arunrajiah/wildnetwork/blob/main/LICENSE" },
+    "license": { "name": "AGPL-3.0 (code)", "url": "https://github.com/wlnw-org/wildnetwork/blob/main/LICENSE" },
     "contact": { "email": "arunrajiah@gmail.com", "url": "https://wildnetwork.arunrajiah.com/developers" }
   },
   "servers": [{ "url": "https://wildnetwork.arunrajiah.com" }],

@@ -95,7 +95,7 @@ export default function Developers() {
 
         <h2 className="mt-8 text-xl font-semibold text-slate-100">Bulk files</h2>
         <CopyBlock>{RELEASE}</CopyBlock>
-        <p className="mt-2 text-sm">Found something wrong? <a href="https://github.com/arunrajiah/wildnetwork/issues" className="text-cyan-400 hover:underline">Open an issue</a> or email arunrajiah@gmail.com.</p>
+        <p className="mt-2 text-sm">Found something wrong? <a href="https://github.com/wlnw-org/wildnetwork/issues" className="text-cyan-400 hover:underline">Open an issue</a> or email arunrajiah@gmail.com.</p>
       </div>
     </main>
   );

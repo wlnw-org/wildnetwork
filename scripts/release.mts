@@ -119,7 +119,7 @@ To join other data (for example BirdNET or eBird names, which follow other taxon
 The GBIF datasets whose records fall in the classes and weeks above, with DOIs, the dataset's own licence, and how many of its records were used (only records individually licensed CC0 or CC BY 4.0 are used, even where the dataset as a whole carries a stricter licence such as CC BY-NC). Cite them as GBIF asks: https://www.gbif.org/citation-guidelines
 
 ## How this release was made
-- Code: https://github.com/arunrajiah/wildnetwork at commit ${COMMIT}, script scripts/release.mts; methods version ${METHODS_VERSION} (definitions at https://wildnetwork.arunrajiah.com/methods).
+- Code: https://github.com/wlnw-org/wildnetwork at commit ${COMMIT}, script scripts/release.mts; methods version ${METHODS_VERSION} (definitions at https://wildnetwork.arunrajiah.com/methods).
 - Weekly counts: GBIF occurrence search API (https://api.gbif.org/v1/occurrence/search), one facet query per 5 degree cell and week, facet=speciesKey, with license=CC0_1_0 and CC_BY_4_0, hasCoordinate=true, hasGeospatialIssue=false, occurrenceStatus=PRESENT, basisOfRecord in HUMAN_OBSERVATION, MACHINE_OBSERVATION, OBSERVATION, OCCURRENCE, and taxonKey 212 (Aves), 734 (Chiroptera), 131 (Amphibia), 216 (Insecta). Cells queried: every 5 degree cell with at least 10 such bird records in the 90 days before the cell list was built.
 - Effort: the same counts summed over all species of a class per cell and week.
 - Arrivals: computed from these counts alone by computeSeasons("gbif") in src/lib/phenology.ts.
@@ -144,7 +144,7 @@ date-released: ${today}
 version: "${RELEASE_NO}"
 license: CC-BY-4.0
 url: "https://wildnetwork.arunrajiah.com/data"
-repository-code: "https://github.com/arunrajiah/wildnetwork"
+repository-code: "https://github.com/wlnw-org/wildnetwork"
 `);
 execSync(`cd release && rm -f ${name}.zip && zip -qr ${name}.zip ${name}`);
 console.log(execSync(`ls -la release/${name} release/${name}.zip`).toString());

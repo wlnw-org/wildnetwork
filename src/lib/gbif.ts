@@ -8,7 +8,7 @@ import { upsertGroups } from "@/lib/rollups";
  * The iNaturalist dataset is skipped for live records because those are pulled directly; the weekly history keeps it.
  */
 export const GBIF = "https://api.gbif.org/v1";
-export const UA = "wildnetwork/0.1 (https://github.com/arunrajiah/wildnetwork; arunrajiah@gmail.com)";
+export const UA = "wildnetwork/0.1 (https://github.com/wlnw-org/wildnetwork; arunrajiah@gmail.com)";
 export const INAT_DATASET = "50c9509d-22c7-4a22-a47d-8c48425ef4a7";
 export const CELL = 5;
 

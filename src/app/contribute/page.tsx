@@ -148,7 +148,7 @@ curl -X POST ${SITE}/api/v1/events \\
           <li><b>No account.</b> The installer registers a key for your device. A station name is optional.</li>
           <li><b>You choose the license.</b> The default is CC BY 4.0, which lets others use your detections with credit.</li>
           <li><b>Sensitive species.</b> If your station records a threatened species at a known site, use the coarser rounding or leave that station out.</li>
-          <li><b>Stopping and removal.</b> Uninstall at any time with the commands in the <A href={`${AGENT}#uninstall`}>agent guide</A>. To have your station&apos;s data removed, <A href="https://github.com/arunrajiah/wildnetwork/issues/new">open an issue</A> with your station id (it is in the first line of the agent&apos;s log).</li>
+          <li><b>Stopping and removal.</b> Uninstall at any time with the commands in the <A href={`${AGENT}#uninstall`}>agent guide</A>. To have your station&apos;s data removed, <A href="https://github.com/wlnw-org/wildnetwork/issues/new">open an issue</A> with your station id (it is in the first line of the agent&apos;s log).</li>
         </ul>
 
         <H2 id="trouble">If something goes wrong</H2>

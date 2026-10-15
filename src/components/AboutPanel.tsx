@@ -19,7 +19,7 @@ export default function AboutPanel() {
           set of wildlife tools: <Link href="https://github.com/arunrajiah/wildlife-detection-exchange">WDX</Link> (the detection exchange format this site speaks),{" "}
           <Link href="https://github.com/arunrajiah/birdecho">BirdEcho</Link>, <Link href="https://github.com/arunrajiah/wildecho">WildEcho</Link> and{" "}
           <Link href="https://github.com/arunrajiah/speciesnet-studio">SpeciesNet Studio</Link>. Source code:{" "}
-          <Link href="https://github.com/arunrajiah/wildnetwork">github.com/arunrajiah/wildnetwork</Link>.
+          <Link href="https://github.com/wlnw-org/wildnetwork">github.com/wlnw-org/wildnetwork</Link>.
         </p>
         <p className="mt-2">
           WildNetwork is free and has no ads. Hosting and the open data releases cost money: if it is useful to you, you can{" "}
@@ -57,7 +57,7 @@ export default function AboutPanel() {
       <section>
         <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Privacy</h3>
         <p>
-          No account and no ads; nothing is sold. Google Analytics counts visits and which features are used. Station owners: to hide a species, a station or a location, email arunrajiah@gmail.com and it is removed within two days. Full details: <a href="/privacy" className="text-cyan-400 hover:underline">privacy</a>. The name and logo: <a href="https://github.com/arunrajiah/wildnetwork/blob/main/TRADEMARKS.md" className="text-cyan-400 hover:underline">trademark note</a>.
+          No account and no ads; nothing is sold. Google Analytics counts visits and which features are used. Station owners: to hide a species, a station or a location, email arunrajiah@gmail.com and it is removed within two days. Full details: <a href="/privacy" className="text-cyan-400 hover:underline">privacy</a>. The name and logo: <a href="https://github.com/wlnw-org/wildnetwork/blob/main/TRADEMARKS.md" className="text-cyan-400 hover:underline">trademark note</a>.
         </p>
       </section>
 

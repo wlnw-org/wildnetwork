@@ -3,7 +3,7 @@
 ## Reporting a vulnerability
 
 Please do not open a public issue. Use GitHub's private reporting:
-**Security tab, then "Report a vulnerability"** on https://github.com/arunrajiah/wildnetwork.
+**Security tab, then "Report a vulnerability"** on https://github.com/wlnw-org/wildnetwork.
 
 You should get a first reply within seven days.
 
