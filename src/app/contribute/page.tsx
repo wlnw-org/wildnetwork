@@ -70,6 +70,15 @@ export default function Contribute() {
         </p>
         <CopyBlock>{`curl -fsSL ${SITE}/agent/install.sh | WDX_SOURCE=speciesnet WDX_PATH=/data/camtrap WDX_LAT=11.41 WDX_LON=76.69 bash`}</CopyBlock>
         <p className="text-sm text-slate-400">Blank images, people and vehicles are never sent. One agent serves one location, so use one setup per camera site.</p>
+        <p>
+          <b>Want a person to check the results first?</b> Use <A href="https://github.com/arunrajiah/speciesnet-studio">SpeciesNet Studio</A> instead of the agent: it runs
+          SpeciesNet, lets you confirm, correct or flag each image, and sends the reviewed results here from its Export dialog, marked as confirmed by a reviewer. Get its key
+          with:
+        </p>
+        <CopyBlock>{`curl -X POST ${SITE}/api/v1/register \\
+  -H 'content-type: application/json' \\
+  -d '{"name":"my-camera-site","source":"speciesnet-studio"}'`}</CopyBlock>
+        <p className="text-sm text-slate-400">Use one route per camera: the agent sends unchecked predictions automatically, Studio sends checked ones.</p>
 
         <H3 id="bat">Bat detector</H3>
         <p>

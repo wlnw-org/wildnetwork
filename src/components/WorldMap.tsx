@@ -39,6 +39,9 @@ const HOURS = [1, 3]; // the live window; longer history is in the weekly moveme
 // Validated for the dark surface (dataviz validator): sources are categorical, change is diverging.
 const SOURCE_COLOR: unknown[] = ["match", ["get", "source"], "birdweather", "#0891b2", "inaturalist", "#65a30d", "gbif", "#f59e0b", "wildnetwork-base", "#a78bfa", "#db2777"];
 
+// Sources whose review field is a human check of a machine detection (GBIF and iNaturalist records are human observations).
+const REVIEWED: Record<string, boolean> = { "speciesnet-studio": true, "wildnetwork-base": true, speciesnet: true, "birdnet-pi": true, "birdnet-go": true, other: true };
+
 const esc = (v: unknown) => String(v ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
 export default function WorldMap() {
@@ -146,7 +149,7 @@ export default function WorldMap() {
         const media = p.media && /^https:\/\//.test(p.media)
           ? p.mediaType === "audio" ? `<audio controls src="${esc(p.media)}" style="width:220px;margin-top:6px"></audio>` : `<img src="${esc(p.media)}" style="width:220px;margin-top:6px;border-radius:6px" alt="" />`
           : "";
-        const text = `<b>${esc(p.common ?? p.sci)}</b><br/><i>${esc(p.sci)}</i><br/>${new Date(p.t).toLocaleString()}<br/>${Number(p.n) > 1 ? `${Number(p.n)} detections nearby in 15 min, best ` : ""}confidence ${Number(p.conf).toFixed(2)} · ${esc(p.source)}`;
+        const text = `<b>${esc(p.common ?? p.sci)}</b><br/><i>${esc(p.sci)}</i><br/>${new Date(p.t).toLocaleString()}<br/>${Number(p.n) > 1 ? `${Number(p.n)} detections nearby in 15 min, best ` : ""}confidence ${Number(p.conf).toFixed(2)} · ${esc(p.source)}${REVIEWED[p.source] ? (p.review === "confirmed" ? "<br/>confirmed by a reviewer" : p.review === "uncertain" ? "<br/>reviewer unsure" : "") : ""}`;
         const popup = new Popup({ closeButton: false, maxWidth: "260px" })
           .setLngLat((f.geometry as GeoJSON.Point).coordinates as [number, number])
           .setHTML(`<div style="font:13px system-ui;color:#e2e8f0">${text}${media}</div>`)
