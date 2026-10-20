@@ -1,6 +1,7 @@
 # Sensitive taxa: one scientific name per line (species, genus or family). Lines starting with # are ignored.
 # Read by scripts/aws-export.py (species: coordinates generalised to 0.1 degree) and src/lib/sensitiveTaxa.ts
-# (OBIS records of these taxa are rounded to 0.1 degree before they are stored).
+# (OBIS records of these taxa are rounded to 0.1 degree before they are stored; the Listen feature queries
+# xeno-canto by species only, with no region, for species or genera listed here).
 # Sea turtles
 Cheloniidae
 Dermochelyidae

@@ -38,6 +38,7 @@ export default function AboutPanel() {
           <li><Link href="https://www.inaturalist.org">iNaturalist</Link>: community observations, CC0 and CC BY licensed records only, credited to their observers.</li>
           <li><Link href="https://open-meteo.com">Open-Meteo</Link>: ERA5 reanalysis weather (CC BY 4.0).</li>
           <li><Link href="https://www.wikipedia.org">Wikipedia</Link> and Wikimedia Commons contributors: species photos and descriptions (CC BY-SA).</li>
+          <li><Link href="https://xeno-canto.org">xeno-canto</Link>: reference recordings in species panels, played and linked from xeno-canto under each recordist&apos;s Creative Commons licence. Recordings courtesy of xeno-canto.org.</li>
           <li><Link href="https://obis.org">OBIS</Link>, the Ocean Biodiversity Information System: marine records under each dataset&apos;s own licence (CC0, CC BY, or CC BY-NC shown for non-commercial use), credited by dataset.</li>
           <li><Link href="https://www.orcasound.net">Orcasound</Link>: whale detections from its hydrophones by the OrcaHello model and listeners. Data: Orcasound (orcasound.net).</li>
           <li><Link href="https://acartia.io">Acartia</Link>: whale, dolphin and porpoise sightings by people, via Conserve.io / Whale Alert and other platforms. Data: Acartia (acartia.io).</li>
