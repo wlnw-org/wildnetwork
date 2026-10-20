@@ -1,4 +1,5 @@
-"""Tests for aws-export.py: Acartia (licence unknown-pending) and BirdWeather never reach the open data export.
+"""Tests for aws-export.py: Acartia and Orcasound (licence unknown-pending) and BirdWeather never reach the open data
+export; OBIS records go to events/ or noncommercial/ by their own licence.
 
 Runs against an in-memory DuckDB with the same tables as Postgres. Needs duckdb (pip install duckdb) and its spatial
 extension. Run: python3 -m unittest scripts/test_aws_export.py
@@ -19,6 +20,11 @@ ROWS = [
     ("acartia:no-licence", "acartia", None),
     ("birdweather:4", "birdweather", None),
     ("device:5", "birdnet-pi", "unknown-pending"),
+    ("orcasound:det_1", "orcasound", "unknown-pending"),
+    ("orcasound:det_2", "orcasound", None),
+    ("obis:by", "obis", "https://creativecommons.org/licenses/by/4.0/"),
+    ("obis:nc", "obis", "https://creativecommons.org/licenses/by-nc/4.0/"),
+    ("obis:cc0", "obis", "https://creativecommons.org/publicdomain/zero/1.0/"),
 ]
 
 
@@ -45,13 +51,27 @@ class ExportExclusion(unittest.TestCase):
     def test_events_skip_acartia_birdweather_and_pending_licence(self):
         aws_export.build_events(self.con, "src")
         ids = {r[0] for r in self.con.execute("SELECT event_id FROM ev").fetchall()}
-        self.assertEqual(ids, {"gbif:1", "inaturalist:2"})
-        self.assertFalse(self.con.execute("SELECT count(*) FROM ev WHERE source_system IN ('acartia', 'birdweather')").fetchone()[0])
+        self.assertEqual(ids, {"gbif:1", "inaturalist:2", "obis:by", "obis:nc", "obis:cc0"})
+        self.assertFalse(self.con.execute("SELECT count(*) FROM ev WHERE source_system IN ('acartia', 'orcasound', 'birdweather')").fetchone()[0])
+
+    def test_pending_sources_come_from_the_shared_config(self):
+        self.assertIn("acartia", aws_export.EXCLUDED_SOURCES)
+        self.assertIn("orcasound", aws_export.EXCLUDED_SOURCES)
+        self.assertIn("birdweather", aws_export.EXCLUDED_SOURCES)
+        self.assertNotIn("obis", aws_export.EXCLUDED_SOURCES)
+
+    def test_obis_licences_route_to_open_and_noncommercial(self):
+        aws_export.build_events(self.con, "src")
+        lic = dict(self.con.execute("SELECT event_id, license FROM ev WHERE source_system = 'obis'").fetchall())
+        self.assertEqual(lic, {"obis:by": "CC-BY-4.0", "obis:nc": "CC-BY-NC-4.0", "obis:cc0": "CC0-1.0"})
+        open_ids = {r[0] for r in self.con.execute("SELECT event_id FROM ev WHERE license <> 'CC-BY-NC-4.0'").fetchall()}
+        self.assertNotIn("obis:nc", open_ids, "CC BY-NC only goes under noncommercial/")
 
     def test_aggregates_skip_acartia_and_birdweather(self):
         for table in ("species_daily", "species_weekly"):
             sources = {r[0] for r in self.con.execute(f"SELECT source_system FROM ({aws_export.aggregate_query(table, 'src')})").fetchall()}
             self.assertNotIn("acartia", sources)
+            self.assertNotIn("orcasound", sources)
             self.assertNotIn("birdweather", sources)
             self.assertIn("gbif", sources)
 

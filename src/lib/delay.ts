@@ -1,9 +1,14 @@
 import { sql } from "@/lib/db";
-import { SOURCE_DELAY_HOURS } from "@/lib/sources";
+import { DELAYS } from "@/lib/sources";
 
-/** SQL condition hiding records of delayed sources (SOURCE_DELAY_HOURS) until they are old enough. Mirrors isPublicNow(). */
+/**
+ * SQL condition hiding delayed records (delayHours in src/config/sources.json, optionally only for delayTaxa)
+ * until they are old enough. Mirrors isPublicNow().
+ */
 export const delayFilter = (alias = "e") =>
-  Object.entries(SOURCE_DELAY_HOURS).reduce(
-    (acc, [source, hours]) => sql`${acc} AND NOT (${sql(`${alias}.source_system`)} = ${source} AND ${sql(`${alias}.event_start`)} > now() - make_interval(hours => ${hours}))`,
+  DELAYS.reduce(
+    (acc, [source, hours, taxa]) => sql`${acc} AND NOT (${sql(`${alias}.source_system`)} = ${source}
+      ${taxa ? sql`AND ${sql(`${alias}.scientific_name`)} = ANY(${taxa as string[]})` : sql``}
+      AND ${sql(`${alias}.event_start`)} > now() - make_interval(hours => ${hours}))`,
     sql``,
   );

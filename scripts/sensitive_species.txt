@@ -1,0 +1,10 @@
+# Sensitive taxa: one scientific name per line (species, genus or family). Lines starting with # are ignored.
+# Read by scripts/aws-export.py (species: coordinates generalised to 0.1 degree) and src/lib/sensitiveTaxa.ts
+# (OBIS records of these taxa are rounded to 0.1 degree before they are stored).
+# Sea turtles
+Cheloniidae
+Dermochelyidae
+# Dugong
+Dugong dugon
+# Sawfishes
+Pristidae

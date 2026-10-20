@@ -44,7 +44,7 @@
       "type": "object",
       "if": { "required": ["observationMethod"], "properties": { "observationMethod": { "const": "human" } } },
       "then": {},
-      "else": { "required": ["confidence", "classifier"] },
+      "else": { "required": ["classifier"] },
       "properties": {
         "observationMethod": {
           "type": "string",
@@ -57,7 +57,7 @@
         "vernacularName": { "type": "string" },
         "taxonRank": {
           "type": "string",
-          "enum": ["species", "genus", "family", "class", "unranked"],
+          "enum": ["species", "genus", "family", "order", "class", "unranked"],
           "default": "species"
         },
         "taxonId": {
@@ -154,7 +154,10 @@
         "systemVersion": { "type": "string" },
         "sourceRecordId": { "type": "string" },
         "provider": { "type": "string", "minLength": 1, "description": "v0.3: the contributing platform or organisation within an aggregating source, e.g. Conserve.io." },
-        "trusted": { "type": "boolean", "description": "v0.3: the source's own verification or trust flag, passed through unchanged." }
+        "trusted": { "type": "boolean", "description": "v0.3: the source's own verification or trust flag, passed through unchanged." },
+        "providerUrl": { "type": "string", "format": "uri", "description": "v0.3: page to credit and link for the provider or dataset." },
+        "occurrenceId": { "type": "string", "description": "v0.3: Darwin Core occurrenceID, when the record is also a biodiversity occurrence; lets consumers deduplicate across aggregators." },
+        "institutionCode": { "type": "string", "description": "v0.3: Darwin Core institutionCode, used with occurrenceId for deduplication." }
       },
       "additionalProperties": true
     },

@@ -1,10 +1,31 @@
 import { sql } from "@/lib/db";
+import { dedupeKey, splitDuplicates } from "@/lib/dedupe";
+import { creditFor } from "@/lib/sources";
 import type { WdxEvent } from "./types";
 
 export interface IngestResult {
   received: number;
   inserted: number;
   updated: number;
+  /** Records already held from another aggregator (same occurrence): not added again, their credit added to the kept row. */
+  merged?: number;
+}
+
+const SOURCE_NAME: Record<string, string> = { gbif: "GBIF", inaturalist: "iNaturalist" };
+
+/** Upserts sensor or observer locations (also used for stations with no records yet, such as hydrophones). */
+export async function upsertDeployments(rows: { id: string; source_system: string; deployment_id: string; name: string | null; sensor_type: string; sensor_model: string | null; latitude: number; longitude: number; coord_uncertainty_m: number | null }[], tx = sql): Promise<void> {
+  if (!rows.length) return;
+  await tx`
+    INSERT INTO deployments ${tx(rows)}
+    ON CONFLICT (id) DO UPDATE SET
+      name = COALESCE(EXCLUDED.name, deployments.name),
+      sensor_model = COALESCE(EXCLUDED.sensor_model, deployments.sensor_model),
+      latitude = EXCLUDED.latitude,
+      longitude = EXCLUDED.longitude,
+      coord_uncertainty_m = COALESCE(EXCLUDED.coord_uncertainty_m, deployments.coord_uncertainty_m),
+      last_seen = now()
+  `;
 }
 
 /**
@@ -52,6 +73,8 @@ export async function ingestEvents(events: WdxEvent[], opts: { keepRaw?: boolean
     individual_count: e.detection.individualCount ?? null,
     source_provider: e.source.provider ?? null,
     source_trusted: e.source.trusted ?? null,
+    source_provider_url: e.source.providerUrl ?? null,
+    dedupe_key: dedupeKey(e.source.system, e.source.sourceRecordId, e.source.occurrenceId, e.source.institutionCode),
     media_type: e.media?.mediaType ?? null,
     media_url: e.media?.url ?? null,
     review_status: e.review?.status ?? "unreviewed",
@@ -61,23 +84,26 @@ export async function ingestEvents(events: WdxEvent[], opts: { keepRaw?: boolean
     raw: sql.json((keepRaw ? e : {}) as unknown as Parameters<typeof sql.json>[0]),
   }));
 
+  // Same occurrence already held from another aggregator: keep that row and add this source's credit to it.
+  const keys = [...new Set(evRows.map((r) => r.dedupe_key).filter((k): k is string => !!k))];
+  const existing = new Map<string, { event_id: string; source_system: string }>();
+  if (keys.length) {
+    for (const r of await sql<{ dedupe_key: string; event_id: string; source_system: string }[]>`
+      SELECT DISTINCT ON (dedupe_key) dedupe_key, event_id, source_system FROM events WHERE dedupe_key = ANY(${keys}) ORDER BY dedupe_key, received_at`) existing.set(r.dedupe_key, r);
+  }
+  const { fresh, merged } = splitDuplicates(evRows, existing);
   let inserted = 0;
   let updated = 0;
   // postgres caps a statement at 65534 bind params; ~24 cols per row, so chunk at 2000 rows.
   const CHUNK = 2000;
   const chunks = <T,>(arr: T[]) => Array.from({ length: Math.ceil(arr.length / CHUNK) }, (_, i) => arr.slice(i * CHUNK, (i + 1) * CHUNK));
   await sql.begin(async (tx) => {
-    for (const depChunk of chunks(depRows)) await tx`
-      INSERT INTO deployments ${tx(depChunk)}
-      ON CONFLICT (id) DO UPDATE SET
-        name = COALESCE(EXCLUDED.name, deployments.name),
-        sensor_model = COALESCE(EXCLUDED.sensor_model, deployments.sensor_model),
-        latitude = EXCLUDED.latitude,
-        longitude = EXCLUDED.longitude,
-        coord_uncertainty_m = COALESCE(EXCLUDED.coord_uncertainty_m, deployments.coord_uncertainty_m),
-        last_seen = now()
-    `;
-    for (const evChunk of chunks(evRows)) {
+    for (const depChunk of chunks(depRows)) await upsertDeployments(depChunk, tx as unknown as typeof sql);
+    for (const m of merged) {
+      const c = creditFor(m.row.source_system, m.row.source_provider)?.text ?? `Also in ${SOURCE_NAME[m.row.source_system] ?? m.row.source_system}`;
+      await tx`UPDATE events SET also_credit = ${c.replace(/^Data: /, "Also in ")} WHERE event_id = ${m.into}`;
+    }
+    for (const evChunk of chunks(fresh)) {
     const res = await tx<{ inserted: boolean }[]>`
       INSERT INTO events ${tx(evChunk)}
       ON CONFLICT (event_id) DO UPDATE SET
@@ -100,5 +126,5 @@ export async function ingestEvents(events: WdxEvent[], opts: { keepRaw?: boolean
     }
   });
 
-  return { received: events.length, inserted, updated };
+  return { received: events.length, inserted, updated, merged: merged.length };
 }

@@ -1,4 +1,5 @@
 import { sql } from "@/lib/db";
+import { delayFilter } from "@/lib/delay";
 import { HIDDEN_DEPLOYMENT_SOURCES } from "@/lib/sources";
 
 /** All known sensor locations with 24h activity counts. Cached 10 minutes: this is the largest response and the map only needs it once per visit. */
@@ -7,7 +8,7 @@ export async function GET() {
     SELECT d.id, d.name, d.source_system, d.sensor_type, d.latitude, d.longitude, d.last_seen,
            COUNT(e.event_id) FILTER (WHERE e.event_start > now() - interval '24 hours') AS events_24h
     FROM deployments d
-    LEFT JOIN events e ON e.deployment_id = d.id AND e.event_start > now() - interval '24 hours'
+    LEFT JOIN events e ON e.deployment_id = d.id AND e.event_start > now() - interval '24 hours' ${delayFilter("e")}
     WHERE d.source_system <> ALL(${HIDDEN_DEPLOYMENT_SOURCES})
     GROUP BY d.id
   `;

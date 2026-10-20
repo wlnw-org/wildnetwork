@@ -11,8 +11,9 @@ arunrajiah/open-data-examples/wildnetwork-wdx/README.md:
   out/manifest.json                                        snapshot date, row counts, file list, sha256
 
 BirdWeather-derived rows are never exported: redistribution has not been agreed with BirdWeather.
-Acartia sightings are not exported either while their licence is "unknown-pending" (events and aggregates); any
-record tagged "unknown-pending" is skipped whatever its source. Tests: python3 -m unittest scripts/test_aws_export.py
+Acartia and Orcasound are not exported either while their licence is "unknown-pending" (src/config/sources.json),
+events or aggregates; any record tagged "unknown-pending" is skipped whatever its source. OBIS records keep their own
+licence: CC0 and CC BY go to events/, CC BY-NC only to noncommercial/, anything else is never stored. Tests: python3 -m unittest scripts/test_aws_export.py
 Station coordinates are generalised to about 1 km (0.01 degree); species listed in
 scripts/sensitive_species.txt (one scientific name per line, optional) are generalised to 0.1 degree.
 
@@ -25,8 +26,11 @@ import datetime, hashlib, json, os, pathlib, sys
 
 import duckdb
 
-# BirdWeather: redistribution not agreed. Acartia: licence "unknown-pending" until Acartia or Orcasound set one.
-EXCLUDED_SOURCES = ("birdweather", "acartia")
+# Licence status per source lives in src/config/sources.json (shared with the site). "not-agreed" (BirdWeather) and
+# "unknown-pending" (Acartia, Orcasound until Orcasound confirms) are never exported, events or aggregates.
+SOURCES_CONFIG = json.loads((pathlib.Path(__file__).parent.parent / "src" / "config" / "sources.json").read_text())
+EXCLUDED_SOURCES = tuple(sorted(k for k, v in SOURCES_CONFIG.items()
+                                if not k.startswith("_") and v.get("licence") in ("not-agreed", "unknown-pending")))
 PENDING_LICENCE = "unknown-pending"
 excluded = ", ".join(f"'{s}'" for s in EXCLUDED_SOURCES)
 SPDX = r"""CASE

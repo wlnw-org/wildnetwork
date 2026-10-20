@@ -1,7 +1,7 @@
 import { authenticate } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { delayFilter } from "@/lib/delay";
-import { creditFor } from "@/lib/sources";
+import { toFeature } from "@/lib/eventFeature";
 import { ingestEvents } from "@/lib/wdx/ingest";
 import type { WdxEvent } from "@/lib/wdx/types";
 import { parseEventsBody, validateWdx } from "@/lib/wdx/validate";
@@ -65,7 +65,7 @@ export async function GET(req: Request) {
     WITH base AS (
     SELECT e.event_id, 1 AS n, e.event_start, e.scientific_name, e.vernacular_name, e.confidence,
            e.latitude, e.longitude, e.source_system, e.deployment_id, e.media_url, e.media_type, e.review_status,
-           e.observation_method, e.individual_count, e.source_provider, e.source_trusted,
+           e.observation_method, e.individual_count, e.source_provider, e.source_trusted, e.source_provider_url, e.also_credit, e.license, e.taxon_rank, e.classifier_name,
            CASE WHEN e.media_type IN ('image', 'video') AND e.source_system NOT IN ('inaturalist') THEN 'camera'
                 WHEN g.grp = 'marine' THEN 'Marine' WHEN g.grp = 'bat' OR e.classifier_name ILIKE '%bat%' THEN 'bat' WHEN g.grp = 'avian' THEN 'Aves' WHEN g.grp = 'amphibian' THEN 'Amphibia' WHEN g.grp = 'insect' THEN 'Insecta' WHEN g.grp = 'mammal' THEN 'Mammalia'
                 ELSE COALESCE(NULLIF(m.iconic, 'Unknown'), CASE WHEN e.source_system = 'birdweather' THEN 'Aves' END, 'Unknown') END AS grp
@@ -84,7 +84,7 @@ export async function GET(req: Request) {
       SELECT * FROM base WHERE source_system <> 'birdweather'
       UNION ALL
       SELECT NULL AS event_id, count(*)::int AS n, max(event_start), scientific_name, max(vernacular_name), max(confidence),
-             latitude, longitude, 'birdweather', NULL, NULL, NULL, 'unreviewed', 'machine', NULL, NULL, NULL, max(grp)
+             latitude, longitude, 'birdweather', NULL, NULL, NULL, 'unreviewed', 'machine', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, max(grp)
       FROM base WHERE source_system = 'birdweather'
       GROUP BY latitude, longitude, scientific_name, floor(extract(epoch FROM event_start) / 900)
     ) x
@@ -93,7 +93,7 @@ export async function GET(req: Request) {
   ` : await sql`
     SELECT e.event_id, 1 AS n, e.event_start, e.scientific_name, e.vernacular_name, e.confidence,
            e.latitude, e.longitude, e.source_system, e.deployment_id, e.media_url, e.media_type, e.review_status,
-           e.observation_method, e.individual_count, e.source_provider, e.source_trusted,
+           e.observation_method, e.individual_count, e.source_provider, e.source_trusted, e.source_provider_url, e.also_credit, e.license, e.taxon_rank, e.classifier_name,
            CASE WHEN e.media_type IN ('image', 'video') AND e.source_system NOT IN ('inaturalist') THEN 'camera'
                 WHEN g.grp = 'marine' THEN 'Marine' WHEN g.grp = 'bat' OR e.classifier_name ILIKE '%bat%' THEN 'bat' WHEN g.grp = 'avian' THEN 'Aves' WHEN g.grp = 'amphibian' THEN 'Amphibia' WHEN g.grp = 'insect' THEN 'Insecta' WHEN g.grp = 'mammal' THEN 'Mammalia'
                 ELSE COALESCE(NULLIF(m.iconic, 'Unknown'), CASE WHEN e.source_system = 'birdweather' THEN 'Aves' END, 'Unknown') END AS grp
@@ -113,30 +113,6 @@ export async function GET(req: Request) {
 
   return Response.json({
     type: "FeatureCollection",
-    features: rows.map((r) => ({
-      type: "Feature",
-      geometry: { type: "Point", coordinates: r.source_system === "birdweather" ? [Math.round(r.longitude), Math.round(r.latitude)] : [r.longitude, r.latitude] },
-      // Empty fields are left out: the map fetches up to 20,000 of these every few minutes.
-      properties: Object.fromEntries(Object.entries({
-        id: r.event_id,
-        n: r.n > 1 ? r.n : null,
-        t: r.event_start,
-        sci: r.scientific_name,
-        common: r.vernacular_name,
-        conf: r.confidence == null ? null : Math.round(r.confidence * 100) / 100,
-        human: r.observation_method === "human" ? true : null, // a person's identification: no model, no confidence
-        count: r.individual_count,
-        trusted: r.source_trusted,
-        unmapped: r.observation_method === "human" && !r.scientific_name ? true : null, // common name the source table could not map
-        credit: creditFor(r.source_system, r.source_provider),
-        source: r.source_system,
-        // BirdWeather station identity stays with BirdWeather; Acartia observer platforms are named in `credit` instead.
-        deployment: r.source_system === "birdweather" || r.source_system === "acartia" ? null : r.deployment_id,
-        media: r.media_url,
-        mediaType: r.media_type,
-        review: r.review_status === "unreviewed" ? null : r.review_status,
-        group: r.grp,
-      }).filter(([, v]) => v != null)),
-    })),
+    features: rows.map(toFeature),
   }, { headers: { "cache-control": "public, s-maxage=120, stale-while-revalidate=600" } });
 }

@@ -37,11 +37,10 @@ const EMPTY: FC = { type: "FeatureCollection", features: [] };
 const STYLE = "https://tiles.openfreemap.org/styles/dark";
 const HOURS = [1, 3]; // the live window; longer history is in the weekly movement playback
 // Validated for the dark surface (dataviz validator): sources are categorical, change is diverging.
-const SOURCE_COLOR: unknown[] = ["match", ["get", "source"], "birdweather", "#0891b2", "inaturalist", "#65a30d", "gbif", "#f59e0b", "wildnetwork-base", "#a78bfa", "acartia", "#60a5fa", "#db2777"];
-// Sources shown a day late (SOURCE_DELAY_HOURS on the server) never fall inside the 1 to 3 hour live window, so the map
-// draws their last 7 days as a separate sightings layer.
-const SIGHTING_SOURCES = ["acartia"];
-const SIGHTING_DAYS = 7;
+const SOURCE_COLOR: unknown[] = ["match", ["get", "source"], "birdweather", "#0891b2", "inaturalist", "#65a30d", "gbif", "#f59e0b", "wildnetwork-base", "#a78bfa", "acartia", "#60a5fa", "orcasound", "#2dd4bf", "obis", "#38bdf8", "#db2777"];
+// Marine records (OBIS, Orcasound, Acartia) are mostly older than the 1 to 3 hour live window (OBIS lags by months and killer
+// whale records are shown a day late), so the map draws them as their own layer from /api/v1/marine, spread evenly over space.
+const MARINE_DAYS = 365;
 
 // Sources whose review field is a human check of a machine detection (GBIF and iNaturalist records are human observations).
 const REVIEWED: Record<string, boolean> = { "speciesnet-studio": true, "wildnetwork-base": true, speciesnet: true, "birdnet-pi": true, "birdnet-go": true, other: true };
@@ -59,6 +58,7 @@ export default function WorldMap() {
   const [query, setQuery] = useState("");
   const [events, setEvents] = useState<FC>(EMPTY);
   const [sightings, setSightings] = useState<FC>(EMPTY);
+  const [showMarine, setShowMarine] = useState(true);
   const [deployments, setDeployments] = useState<FC>(EMPTY);
   const [cells, setCells] = useState<FC>(EMPTY);
   const [fetchedAt, setFetchedAt] = useState(0);
@@ -158,8 +158,11 @@ export default function WorldMap() {
         const human = String(p.human) === "true";
         const what = human
           ? `${Number(p.count) > 1 ? `${Number(p.count)} animals` : "1 animal"} sighted by people${String(p.trusted) === "true" ? ", trusted observer" : String(p.trusted) === "false" ? ", not verified by the source" : ""}${String(p.unmapped) === "true" ? "<br/>species not mapped yet" : ""}`
-          : `${Number(p.n) > 1 ? `${Number(p.n)} detections nearby in 15 min, best ` : ""}confidence ${Number(p.conf).toFixed(2)} · ${esc(p.source)}`;
-        const credit = p.credit ? `<br/><span style="font-size:11px;color:#94a3b8">${esc(p.credit)}. Position rounded to 0.1°, shown 24 h late.</span>` : "";
+          : p.model ? `detected by ${esc(p.model)} (no score published)` : `${Number(p.n) > 1 ? `${Number(p.n)} detections nearby in 15 min, best ` : ""}confidence ${Number(p.conf).toFixed(2)} · ${esc(p.source)}`;
+        // Credit lines link to the dataset or feed page; only https links are used.
+        const link = (t: string, u?: string) => (u && /^https:\/\//.test(u) ? `<a href="${esc(u)}" target="_blank" rel="noreferrer" style="color:#22d3ee">${esc(t)}</a>` : esc(t));
+        const notes = [p.rounded ? `position rounded to ${esc(p.rounded)}°` : "", p.delayed ? `shown ${esc(p.delayed)} h late` : "", p.license && /creativecommons/.test(p.license) ? link(p.license.includes("/by-nc") ? "CC BY-NC" : p.license.includes("zero") ? "CC0" : "CC BY", p.license) : ""].filter(Boolean).join(", ");
+        const credit = p.credit ? `<br/><span style="font-size:11px;color:#94a3b8">${link(p.credit, p.creditUrl)}${p.alsoCredit ? `. ${esc(p.alsoCredit)}` : ""}${notes ? `. ${notes.charAt(0).toUpperCase()}${notes.slice(1)}` : ""}.</span>` : "";
         const text = `<b>${esc(p.common ?? p.sci)}</b>${p.sci ? `<br/><i>${esc(p.sci)}</i>` : ""}<br/>${new Date(p.t).toLocaleString()}<br/>${what}${REVIEWED[p.source] ? (p.review === "confirmed" ? "<br/>confirmed by a reviewer" : p.review === "uncertain" ? "<br/>reviewer unsure" : "") : ""}${credit}`;
         const popup = new Popup({ closeButton: false, maxWidth: "260px" })
           .setLngLat((f.geometry as GeoJSON.Point).coordinates as [number, number])
@@ -208,19 +211,19 @@ export default function WorldMap() {
       setEvents(ev); setFetchedAt(Date.now()); setLoading(false);
       wantThumbs(ev.features.slice(0, 40).map((f) => String(f.properties.sci)));
     });
-    // Delayed sightings: their own 7-day window, only for the classes they can belong to.
-    const sightingsReq = group === "all" || group === "marine"
-      ? fetch(`/api/v1/events?${new URLSearchParams({ from: new Date(Math.floor((Date.now() - SIGHTING_DAYS * 86400_000) / 3600_000) * 3600_000).toISOString(), limit: "2000", ...(species ? { species } : {}) })}&${SIGHTING_SOURCES.map((s) => `source=${s}`).join("&")}`)
+    // Marine layer: its own window, only for the classes it can hold and while the legend toggle is on.
+    const sightingsReq = showMarine && (group === "all" || group === "marine" || !!species)
+      ? fetch(`/api/v1/marine?${new URLSearchParams({ days: String(MARINE_DAYS), perCell: species ? "500" : "40", ...(species ? { species } : {}) })}`)
           .then((r) => r.json() as Promise<FC>).then(setSightings).catch(() => setSightings(EMPTY))
       : Promise.resolve(setSightings(EMPTY));
     const rest = [
       sightingsReq,
-      fetch(`/api/v1/species?hours=${group === "marine" ? SIGHTING_DAYS * 24 : group === "bat" ? 24 : hours}${gq ? "&" + gq : ""}`).then((r) => r.json() as Promise<Species[]>).then((sp) => { setSpeciesList(sp); wantThumbs(sp.slice(0, 15).map((x) => x.scientificName)); }),
+      fetch(`/api/v1/species?hours=${group === "marine" ? MARINE_DAYS * 24 : group === "bat" ? 24 : hours}${gq ? "&" + gq : ""}`).then((r) => r.json() as Promise<Species[]>).then((sp) => { setSpeciesList(sp); wantThumbs(sp.slice(0, 15).map((x) => x.scientificName)); }),
       fetch(`/api/v1/insights${gq ? "?" + gq : ""}`).then((r) => r.json() as Promise<Insights>).then((ins) => { setInsights(ins); wantThumbs([...(ins.seasonal ?? []), ...(ins.common ?? []), ...ins.drift, ...ins.movers, ...ins.arrivals].map((x) => x.scientificName)); }),
       fetch(`/api/v1/status`).then((r) => r.json() as Promise<Status>).then(setStatus),
     ];
     await Promise.allSettled([events, ...rest]);
-  }, [hours, species, group]);
+  }, [hours, species, group, showMarine]);
 
   useEffect(() => {
     const t0 = setTimeout(load, 0);
@@ -508,7 +511,7 @@ export default function WorldMap() {
               {group !== "all" && group !== "avian" && (
                 <p className="text-xs text-slate-400 leading-relaxed">
                   {group === "marine"
-                    ? <>Whale, dolphin and porpoise sightings from Acartia, measured against other marine sightings only. Shown 24 hours late at 0.1 degree, to protect endangered orcas.</>
+                    ? <>Marine records from OBIS, Orcasound hydrophones and Acartia sightings, measured against other marine records only. Killer whale records are shown 24 hours late, to protect endangered orcas.</>
                     : <>{CLASSES.find((c) => c.key === group)?.label} are measured against other {CLASSES.find((c) => c.key === group)?.label.toLowerCase()} only, from the stations able to detect them.</>}
                   Coverage is thin, so treat these as early signals. <Link href="/methods#classes" className="text-cyan-500 hover:underline">How this works</Link>.
                 </p>
@@ -558,7 +561,7 @@ export default function WorldMap() {
             </div>
           )}
           <div className="px-4 py-2 border-t border-white/5 text-[11px] text-slate-400 flex flex-wrap gap-x-3 gap-y-1">
-            <Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label="WDX devices" /><Legend color="#60a5fa" label="Acartia (7 days, 24 h late)" />
+            <Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label="WDX devices" /><Legend color="#60a5fa" label="Acartia" /><Legend color="#2dd4bf" label="Orcasound" /><Legend color="#38bdf8" label="OBIS" />
             <span className="text-slate-500">{deployments.features.length.toLocaleString()} sensors</span>
           </div>
         </aside>
@@ -580,11 +583,15 @@ export default function WorldMap() {
         ) : (
           <>
             <div className="text-slate-400 mb-1" title="The newest detections from each source, refreshed every few minutes. Measures use full counts, not these dots.">{group === "bat" ? "Bat detections, last 24h" : `Detections, last ${hours}h (sample)`}</div>
-            <div className="flex flex-wrap gap-x-3 gap-y-0.5"><Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label="Devices" /><Legend color="#60a5fa" label="Acartia" /><Legend color="#475569" label="Sensor" /></div>
+            <div className="flex flex-wrap gap-x-3 gap-y-0.5"><Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label="Devices" /><Legend color="#60a5fa" label="Acartia" /><Legend color="#2dd4bf" label="Orcasound" /><Legend color="#38bdf8" label="OBIS" /><Legend color="#475569" label="Sensor" /></div>
           </>
         )}
         {!species && (
           <div className="mt-1.5 pt-1.5 border-t border-white/10">
+            <label className="flex items-center gap-1.5 cursor-pointer select-none" title="OBIS, Orcasound hydrophones and Acartia sightings, last 12 months">
+              <input type="checkbox" checked={showMarine} onChange={(e) => { setShowMarine(e.target.checked); track("toggle_marine", { on: e.target.checked ? 1 : 0 }); }} className="accent-[#60a5fa]" />
+              <span>Marine records</span>
+            </label>
             <label className="flex items-center gap-1.5 cursor-pointer select-none">
               <input type="checkbox" checked={showCoverage} onChange={(e) => { setShowCoverage(e.target.checked); if (e.target.checked) track("show_coverage"); }} className="accent-[#a78bfa]" />
               <span>Coverage</span>
