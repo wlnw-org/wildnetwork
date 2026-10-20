@@ -206,7 +206,7 @@ Stack: Next.js (App Router), TypeScript, Tailwind, MapLibre GL, Postgres with Po
 
 Species panels on the map have a **Listen** block with up to two reference recordings from [xeno-canto](https://xeno-canto.org), so you can hear what a station detected. Xeno-canto agreed to this use by email.
 
-- **Choice.** The server asks the [XC API v3](https://xeno-canto.org/explore/api) for the species (genus and epithet; we do not store subspecies) at quality A or B, preferring the continent in view and falling back to anywhere. It then ranks by quality, sound type (song, then call; echolocation for bats) and length (5 to 60 seconds first).
+- **Choice.** The server asks the [XC API v3](https://xeno-canto.org/explore/api) for the species (genus and epithet; we do not store subspecies) at quality A or B, preferring the continent in view and falling back to anywhere. It then ranks by quality, sound type (song, then call; echolocation for bats) and length (10 to 60 seconds, closest to 30, first), with the two clips from different recordists where possible.
 - **Audio stays on xeno-canto.** The player is a plain `<audio preload="none">` pointed at the file URL xeno-canto returns, and the sonogram is hot-linked too. Nothing downloads until you press play, and only one clip plays at a time. We never copy, trim, re-host or re-encode a recording, which is why ND (no derivatives) licences are fine to show.
 - **Credit.** Under each clip: recordist, location and country, the XC catalogue number linked to its page, and the licence linked to its deed, then the line "Recordings courtesy of xeno-canto.org".
 - **Non-commercial.** WildNetwork is a non-commercial project, so NC licensed recordings can be played. A commercial fork must not show NC recordings.

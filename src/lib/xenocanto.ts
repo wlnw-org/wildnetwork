@@ -110,23 +110,28 @@ function typeRank(type: string, group: string | null): number {
   return i < 0 ? order.length : i;
 }
 
-/** Short clips first, but very short ones (under 5 s) say little: 5 to 60 s is best. */
+/** Long enough to hear the pattern, short enough to play through: 10 to 60 s is best, then 5 to 10 or 60 to 180 s. */
 function lengthRank(s: number | null): number {
   if (s == null) return 3;
-  if (s < 5) return 2;
-  if (s <= 60) return 0;
-  return s <= 180 ? 1 : 2;
+  if (s >= 10 && s <= 60) return 0;
+  return s >= 5 && s <= 180 ? 1 : 2;
 }
 
-/** Quality A before B, then sound type, then length, then shorter. Clips from the same area come first when the caller passes them first. */
+/**
+ * Quality A before B, then sound type, then length (closest to 30 s). Picks prefer different recordists, so two clips
+ * are two voices rather than one person's session. Clips from the same area come first when the caller passes them first.
+ */
 export function rankClips(clips: XcClip[], group: string | null, limit = MAX_CLIPS): XcClip[] {
   const qr = (q: string) => (q === "A" ? 0 : q === "B" ? 1 : 2);
-  return clips
+  const sorted = clips
     .map((c, i) => ({ c, i }))
     .sort((a, b) => qr(a.c.quality) - qr(b.c.quality) || typeRank(a.c.type, group) - typeRank(b.c.type, group)
-      || lengthRank(a.c.seconds) - lengthRank(b.c.seconds) || (a.c.seconds ?? 1e9) - (b.c.seconds ?? 1e9) || a.i - b.i)
-    .slice(0, limit)
+      || lengthRank(a.c.seconds) - lengthRank(b.c.seconds) || Math.abs((a.c.seconds ?? 1e9) - 30) - Math.abs((b.c.seconds ?? 1e9) - 30) || a.i - b.i)
     .map((x) => x.c);
+  const out: XcClip[] = [];
+  for (const c of sorted) if (out.length < limit && !out.some((o) => o.recordist === c.recordist)) out.push(c);
+  for (const c of sorted) if (out.length < limit && !out.includes(c)) out.push(c);
+  return out;
 }
 
 export class XcError extends Error {}

@@ -83,8 +83,13 @@ test("parseResponse handles empty and malformed payloads", () => {
   assert.deepEqual(parseResponse({ recordings: "nope" }, NAME), []);
 });
 
-const clip = (id: string, quality: string, type: string, seconds: number | null): XcClip => ({
-  id, quality, type, seconds, url: "", file: "", sonogram: null, recordist: "", location: "", country: "", license: { name: "CC BY 4.0", url: "" },
+const clip = (id: string, quality: string, type: string, seconds: number | null, recordist = `R${id}`): XcClip => ({
+  id, quality, type, seconds, url: "", file: "", sonogram: null, recordist, location: "", country: "", license: { name: "CC BY 4.0", url: "" },
+});
+
+test("rankClips prefers two different recordists, but falls back to one", () => {
+  assert.deepEqual(rankClips([clip("1", "A", "song", 30, "X"), clip("2", "A", "song", 30, "X"), clip("3", "A", "song", 50, "Y")], "avian").map((c) => c.id), ["1", "3"]);
+  assert.deepEqual(rankClips([clip("1", "A", "song", 30, "X"), clip("2", "A", "song", 31, "X")], "avian").map((c) => c.id), ["1", "2"]);
 });
 
 test("rankClips: quality first, then type, then length", () => {
@@ -92,6 +97,7 @@ test("rankClips: quality first, then type, then length", () => {
   assert.deepEqual(r.map((c) => c.id), ["4", "3", "2", "1"]);
   assert.deepEqual(rankClips([clip("1", "A", "alarm call", 20), clip("2", "A", "call, song", 20)], "avian").map((c) => c.id), ["2", "1"]);
   assert.deepEqual(rankClips([clip("1", "A", "song", 2), clip("2", "A", "song", 40)], "avian").map((c) => c.id), ["2", "1"]);
+  assert.deepEqual(rankClips([clip("1", "A", "song", 5), clip("2", "A", "song", 6), clip("3", "A", "song", 25), clip("4", "A", "song", 50)], "avian").map((c) => c.id), ["3", "4"]);
   assert.deepEqual(rankClips([clip("1", "A", "social call", 10), clip("2", "A", "echolocation", 10)], "bat").map((c) => c.id), ["2", "1"]);
   assert.equal(rankClips([clip("1", "A", "song", 1), clip("2", "A", "song", 2), clip("3", "A", "song", 3)], "avian").length, 2);
 });
