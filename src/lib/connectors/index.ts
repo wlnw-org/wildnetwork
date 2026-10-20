@@ -5,12 +5,13 @@ import { acartia } from "./acartia";
 import { birdweather } from "./birdweather";
 import { gbif } from "./gbif";
 import { inaturalist } from "./inaturalist";
+import { orcasound } from "./orcasound";
 import { BIRDWEATHER_PAUSED, SOURCES } from "@/lib/sources";
 import { upsertGroups } from "@/lib/rollups";
 import { isDue } from "./schedule";
 import type { PullConnector } from "./types";
 
-export const connectors: Record<string, PullConnector> = BIRDWEATHER_PAUSED ? { inaturalist, gbif, acartia } : { birdweather, inaturalist, gbif, acartia };
+export const connectors: Record<string, PullConnector> = BIRDWEATHER_PAUSED ? { inaturalist, gbif, acartia, orcasound } : { birdweather, inaturalist, gbif, acartia, orcasound };
 
 export interface RunResult {
   connector: string;
