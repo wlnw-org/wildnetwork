@@ -15,6 +15,8 @@ function soloPlay(e: React.SyntheticEvent<HTMLAudioElement>) {
  */
 export default function ListenBlock({ name, area }: { name: string; area: XcArea | null }) {
   const [res, setRes] = useState<{ key: string; clips: XcClip[] } | null>(null);
+  // Recordists can withdraw recordings at any time; a clip whose audio no longer loads is dropped until the cache refreshes.
+  const [gone, setGone] = useState<string[]>([]);
   const key = `${name}|${area ?? ""}`;
   useEffect(() => {
     let cancelled = false;
@@ -25,7 +27,7 @@ export default function ListenBlock({ name, area }: { name: string; area: XcArea
     return () => { cancelled = true; };
   }, [name, area, key]);
 
-  const clips = res?.key === key ? res.clips : [];
+  const clips = (res?.key === key ? res.clips : []).filter((c) => !gone.includes(c.id));
   if (clips.length === 0) return null;
   return (
     <section aria-labelledby="listen-h" className="rounded-md border border-white/10 bg-white/5 px-3 py-2.5">
@@ -41,7 +43,7 @@ export default function ListenBlock({ name, area }: { name: string; area: XcArea
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={c.sonogram} alt={`Sonogram of XC${c.id}`} loading="lazy" className="w-full h-14 object-cover rounded bg-white" />
               )}
-              <audio controls preload="none" src={c.file} onPlay={(e) => { soloPlay(e); track("play_recording", { species: name, xc: c.id }); }}
+              <audio controls preload="none" src={c.file} onError={() => setGone((g) => [...g, c.id])} onPlay={(e) => { soloPlay(e); track("play_recording", { species: name, xc: c.id }); }}
                 aria-label={`Play xeno-canto recording XC${c.id}, ${what}, by ${c.recordist || "unknown recordist"}`} className="w-full h-9 mt-1" />
               <p className="text-[11px] text-slate-400 leading-snug mt-1">
                 <span className="text-slate-300">{what}</span>{c.quality && <> · quality {c.quality}</>}<br />
