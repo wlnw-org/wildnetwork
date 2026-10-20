@@ -529,7 +529,7 @@ export default function WorldMap() {
                 <p className="text-xs text-slate-400 leading-relaxed">
                   {group === "marine"
                     ? <>Marine records from OBIS, Orcasound hydrophones and Acartia sightings, measured against other marine records only. Killer whale records are shown 24 hours late, to protect endangered orcas.</>
-                    : <>{CLASSES.find((c) => c.key === group)?.label} are measured against other {CLASSES.find((c) => c.key === group)?.label.toLowerCase()} only, from the stations able to detect them.</>}
+                    : <>{CLASSES.find((c) => c.key === group)?.label} are measured against other {CLASSES.find((c) => c.key === group)?.label.toLowerCase()} only, from the stations able to detect them.</>}{" "}
                   Coverage is thin, so treat these as early signals. <Link href="/methods#classes" className="text-cyan-500 hover:underline">How this works</Link>.
                 </p>
               )}
