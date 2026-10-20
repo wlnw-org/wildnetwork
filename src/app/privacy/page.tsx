@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "What WildNetwork collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
 };
 
-const UPDATED = "8 October 2026";
+const UPDATED = "20 October 2026";
 
 export default function Privacy() {
   return (
@@ -57,6 +57,11 @@ export default function Privacy() {
         <p>
           The site runs on Vercel and its database on Neon, both in the United States. Vercel processes IP addresses and request details to serve pages and protect
           the service, and keeps them in logs for a short time. No other cookies or tracking are used.
+        </p>
+        <p>
+          Reference recordings in species panels are streamed straight from xeno-canto.org, and only when you press play (the sonogram image loads with the panel).
+          Your browser then contacts xeno-canto, which sees your IP address. To pick the recordings, this site sends xeno-canto the species name and, for most species,
+          the continent in view. Never your location or a detection&apos;s coordinates.
         </p>
 
         <H2>Removal and your rights</H2>

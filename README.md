@@ -22,6 +22,7 @@ It is free, open source, and built so that anyone with a Raspberry Pi can contri
 - [Run your own instance](#run-your-own-instance)
 - [Project layout](#project-layout)
 - [Data sources and licensing](#data-sources-and-licensing)
+- [Reference recordings from Xeno-canto](#reference-recordings-from-xeno-canto)
 - [Part of an open wildlife toolkit](#part-of-an-open-wildlife-toolkit)
 - [Contributing and governance](#contributing-and-governance)
 - [Roadmap](#roadmap)
@@ -147,7 +148,7 @@ Optional: `pnpm backfill:weekly 52` fills a year of weekly history for the movem
 | `pnpm pull [seconds]` | Run the pull connectors on a loop (`0` runs once) |
 | `pnpm backfill [days]` / `pnpm backfill:weekly [weeks]` | Build history from BirdWeather aggregates |
 | `pnpm key:create "<name>" [source]` | Issue a push key by hand |
-| `pnpm lint` / `pnpm exec tsc --noEmit` | Checks that CI runs |
+| `pnpm lint` / `pnpm exec tsc --noEmit` / `pnpm test` | Checks that CI runs |
 
 ### Self-host with Neon and Vercel
 
@@ -196,9 +197,22 @@ Stack: Next.js (App Router), TypeScript, Tailwind, MapLibre GL, Postgres with Po
 | [iNaturalist](https://www.inaturalist.org) | Community observations | Only CC0 and CC BY records are ingested; credit the observer |
 | WDX producers | Devices running wdx-agent or pushing directly | License chosen by each contributor, CC BY 4.0 by default |
 | [Open-Meteo](https://open-meteo.com) | ERA5 weather | CC BY 4.0 |
+| [xeno-canto](https://xeno-canto.org) | Reference recordings in species panels | Played and linked from xeno-canto, never copied; each recording keeps its own Creative Commons licence and credits its recordist |
 | [Wikipedia](https://www.wikipedia.org) / Wikimedia Commons | Species photos and descriptions | CC BY-SA |
 | [OpenFreeMap](https://openfreemap.org), [OpenMapTiles](https://openmaptiles.org), [OpenStreetMap](https://www.openstreetmap.org/copyright) | Base map | ODbL and respective licenses |
 | [EarthRanger](https://www.earthranger.com) | Map silhouettes and interface patterns | Apache 2.0, see [public/icons/er/NOTICE.md](public/icons/er/NOTICE.md) |
+
+## Reference recordings from Xeno-canto
+
+Species panels on the map have a **Listen** block with up to two reference recordings from [xeno-canto](https://xeno-canto.org), so you can hear what a station detected. Xeno-canto agreed to this use by email.
+
+- **Choice.** The server asks the [XC API v3](https://xeno-canto.org/explore/api) for the species (genus and epithet; we do not store subspecies) at quality A or B, preferring the continent in view and falling back to anywhere. It then ranks by quality, sound type (song, then call; echolocation for bats) and length (5 to 60 seconds first).
+- **Audio stays on xeno-canto.** The player is a plain `<audio preload="none">` pointed at the file URL xeno-canto returns, and the sonogram is hot-linked too. Nothing downloads until you press play, and only one clip plays at a time. We never copy, trim, re-host or re-encode a recording, which is why ND (no derivatives) licences are fine to show.
+- **Credit.** Under each clip: recordist, location and country, the XC catalogue number linked to its page, and the licence linked to its deed, then the line "Recordings courtesy of xeno-canto.org".
+- **Non-commercial.** WildNetwork is a non-commercial project, so NC licensed recordings can be played. A commercial fork must not show NC recordings.
+- **Caching.** Results (including "none found") are cached per species and continent for 7 days in the `xc_recordings` table, with a day of CDN caching on top, to keep requests to xeno-canto low. If xeno-canto is slow (4 second timeout) or down, the panel loads as usual without the Listen block, and nothing is cached.
+- **Sensitive species.** The browser only ever sends a continent name, never coordinates. For species listed in `scripts/sensitive_species.txt`, even the continent is dropped and xeno-canto is queried by species alone.
+- **Key.** Set `XENO_CANTO_API_KEY` (from your xeno-canto account page) as a server-side environment variable, for example `vercel env add XENO_CANTO_API_KEY`. It is never sent to the browser or committed. Without it, the Listen block stays hidden.
 
 ## Part of an open wildlife toolkit
 

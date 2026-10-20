@@ -38,6 +38,7 @@ export default function AboutPanel() {
           <li><Link href="https://www.inaturalist.org">iNaturalist</Link>: community observations, CC0 and CC BY licensed records only, credited to their observers.</li>
           <li><Link href="https://open-meteo.com">Open-Meteo</Link>: ERA5 reanalysis weather (CC BY 4.0).</li>
           <li><Link href="https://www.wikipedia.org">Wikipedia</Link> and Wikimedia Commons contributors: species photos and descriptions (CC BY-SA).</li>
+          <li><Link href="https://xeno-canto.org">xeno-canto</Link>: reference recordings in species panels, played and linked from xeno-canto under each recordist&apos;s Creative Commons licence. Recordings courtesy of xeno-canto.org.</li>
           <li>WDX producers: anyone running a Raspberry Pi, camera trap or BirdNET station who pushes events to this network.</li>
         </ul>
       </section>
