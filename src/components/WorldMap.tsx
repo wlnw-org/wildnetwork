@@ -507,7 +507,9 @@ export default function WorldMap() {
             <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-4">
               {group !== "all" && group !== "avian" && (
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  {CLASSES.find((c) => c.key === group)?.label} are measured against other {CLASSES.find((c) => c.key === group)?.label.toLowerCase()} only, from the stations able to detect them.
+                  {group === "marine"
+                    ? <>Whale, dolphin and porpoise sightings from Acartia, measured against other marine sightings only. Shown 24 hours late at 0.1 degree, to protect endangered orcas.</>
+                    : <>{CLASSES.find((c) => c.key === group)?.label} are measured against other {CLASSES.find((c) => c.key === group)?.label.toLowerCase()} only, from the stations able to detect them.</>}
                   Coverage is thin, so treat these as early signals. <Link href="/methods#classes" className="text-cyan-500 hover:underline">How this works</Link>.
                 </p>
               )}
