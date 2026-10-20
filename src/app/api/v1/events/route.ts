@@ -1,5 +1,7 @@
 import { authenticate } from "@/lib/auth";
 import { sql } from "@/lib/db";
+import { delayFilter } from "@/lib/delay";
+import { creditFor } from "@/lib/sources";
 import { ingestEvents } from "@/lib/wdx/ingest";
 import type { WdxEvent } from "@/lib/wdx/types";
 import { parseEventsBody, validateWdx } from "@/lib/wdx/validate";
@@ -63,14 +65,16 @@ export async function GET(req: Request) {
     WITH base AS (
     SELECT e.event_id, 1 AS n, e.event_start, e.scientific_name, e.vernacular_name, e.confidence,
            e.latitude, e.longitude, e.source_system, e.deployment_id, e.media_url, e.media_type, e.review_status,
+           e.observation_method, e.individual_count, e.source_provider, e.source_trusted,
            CASE WHEN e.media_type IN ('image', 'video') AND e.source_system NOT IN ('inaturalist') THEN 'camera'
-                WHEN g.grp = 'bat' OR e.classifier_name ILIKE '%bat%' THEN 'bat' WHEN g.grp = 'avian' THEN 'Aves' WHEN g.grp = 'amphibian' THEN 'Amphibia' WHEN g.grp = 'insect' THEN 'Insecta' WHEN g.grp = 'mammal' THEN 'Mammalia'
+                WHEN g.grp = 'marine' THEN 'Marine' WHEN g.grp = 'bat' OR e.classifier_name ILIKE '%bat%' THEN 'bat' WHEN g.grp = 'avian' THEN 'Aves' WHEN g.grp = 'amphibian' THEN 'Amphibia' WHEN g.grp = 'insect' THEN 'Insecta' WHEN g.grp = 'mammal' THEN 'Mammalia'
                 ELSE COALESCE(NULLIF(m.iconic, 'Unknown'), CASE WHEN e.source_system = 'birdweather' THEN 'Aves' END, 'Unknown') END AS grp
     FROM events e LEFT JOIN species_media m ON m.scientific_name = e.scientific_name
     LEFT JOIN species_group g ON g.scientific_name = e.scientific_name
     WHERE event_start >= ${from} AND event_start <= ${to}
-      AND confidence >= ${minConf}
+      AND (${minConf} = 0 OR confidence >= ${minConf})
       AND review_status <> 'rejected'
+      ${delayFilter("e")}
       ${species ? sql`AND e.scientific_name = ${species}` : sql``}
       ${source ? sql`AND source_system = ${source}` : sql``}
       ${group ? sql`AND g.grp = ${group}` : sql``}
@@ -80,7 +84,7 @@ export async function GET(req: Request) {
       SELECT * FROM base WHERE source_system <> 'birdweather'
       UNION ALL
       SELECT NULL AS event_id, count(*)::int AS n, max(event_start), scientific_name, max(vernacular_name), max(confidence),
-             latitude, longitude, 'birdweather', NULL, NULL, NULL, 'unreviewed', max(grp)
+             latitude, longitude, 'birdweather', NULL, NULL, NULL, 'unreviewed', 'machine', NULL, NULL, NULL, max(grp)
       FROM base WHERE source_system = 'birdweather'
       GROUP BY latitude, longitude, scientific_name, floor(extract(epoch FROM event_start) / 900)
     ) x
@@ -89,14 +93,16 @@ export async function GET(req: Request) {
   ` : await sql`
     SELECT e.event_id, 1 AS n, e.event_start, e.scientific_name, e.vernacular_name, e.confidence,
            e.latitude, e.longitude, e.source_system, e.deployment_id, e.media_url, e.media_type, e.review_status,
+           e.observation_method, e.individual_count, e.source_provider, e.source_trusted,
            CASE WHEN e.media_type IN ('image', 'video') AND e.source_system NOT IN ('inaturalist') THEN 'camera'
-                WHEN g.grp = 'bat' OR e.classifier_name ILIKE '%bat%' THEN 'bat' WHEN g.grp = 'avian' THEN 'Aves' WHEN g.grp = 'amphibian' THEN 'Amphibia' WHEN g.grp = 'insect' THEN 'Insecta' WHEN g.grp = 'mammal' THEN 'Mammalia'
+                WHEN g.grp = 'marine' THEN 'Marine' WHEN g.grp = 'bat' OR e.classifier_name ILIKE '%bat%' THEN 'bat' WHEN g.grp = 'avian' THEN 'Aves' WHEN g.grp = 'amphibian' THEN 'Amphibia' WHEN g.grp = 'insect' THEN 'Insecta' WHEN g.grp = 'mammal' THEN 'Mammalia'
                 ELSE COALESCE(NULLIF(m.iconic, 'Unknown'), CASE WHEN e.source_system = 'birdweather' THEN 'Aves' END, 'Unknown') END AS grp
     FROM events e LEFT JOIN species_media m ON m.scientific_name = e.scientific_name
     LEFT JOIN species_group g ON g.scientific_name = e.scientific_name
     WHERE event_start >= ${from} AND event_start <= ${to}
-      AND confidence >= ${minConf}
+      AND (${minConf} = 0 OR confidence >= ${minConf})
       AND review_status <> 'rejected'
+      ${delayFilter("e")}
       ${species ? sql`AND e.scientific_name = ${species}` : sql``}
       ${source ? sql`AND source_system = ${source}` : sql``}
       ${group ? sql`AND g.grp = ${group}` : sql``}
@@ -117,9 +123,15 @@ export async function GET(req: Request) {
         t: r.event_start,
         sci: r.scientific_name,
         common: r.vernacular_name,
-        conf: Math.round(r.confidence * 100) / 100,
+        conf: r.confidence == null ? null : Math.round(r.confidence * 100) / 100,
+        human: r.observation_method === "human" ? true : null, // a person's identification: no model, no confidence
+        count: r.individual_count,
+        trusted: r.source_trusted,
+        unmapped: r.observation_method === "human" && !r.scientific_name ? true : null, // common name the source table could not map
+        credit: creditFor(r.source_system, r.source_provider),
         source: r.source_system,
-        deployment: r.source_system === "birdweather" ? null : r.deployment_id, // BirdWeather station identity stays with BirdWeather
+        // BirdWeather station identity stays with BirdWeather; Acartia observer platforms are named in `credit` instead.
+        deployment: r.source_system === "birdweather" || r.source_system === "acartia" ? null : r.deployment_id,
         media: r.media_url,
         mediaType: r.media_type,
         review: r.review_status === "unreviewed" ? null : r.review_status,

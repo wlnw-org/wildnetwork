@@ -30,14 +30,18 @@ interface Status { ask?: boolean; paused?: string[]; live: boolean; lastPullAt: 
 
 const CLASSES: { key: string; label: string }[] = [
   { key: "all", label: "All" }, { key: "avian", label: "Birds" }, { key: "bat", label: "Bats" },
-  { key: "amphibian", label: "Frogs" }, { key: "insect", label: "Insects" }, { key: "mammal", label: "Mammals" },
+  { key: "amphibian", label: "Frogs" }, { key: "insect", label: "Insects" }, { key: "mammal", label: "Mammals" }, { key: "marine", label: "Marine" },
 ];
 
 const EMPTY: FC = { type: "FeatureCollection", features: [] };
 const STYLE = "https://tiles.openfreemap.org/styles/dark";
 const HOURS = [1, 3]; // the live window; longer history is in the weekly movement playback
 // Validated for the dark surface (dataviz validator): sources are categorical, change is diverging.
-const SOURCE_COLOR: unknown[] = ["match", ["get", "source"], "birdweather", "#0891b2", "inaturalist", "#65a30d", "gbif", "#f59e0b", "wildnetwork-base", "#a78bfa", "#db2777"];
+const SOURCE_COLOR: unknown[] = ["match", ["get", "source"], "birdweather", "#0891b2", "inaturalist", "#65a30d", "gbif", "#f59e0b", "wildnetwork-base", "#a78bfa", "acartia", "#60a5fa", "#db2777"];
+// Sources shown a day late (SOURCE_DELAY_HOURS on the server) never fall inside the 1 to 3 hour live window, so the map
+// draws their last 7 days as a separate sightings layer.
+const SIGHTING_SOURCES = ["acartia"];
+const SIGHTING_DAYS = 7;
 
 // Sources whose review field is a human check of a machine detection (GBIF and iNaturalist records are human observations).
 const REVIEWED: Record<string, boolean> = { "speciesnet-studio": true, "wildnetwork-base": true, speciesnet: true, "birdnet-pi": true, "birdnet-go": true, other: true };
@@ -54,6 +58,7 @@ export default function WorldMap() {
   const [insights, setInsights] = useState<Insights | null>(null);
   const [query, setQuery] = useState("");
   const [events, setEvents] = useState<FC>(EMPTY);
+  const [sightings, setSightings] = useState<FC>(EMPTY);
   const [deployments, setDeployments] = useState<FC>(EMPTY);
   const [cells, setCells] = useState<FC>(EMPTY);
   const [fetchedAt, setFetchedAt] = useState(0);
@@ -149,7 +154,13 @@ export default function WorldMap() {
         const media = p.media && /^https:\/\//.test(p.media)
           ? p.mediaType === "audio" ? `<audio controls src="${esc(p.media)}" style="width:220px;margin-top:6px"></audio>` : `<img src="${esc(p.media)}" style="width:220px;margin-top:6px;border-radius:6px" alt="" />`
           : "";
-        const text = `<b>${esc(p.common ?? p.sci)}</b><br/><i>${esc(p.sci)}</i><br/>${new Date(p.t).toLocaleString()}<br/>${Number(p.n) > 1 ? `${Number(p.n)} detections nearby in 15 min, best ` : ""}confidence ${Number(p.conf).toFixed(2)} · ${esc(p.source)}${REVIEWED[p.source] ? (p.review === "confirmed" ? "<br/>confirmed by a reviewer" : p.review === "uncertain" ? "<br/>reviewer unsure" : "") : ""}`;
+        // Human sightings (WDX observationMethod "human") have no confidence: show the count and the source's own verification instead.
+        const human = String(p.human) === "true";
+        const what = human
+          ? `${Number(p.count) > 1 ? `${Number(p.count)} animals` : "1 animal"} sighted by people${String(p.trusted) === "true" ? ", trusted observer" : String(p.trusted) === "false" ? ", not verified by the source" : ""}${String(p.unmapped) === "true" ? "<br/>species not mapped yet" : ""}`
+          : `${Number(p.n) > 1 ? `${Number(p.n)} detections nearby in 15 min, best ` : ""}confidence ${Number(p.conf).toFixed(2)} · ${esc(p.source)}`;
+        const credit = p.credit ? `<br/><span style="font-size:11px;color:#94a3b8">${esc(p.credit)}. Position rounded to 0.1°, shown 24 h late.</span>` : "";
+        const text = `<b>${esc(p.common ?? p.sci)}</b>${p.sci ? `<br/><i>${esc(p.sci)}</i>` : ""}<br/>${new Date(p.t).toLocaleString()}<br/>${what}${REVIEWED[p.source] ? (p.review === "confirmed" ? "<br/>confirmed by a reviewer" : p.review === "uncertain" ? "<br/>reviewer unsure" : "") : ""}${credit}`;
         const popup = new Popup({ closeButton: false, maxWidth: "260px" })
           .setLngLat((f.geometry as GeoJSON.Point).coordinates as [number, number])
           .setHTML(`<div style="font:13px system-ui;color:#e2e8f0">${text}${media}</div>`)
@@ -197,8 +208,14 @@ export default function WorldMap() {
       setEvents(ev); setFetchedAt(Date.now()); setLoading(false);
       wantThumbs(ev.features.slice(0, 40).map((f) => String(f.properties.sci)));
     });
+    // Delayed sightings: their own 7-day window, only for the classes they can belong to.
+    const sightingsReq = group === "all" || group === "marine"
+      ? fetch(`/api/v1/events?${new URLSearchParams({ from: new Date(Math.floor((Date.now() - SIGHTING_DAYS * 86400_000) / 3600_000) * 3600_000).toISOString(), limit: "2000", ...(species ? { species } : {}) })}&${SIGHTING_SOURCES.map((s) => `source=${s}`).join("&")}`)
+          .then((r) => r.json() as Promise<FC>).then(setSightings).catch(() => setSightings(EMPTY))
+      : Promise.resolve(setSightings(EMPTY));
     const rest = [
-      fetch(`/api/v1/species?hours=${group === "bat" ? 24 : hours}${gq ? "&" + gq : ""}`).then((r) => r.json() as Promise<Species[]>).then((sp) => { setSpeciesList(sp); wantThumbs(sp.slice(0, 15).map((x) => x.scientificName)); }),
+      sightingsReq,
+      fetch(`/api/v1/species?hours=${group === "marine" ? SIGHTING_DAYS * 24 : group === "bat" ? 24 : hours}${gq ? "&" + gq : ""}`).then((r) => r.json() as Promise<Species[]>).then((sp) => { setSpeciesList(sp); wantThumbs(sp.slice(0, 15).map((x) => x.scientificName)); }),
       fetch(`/api/v1/insights${gq ? "?" + gq : ""}`).then((r) => r.json() as Promise<Insights>).then((ins) => { setInsights(ins); wantThumbs([...(ins.seasonal ?? []), ...(ins.common ?? []), ...ins.drift, ...ins.movers, ...ins.arrivals].map((x) => x.scientificName)); }),
       fetch(`/api/v1/status`).then((r) => r.json() as Promise<Status>).then(setStatus),
     ];
@@ -324,9 +341,11 @@ export default function WorldMap() {
       const cutoff = windowStart + playhead;
       const trail = Math.max(liveHours * 3600_000 * 0.05, 15 * 60_000);
       fc = { ...events, features: events.features.filter((f) => { const t = Date.parse(String(f.properties.t)); return t <= cutoff && t > cutoff - trail; }) };
+    } else if (sightings.features.length) {
+      fc = { ...events, features: [...events.features, ...sightings.features] };
     }
     (map.getSource("events") as GeoJSONSource)?.setData(fc);
-  }, [events, deployments, cells, species, playhead, ready, windowStart, liveHours, activeFrame, frames, frame, shareScale]);
+  }, [events, sightings, deployments, cells, species, playhead, ready, windowStart, liveHours, activeFrame, frames, frame, shareScale]);
 
   useEffect(() => {
     if (!playing) return;
@@ -537,7 +556,7 @@ export default function WorldMap() {
             </div>
           )}
           <div className="px-4 py-2 border-t border-white/5 text-[11px] text-slate-400 flex flex-wrap gap-x-3 gap-y-1">
-            <Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label="WDX devices" />
+            <Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label="WDX devices" /><Legend color="#60a5fa" label="Acartia (7 days, 24 h late)" />
             <span className="text-slate-500">{deployments.features.length.toLocaleString()} sensors</span>
           </div>
         </aside>
@@ -559,7 +578,7 @@ export default function WorldMap() {
         ) : (
           <>
             <div className="text-slate-400 mb-1" title="The newest detections from each source, refreshed every few minutes. Measures use full counts, not these dots.">{group === "bat" ? "Bat detections, last 24h" : `Detections, last ${hours}h (sample)`}</div>
-            <div className="flex flex-wrap gap-x-3 gap-y-0.5"><Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label="Devices" /><Legend color="#475569" label="Sensor" /></div>
+            <div className="flex flex-wrap gap-x-3 gap-y-0.5"><Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label="Devices" /><Legend color="#60a5fa" label="Acartia" /><Legend color="#475569" label="Sensor" /></div>
           </>
         )}
         {!species && (
