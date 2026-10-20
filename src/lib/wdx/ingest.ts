@@ -45,9 +45,13 @@ export async function ingestEvents(events: WdxEvent[], opts: { keepRaw?: boolean
     vernacular_name: e.detection.vernacularName ?? null,
     taxon_rank: e.detection.taxonRank ?? null,
     taxon_id: e.detection.taxonId ?? null,
-    confidence: e.detection.confidence,
-    classifier_name: e.detection.classifier.name,
-    classifier_version: e.detection.classifier.version,
+    confidence: e.detection.confidence ?? null,
+    classifier_name: e.detection.classifier?.name ?? null,
+    classifier_version: e.detection.classifier?.version ?? null,
+    observation_method: e.detection.observationMethod ?? "machine",
+    individual_count: e.detection.individualCount ?? null,
+    source_provider: e.source.provider ?? null,
+    source_trusted: e.source.trusted ?? null,
     media_type: e.media?.mediaType ?? null,
     media_url: e.media?.url ?? null,
     review_status: e.review?.status ?? "unreviewed",
@@ -59,7 +63,7 @@ export async function ingestEvents(events: WdxEvent[], opts: { keepRaw?: boolean
 
   let inserted = 0;
   let updated = 0;
-  // postgres caps a statement at 65534 bind params; ~20 cols per row, so chunk at 2000 rows.
+  // postgres caps a statement at 65534 bind params; ~24 cols per row, so chunk at 2000 rows.
   const CHUNK = 2000;
   const chunks = <T,>(arr: T[]) => Array.from({ length: Math.ceil(arr.length / CHUNK) }, (_, i) => arr.slice(i * CHUNK, (i + 1) * CHUNK));
   await sql.begin(async (tx) => {
@@ -82,6 +86,9 @@ export async function ingestEvents(events: WdxEvent[], opts: { keepRaw?: boolean
         scientific_name = EXCLUDED.scientific_name,
         vernacular_name = EXCLUDED.vernacular_name,
         taxon_id = EXCLUDED.taxon_id,
+        taxon_rank = EXCLUDED.taxon_rank,
+        individual_count = EXCLUDED.individual_count,
+        source_trusted = EXCLUDED.source_trusted,
         media_url = COALESCE(EXCLUDED.media_url, events.media_url),
         raw = EXCLUDED.raw,
         received_at = now()

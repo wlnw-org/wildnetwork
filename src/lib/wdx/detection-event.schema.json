@@ -2,13 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/arunrajiah/wildlife-detection-exchange/schema/detection-event.schema.json",
   "title": "WDX Detection Event",
-  "description": "A single machine-generated wildlife detection event. Wildlife Detection Exchange (WDX) v0.2 draft; v0.1 events remain valid.",
+  "description": "A single wildlife detection event, machine-generated or (v0.3) a human observation. Wildlife Detection Exchange (WDX) v0.3 draft; v0.1 and v0.2 events remain valid.",
   "type": "object",
   "required": ["wdx", "eventId", "eventStart", "deployment", "detection", "source"],
   "properties": {
     "wdx": {
       "type": "string",
-      "enum": ["0.1", "0.2"],
+      "enum": ["0.1", "0.2", "0.3"],
       "description": "WDX spec version this event conforms to."
     },
     "eventId": {
@@ -42,8 +42,17 @@
     },
     "detection": {
       "type": "object",
-      "required": ["confidence", "classifier"],
+      "if": { "required": ["observationMethod"], "properties": { "observationMethod": { "const": "human" } } },
+      "then": {},
+      "else": { "required": ["confidence", "classifier"] },
       "properties": {
+        "observationMethod": {
+          "type": "string",
+          "enum": ["machine", "human"],
+          "default": "machine",
+          "description": "v0.3: who made the identification. A human observation has no model, so confidence and classifier are optional and MUST NOT be invented."
+        },
+        "individualCount": { "type": "integer", "minimum": 1, "description": "v0.3: number of individuals, as reported by the source." },
         "scientificName": { "type": "string" },
         "vernacularName": { "type": "string" },
         "taxonRank": {
@@ -143,7 +152,9 @@
       "properties": {
         "system": { "type": "string", "minLength": 1 },
         "systemVersion": { "type": "string" },
-        "sourceRecordId": { "type": "string" }
+        "sourceRecordId": { "type": "string" },
+        "provider": { "type": "string", "minLength": 1, "description": "v0.3: the contributing platform or organisation within an aggregating source, e.g. Conserve.io." },
+        "trusted": { "type": "boolean", "description": "v0.3: the source's own verification or trust flag, passed through unchanged." }
       },
       "additionalProperties": true
     },

@@ -1,11 +1,11 @@
-// Mirrors wildlife-detection-exchange v0.2 (v0.1 events are also valid) (schema/detection-event.schema.json).
+// Mirrors wildlife-detection-exchange v0.3 (v0.1 and v0.2 events are also valid) (schema/detection-event.schema.json).
 export type SensorType = "acoustic-recorder" | "camera-trap" | "other";
 export type TaxonRank = "species" | "genus" | "family" | "class" | "unranked";
 export type ReviewStatus = "unreviewed" | "confirmed" | "rejected" | "uncertain";
 export type MediaType = "audio" | "image" | "video";
 
 export interface WdxEvent {
-  wdx: "0.1" | "0.2";
+  wdx: "0.1" | "0.2" | "0.3";
   eventId: string;
   eventStart: string;
   eventEnd?: string;
@@ -23,8 +23,11 @@ export interface WdxEvent {
     vernacularName?: string;
     taxonRank?: TaxonRank;
     taxonId?: string;
-    confidence: number;
-    classifier: { name: string; version: string };
+    /** v0.3: "human" observations carry no model, so confidence and classifier are optional for them only. */
+    observationMethod?: "machine" | "human";
+    individualCount?: number;
+    confidence?: number;
+    classifier?: { name: string; version: string };
     pipeline?: { role: string; name: string; version: string; weights?: string }[];
     classifiedAt?: string;
   };
@@ -38,6 +41,6 @@ export interface WdxEvent {
     region?: { type: "box" | "polygon" | "point"; coordinates: number[] | number[][]; units?: "normalized" | "pixels"; imageWidth?: number; imageHeight?: number; frame?: number };
   };
   review?: { status: ReviewStatus; reviewedBy?: string; reviewedAt?: string };
-  source: { system: string; systemVersion?: string; sourceRecordId?: string };
+  source: { system: string; systemVersion?: string; sourceRecordId?: string; provider?: string; trusted?: boolean };
   license?: string;
 }
