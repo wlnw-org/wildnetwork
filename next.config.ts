@@ -16,8 +16,8 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
-  // The Listen proxy reads the sensitive species list at runtime.
-  outputFileTracingIncludes: { "/api/v1/recordings": ["./scripts/sensitive_species.txt"] },
+  // Connectors read the sensitive taxa list at runtime.
+  outputFileTracingIncludes: { "/api/**": ["./scripts/sensitive_species.txt"] },
   async headers() {
     return [{
       source: "/:path*",

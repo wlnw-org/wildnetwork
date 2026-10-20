@@ -1,4 +1,5 @@
 import { sql } from "@/lib/db";
+import { delayFilter } from "@/lib/delay";
 
 /** Species seen in the window, ranked by count. ?hours=24 ?q=robin */
 export async function GET(req: Request) {
@@ -22,7 +23,7 @@ export async function GET(req: Request) {
                COUNT(*) AS n, COUNT(DISTINCT e.deployment_id) AS deployments
         FROM events e ${group ? sql`JOIN species_group g ON g.scientific_name = e.scientific_name AND g.grp = ${group}` : sql``}
         WHERE e.event_start > now() - (${hours} || ' hours')::interval
-          AND e.scientific_name IS NOT NULL AND e.review_status <> 'rejected'
+          AND e.scientific_name IS NOT NULL AND e.review_status <> 'rejected' ${delayFilter("e")}
         GROUP BY e.scientific_name
         ORDER BY n DESC
         LIMIT 200

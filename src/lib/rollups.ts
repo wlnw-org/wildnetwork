@@ -1,7 +1,7 @@
 import { sql } from "@/lib/db";
 import { GRP } from "@/lib/methods";
 
-import { BIRDWEATHER_PAUSED } from "@/lib/sources";
+import { BIRDWEATHER_PAUSED, PENDING_SOURCES } from "@/lib/sources";
 
 const ENDPOINT = "https://app.birdweather.com/graphql";
 const CELL = 5;
@@ -99,6 +99,8 @@ export async function rollupEventsDay(day: string): Promise<void> {
     FROM events
     WHERE event_start >= ${day}::date AND event_start < ${day}::date + 1
       AND scientific_name IS NOT NULL AND review_status <> 'rejected' AND source_system <> 'birdweather'
+      -- Sources whose licence is still pending stay out of every aggregate, so none of their data reaches the CSV downloads or exports.
+      AND source_system <> ALL(${PENDING_SOURCES})
     GROUP BY 2, 3, 5, 6
     ON CONFLICT (day, source_system, scientific_name, cell_lat, cell_lon) DO UPDATE SET
       count = EXCLUDED.count, high_conf_count = EXCLUDED.high_conf_count, sites = EXCLUDED.sites, vernacular_name = EXCLUDED.vernacular_name
@@ -172,11 +174,12 @@ export async function refreshDerived(days = 7): Promise<void> {
 }
 
 /** Remember each species' class. A name without a space is a genus, family or order, not a species. */
-export async function upsertGroups(items: { name: string; grp: string }[]): Promise<void> {
+export async function upsertGroups(items: { name: string; grp: string }[], opts: { overwrite?: boolean } = {}): Promise<void> {
   const seen = new Map(items.map((i) => [i.name, i.grp]));
   if (seen.size === 0) return;
   const rows = [...seen.entries()].map(([scientific_name, grp]) => ({ scientific_name, grp, is_species: scientific_name.trim().includes(" ") }));
-  await sql`INSERT INTO species_group ${sql(rows)} ON CONFLICT (scientific_name) DO UPDATE SET grp = EXCLUDED.grp, is_species = EXCLUDED.is_species`;
+  if (opts.overwrite === false) await sql`INSERT INTO species_group ${sql(rows)} ON CONFLICT (scientific_name) DO NOTHING`;
+  else await sql`INSERT INTO species_group ${sql(rows)} ON CONFLICT (scientific_name) DO UPDATE SET grp = EXCLUDED.grp, is_species = EXCLUDED.is_species`;
 }
 
 /** One-off and occasional: list every non-bird taxon BirdWeather has heard in a year, then mark the rest. */

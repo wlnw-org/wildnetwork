@@ -1,0 +1,39 @@
+{
+  "_comment": "One place for each source's licence status and privacy rules. Read by src/lib/sources.ts and scripts/aws-export.py. licence: 'open' = records carry their own open licence, 'per-record' = each record's licence decides (others skipped), 'unknown-pending' = shown on the map with credit, never in exports or bulk downloads, 'not-agreed' = never exported. Change 'unknown-pending' to 'open' (and set defaultLicence) once permission arrives.",
+  "birdweather": { "licence": "not-agreed" },
+  "gbif": { "licence": "per-record" },
+  "inaturalist": { "licence": "per-record" },
+  "obis": {
+    "licence": "per-record",
+    "pollMinutes": 1440,
+    "keepDays": 365,
+    "maxRows": 25000,
+    "pagesPerRun": 10,
+    "pageSize": 1000,
+    "regions": [
+      { "name": "india", "geometry": "POLYGON((76 5,85 5,85 16,76 16,76 5))", "days": 365, "maxRows": 10000 },
+      { "name": "global", "geometry": null, "days": 365, "maxRows": 15000 }
+    ],
+    "sensitiveRoundDegrees": 0.1,
+    "hideDeployments": true
+  },
+  "orcasound": {
+    "licence": "unknown-pending",
+    "pollMinutes": 20,
+    "keepDays": 7,
+    "delayHours": 24,
+    "delayTaxa": ["Orcinus orca", "Cetacea"],
+    "roundDegrees": null,
+    "roundTaxa": []
+  },
+  "acartia": {
+    "licence": "unknown-pending",
+    "pollMinutes": 30,
+    "keepDays": 7,
+    "delayHours": 24,
+    "delayTaxa": ["Orcinus orca"],
+    "roundDegrees": 0.1,
+    "roundTaxa": ["Orcinus orca"],
+    "hideDeployments": true
+  }
+}

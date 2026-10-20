@@ -21,7 +21,7 @@ export default async function Stations() {
     sql<{ id: string; name: string | null; sensor_type: string | null; sensor_model: string | null; lat: number; lon: number; last_seen: string | null; n: number }[]>`
       SELECT d.id, d.name, d.sensor_type, d.sensor_model, ROUND(d.latitude::numeric, 1)::float AS lat, ROUND(d.longitude::numeric, 1)::float AS lon, d.last_seen::text,
              (SELECT COUNT(*) FROM events e WHERE e.deployment_id = d.id)::int AS n
-      FROM deployments d WHERE d.source_system NOT IN ('birdweather', 'inaturalist', 'gbif')
+      FROM deployments d WHERE d.source_system NOT IN ('birdweather', 'inaturalist', 'gbif', 'acartia')
       ORDER BY d.last_seen DESC NULLS LAST LIMIT 200`,
     sql<{ station_id: number; display_name: string | null; station_type: string | null; lat: number | null; lon: number | null; precision_km: number; license: string; species: number; days: number }[]>`
       SELECT o.station_id, o.display_name, o.station_type, o.lat, o.lon, o.precision_km, o.license,

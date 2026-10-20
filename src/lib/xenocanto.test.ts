@@ -1,7 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { areaFor, buildQuery, creditLine, fetchClips, licenseInfo, parseLength, parseResponse, rankClips, XcError, type XcClip } from "./xenocanto";
-import { parseSensitive } from "./sensitive";
 
 const rec = (o: Record<string, unknown> = {}) => ({
   id: "100", gen: "Eudynamys", sp: "scolopaceus", status: "identified", rec: "A. Recordist", cnt: "India", loc: "Guindy, Chennai",
@@ -147,10 +146,4 @@ test("fetchClips does not call XC for classes it does not cover", async () => {
   const { f, urls } = mockXc(page(), page());
   assert.deepEqual(await fetchClips("Foo bar", "other", "asia", "k", f), []);
   assert.equal(urls.length, 0);
-});
-
-test("parseSensitive reads names and ignores comments and blanks", () => {
-  const s = parseSensitive("# header\n\nGyps indicus\n  Ardeotis nigriceps \n#Not this one\n");
-  assert.ok(s.has("gyps indicus") && s.has("ardeotis nigriceps"));
-  assert.equal(s.size, 2);
 });

@@ -1,5 +1,5 @@
 import { sql } from "@/lib/db";
-import { isSensitive } from "@/lib/sensitive";
+import { isSensitiveTaxon } from "@/lib/sensitiveTaxa";
 import { fetchClips, isArea, XcError, type XcClip } from "@/lib/xenocanto";
 
 const TTL_DAYS = 7;
@@ -20,7 +20,7 @@ export async function GET(req: Request) {
   const key = process.env.XENO_CANTO_API_KEY;
   if (!key || !/^[A-Za-z-]+ [a-z-]+$/.test(name) || name.length > 80) return ok([], 3600);
   const areaParam = p.get("area");
-  const area = isArea(areaParam) && !isSensitive(name) ? areaParam : null;
+  const area = isArea(areaParam) && !isSensitiveTaxon([name, name.split(" ")[0]]) ? areaParam : null;
   const slot = area ?? "any";
   try {
     const [cached] = await sql<{ clips: XcClip[] }[]>`
