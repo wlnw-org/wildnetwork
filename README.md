@@ -22,7 +22,7 @@ It is free, open source, and built so that anyone with a Raspberry Pi can contri
 - [Run your own instance](#run-your-own-instance)
 - [Project layout](#project-layout)
 - [Data sources and licensing](#data-sources-and-licensing)
-- [Acartia (marine mammal sightings)](#acartia-marine-mammal-sightings)
+- [Marine data](#marine-data)
 - [Part of an open wildlife toolkit](#part-of-an-open-wildlife-toolkit)
 - [Contributing and governance](#contributing-and-governance)
 - [Roadmap](#roadmap)
@@ -196,23 +196,32 @@ Stack: Next.js (App Router), TypeScript, Tailwind, MapLibre GL, Postgres with Po
 | [GBIF](https://www.gbif.org) | Observations published by national recording schemes and others | Only CC0 and CC BY 4.0 records are ingested; every dataset is cited by DOI |
 | [iNaturalist](https://www.inaturalist.org) | Community observations | Only CC0 and CC BY records are ingested; credit the observer |
 | WDX producers | Devices running wdx-agent or pushing directly | License chosen by each contributor, CC BY 4.0 by default |
-| [Acartia](https://acartia.io), offered by [Orcasound](https://www.orcasound.net) | Whale, dolphin and porpoise sightings by people (Conserve.io / Whale Alert and other platforms) | Licence not yet confirmed (`unknown-pending`): shown on the map and API only, never in open data exports. Credit "Data: Acartia (acartia.io), via <platform>" |
+| [OBIS](https://obis.org) | Marine occurrences worldwide, a capped sample plus all recent records around India | Each record's own licence: CC0 and CC BY in the main data, CC BY-NC shown and exported only as noncommercial, others not taken. Credit "Data: OBIS (obis.org), dataset <title>" |
+| [Orcasound](https://www.orcasound.net) | Whale detections from hydrophones in Puget Sound and the San Juan Islands (OrcaHello model and listeners) | Licence not yet confirmed (`unknown-pending`): map and API only, never in exports or bulk downloads. Credit "Data: Orcasound (orcasound.net)" |
+| [Acartia](https://acartia.io), offered by Orcasound | Whale, dolphin and porpoise sightings by people (Conserve.io / Whale Alert and other platforms) | Licence not yet confirmed (`unknown-pending`): map and API only. Credit "Data: Acartia (acartia.io), via <platform>" |
 | [Open-Meteo](https://open-meteo.com) | ERA5 weather | CC BY 4.0 |
 | [Wikipedia](https://www.wikipedia.org) / Wikimedia Commons | Species photos and descriptions | CC BY-SA |
 | [OpenFreeMap](https://openfreemap.org), [OpenMapTiles](https://openmaptiles.org), [OpenStreetMap](https://www.openstreetmap.org/copyright) | Base map | ODbL and respective licenses |
 | [EarthRanger](https://www.earthranger.com) | Map silhouettes and interface patterns | Apache 2.0, see [public/icons/er/NOTICE.md](public/icons/er/NOTICE.md) |
 
-## Acartia (marine mammal sightings)
+## Marine data
 
-[Acartia](https://acartia.io) shares recent sightings of whales, dolphins and porpoises off the Pacific coast of the US and Canada, collected from platforms such as Conserve.io / Whale Alert. Scott Veirs of [Orcasound](https://www.orcasound.net) offered the feed to WildNetwork in October 2026.
+Three open marine sources sit on the map beside the land data, as their own **Marine** class and a **Marine records** layer that can be switched off in the legend. Each source's licence status, polling, retention and privacy rules live in one file, `src/config/sources.json`, read by both the site and `scripts/aws-export.py`.
 
-- **What and how often.** `src/lib/connectors/acartia.ts` reads `https://acartia.io/api/v1/sightings/current` (no key) at most every 30 minutes, waiting 2 hours after an error, with a 15 second timeout and a User-Agent naming WildNetwork. `entry_id` is the record id, so a repeat poll updates rows instead of adding new ones. Sightings are kept for 7 days.
-- **Human observations.** They are stored as WDX v0.3 `observationMethod: "human"`: species, number of animals, time (Acartia's `created`, which is UTC) and the source's own `trusted` flag. No model, version or confidence is invented. Common names map to scientific names through the editable `SPECIES` table; a name that is not in it is kept as "unmapped" and listed in the run log.
-- **Marine class.** Sightings form their own class on the map (the **Marine** button) and in the methods, compared only with other marine sightings.
-- **Not stored.** Observer ids (`submitter_did`), signatures, witness usernames, photo links, and the free-text comments, which often name the observer.
-- **Location rules.** Southern Resident killer whales are endangered, and live whale positions can draw boats. Until Acartia or Orcasound confirm their preferred rules, positions are rounded to 0.1 degree when stored, every sighting is hidden from the map and API for 24 hours, and Acartia positions never appear in the station lists. The settings are `ACARTIA` in `src/lib/sources.ts`.
-- **Credit.** Every record and popup carries "Data: Acartia (acartia.io), via <platform>", for example "via Conserve.io / Whale Alert".
-- **Licence.** Not confirmed yet, so records are tagged `unknown-pending`, and `scripts/aws-export.py` leaves out both the sightings and their aggregates (tested in `scripts/test_aws_export.py`), the same as BirdWeather.
+| Source | What | Polled | Kept |
+|---|---|---|---|
+| [OBIS](https://obis.org) (`connectors/obis.ts`) | Marine occurrences, human and machine observations | Daily, at most 10 pages of 1,000 | 12 months, at most 25,000 rows |
+| [Orcasound](https://www.orcasound.net) (`connectors/orcasound.ts`) | Hydrophone whale detections; the hydrophones show as stations | Every 20 minutes | 7 days |
+| [Acartia](https://acartia.io) (`connectors/acartia.ts`) | Marine mammal sightings by people | Every 30 minutes | 7 days |
+
+- **OBIS.** Paged with `after` (records come in id order, which is random, so a capped walk is an even sample). The first backfill (`pnpm backfill:obis`) takes the India box (76 to 85 E, 5 to 16 N, about 4,000 records in a year) and then a sample of the last 12 months worldwide, stopping at the row cap and logging row counts and database size. Each walk restarts daily, so new India records arrive every day. `MachineObservation` becomes a machine record with an unspecified model; everything else is a human observation. No model, version or score is invented.
+- **Licences.** OBIS licences are per record and followed as published: CC0 and CC BY go into the main data, CC BY-NC is shown and exported only under `noncommercial/`, anything else is skipped and counted in the run log. Orcasound and Acartia have not confirmed a licence yet, so their records are tagged `unknown-pending`: shown on the map with credit, kept out of rollups (and so out of the CSV downloads), and out of the AWS export (tested in `scripts/test_aws_export.py`). Switch `licence` in the config once permission arrives.
+- **Duplicates.** OBIS republishes many GBIF and iNaturalist records. Records are matched on Darwin Core `occurrenceID` plus `institutionCode` (iNaturalist observations on their observation number); the first copy is kept and the other source is credited on it ("Also in OBIS dataset ...").
+- **Orcasound.** OrcaHello detections are machine records with model "OrcaHello", version unknown and no score (the API gives none); listener reports are human observations. "Whale" is recorded as Cetacea at order level unless a listener names the species plainly (never a guess). Vessel detections are counted in the run log, not shown; "other" is skipped. Positions are the hydrophones' public sites.
+- **Acartia.** Human sightings with the source's `trusted` flag and the number of animals. Common names map to scientific names through the editable `SPECIES` table in `connectors/acartia.ts`; unknown names are kept as "unmapped" and logged. Observer ids, signatures, witness usernames, photo links and the free-text comments (which often name the observer) are not stored. `created` is UTC (checked against the feed's GMT timestamps).
+- **Sensitive species.** Southern Resident killer whales are endangered and live positions can draw boats, so Acartia and Orcasound killer whale records (and Orcasound whale detections, which are almost always killer whales) are shown 24 hours late, and Acartia killer whale sightings are rounded to 0.1 degree when stored. OBIS records of taxa in `scripts/sensitive_species.txt` (sea turtles Cheloniidae and Dermochelyidae, dugong, sawfishes Pristidae, and any species added there) are rounded to 0.1 degree when stored. All delays and rounding are in the config.
+- **Credit.** Every record carries its credit line and link: "Data: OBIS (obis.org), dataset <title>" to the dataset page, "Data: Orcasound (orcasound.net)" to the hydrophone's page, "Data: Acartia (acartia.io), via <platform>".
+- **API.** `/api/v1/marine?days=365&perCell=40&bbox=w,s,e,n` returns the marine layer, spread evenly over space; `/api/v1/events` also returns marine records in its window.
 
 ## Part of an open wildlife toolkit
 
@@ -259,4 +268,4 @@ Contributions are welcome: new connectors, better movement analysis, design, doc
 
 Made by [Arun Rajiah](https://www.arunrajiah.com), alongside [WDX](https://github.com/arunrajiah/wildlife-detection-exchange), [wdx-agent](https://github.com/arunrajiah/wdx-agent), [BirdEcho](https://github.com/arunrajiah/birdecho), [WildEcho](https://github.com/arunrajiah/wildecho) and [SpeciesNet Studio](https://github.com/arunrajiah/speciesnet-studio).
 
-WildNetwork stands on the work of the BirdNET team (Cornell Lab of Ornithology and Chemnitz University of Technology), BirdWeather and its station owners, iNaturalist observers, Acartia and Orcasound with the whale watchers who report sightings, Open-Meteo, Wikipedia contributors, the OpenStreetMap community, MapLibre, PostGIS, and EarthRanger.
+WildNetwork stands on the work of the BirdNET team (Cornell Lab of Ornithology and Chemnitz University of Technology), BirdWeather and its station owners, iNaturalist observers, OBIS and its data providers, Orcasound and its listeners, Acartia and the whale watchers who report sightings, Open-Meteo, Wikipedia contributors, the OpenStreetMap community, MapLibre, PostGIS, and EarthRanger.

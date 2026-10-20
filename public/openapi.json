@@ -10,6 +10,19 @@
   "servers": [{ "url": "https://wildnetwork.arunrajiah.com" }],
   "paths": {
     "/api/v1/status": { "get": { "summary": "Ingest health and totals", "responses": { "200": { "description": "live flag, last pull time, connector states, totals" } } } },
+    "/api/v1/marine": {
+      "get": {
+        "summary": "Marine records for the map layer: OBIS, Orcasound and Acartia, newest first, spread evenly over space",
+        "parameters": [
+          { "name": "days", "in": "query", "schema": { "type": "integer", "default": 365, "maximum": 400 } },
+          { "name": "perCell", "in": "query", "schema": { "type": "integer", "default": 40 }, "description": "At most this many records per cell (5 degree cells, or 1 degree inside bbox)" },
+          { "name": "bbox", "in": "query", "schema": { "type": "string" }, "description": "w,s,e,n" },
+          { "name": "species", "in": "query", "schema": { "type": "string" } },
+          { "name": "source", "in": "query", "schema": { "type": "string", "enum": ["obis", "orcasound", "acartia"] } }
+        ],
+        "responses": { "200": { "description": "GeoJSON FeatureCollection with the same properties as /api/v1/events" } }
+      }
+    },
     "/api/v1/events": {
       "get": {
         "summary": "Live detections as GeoJSON (a sample of the newest, see /methods)",
@@ -17,14 +30,14 @@
           { "name": "from", "in": "query", "schema": { "type": "string", "format": "date-time" }, "description": "default: 24 hours before `to`" },
           { "name": "to", "in": "query", "schema": { "type": "string", "format": "date-time" }, "description": "default: now" },
           { "name": "species", "in": "query", "schema": { "type": "string" }, "description": "scientific name" },
-          { "name": "source", "in": "query", "schema": { "type": "string", "enum": ["birdweather", "gbif", "inaturalist", "birdnet-pi", "birdnet-go", "birdecho"] } },
+          { "name": "source", "in": "query", "schema": { "type": "string", "enum": ["birdweather", "gbif", "inaturalist", "obis", "orcasound", "acartia", "birdnet-pi", "birdnet-go", "birdecho"] } },
           { "name": "group", "in": "query", "schema": { "$ref": "#/components/schemas/Group" } },
           { "name": "minConfidence", "in": "query", "schema": { "type": "number", "minimum": 0, "maximum": 1 } },
           { "name": "bbox", "in": "query", "schema": { "type": "string" }, "description": "west,south,east,north in degrees" },
           { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 5000, "maximum": 20000 } },
           { "name": "merge", "in": "query", "description": "1 = merge BirdWeather detections of one species at the same 1 degree position within 15 minutes into one point with a count n", "schema": { "type": "string", "enum": ["1"] } }
         ],
-        "responses": { "200": { "description": "GeoJSON FeatureCollection; properties: id, t, sci, common, conf (machine detections only), human (true for human observations, which have no conf), count (animals, when reported), trusted (the source's own verification flag), unmapped (common name not yet mapped to a species), credit (required credit line, e.g. for Acartia), source, group, media, mediaType. Acartia sightings appear only once 24 hours old, at 0.1 degree." } }
+        "responses": { "200": { "description": "GeoJSON FeatureCollection; properties: id, t, sci, common, rank, conf (machine detections with a published score), human (human observations, no conf), model (a model that publishes no score), count (animals, when reported), trusted (the source's own verification flag), unmapped (common name not mapped to a species), credit and creditUrl (required credit), alsoCredit (same occurrence from another aggregator), license, delayed (hours), rounded (degrees), source, group, media, mediaType. Orcasound and Acartia killer whale records appear once 24 hours old." } }
       },
       "post": {
         "summary": "Push WDX 0.1 or 0.2 detection events (single event, JSON array or NDJSON, up to 5,000 per request)",
