@@ -45,7 +45,7 @@ export async function registerIcons(map: MLMap): Promise<void> {
 }
 
 export const ICON_IMAGE = ["concat",
-  ["match", ["get", "group"], "Aves", "bird", "bat", "bat", "Mammalia", "mammal", "Amphibia", "amphibian", "Reptilia", "reptile", "camera", "camera", "generic"],
+  ["match", ["get", "group"], "Aves", "bird", "bat", "bat", "Mammalia", "mammal", "Marine", "mammal", "Amphibia", "amphibian", "Reptilia", "reptile", "camera", "camera", "generic"],
   "-",
   ["match", ["get", "source"], "birdweather", "birdweather", "inaturalist", "inaturalist", "gbif", "gbif", "wdx"],
 ];

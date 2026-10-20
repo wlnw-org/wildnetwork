@@ -145,7 +145,7 @@ export function speciesStory(name: string, daily: DayPoint[], climate: Climate |
 
 interface DriftRow { vernacularName: string | null; scientificName: string; group: string; region: string; driftDeg: number; driftLow?: number | null; driftHigh?: number | null }
 interface MoverRow { vernacularName: string | null; scientificName: string; group: string; ratio: number }
-const CLASS_PLURAL: Record<string, string> = { avian: "birds", bat: "bats", amphibian: "frogs and toads", insect: "insects", mammal: "mammals" };
+const CLASS_PLURAL: Record<string, string> = { avian: "birds", bat: "bats", amphibian: "frogs and toads", insect: "insects", mammal: "mammals", marine: "marine mammals" };
 
 /** A few sentences on what the lists show this week. Counts refer to the species listed, not to all species. */
 export function overview(drift: DriftRow[], movers: MoverRow[]): string[] {

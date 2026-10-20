@@ -50,8 +50,8 @@ function Line({ values, labels, format, color, title }: { values: (number | null
   );
 }
 
-const SOURCE_LABEL: Record<string, string> = { birdweather: "BirdWeather", gbif: "GBIF", inaturalist: "iNaturalist", wdx: "WDX devices" };
-const CLASS_NOUN: Record<string, string> = { avian: "", bat: "bat", amphibian: "frog", insect: "insect", mammal: "mammal", other: "other" };
+const SOURCE_LABEL: Record<string, string> = { birdweather: "BirdWeather", gbif: "GBIF", inaturalist: "iNaturalist", wdx: "WDX devices", acartia: "Acartia (acartia.io)" };
+const CLASS_NOUN: Record<string, string> = { avian: "", bat: "bat", amphibian: "frog", insect: "insect", mammal: "mammal", marine: "marine", other: "other" };
 
 interface Arrival { cellLat: number; cellLon: number; region: string; arrivalWeek: string; arrivalLow?: string | null; arrivalHigh?: string | null; arrivalSupport?: number | null; peakWeek: string; departureWeek: string | null; detections: number }
 interface Media { title: string | null; thumbUrl: string | null; imageUrl: string | null; extract: string | null; pageUrl: string | null; source: string; attribution: string | null; license: string | null }

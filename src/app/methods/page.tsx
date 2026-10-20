@@ -68,7 +68,7 @@ export default function Methods() {
         </p>
         <Src files={[["drizzle/0006_effort.sql", "effort tables"], ["src/lib/methods.ts", "thresholds"]]} />
 
-        <H3><span id="classes" className="scroll-mt-6">Classes: birds, bats, frogs, insects, mammals</span></H3>
+        <H3><span id="classes" className="scroll-mt-6">Classes: birds, bats, frogs, insects, mammals, marine</span></H3>
         <p>
           Effort is corrected <b>within a class</b>. Each species belongs to one of birds, bats, amphibians, insects or mammals (as labelled by BirdWeather),
           and its share is taken of the detections of that class only.
@@ -83,6 +83,12 @@ export default function Methods() {
           Classes other than birds have far fewer sensors and detections, so their minimums are lower: a cell counts as observed with {SMALL_CLASS.MIN_EFFORT_DAY}{" "}
           detections of that class in a day or {SMALL_CLASS.MIN_EFFORT_WEEK} in a week, and count thresholds in the measures below are a fifth of those for birds.
           Results for these classes rest on little data and should be read as early signals.
+        </p>
+        <p className="mt-3">
+          <b>Marine</b> is its own class: whales, dolphins and porpoises sighted by people at sea (Acartia, from version 0.12). They are compared only with
+          other marine sightings, never with mammals heard by land stations, because watching the sea from boats and shores is a different kind of effort.
+          Sightings are opportunistic and few, so most cells will read as not watched for now. They are shown 24 hours late and at 0.1 degree, see{" "}
+          <a href="/privacy" className="text-cyan-400 hover:underline">privacy</a> and the README.
         </p>
         <p className="mt-3">
           Many bat calls cannot be identified to species and are reported at a higher level: &quot;Bats&quot; (order), &quot;Vesper Bats&quot; (family) or a genus such as
@@ -311,6 +317,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.12</b> (20 October 2026): a <b>marine</b> class for whale, dolphin and porpoise sightings from Acartia, corrected only against other marine sightings. Human sightings carry no confidence score and count as one record each, like iNaturalist and GBIF records.</li>
           <li><b>0.11</b> (7 October 2026): <a href="#range" className="text-cyan-400 hover:underline">range check</a> for arrival dates: birds that GBIF has almost never recorded around a well surveyed cell no longer get an arrival date there from recordings.</li>
           <li><b>0.10</b> (7 October 2026): confidence intervals from resampling for range shifts, surging and fading, arrival weeks and heard versus seen; Moving and Surging lists show only changes whose 95% interval excludes no change.</li>
           <li><b>0.9</b> (6 October 2026): heard versus seen (recordings against human records in the same cells and weeks), a coverage layer, per-source effort, and the first open data release.</li>
