@@ -17,7 +17,8 @@
     "backfill:gbif": "tsx --env-file=.env.local scripts/backfill-gbif.mts",
     "phenology": "tsx --env-file=.env.local scripts/phenology.mts",
     "classify": "tsx --env-file=.env.local scripts/classify.mts",
-    "test": "tsx --test 'src/**/*.test.ts'"
+    "test": "tsx --test 'src/**/*.test.ts'",
+    "backfill:obis": "tsx --env-file=.env.local scripts/backfill-obis.mts"
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.87",

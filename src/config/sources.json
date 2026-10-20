@@ -14,7 +14,8 @@
       { "name": "india", "geometry": "POLYGON((76 5,85 5,85 16,76 16,76 5))", "days": 365, "maxRows": 10000 },
       { "name": "global", "geometry": null, "days": 365, "maxRows": 15000 }
     ],
-    "sensitiveRoundDegrees": 0.1
+    "sensitiveRoundDegrees": 0.1,
+    "hideDeployments": true
   },
   "orcasound": {
     "licence": "unknown-pending",
