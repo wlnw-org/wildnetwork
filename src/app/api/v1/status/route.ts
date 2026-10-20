@@ -12,6 +12,10 @@ import { refreshOptins } from "@/lib/optin";
 export const maxDuration = 300;
 
 /** Live health: last connector runs and totals, for the top-bar status dot. */
+// Preview deployments share the production database: they read it, but never pull, roll up or recompute, so unmerged
+// connector code cannot write to production (or publish records the merged code would hold back).
+const BACKGROUND_WRITES = process.env.VERCEL_ENV !== "preview";
+
 export async function GET() {
   const [pulls, totals] = await Promise.all([
     sql`SELECT connector, last_run_at, last_count, last_error FROM pull_state WHERE connector NOT LIKE '!_%' ESCAPE '!' ${BIRDWEATHER_PAUSED ? sql`AND connector <> 'birdweather'` : sql``} ORDER BY connector`,
@@ -23,7 +27,7 @@ export async function GET() {
   const newest = pulls.reduce<number>((m, p) => Math.max(m, p.last_run_at ? new Date(p.last_run_at).getTime() : 0), 0);
   // Self-healing ingest: if no scheduler has pulled recently, a visit triggers one in the background.
   // The conditional UPDATE is the lock, so concurrent visitors start at most one pull.
-  if (newest < Date.now() - 4 * 60_000) {
+  if (BACKGROUND_WRITES && newest < Date.now() - 4 * 60_000) {
     after(async () => {
       const claimed = await sql`
         INSERT INTO pull_state (connector, last_run_at) VALUES ('_visit_lock', now())
@@ -33,7 +37,7 @@ export async function GET() {
     });
   }
   // Hourly rollups ride on the same trigger, with their own lock, so any uptime pinger keeps insights fresh.
-  after(async () => {
+  if (BACKGROUND_WRITES) after(async () => {
     const claimed = await sql`
       INSERT INTO pull_state (connector, last_run_at) VALUES ('_rollup_lock', now())
       ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '55 minutes'
@@ -53,7 +57,7 @@ export async function GET() {
     if (gb.length) { await refreshGbifWeekly(3, 200_000); await refreshSourceEffort("28"); }
   });
   // Opted-in BirdWeather stations: their own daily counts, every 30 minutes, in their own background task.
-  after(async () => {
+  if (BACKGROUND_WRITES) after(async () => {
     const oi = await sql`
       INSERT INTO pull_state (connector, last_run_at) VALUES ('_optin_lock', now())
       ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '30 minutes'
