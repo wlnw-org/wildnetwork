@@ -157,8 +157,8 @@ export default function WorldMap() {
         // Human sightings (WDX observationMethod "human") have no confidence: show the count and the source's own verification instead.
         const human = String(p.human) === "true";
         const what = human
-          ? `${Number(p.count) > 1 ? `${Number(p.count)} animals` : "1 animal"} sighted by people${String(p.trusted) === "true" ? ", trusted observer" : String(p.trusted) === "false" ? ", not verified by the source" : ""}${String(p.unmapped) === "true" ? "<br/>species not mapped yet" : ""}`
-          : p.model ? `detected by ${esc(p.model)} (no score published)` : `${Number(p.n) > 1 ? `${Number(p.n)} detections nearby in 15 min, best ` : ""}confidence ${Number(p.conf).toFixed(2)} · ${esc(p.source)}`;
+          ? `${Number(p.count) > 1 ? `${Number(p.count)} animals ` : Number(p.count) === 1 ? "1 animal " : ""}observed by people${String(p.trusted) === "true" ? ", trusted observer" : String(p.trusted) === "false" ? ", not verified by the source" : ""}${String(p.unmapped) === "true" ? "<br/>species not mapped yet" : ""}`
+          : p.model ? (p.model === "unspecified" ? "machine observation, model not named" : `detected by ${esc(p.model)} (no score published)`) : `${Number(p.n) > 1 ? `${Number(p.n)} detections nearby in 15 min, best ` : ""}confidence ${Number(p.conf).toFixed(2)} · ${esc(p.source)}`;
         // Credit lines link to the dataset or feed page; only https links are used.
         const link = (t: string, u?: string) => (u && /^https:\/\//.test(u) ? `<a href="${esc(u)}" target="_blank" rel="noreferrer" style="color:#22d3ee">${esc(t)}</a>` : esc(t));
         const notes = [p.rounded ? `position rounded to ${esc(p.rounded)}°` : "", p.delayed ? `shown ${esc(p.delayed)} h late` : "", p.license && /creativecommons/.test(p.license) ? link(p.license.includes("/by-nc") ? "CC BY-NC" : p.license.includes("zero") ? "CC0" : "CC BY", p.license) : ""].filter(Boolean).join(", ");
@@ -211,19 +211,36 @@ export default function WorldMap() {
       setEvents(ev); setFetchedAt(Date.now()); setLoading(false);
       wantThumbs(ev.features.slice(0, 40).map((f) => String(f.properties.sci)));
     });
-    // Marine layer: its own window, only for the classes it can hold and while the legend toggle is on.
-    const sightingsReq = showMarine && (group === "all" || group === "marine" || !!species)
-      ? fetch(`/api/v1/marine?${new URLSearchParams({ days: String(MARINE_DAYS), perCell: species ? "500" : "40", ...(species ? { species } : {}) })}`)
-          .then((r) => r.json() as Promise<FC>).then(setSightings).catch(() => setSightings(EMPTY))
-      : Promise.resolve(setSightings(EMPTY));
     const rest = [
-      sightingsReq,
       fetch(`/api/v1/species?hours=${group === "marine" ? MARINE_DAYS * 24 : group === "bat" ? 24 : hours}${gq ? "&" + gq : ""}`).then((r) => r.json() as Promise<Species[]>).then((sp) => { setSpeciesList(sp); wantThumbs(sp.slice(0, 15).map((x) => x.scientificName)); }),
       fetch(`/api/v1/insights${gq ? "?" + gq : ""}`).then((r) => r.json() as Promise<Insights>).then((ins) => { setInsights(ins); wantThumbs([...(ins.seasonal ?? []), ...(ins.common ?? []), ...ins.drift, ...ins.movers, ...ins.arrivals].map((x) => x.scientificName)); }),
       fetch(`/api/v1/status`).then((r) => r.json() as Promise<Status>).then(setStatus),
     ];
     await Promise.allSettled([events, ...rest]);
-  }, [hours, species, group, showMarine]);
+  }, [hours, species, group]);
+
+  // Marine layer: its own window and its own fetch, following the view when zoomed in so dense coasts (India) fill in.
+  const [marineView, setMarineView] = useState<string | null>(null);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    const onMove = () => {
+      if (map.getZoom() < 4) return setMarineView(null);
+      const b = map.getBounds();
+      setMarineView([Math.floor(b.getWest()), Math.floor(b.getSouth()), Math.ceil(b.getEast()), Math.ceil(b.getNorth())].join(","));
+    };
+    map.on("moveend", onMove);
+    return () => { map.off("moveend", onMove); };
+  }, [ready]);
+  useEffect(() => {
+    if (!showMarine || !(group === "all" || group === "marine" || !!species)) { const t = setTimeout(() => setSightings(EMPTY), 0); return () => clearTimeout(t); }
+    let cancelled = false;
+    const get = () => fetch(`/api/v1/marine?${new URLSearchParams({ days: String(MARINE_DAYS), perCell: species ? "500" : marineView ? "15" : "40", ...(species ? { species } : {}), ...(marineView ? { bbox: marineView } : {}) })}`)
+      .then((r) => r.json() as Promise<FC>).then((fc) => { if (!cancelled) setSightings(fc); }).catch(() => {});
+    const t0 = setTimeout(get, 0);
+    const t = setInterval(get, 600_000);
+    return () => { cancelled = true; clearTimeout(t0); clearInterval(t); };
+  }, [showMarine, group, species, marineView]);
 
   useEffect(() => {
     const t0 = setTimeout(load, 0);
