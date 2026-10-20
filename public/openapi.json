@@ -24,7 +24,7 @@
           { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 5000, "maximum": 20000 } },
           { "name": "merge", "in": "query", "description": "1 = merge BirdWeather detections of one species at the same 1 degree position within 15 minutes into one point with a count n", "schema": { "type": "string", "enum": ["1"] } }
         ],
-        "responses": { "200": { "description": "GeoJSON FeatureCollection; properties: id, t, sci, common, conf, source, grp, media, mediaType" } }
+        "responses": { "200": { "description": "GeoJSON FeatureCollection; properties: id, t, sci, common, conf (machine detections only), human (true for human observations, which have no conf), count (animals, when reported), trusted (the source's own verification flag), unmapped (common name not yet mapped to a species), credit (required credit line, e.g. for Acartia), source, group, media, mediaType. Acartia sightings appear only once 24 hours old, at 0.1 degree." } }
       },
       "post": {
         "summary": "Push WDX 0.1 or 0.2 detection events (single event, JSON array or NDJSON, up to 5,000 per request)",

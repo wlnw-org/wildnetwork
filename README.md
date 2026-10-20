@@ -22,6 +22,7 @@ It is free, open source, and built so that anyone with a Raspberry Pi can contri
 - [Run your own instance](#run-your-own-instance)
 - [Project layout](#project-layout)
 - [Data sources and licensing](#data-sources-and-licensing)
+- [Acartia (marine mammal sightings)](#acartia-marine-mammal-sightings)
 - [Part of an open wildlife toolkit](#part-of-an-open-wildlife-toolkit)
 - [Contributing and governance](#contributing-and-governance)
 - [Roadmap](#roadmap)
@@ -195,10 +196,23 @@ Stack: Next.js (App Router), TypeScript, Tailwind, MapLibre GL, Postgres with Po
 | [GBIF](https://www.gbif.org) | Observations published by national recording schemes and others | Only CC0 and CC BY 4.0 records are ingested; every dataset is cited by DOI |
 | [iNaturalist](https://www.inaturalist.org) | Community observations | Only CC0 and CC BY records are ingested; credit the observer |
 | WDX producers | Devices running wdx-agent or pushing directly | License chosen by each contributor, CC BY 4.0 by default |
+| [Acartia](https://acartia.io), offered by [Orcasound](https://www.orcasound.net) | Whale, dolphin and porpoise sightings by people (Conserve.io / Whale Alert and other platforms) | Licence not yet confirmed (`unknown-pending`): shown on the map and API only, never in open data exports. Credit "Data: Acartia (acartia.io), via <platform>" |
 | [Open-Meteo](https://open-meteo.com) | ERA5 weather | CC BY 4.0 |
 | [Wikipedia](https://www.wikipedia.org) / Wikimedia Commons | Species photos and descriptions | CC BY-SA |
 | [OpenFreeMap](https://openfreemap.org), [OpenMapTiles](https://openmaptiles.org), [OpenStreetMap](https://www.openstreetmap.org/copyright) | Base map | ODbL and respective licenses |
 | [EarthRanger](https://www.earthranger.com) | Map silhouettes and interface patterns | Apache 2.0, see [public/icons/er/NOTICE.md](public/icons/er/NOTICE.md) |
+
+## Acartia (marine mammal sightings)
+
+[Acartia](https://acartia.io) shares recent sightings of whales, dolphins and porpoises off the Pacific coast of the US and Canada, collected from platforms such as Conserve.io / Whale Alert. Scott Veirs of [Orcasound](https://www.orcasound.net) offered the feed to WildNetwork in October 2026.
+
+- **What and how often.** `src/lib/connectors/acartia.ts` reads `https://acartia.io/api/v1/sightings/current` (no key) at most every 30 minutes, waiting 2 hours after an error, with a 15 second timeout and a User-Agent naming WildNetwork. `entry_id` is the record id, so a repeat poll updates rows instead of adding new ones. Sightings are kept for 7 days.
+- **Human observations.** They are stored as WDX v0.3 `observationMethod: "human"`: species, number of animals, time (Acartia's `created`, which is UTC) and the source's own `trusted` flag. No model, version or confidence is invented. Common names map to scientific names through the editable `SPECIES` table; a name that is not in it is kept as "unmapped" and listed in the run log.
+- **Marine class.** Sightings form their own class on the map (the **Marine** button) and in the methods, compared only with other marine sightings.
+- **Not stored.** Observer ids (`submitter_did`), signatures, witness usernames, photo links, and the free-text comments, which often name the observer.
+- **Location rules.** Southern Resident killer whales are endangered, and live whale positions can draw boats. Until Acartia or Orcasound confirm their preferred rules, positions are rounded to 0.1 degree when stored, every sighting is hidden from the map and API for 24 hours, and Acartia positions never appear in the station lists. The settings are `ACARTIA` in `src/lib/sources.ts`.
+- **Credit.** Every record and popup carries "Data: Acartia (acartia.io), via <platform>", for example "via Conserve.io / Whale Alert".
+- **Licence.** Not confirmed yet, so records are tagged `unknown-pending`, and `scripts/aws-export.py` leaves out both the sightings and their aggregates (tested in `scripts/test_aws_export.py`), the same as BirdWeather.
 
 ## Part of an open wildlife toolkit
 
@@ -245,4 +259,4 @@ Contributions are welcome: new connectors, better movement analysis, design, doc
 
 Made by [Arun Rajiah](https://www.arunrajiah.com), alongside [WDX](https://github.com/arunrajiah/wildlife-detection-exchange), [wdx-agent](https://github.com/arunrajiah/wdx-agent), [BirdEcho](https://github.com/arunrajiah/birdecho), [WildEcho](https://github.com/arunrajiah/wildecho) and [SpeciesNet Studio](https://github.com/arunrajiah/speciesnet-studio).
 
-WildNetwork stands on the work of the BirdNET team (Cornell Lab of Ornithology and Chemnitz University of Technology), BirdWeather and its station owners, iNaturalist observers, Open-Meteo, Wikipedia contributors, the OpenStreetMap community, MapLibre, PostGIS, and EarthRanger.
+WildNetwork stands on the work of the BirdNET team (Cornell Lab of Ornithology and Chemnitz University of Technology), BirdWeather and its station owners, iNaturalist observers, Acartia and Orcasound with the whale watchers who report sightings, Open-Meteo, Wikipedia contributors, the OpenStreetMap community, MapLibre, PostGIS, and EarthRanger.

@@ -38,6 +38,7 @@ export default function AboutPanel() {
           <li><Link href="https://www.inaturalist.org">iNaturalist</Link>: community observations, CC0 and CC BY licensed records only, credited to their observers.</li>
           <li><Link href="https://open-meteo.com">Open-Meteo</Link>: ERA5 reanalysis weather (CC BY 4.0).</li>
           <li><Link href="https://www.wikipedia.org">Wikipedia</Link> and Wikimedia Commons contributors: species photos and descriptions (CC BY-SA).</li>
+          <li><Link href="https://acartia.io">Acartia</Link> (offered by <Link href="https://www.orcasound.net">Orcasound</Link>): whale, dolphin and porpoise sightings by people, via Conserve.io / Whale Alert and other platforms. Shown 24 hours late at 0.1 degree. Data: Acartia (acartia.io).</li>
           <li>WDX producers: anyone running a Raspberry Pi, camera trap or BirdNET station who pushes events to this network.</li>
         </ul>
       </section>
