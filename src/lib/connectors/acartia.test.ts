@@ -43,7 +43,7 @@ test("roundTo snaps to the grid without float noise", () => {
 });
 
 test("toWdx: human observation, no invented model or confidence, count, trusted flag, rounded position, pending licence", () => {
-  const m = toWdx(row({ no_sighted: "3", trusted: 1, latitude: "48.0815", longitude: "-122.55516" }))!;
+  const m = toWdx(row({ type: "Orca", no_sighted: "3", trusted: 1, latitude: "48.0815", longitude: "-122.55516" }))!;
   const e = m.event;
   assert.equal(m.mapped, true);
   assert.equal(e.wdx, "0.3");
@@ -53,13 +53,21 @@ test("toWdx: human observation, no invented model or confidence, count, trusted 
   assert.equal(e.detection.confidence, undefined);
   assert.equal(e.detection.classifier, undefined);
   assert.equal(e.detection.individualCount, 3);
-  assert.equal(e.detection.scientificName, "Megaptera novaeangliae");
+  assert.equal(e.detection.scientificName, "Orcinus orca");
   assert.equal(e.deployment.latitude, 48.1);
   assert.equal(e.deployment.longitude, -122.6);
   assert.ok(e.deployment.coordinateUncertaintyMeters! > 7000);
   assert.deepEqual(e.source, { system: "acartia", sourceRecordId: "3aee1aaa-0000-4000-8000-000000000001", provider: "Conserve.io", trusted: true });
   assert.equal(e.license, "unknown-pending");
   assert.ok(validateWdx(e).ok, validateWdx(e).errors?.join("; "));
+});
+
+test("toWdx rounds only killer whales by default (src/config/sources.json)", () => {
+  const humpback = toWdx(row({ type: "Humpback" }))!.event.deployment;
+  assert.deepEqual([humpback.latitude, humpback.longitude, humpback.coordinateUncertaintyMeters], [38.94383, -123.73272, undefined]);
+  const orca = toWdx(row({ type: "Killer Whale" }))!.event.deployment;
+  assert.deepEqual([orca.latitude, orca.longitude], [38.9, -123.7]);
+  assert.equal(toWdx(row({ type: "Humpback" }), 1)!.event.deployment.latitude, 39, "an explicit step overrides the config");
 });
 
 test("toWdx keeps no personal or signature fields, no photo and no comments", () => {
@@ -109,12 +117,14 @@ test("fetchSightings sends a WildNetwork User-Agent and fails on HTTP errors (mo
   await assert.rejects(fetchSightings((async () => new Response("busy", { status: 503 })) as unknown as typeof fetch), /acartia 503/);
 });
 
-test("isPublicNow holds Acartia records back 24 hours and nothing else", () => {
+test("isPublicNow holds Acartia and Orcasound killer whale records back 24 hours and nothing else", () => {
   const now = new Date("2026-10-20T12:00:00Z");
-  assert.equal(isPublicNow("acartia", "2026-10-19T12:30:00Z", now), false);
-  assert.equal(isPublicNow("acartia", "2026-10-19T12:00:00Z", now), true);
-  assert.equal(isPublicNow("acartia", "2026-10-15T20:35:45Z", now), true);
-  assert.equal(isPublicNow("gbif", "2026-10-20T11:59:00Z", now), true);
+  assert.equal(isPublicNow("acartia", "2026-10-19T12:30:00Z", "Orcinus orca", now), false);
+  assert.equal(isPublicNow("acartia", "2026-10-19T12:00:00Z", "Orcinus orca", now), true);
+  assert.equal(isPublicNow("acartia", "2026-10-20T11:00:00Z", "Megaptera novaeangliae", now), true, "only killer whales are delayed");
+  assert.equal(isPublicNow("orcasound", "2026-10-20T11:00:00Z", "Cetacea", now), false);
+  assert.equal(isPublicNow("orcasound", "2026-10-19T11:00:00Z", "Cetacea", now), true);
+  assert.equal(isPublicNow("gbif", "2026-10-20T11:59:00Z", "Orcinus orca", now), true);
 });
 
 test("isDue polls every 30 minutes and backs off after an error", () => {
@@ -128,9 +138,9 @@ test("isDue polls every 30 minutes and backs off after an error", () => {
 });
 
 test("creditFor names Acartia and the contributing platform", () => {
-  assert.equal(creditFor("acartia", "Conserve.io"), "Data: Acartia (acartia.io), via Conserve.io / Whale Alert");
-  assert.equal(creditFor("acartia", "Orca Network"), "Data: Acartia (acartia.io), via Orca Network");
-  assert.equal(creditFor("acartia", null), "Data: Acartia (acartia.io)");
+  assert.deepEqual(creditFor("acartia", "Conserve.io"), { text: "Data: Acartia (acartia.io), via Conserve.io / Whale Alert", url: "https://acartia.io" });
+  assert.equal(creditFor("acartia", "Orca Network")?.text, "Data: Acartia (acartia.io), via Orca Network");
+  assert.equal(creditFor("acartia", null)?.text, "Data: Acartia (acartia.io)");
   assert.equal(creditFor("gbif", "x"), null);
 });
 
@@ -148,7 +158,7 @@ test("ingesting the same sightings twice inserts once, then updates", { skip: !p
     assert.deepEqual([first.inserted, first.updated, again.inserted, again.updated], [2, 0, 0, 2]);
     assert.deepEqual(rows[0], { n: 2, c: 5 }, "two rows, counts taken from the newer poll");
     const [r] = await sql`SELECT confidence, classifier_name, observation_method, latitude FROM events WHERE event_id = ${events[0].eventId}`;
-    assert.deepEqual({ ...r }, { confidence: null, classifier_name: null, observation_method: "human", latitude: 38.9 });
+    assert.deepEqual({ ...r }, { confidence: null, classifier_name: null, observation_method: "human", latitude: 38.94383 });
   } finally {
     await sql`DELETE FROM events WHERE event_id = ANY(${events.map((e) => e.eventId)})`;
     await sql.end();

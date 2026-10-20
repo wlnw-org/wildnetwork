@@ -1,12 +1,13 @@
 import type { WdxEvent } from "@/lib/wdx/types";
-import { ACARTIA } from "@/lib/sources";
+import { PENDING_LICENCE, SOURCES, roundingFor } from "@/lib/sources";
 import type { PullConnector } from "./types";
 
 /**
  * Acartia (acartia.io): recent marine mammal sightings shared by Orcasound, Conserve.io / Whale Alert and others.
  * Human observations, so WDX observationMethod "human" with no model, version or confidence (WDX v0.3).
  * The endpoint returns the last few days as one JSON array; entry_id is the stable record id, so re-polls are upserts.
- * Kept: species, count, time, rounded position, the source's trusted flag, entry_id and data_source_entity.
+ * Kept: species, count, time, position (killer whales rounded, see src/config/sources.json), the source's trusted flag,
+ * entry_id and data_source_entity.
  * Not kept: submitter_did, signature, witness usernames, photo_url, and the free-text comments (they name observers).
  */
 export const API = "https://acartia.io/api/v1/sightings/current";
@@ -70,7 +71,8 @@ const uncertaintyFor = (step: number) => Math.round((step / 2) * Math.SQRT2 * 11
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "unknown";
 
-export function toWdx(r: AcartiaSighting, step = ACARTIA.roundDegrees): { event: WdxEvent; mapped: boolean } | null {
+/** `step` overrides the configured rounding (tests); by default killer whales are rounded and other species kept as published. */
+export function toWdx(r: AcartiaSighting, step?: number | null): { event: WdxEvent; mapped: boolean } | null {
   const id = (r.entry_id ?? "").trim();
   const lat = Number(r.latitude), lon = Number(r.longitude);
   const start = parseCreated(r.created);
@@ -78,6 +80,8 @@ export function toWdx(r: AcartiaSighting, step = ACARTIA.roundDegrees): { event:
   const n = Math.trunc(Number(r.no_sighted));
   const provider = (r.data_source_entity ?? "").trim() || (r.data_source_name ?? "").trim() || "unknown";
   const sp = mapSpecies(r.type);
+  const grid = step === undefined ? roundingFor("acartia", sp.scientificName) : step;
+  const pos = grid ? { latitude: roundTo(lat, grid), longitude: roundTo(lon, grid), coordinateUncertaintyMeters: uncertaintyFor(grid) } : { latitude: roundTo(lat, 1e-5), longitude: roundTo(lon, 1e-5) };
   const trusted = r.trusted === true || r.trusted === 1 || r.trusted === "1";
   return {
     mapped: sp.mapped,
@@ -86,7 +90,7 @@ export function toWdx(r: AcartiaSighting, step = ACARTIA.roundDegrees): { event:
       eventId: `acartia:${id}`,
       eventStart: start,
       // One deployment per contributing platform; its position is the latest sighting's rounded position and is never published.
-      deployment: { deploymentId: slug(provider), name: provider, latitude: roundTo(lat, step), longitude: roundTo(lon, step), coordinateUncertaintyMeters: uncertaintyFor(step), sensorType: "other", sensorModel: "human-observer" },
+      deployment: { deploymentId: slug(provider), name: provider, ...pos, sensorType: "other", sensorModel: "human-observer" },
       detection: {
         observationMethod: "human",
         ...(n >= 1 ? { individualCount: n } : {}),
@@ -94,13 +98,13 @@ export function toWdx(r: AcartiaSighting, step = ACARTIA.roundDegrees): { event:
         vernacularName: sp.vernacularName,
       },
       source: { system: "acartia", sourceRecordId: id, provider, trusted },
-      license: ACARTIA.license,
+      license: PENDING_LICENCE,
     },
   };
 }
 
 /** Maps a response body. Unmapped common names are counted for the run log, never dropped. */
-export function parseSightings(json: unknown, step = ACARTIA.roundDegrees): { events: WdxEvent[]; unmapped: Record<string, number>; skipped: number } {
+export function parseSightings(json: unknown, step?: number | null): { events: WdxEvent[]; unmapped: Record<string, number>; skipped: number } {
   const rows = Array.isArray(json) ? (json as AcartiaSighting[]) : [];
   const events: WdxEvent[] = [];
   const unmapped: Record<string, number> = {};
@@ -124,7 +128,7 @@ export async function fetchSightings(fetcher: typeof fetch = fetch, timeoutMs = 
 
 export const acartia: PullConnector = {
   name: "acartia",
-  minIntervalMinutes: ACARTIA.pollMinutes,
+  minIntervalMinutes: SOURCES.acartia.pollMinutes,
   async pull() {
     const { events, unmapped, skipped } = parseSightings(await fetchSightings());
     const notes = [
