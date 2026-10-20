@@ -3,8 +3,11 @@ import { isSensitive } from "@/lib/sensitive";
 import { fetchClips, isArea, XcError, type XcClip } from "@/lib/xenocanto";
 
 const TTL_DAYS = 7;
+// Browsers keep a success for an hour and a failure not at all, so an XC outage is retried on the next panel open.
 const ok = (clips: XcClip[], sMaxAge: number) =>
-  Response.json({ clips, credit: "Recordings courtesy of xeno-canto.org" }, { headers: { "cache-control": `public, s-maxage=${sMaxAge}, stale-while-revalidate=${sMaxAge * 7}` } });
+  Response.json({ clips, credit: "Recordings courtesy of xeno-canto.org" }, {
+    headers: { "cache-control": `public, max-age=${sMaxAge >= 3600 ? 3600 : 0}, s-maxage=${sMaxAge}, stale-while-revalidate=${sMaxAge * 7}` },
+  });
 
 /**
  * ?species=Eudynamys scolopaceus&area=asia -> { clips: up to 2 xeno-canto recordings }.
