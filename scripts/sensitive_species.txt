@@ -1,0 +1,3 @@
+# Sensitive species: one scientific name per line. Lines starting with # are ignored.
+# Read by scripts/aws-export.py (coordinates generalised to 0.1 degree) and src/lib/sensitive.ts
+# (the Listen feature queries xeno-canto by species only, with no region).
