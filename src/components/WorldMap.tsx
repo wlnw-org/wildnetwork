@@ -192,7 +192,11 @@ export default function WorldMap() {
   }, []);
 
   // Each request paints as soon as it arrives; the map never waits for the slowest one.
+  // Each load gets a number; a response from an older load (e.g. "All" finishing after a switch to "Marine") is dropped.
+  const loadSeq = useRef(0);
   const load = useCallback(async () => {
+    const seq = ++loadSeq.current;
+    const current = () => seq === loadSeq.current;
     const windowHours = group === "bat" && !species ? 24 : hours; // bats are sparse and nocturnal, so their live window is a day
     const from = new Date(Math.floor((Date.now() - windowHours * 3600_000) / 300_000) * 300_000).toISOString(); // 5 minute steps, cacheable
     const u = new URLSearchParams({ from, limit: "20000", merge: "1" });
@@ -208,12 +212,13 @@ export default function WorldMap() {
       }).catch(() => {});
     };
     const events = fetch(`/api/v1/events?${u}`).then((r) => r.json() as Promise<FC>).then((ev) => {
+      if (!current()) return;
       setEvents(ev); setFetchedAt(Date.now()); setLoading(false);
       wantThumbs(ev.features.slice(0, 40).map((f) => String(f.properties.sci)));
     });
     const rest = [
-      fetch(`/api/v1/species?hours=${group === "marine" ? MARINE_DAYS * 24 : group === "bat" ? 24 : hours}${gq ? "&" + gq : ""}`).then((r) => r.json() as Promise<Species[]>).then((sp) => { setSpeciesList(sp); wantThumbs(sp.slice(0, 15).map((x) => x.scientificName)); }),
-      fetch(`/api/v1/insights${gq ? "?" + gq : ""}`).then((r) => r.json() as Promise<Insights>).then((ins) => { setInsights(ins); wantThumbs([...(ins.seasonal ?? []), ...(ins.common ?? []), ...ins.drift, ...ins.movers, ...ins.arrivals].map((x) => x.scientificName)); }),
+      fetch(`/api/v1/species?hours=${group === "marine" ? MARINE_DAYS * 24 : group === "bat" ? 24 : hours}${gq ? "&" + gq : ""}`).then((r) => r.json() as Promise<Species[]>).then((sp) => { if (!current()) return; setSpeciesList(sp); wantThumbs(sp.slice(0, 15).map((x) => x.scientificName)); }),
+      fetch(`/api/v1/insights${gq ? "?" + gq : ""}`).then((r) => r.json() as Promise<Insights>).then((ins) => { if (!current()) return; setInsights(ins); wantThumbs([...(ins.seasonal ?? []), ...(ins.common ?? []), ...ins.drift, ...ins.movers, ...ins.arrivals].map((x) => x.scientificName)); }),
       fetch(`/api/v1/status`).then((r) => r.json() as Promise<Status>).then(setStatus),
     ];
     await Promise.allSettled([events, ...rest]);
