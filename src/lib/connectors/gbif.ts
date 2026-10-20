@@ -32,6 +32,8 @@ interface Occ {
   license?: string;
   lastInterpreted: string;
   references?: string;
+  occurrenceID?: string;
+  institutionCode?: string;
 }
 
 const grpOf = (o: Occ) => (o.orderKey === 734 ? "bat" : CLASS_TAXA.find((c) => c.key === o.classKey)?.grp ?? "other");
@@ -66,7 +68,8 @@ function toWdx(o: Occ): WdxEvent | null {
       classifier: { name: "gbif-publisher", version: o.datasetKey },
     },
     review: { status: "confirmed", reviewedAt: o.lastInterpreted },
-    source: { system: "gbif", sourceRecordId: String(o.key) },
+    // occurrenceID and institutionCode let an OBIS copy of the same occurrence be recognised and merged (src/lib/dedupe.ts).
+    source: { system: "gbif", sourceRecordId: String(o.key), ...(o.occurrenceID ? { occurrenceId: o.occurrenceID } : {}), ...(o.institutionCode ? { institutionCode: o.institutionCode } : {}) },
     license: o.license,
   };
 }

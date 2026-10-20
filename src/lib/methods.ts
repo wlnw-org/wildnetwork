@@ -1,7 +1,7 @@
 import { sql } from "@/lib/db";
 
 /** Version of the published methods. Bump when a measure changes, and add a line to the changelog on /methods. */
-export const METHODS_VERSION = "0.11";
+export const METHODS_VERSION = "0.12";
 
 /** A cell-day needs this many detections of all species before it counts as observed. */
 export const MIN_EFFORT_DAY = 200;
@@ -21,7 +21,7 @@ export const REGION = sql`CASE
   ELSE 'Asia' END`;
 
 /** Taxon classes. Effort is corrected within a class: a bat is compared with other bats, heard by the same ultrasonic stations. */
-export const GROUPS = ["avian", "bat", "amphibian", "insect", "mammal", "other"] as const;
+export const GROUPS = ["avian", "bat", "amphibian", "insect", "mammal", "marine", "other"] as const;
 export type Group = (typeof GROUPS)[number];
 
 /** Non-bird classes have far fewer sensors and detections, so their minimums are lower. */

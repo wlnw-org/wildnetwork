@@ -16,6 +16,8 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  // Connectors read the sensitive taxa list at runtime.
+  outputFileTracingIncludes: { "/api/**": ["./scripts/sensitive_species.txt"] },
   async headers() {
     return [{
       source: "/:path*",

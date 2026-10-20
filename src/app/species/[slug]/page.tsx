@@ -12,7 +12,7 @@ import { getClimate, getYearSpan, speciesStory } from "@/lib/story";
 
 export const revalidate = 3600;
 
-const CLASS_LABEL: Record<string, string> = { avian: "bird", bat: "bat", amphibian: "frog or toad", insect: "insect", mammal: "mammal", other: "animal" };
+const CLASS_LABEL: Record<string, string> = { avian: "bird", bat: "bat", amphibian: "frog or toad", insect: "insect", mammal: "mammal", marine: "marine mammal", other: "animal" };
 const fmtWeek = (d: string) => new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
 /** Everything the page shows, straight from the tables behind the public API. */

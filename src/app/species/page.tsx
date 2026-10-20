@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/species" },
 };
 
-const CLASS_TITLE: Record<string, string> = { avian: "Birds", bat: "Bats", amphibian: "Frogs and toads", insect: "Insects", mammal: "Mammals", other: "Other" };
+const CLASS_TITLE: Record<string, string> = { avian: "Birds", bat: "Bats", amphibian: "Frogs and toads", insect: "Insects", mammal: "Mammals", marine: "Marine mammals", other: "Other" };
 
 export default async function SpeciesIndex() {
   const rows = await sql<{ scientific_name: string; vernacular_name: string | null; grp: string }[]>`

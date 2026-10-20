@@ -21,7 +21,7 @@ const FALLBACKS = (process.env.AI_GATEWAY_FALLBACKS ?? "openai/gpt-oss-20b").spl
 const GOOGLE_MODELS = (process.env.ASK_GOOGLE_MODELS ?? "gemini-flash-latest,gemini-flash-lite-latest").split(",").map((s) => s.trim()).filter(Boolean);
 export const usesGoogle = () => Boolean(process.env.GOOGLE_GENERATIVE_AI_API_KEY);
 
-const CLASSES = ["avian", "bat", "amphibian", "insect", "mammal"] as const;
+const CLASSES = ["avian", "bat", "amphibian", "insect", "mammal", "marine"] as const;
 const round = (x: number, d = 1) => Math.round(x * 10 ** d) / 10 ** d;
 const cellName = (lat: number, lon: number) => `${Math.abs(lat + 2.5)}°${lat + 2.5 >= 0 ? "N" : "S"}, ${Math.abs(lon + 2.5)}°${lon + 2.5 >= 0 ? "E" : "W"}`;
 
@@ -77,7 +77,7 @@ export function askTools(origin: string, seen: Map<string, string | null>, used:
     }),
     whatIsChanging: tool({
       description: "What is changing right now across all species or one class: which species are moving north or south, surging, fading, or newly arrived.",
-      inputSchema: z.object({ animalClass: z.enum(CLASSES).optional().describe("Limit to birds (avian), bats, amphibians, insects or mammals") }),
+      inputSchema: z.object({ animalClass: z.enum(CLASSES).optional().describe("Limit to birds (avian), bats, amphibians, insects, mammals or marine mammals (marine)") }),
       execute: async ({ animalClass }) => {
         used.push("whatIsChanging");
         const d = await api(`/api/v1/insights${animalClass ? `?group=${animalClass}` : ""}`);
