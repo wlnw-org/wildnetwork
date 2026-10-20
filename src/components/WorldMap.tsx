@@ -10,6 +10,7 @@ import AboutPanel from "./AboutPanel";
 import AskPanel from "./AskPanel";
 import { track } from "./Analytics";
 import SpeciesPanel, { type SpeciesDetail } from "./SpeciesPanel";
+import { areaFor, type XcArea } from "@/lib/xenocanto";
 import Tour, { TOUR_KEY } from "./Tour";
 
 
@@ -50,6 +51,8 @@ export default function WorldMap() {
   const [ready, setReady] = useState(false);
   const [hours, setHours] = useState(3);
   const [species, setSpecies] = useState<string | null>(null);
+  // Continent in view when a species is picked: Listen prefers recordings from there. Only this name is sent, never coordinates.
+  const [listenArea, setListenArea] = useState<XcArea | null>(null);
   const [speciesList, setSpeciesList] = useState<Species[]>([]);
   const [insights, setInsights] = useState<Insights | null>(null);
   const [query, setQuery] = useState("");
@@ -356,6 +359,8 @@ export default function WorldMap() {
 
   const total = liveHours * 3600_000;
   const selectSpecies = (name: string | null) => {
+    const c = mapRef.current?.getCenter();
+    setListenArea(c ? areaFor(c.lng, c.lat) : null);
     setSpecies(name); setPlayhead(null); setPlaying(false); setFrame(null); setMvPlaying(false);
     setEvents(EMPTY); setLoading(true);
   };
@@ -459,7 +464,7 @@ export default function WorldMap() {
         <aside className="absolute left-[4.375rem] top-11 bottom-0 w-[24rem] max-w-[calc(100vw-4.375rem)] bg-slate-900/95 backdrop-blur-xl border-r border-white/10 flex flex-col z-10">
           {status?.paused?.length ? <PausedNotice className="m-2 mb-0 shrink-0" /> : null}
           {species ? (
-            <SpeciesPanel name={species} onClose={() => selectSpecies(null)} />
+            <SpeciesPanel name={species} area={listenArea} onClose={() => selectSpecies(null)} />
           ) : tab === "about" ? (
             <AboutPanel />
           ) : tab === "ask" ? (

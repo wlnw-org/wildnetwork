@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { track } from "./Analytics";
+import ListenBlock from "./ListenBlock";
+import type { XcArea } from "@/lib/xenocanto";
 
 export interface SpeciesDetail {
   scientificName: string;
@@ -56,7 +58,7 @@ const CLASS_NOUN: Record<string, string> = { avian: "", bat: "bat", amphibian: "
 interface Arrival { cellLat: number; cellLon: number; region: string; arrivalWeek: string; arrivalLow?: string | null; arrivalHigh?: string | null; arrivalSupport?: number | null; peakWeek: string; departureWeek: string | null; detections: number }
 interface Media { title: string | null; thumbUrl: string | null; imageUrl: string | null; extract: string | null; pageUrl: string | null; source: string; attribution: string | null; license: string | null }
 
-export default function SpeciesPanel({ name, onClose }: { name: string; onClose: () => void }) {
+export default function SpeciesPanel({ name, area = null, onClose }: { name: string; area?: XcArea | null; onClose: () => void }) {
   const [data, setData] = useState<SpeciesDetail | null>(null);
   const [media, setMedia] = useState<Media | null>(null);
   const [arrivals, setArrivals] = useState<{ name: string; rows: Arrival[] } | null>(null);
@@ -109,6 +111,7 @@ export default function SpeciesPanel({ name, onClose }: { name: string; onClose:
           <p className="mt-1.5 text-[11px] text-slate-500">Written from the numbers below by fixed rules. <Link href="/methods#words" className="text-cyan-500 hover:underline">How</Link>.</p>
         </section>
       )}
+      <ListenBlock name={name} area={area} />
       <dl className="grid grid-cols-3 gap-2 text-xs">
         <Stat label="Detections, 30d" value={total.toLocaleString()} />
         <Stat label="Range centre drift" value={drift == null ? "n/a" : `${Math.abs(drift).toFixed(1)}° ${drift > 0 ? "north" : "south"}`} />
