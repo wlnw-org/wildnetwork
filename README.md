@@ -1,12 +1,12 @@
-<p align="center"><img src="public/logo.svg" width="96" alt="WildNetwork logo" /></p>
+<p align="center"><img src="public/logo.svg" width="96" alt="Wildlife Network logo" /></p>
 
-# WildNetwork
+# Wildlife Network
 
 **A live, open map of where birds and animals are, and where they are going.**
 
 Live site: **https://wlnw.org**
 
-WildNetwork gathers wildlife detections from acoustic stations, camera traps and community observations into one open event stream, then looks for movement: species whose range centre is shifting, whose numbers are surging or fading, and who has turned up somewhere new. Weather is matched to each species day by day.
+Wildlife Network gathers wildlife detections from acoustic stations, camera traps and community observations into one open event stream, then looks for movement: species whose range centre is shifting, whose numbers are surging or fading, and who has turned up somewhere new. Weather is matched to each species day by day.
 
 It is free, open source, and built so that anyone with a Raspberry Pi can contribute data.
 
@@ -42,7 +42,7 @@ It is free, open source, and built so that anyone with a Raspberry Pi can contri
 
 The step by step guide, for people who already have a device and for people starting from nothing, is at **[wlnw.org/contribute](https://wlnw.org/contribute)**. Stations that already report to BirdWeather are included automatically and should not install the agent as well.
 
-Building a new station? The open **[WildNetwork Base](https://github.com/arunrajiah/wildnetwork-base)** (Raspberry Pi, microphone, solar) identifies birds on the device and sends to WildNetwork by itself; flash its SD card image (beta) onto a Raspberry Pi and set it up from a phone or a browser.
+Building a new station? The open **[Wildlife Network Base](https://github.com/arunrajiah/wildnetwork-base)** (Raspberry Pi, microphone, solar) identifies birds on the device and sends to Wildlife Network by itself; flash its SD card image (beta) onto a Raspberry Pi and set it up from a phone or a browser.
 
 If you run BirdNET-Pi or BirdNET-Go on a Raspberry Pi:
 
@@ -214,7 +214,7 @@ Species panels on the map have a **Listen** block with up to two reference recor
 - **Audio stays on xeno-canto.** The player is a plain `<audio preload="none">` pointed at the file URL xeno-canto returns, and the sonogram is hot-linked too. Nothing downloads until you press play, and only one clip plays at a time. We never copy, trim, re-host or re-encode a recording, which is why ND (no derivatives) licences are fine to show.
 - **Withdrawn recordings.** Recordists can take a recording offline at any time. A clip whose audio no longer loads is hidden, and the cache refreshes within 7 days.
 - **Credit.** Under each clip: recordist, location and country, the XC catalogue number linked to its page, and the licence linked to its deed, then the line "Recordings courtesy of xeno-canto.org".
-- **Non-commercial.** WildNetwork is a non-commercial project, so NC licensed recordings can be played. A commercial fork must not show NC recordings.
+- **Non-commercial.** Wildlife Network is a non-commercial project, so NC licensed recordings can be played. A commercial fork must not show NC recordings.
 - **Caching.** Results (including "none found") are cached per species and continent for 7 days in the `xc_recordings` table, with a day of CDN caching on top, to keep requests to xeno-canto low. If xeno-canto is slow (4 second timeout) or down, the panel loads as usual without the Listen block, and nothing is cached.
 - **Sensitive species.** The browser only ever sends a continent name, never coordinates. For species listed in `scripts/sensitive_species.txt`, even the continent is dropped and xeno-canto is queried by species alone.
 - **Key.** Set `XENO_CANTO_API_KEY` (from your xeno-canto account page) as a server-side environment variable, for example `vercel env add XENO_CANTO_API_KEY`. It is never sent to the browser or committed. Without it, the Listen block stays hidden.
@@ -243,22 +243,22 @@ Eight open source projects for listening to, identifying and mapping wildlife. T
 
 | I want to | Use | What it is |
 |---|---|---|
-| See where birds and wildlife are moving, or download the data | [WildNetwork](https://github.com/arunrajiah/wildnetwork) (this project) | The live map and open data: [wlnw.org](https://wlnw.org) |
-| Build a monitoring station from open hardware | [WildNetwork Base](https://github.com/arunrajiah/wildnetwork-base) | Software and a ready-to-flash SD card image (beta) for the open WildNetwork station (Raspberry Pi, microphone, solar) |
+| See where birds and wildlife are moving, or download the data | [Wildlife Network](https://github.com/wlnw-org/wildnetwork) (this project) | The live map and open data: [wlnw.org](https://wlnw.org) |
+| Build a monitoring station from open hardware | [Wildlife Network Base](https://github.com/arunrajiah/wildnetwork-base) | Software and a ready-to-flash SD card image (beta) for the open Wildlife Network station (Raspberry Pi, microphone, solar) |
 | Share detections from a BirdNET-Pi, BirdNET-Go, camera trap or bat detector you already have | [wdx-agent](https://github.com/arunrajiah/wdx-agent) | One small program that sends your station's detections. BirdWeather stations are already included and need nothing |
 | Follow your own station on your phone | [BirdEcho](https://github.com/arunrajiah/birdecho) | Android app for BirdNET-Pi, BirdNET-Go and BirdWeather stations |
 | Identify a sound you just heard | [WildEcho](https://github.com/arunrajiah/wildecho) | Phone app: record a clip, get ranked species |
 | Run your own sound identification server | [wildecho-api](https://github.com/arunrajiah/wildecho-api) | Self-hosted species identification from audio, on CPU, no API keys |
-| Check camera trap predictions before you use them | [SpeciesNet Studio](https://github.com/arunrajiah/speciesnet-studio) | Self-hosted review of SpeciesNet results, then send them to WildNetwork |
+| Check camera trap predictions before you use them | [SpeciesNet Studio](https://github.com/arunrajiah/speciesnet-studio) | Self-hosted review of SpeciesNet results, then send them to Wildlife Network |
 | Make your own software or device produce or read detections in a common format | [WDX](https://github.com/arunrajiah/wildlife-detection-exchange) | The open format for one AI wildlife detection; maps to Darwin Core |
 
-**How this one fits.** WildNetwork is where detections come together. It takes WDX from WildNetwork Bases, wdx-agent, SpeciesNet Studio and WildEcho, alongside BirdWeather, GBIF and iNaturalist, and turns them into the map, arrival dates and open data releases.
+**How this one fits.** Wildlife Network is where detections come together. It takes WDX from Wildlife Network Bases, wdx-agent, SpeciesNet Studio and WildEcho, alongside BirdWeather, GBIF and iNaturalist, and turns them into the map, arrival dates and open data releases.
 
-**How they connect:** stations (a WildNetwork Base, BirdNET-Pi, BirdNET-Go, camera traps) produce detections; wdx-agent sends them in the WDX format, SpeciesNet Studio adds a human check for camera traps, and WildNetwork maps them. Connected today: wdx-agent, the WildNetwork Base, SpeciesNet Studio and WildEcho (if you switch sharing on) send to WildNetwork, BirdEcho shows WildNetwork arrivals near your station, and WildEcho uses wildecho-api. Planned: Base setup in BirdEcho.
+**How they connect:** stations (a Wildlife Network Base, BirdNET-Pi, BirdNET-Go, camera traps) produce detections; wdx-agent sends them in the WDX format, SpeciesNet Studio adds a human check for camera traps, and Wildlife Network maps them. Connected today: wdx-agent, the Wildlife Network Base, SpeciesNet Studio and WildEcho (if you switch sharing on) send to Wildlife Network, BirdEcho shows Wildlife Network arrivals near your station, and WildEcho uses wildecho-api. Planned: Base setup in BirdEcho.
 
 ## Name and logo
 
-The code is open source (AGPL v3). The name "WildNetwork" and the logo are not part of the code licence: forks that run as a public service should use their own name and logo. See [TRADEMARKS.md](TRADEMARKS.md).
+The code is open source (AGPL v3). The name "Wildlife Network" and the logo are not part of the code licence: forks that run as a public service should use their own name and logo. See [TRADEMARKS.md](TRADEMARKS.md).
 
 ## Contributing and governance
 
@@ -282,4 +282,4 @@ Contributions are welcome: new connectors, better movement analysis, design, doc
 
 Made by [Arun Rajiah](https://www.arunrajiah.com), alongside [WDX](https://github.com/arunrajiah/wildlife-detection-exchange), [wdx-agent](https://github.com/arunrajiah/wdx-agent), [BirdEcho](https://github.com/arunrajiah/birdecho), [WildEcho](https://github.com/arunrajiah/wildecho) and [SpeciesNet Studio](https://github.com/arunrajiah/speciesnet-studio).
 
-WildNetwork stands on the work of the BirdNET team (Cornell Lab of Ornithology and Chemnitz University of Technology), BirdWeather and its station owners, iNaturalist observers, OBIS and its data providers, Orcasound and its listeners, Acartia and the whale watchers who report sightings, Open-Meteo, Wikipedia contributors, the OpenStreetMap community, MapLibre, PostGIS, and EarthRanger.
+Wildlife Network stands on the work of the BirdNET team (Cornell Lab of Ornithology and Chemnitz University of Technology), BirdWeather and its station owners, iNaturalist observers, OBIS and its data providers, Orcasound and its listeners, Acartia and the whale watchers who report sightings, Open-Meteo, Wikipedia contributors, the OpenStreetMap community, MapLibre, PostGIS, and EarthRanger.

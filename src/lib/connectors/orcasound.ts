@@ -11,7 +11,7 @@ import type { PullConnector, Station } from "./types";
  * run log and kept off the wildlife map; "other" is skipped. Positions are the hydrophones' public sites.
  */
 export const BASE = "https://live.orcasound.net/api/json";
-const UA = "WildNetwork/0.1 (+https://wlnw.org; https://github.com/wlnw-org/wildnetwork)";
+const UA = "WildlifeNetwork/0.1 (+https://wlnw.org; https://github.com/wlnw-org/wildnetwork)";
 const PAGE = 200; // about a week of detections in October 2026
 
 export interface OrcaFeed { id: string; attributes: { name?: string; slug?: string; lat_lng?: { lat: number; lng: number } | null; location_point?: { coordinates?: [number, number] } | null; visible?: boolean } }

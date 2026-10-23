@@ -8,7 +8,7 @@ import { BOOT } from "@/lib/uncertainty";
 export const metadata: Metadata = {
   title: "Methods: how wildlife movement is measured",
   alternates: { canonical: "/methods" },
-  description: "How WildNetwork measures wildlife movement, how it corrects for observation effort, and what its limits are.",
+  description: "How Wildlife Network measures wildlife movement, how it corrects for observation effort, and what its limits are.",
 };
 
 const GH = "https://github.com/wlnw-org/wildnetwork/blob/main";
@@ -24,14 +24,14 @@ export default function Methods() {
         {BIRDWEATHER_PAUSED && <PausedNotice className="mt-6" />}
 
         <p className="mt-6">
-          This page states exactly how each number on WildNetwork is produced, and where it can mislead. If you plan to use these measures in research,
+          This page states exactly how each number on Wildlife Network is produced, and where it can mislead. If you plan to use these measures in research,
           read the <a href="#limits" className="text-cyan-400 hover:underline">known limits</a> first. The code that computes everything is public and linked
           from each section.
         </p>
 
         <H2 id="data">1. Data</H2>
         <p>
-          A <b>detection</b> is one record that a species was identified at a place and time, by a classifier or a person. WildNetwork currently holds three kinds:
+          A <b>detection</b> is one record that a species was identified at a place and time, by a classifier or a person. Wildlife Network currently holds three kinds:
         </p>
         <ul className="mt-2 list-disc pl-5 space-y-1">
           <li><b>Acoustic detections</b> from BirdWeather community stations: birds, frogs, insects and some mammals identified by BirdNET, and bats identified by BirdWeather&apos;s ultrasonic classifier. This is the large majority of the data. Detections only: soundscapes and recording links are never taken, at BirdWeather&apos;s request. Paused from 2 to 6 October 2026 while terms were discussed.</li>
@@ -54,7 +54,7 @@ export default function Methods() {
           across the network.
         </p>
         <p className="mt-3">
-          WildNetwork therefore never compares raw counts between places or periods. It uses <b>relative frequency</b>: a species&apos; share of all detections
+          Wildlife Network therefore never compares raw counts between places or periods. It uses <b>relative frequency</b>: a species&apos; share of all detections
           of all species in the same cell and period.
         </p>
         <Formula>share(species, cell, period) = detections of the species ÷ detections of all species</Formula>
@@ -276,7 +276,7 @@ export default function Methods() {
         <p className="mt-3">
           The southward passage and its timing match what is known for this species. This is one example chosen because the answer is known. The systematic
           test is on the <Link href="/validation" className="text-cyan-400 hover:underline">validation page</Link>: 204 arrival dates across 82 species
-          compared with iNaturalist, including the cases where WildNetwork is wrong. A comparison with eBird and BirdCast products is still to do.
+          compared with iNaturalist, including the cases where Wildlife Network is wrong. A comparison with eBird and BirdCast products is still to do.
         </p>
 
         <H2 id="limits">5. Known limits</H2>
@@ -303,7 +303,7 @@ export default function Methods() {
           observers, and Open-Meteo.
         </p>
         <p className="mt-3">
-          Suggested citation: Rajiah, A. (2026). WildNetwork: an open map of wildlife movement from community sensors. Methods version {METHODS_VERSION}.
+          Suggested citation: Rajiah, A. (2026). Wildlife Network: an open map of wildlife movement from community sensors. Methods version {METHODS_VERSION}.
           https://wlnw.org/methods
         </p>
         <p className="mt-3">

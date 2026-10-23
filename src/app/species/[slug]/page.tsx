@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description,
     alternates: { canonical: `/species/${speciesSlug(d.name)}` },
     robots: thin ? { index: false, follow: true } : undefined,
-    openGraph: { title: `${label} on WildNetwork`, description, url: `/species/${speciesSlug(d.name)}`, type: "article", ...(d.media?.imageUrl ? { images: [{ url: d.media.imageUrl, alt: label }] } : {}) },
+    openGraph: { title: `${label} on Wildlife Network`, description, url: `/species/${speciesSlug(d.name)}`, type: "article", ...(d.media?.imageUrl ? { images: [{ url: d.media.imageUrl, alt: label }] } : {}) },
   };
 }
 
@@ -62,7 +62,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
       { "@type": "WebPage", "@id": url, url, name: `${title}: migration, arrival dates and live map`, isPartOf: { "@id": `${SITE}/#website` },
         about: { "@type": "Taxon", name: d.name, ...(d.common ? { alternateName: d.common } : {}), taxonRank: "species", ...(d.media?.pageUrl ? { sameAs: d.media.pageUrl } : {}) } },
       { "@type": "BreadcrumbList", itemListElement: [
-        { "@type": "ListItem", position: 1, name: "WildNetwork", item: SITE },
+        { "@type": "ListItem", position: 1, name: "Wildlife Network", item: SITE },
         { "@type": "ListItem", position: 2, name: "Species", item: `${SITE}/species` },
         { "@type": "ListItem", position: 3, name: title, item: url },
       ] },
@@ -73,7 +73,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <nav className="text-sm text-slate-500">
-          <Link href="/" className="text-cyan-400 hover:underline">WildNetwork</Link> / <Link href="/species" className="text-cyan-400 hover:underline">Species</Link>
+          <Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / <Link href="/species" className="text-cyan-400 hover:underline">Species</Link>
         </nav>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">{title}</h1>
         {d.common && <p className="mt-1 text-slate-400 italic">{d.name}</p>}

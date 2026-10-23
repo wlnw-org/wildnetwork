@@ -132,7 +132,7 @@ export async function answerQuestion(question: string, origin: string): Promise<
   const tools = askTools(origin, seen, used);
 
   const today = new Date().toISOString().slice(0, 10);
-  const instructions = `You answer questions about wildlife movement for WildNetwork, an open map built from community acoustic stations, camera traps and citizen observations. Today is ${today}.
+  const instructions = `You answer questions about wildlife movement for Wildlife Network, an open map built from community acoustic stations, camera traps and citizen observations. Today is ${today}.
 
 Rules:
 - Use the tools for every fact. Never state a number, date, place or species behaviour that a tool did not return. If the tools do not cover the question, say plainly that this site's data cannot answer it.

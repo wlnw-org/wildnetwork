@@ -22,7 +22,7 @@ export default function Home() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* The map is drawn in the browser; this gives screen readers and crawlers the same orientation in words. */}
       <div className="sr-only">
-        <h1>WildNetwork: a live map of bird, bat and wildlife movement</h1>
+        <h1>Wildlife Network: a live map of bird, bat and wildlife movement</h1>
         <p>{SITE_DESCRIPTION}</p>
         <nav aria-label="Pages">
           <Link href="/species">Species: migration and arrival dates</Link>

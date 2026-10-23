@@ -65,12 +65,12 @@ test("feeds become stations; included feeds are used when /feeds misses one", ()
   assert.equal(events[0].deployment.deploymentId, "point-robinson");
 });
 
-test("getJson retries server errors with backoff and sends a WildNetwork User-Agent (mocked)", async () => {
+test("getJson retries server errors with backoff and sends a Wildlife Network User-Agent (mocked)", async () => {
   let calls = 0, ua = "";
   const flaky = (async (_u: string, init: RequestInit) => { calls++; ua = new Headers(init.headers).get("user-agent") ?? ""; return calls < 2 ? new Response("down", { status: 502 }) : new Response("{\"data\":[]}"); }) as unknown as typeof fetch;
   assert.deepEqual(await getJson("https://live.orcasound.net/api/json/feeds", flaky), { data: [] });
   assert.equal(calls, 2);
-  assert.match(ua, /^WildNetwork\//);
+  assert.match(ua, /^WildlifeNetwork\//);
   let n = 0;
   await assert.rejects(getJson("https://live.orcasound.net/api/json/feeds", (async () => { n++; return new Response("no", { status: 404 }); }) as unknown as typeof fetch), /404/);
   assert.equal(n, 1, "client errors are not retried");

@@ -5,7 +5,7 @@ import CopyBlock from "@/components/CopyBlock";
 export const metadata: Metadata = {
   title: "Contribute data: connect a bird station, bat detector or camera trap",
   alternates: { canonical: "/contribute" },
-  description: "How to send detections from a bird station, bat detector or camera trap to WildNetwork, whether you already have a device or want to set one up.",
+  description: "How to send detections from a bird station, bat detector or camera trap to Wildlife Network, whether you already have a device or want to set one up.",
 };
 
 const SITE = "https://wlnw.org";
@@ -18,7 +18,7 @@ export default function Contribute() {
         <Link href="/" className="text-sm text-cyan-400 hover:underline">← Back to the map</Link>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Contribute data</h1>
         <p className="mt-3">
-          WildNetwork is built from what people&apos;s devices hear and see. If you run a bird station, a bat detector or a camera trap, you can add it in a few
+          Wildlife Network is built from what people&apos;s devices hear and see. If you run a bird station, a bat detector or a camera trap, you can add it in a few
           minutes. If you don&apos;t have one yet, this page shows what to get and how to set it up. It is free, and you keep the rights to your data.
         </p>
 
@@ -31,7 +31,7 @@ export default function Contribute() {
 
         <H2 id="birdweather">Already on BirdWeather? You are done</H2>
         <p>
-          WildNetwork reads BirdWeather&apos;s public detections (never the recordings). If you have a BirdWeather PUC, or your BirdNET-Pi or BirdNET-Go station uploads to BirdWeather,
+          Wildlife Network reads BirdWeather&apos;s public detections (never the recordings). If you have a BirdWeather PUC, or your BirdNET-Pi or BirdNET-Go station uploads to BirdWeather,
           your detections are on the map and in every measure. <b>Do not install the agent as well:</b> the same detections would arrive twice and be counted twice.
         </p>
         <p className="mt-3">
@@ -119,7 +119,7 @@ curl -X POST ${SITE}/api/v1/events \\
           <><b>Connect it:</b> run the <a href="#birdnet-pi" className="text-cyan-400 hover:underline">one line install</a> above.</>,
         ]} />
         <p className="mt-3 text-sm text-slate-400">
-          Prefer something ready made? A <A href="https://www.birdweather.com">BirdWeather PUC</A> is a finished device that reports to BirdWeather, and so to WildNetwork, with nothing to build.
+          Prefer something ready made? A <A href="https://www.birdweather.com">BirdWeather PUC</A> is a finished device that reports to BirdWeather, and so to Wildlife Network, with nothing to build.
         </p>
 
         <H3 id="new-bat">A bat detector</H3>

@@ -1,4 +1,4 @@
--- Device registry (Phase 0 of the WildNetwork Base). A device gets its own push key; health reports (WDX device status) are kept 30 days.
+-- Device registry (Phase 0 of the Wildlife Network Base). A device gets its own push key; health reports (WDX device status) are kept 30 days.
 CREATE TABLE IF NOT EXISTS devices (
   id              text PRIMARY KEY,                    -- wnd_<random>, also the key's device_id
   name            text NOT NULL,

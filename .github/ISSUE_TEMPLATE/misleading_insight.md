@@ -6,7 +6,7 @@ labels: science
 
 **Species:**
 
-**What WildNetwork shows** (screenshot helps):
+**What Wildlife Network shows** (screenshot helps):
 
 **What is actually happening, and how you know:**
 

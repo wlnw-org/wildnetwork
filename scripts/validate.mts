@@ -1,4 +1,4 @@
-// Validate WildNetwork arrival weeks against iNaturalist human observations (independent modality).
+// Validate Wildlife Network arrival weeks against iNaturalist human observations (independent modality).
 // Usage: pnpm exec tsx --env-file=.env.production.local scripts/validate.mts [pairs=300]
 // Writes src/data/validation.json. Same detection rule on both sides (detectSeason), thresholds relaxed for iNat's smaller counts.
 import { writeFileSync } from "node:fs";

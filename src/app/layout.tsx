@@ -16,14 +16,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
-  title: { default: "WildNetwork: live map of bird and wildlife migration", template: "%s · WildNetwork" },
+  title: { default: "Wildlife Network: live map of bird and wildlife migration", template: "%s · Wildlife Network" },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
   authors: [{ name: "Arun Rajiah", url: "https://www.arunrajiah.com" }],
   creator: "Arun Rajiah",
   keywords: ["bird migration map", "live bird migration", "wildlife movement", "bat activity", "bird arrival dates", "phenology", "BirdNET", "camera trap", "bioacoustics", "open data"],
-  openGraph: { type: "website", siteName: SITE_NAME, locale: "en_GB", url: "/", title: "WildNetwork: live map of bird and wildlife migration", description: SITE_DESCRIPTION },
-  twitter: { card: "summary_large_image", title: "WildNetwork: live map of bird and wildlife migration", description: SITE_DESCRIPTION },
+  openGraph: { type: "website", siteName: SITE_NAME, locale: "en_GB", url: "/", title: "Wildlife Network: live map of bird and wildlife migration", description: SITE_DESCRIPTION },
+  twitter: { card: "summary_large_image", title: "Wildlife Network: live map of bird and wildlife migration", description: SITE_DESCRIPTION },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
   ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
 };

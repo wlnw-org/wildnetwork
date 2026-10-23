@@ -1,6 +1,6 @@
-# Contributing to WildNetwork
+# Contributing to Wildlife Network
 
-WildNetwork exists so that anyone can see how wildlife is moving, and anyone can help. Thank you for being here.
+Wildlife Network exists so that anyone can see how wildlife is moving, and anyone can help. Thank you for being here.
 
 ## Ways to help
 

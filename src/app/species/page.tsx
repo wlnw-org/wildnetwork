@@ -9,7 +9,7 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Species: migration and arrival dates",
-  description: "Every bird, bat and other animal with a seasonal record on WildNetwork: where it is now, when it arrives and how it moves through the year.",
+  description: "Every bird, bat and other animal with a seasonal record on Wildlife Network: where it is now, when it arrives and how it moves through the year.",
   alternates: { canonical: "/species" },
 };
 

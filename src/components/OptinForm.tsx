@@ -59,7 +59,7 @@ export default function OptinForm() {
       </div>
       <label className="flex items-start gap-2 text-sm">
         <input type="checkbox" checked={inReleases} onChange={(e) => setInReleases(e.target.checked)} className="mt-1 accent-cyan-500" />
-        <span>Include my station&apos;s daily species counts in WildNetwork&apos;s open, citable data releases.</span>
+        <span>Include my station&apos;s daily species counts in Wildlife Network&apos;s open, citable data releases.</span>
       </label>
       <label className="block">
         <span className="text-sm text-slate-200">Email (optional)</span>

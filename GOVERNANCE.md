@@ -2,7 +2,7 @@
 
 ## Purpose
 
-WildNetwork is an open platform for seeing how birds and animals move across the world. It is run in the open, for the benefit of wildlife and the people who study and protect it.
+Wildlife Network is an open platform for seeing how birds and animals move across the world. It is run in the open, for the benefit of wildlife and the people who study and protect it.
 
 ## Roles
 
@@ -34,7 +34,7 @@ Running a global service costs money. The project may accept sponsorship, grants
 
 ## Names and marks
 
-"WildNetwork", "WDX" and "wdx-agent", and the WildNetwork logo, identify this project. The license lets you run and modify the software, including commercially under its terms. Please do not present a modified or separately hosted version as the official WildNetwork.
+"Wildlife Network", "WDX" and "wdx-agent", and the Wildlife Network logo, identify this project. The license lets you run and modify the software, including commercially under its terms. Please do not present a modified or separately hosted version as the official Wildlife Network.
 
 ## Changing this document
 

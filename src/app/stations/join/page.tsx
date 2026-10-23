@@ -5,7 +5,7 @@ import OptinForm from "@/components/OptinForm";
 export const metadata: Metadata = {
   title: "Add your BirdWeather station",
   alternates: { canonical: "/stations/join" },
-  description: "Opt your BirdWeather station in to WildNetwork: appear by name or anonymously, and share its daily species counts in open, citable data releases under your licence.",
+  description: "Opt your BirdWeather station in to Wildlife Network: appear by name or anonymously, and share its daily species counts in open, citable data releases under your licence.",
 };
 
 export default function Join() {
@@ -17,13 +17,13 @@ export default function Join() {
         <p className="mt-3">
           If your station reports to BirdWeather, a sample of its detections is already on the map, at an approximate position and without its name. Opting in
           puts you in control of more: your station appears on the <Link href="/stations" className="text-cyan-400 hover:underline">stations page</Link> under a name you
-          choose (or none), and its full daily species counts can go into WildNetwork&apos;s <Link href="/data" className="text-cyan-400 hover:underline">open data releases</Link>,
+          choose (or none), and its full daily species counts can go into Wildlife Network&apos;s <Link href="/data" className="text-cyan-400 hover:underline">open data releases</Link>,
           which researchers cite, under the licence you pick.
         </p>
 
         <h2 className="mt-8 text-xl font-semibold text-slate-100">What happens with your token</h2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
-          <li>It is checked with BirdWeather, then stored encrypted. It is used only to <b>read</b> your station&apos;s daily species counts; WildNetwork never posts anything to your station.</li>
+          <li>It is checked with BirdWeather, then stored encrypted. It is used only to <b>read</b> your station&apos;s daily species counts; Wildlife Network never posts anything to your station.</li>
           <li>Only counts per species per day are kept. No recordings, soundscapes or individual detections.</li>
           <li>Your location is rounded to the precision you choose before anything is shown or published, and BirdWeather&apos;s own location privacy setting still applies.</li>
           <li>Withdraw here at any time with the same token, or by email: the token is forgotten and your station&apos;s data deleted. Releases already published keep their copy; later ones leave your station out.</li>
@@ -40,7 +40,7 @@ export default function Join() {
         <OptinForm />
 
         <p className="mt-6 text-sm text-slate-500">
-          WildNetwork is independent of BirdWeather and non-commercial; data from BirdWeather stations is never used commercially. Questions or problems:
+          Wildlife Network is independent of BirdWeather and non-commercial; data from BirdWeather stations is never used commercially. Questions or problems:
           arunrajiah@gmail.com. See also the <Link href="/privacy" className="text-cyan-400 hover:underline">privacy page</Link>.
         </p>
       </div>

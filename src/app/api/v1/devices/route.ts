@@ -3,7 +3,7 @@ import { sql } from "@/lib/db";
 import { PER_IP_PER_DAY, SOURCES, clientIp, newDeviceId } from "@/lib/devices";
 
 /**
- * Register a device (a WildNetwork Base, or any other recorder). Body: { name, model?, source?, hardwareId?, contact? }.
+ * Register a device (a Wildlife Network Base, or any other recorder). Body: { name, model?, source?, hardwareId?, contact? }.
  * A Base (model "wildnetwork-base") pushes as source "wildnetwork-base". Returns the device id and a push key, shown once.
  * Shares the per-address daily limit with /api/v1/register.
  */

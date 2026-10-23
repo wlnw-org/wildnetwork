@@ -22,8 +22,8 @@ jobs:
             echo "$1: HTTP $code"
             if [ "$code" != "200" ]; then fail="$fail\n- $1: HTTP $code at $2 ($(head -c 300 body.txt | tr '\n' ' '))"; fi
           }
-          check "WildNetwork health" "https://wlnw.org/api/v1/health"
-          check "WildNetwork home" "https://wlnw.org/"
+          check "Wildlife Network health" "https://wlnw.org/api/v1/health"
+          check "Wildlife Network home" "https://wlnw.org/"
           check "wildecho-api health" "https://wildecho.arunrajiah.com/v1/health"
           if [ -n "$fail" ]; then
             printf 'failures<<EOF\n%b\nEOF\n' "$fail" >> "$GITHUB_OUTPUT"

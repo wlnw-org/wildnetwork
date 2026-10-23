@@ -58,7 +58,7 @@ export default function Data() {
         <h2 className="mt-8 text-xl font-semibold text-slate-100">What is in it</h2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
           <li>Birds, bats, amphibians and insects; human and machine observations with coordinates and no geospatial issues.</li>
-          <li>Counts are records, not animals. Use <b>effort.csv</b> to turn them into shares and to judge coverage: WildNetwork treats a cell-week as watched by observers at {OBSERVED.MIN_EFFORT_WEEK} bird records ({OBSERVED.SMALL_MIN_EFFORT_WEEK} for other classes).</li>
+          <li>Counts are records, not animals. Use <b>effort.csv</b> to turn them into shares and to judge coverage: Wildlife Network treats a cell-week as watched by observers at {OBSERVED.MIN_EFFORT_WEEK} bird records ({OBSERVED.SMALL_MIN_EFFORT_WEEK} for other classes).</li>
           <li>Arrival dates follow the rule on the <Link href="/methods#measures" className="text-cyan-400 hover:underline">methods page</Link>, applied to these records alone.</li>
           <li>The last two weeks are left out because GBIF receives records late.</li>
         </ul>

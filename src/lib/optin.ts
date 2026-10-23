@@ -2,7 +2,7 @@ import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:
 import { sql } from "@/lib/db";
 
 /**
- * BirdWeather opt-in (see /stations/join): a station owner gives their station token; WildNetwork keeps it encrypted and uses it
+ * BirdWeather opt-in (see /stations/join): a station owner gives their station token; Wildlife Network keeps it encrypted and uses it
  * only to read that station's own daily species counts, which may then go into open data releases under the owner's licence.
  */
 

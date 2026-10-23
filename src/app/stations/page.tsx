@@ -8,7 +8,7 @@ export const revalidate = 600;
 export const metadata: Metadata = {
   title: "Stations: the sensors and observers behind the map",
   alternates: { canonical: "/stations" },
-  description: "How many acoustic stations, camera traps and observers feed WildNetwork, and the stations whose owners send their detections directly.",
+  description: "How many acoustic stations, camera traps and observers feed Wildlife Network, and the stations whose owners send their detections directly.",
 };
 
 const LABEL: Record<string, string> = { birdweather: "BirdWeather stations", inaturalist: "iNaturalist observers", gbif: "GBIF datasets (live)" };
@@ -102,7 +102,7 @@ export default async function Stations() {
         )}
         <h2 className="mt-10 text-xl font-semibold text-slate-100">Device health</h2>
         <p className="mt-2">
-          WildNetwork Bases and other registered devices report their battery, storage and backlog. Shown here: devices that reported in the last 30 days.
+          Wildlife Network Bases and other registered devices report their battery, storage and backlog. Shown here: devices that reported in the last 30 days.
           Health reports carry no detections and no location.
         </p>
         {devices.length ? (

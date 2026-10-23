@@ -105,7 +105,7 @@ test("parseSightings lists unmapped names, drops bad rows and duplicate ids, and
   assert.deepEqual(parseSightings({ error: "x" }), { events: [], unmapped: {}, skipped: 0 });
 });
 
-test("fetchSightings sends a WildNetwork User-Agent and fails on HTTP errors (mocked, never the live API)", async () => {
+test("fetchSightings sends a Wildlife Network User-Agent and fails on HTTP errors (mocked, never the live API)", async () => {
   let seen: { url: string; ua: string | null } | null = null;
   const ok = (async (u: string, init: RequestInit) => {
     seen = { url: u, ua: new Headers(init.headers).get("user-agent") };
@@ -113,7 +113,7 @@ test("fetchSightings sends a WildNetwork User-Agent and fails on HTTP errors (mo
   }) as unknown as typeof fetch;
   assert.equal(((await fetchSightings(ok)) as unknown[]).length, 1);
   assert.equal(seen!.url, API);
-  assert.match(seen!.ua!, /^WildNetwork\/.+https:\/\/wildnetwork\.arunrajiah\.com/);
+  assert.match(seen!.ua!, /^WildlifeNetwork\/.+https:\/\/wlnw\.org/);
   await assert.rejects(fetchSightings((async () => new Response("busy", { status: 503 })) as unknown as typeof fetch), /acartia 503/);
 });
 

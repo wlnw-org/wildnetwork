@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "WildNetwork open API",
+    "title": "Wildlife Network open API",
     "version": "1",
-    "description": "Read access to WildNetwork's live map and effort-corrected measures, and authenticated push of WDX detection events. Responses mix sources, including BirdWeather detections shown with BirdWeather's agreement for display only: use the API to view and explore, and the citable open data releases (https://wlnw.org/data) for analysis and redistribution. No key is needed to read; please keep to about one request per second.",
+    "description": "Read access to Wildlife Network's live map and effort-corrected measures, and authenticated push of WDX detection events. Responses mix sources, including BirdWeather detections shown with BirdWeather's agreement for display only: use the API to view and explore, and the citable open data releases (https://wlnw.org/data) for analysis and redistribution. No key is needed to read; please keep to about one request per second.",
     "license": { "name": "AGPL-3.0 (code)", "url": "https://github.com/wlnw-org/wildnetwork/blob/main/LICENSE" },
     "contact": { "email": "arunrajiah@gmail.com", "url": "https://wlnw.org/developers" }
   },
@@ -55,7 +55,7 @@
     },
     "/api/v1/devices": {
       "post": {
-        "summary": "Register a device (a WildNetwork Base or any recorder): returns deviceId and a push key, shown once. 5 per IP per day, shared with /register",
+        "summary": "Register a device (a Wildlife Network Base or any recorder): returns deviceId and a push key, shown once. 5 per IP per day, shared with /register",
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["name"], "properties": { "name": { "type": "string" }, "model": { "type": "string", "default": "wildnetwork-base" }, "source": { "type": "string", "description": "required unless model is wildnetwork-base" }, "hardwareId": { "type": "string" }, "contact": { "type": "string" } } } } } },
         "responses": { "200": { "description": "deviceId, apiKey, source, eventsEndpoint, statusEndpoint" } }
       },

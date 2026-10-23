@@ -446,7 +446,7 @@ export default function WorldMap() {
       <header className="absolute top-0 inset-x-0 h-11 bg-black/80 backdrop-blur-xl border-b border-white/10 flex items-center px-3 gap-3 z-20">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.svg" alt="" className="w-6 h-6 rounded-md" />
-        <span className="font-semibold tracking-tight">WildNetwork</span>
+        <span className="font-semibold tracking-tight">Wildlife Network</span>
         <span className="flex items-center gap-1.5 text-[11px] text-slate-400">
           <span className={`inline-block w-2 h-2 rounded-full ${status?.live ? "bg-[#7fd320]" : "bg-[#d0031b]"}`} />
           {status?.live ? "Live" : "Stale"}{status?.lastPullAt && <span className="hidden sm:inline"> · updated {relTime(status.lastPullAt)}</span>}

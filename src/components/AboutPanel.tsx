@@ -4,9 +4,9 @@ export default function AboutPanel() {
   return (
     <div className="p-5 text-sm text-slate-300 flex flex-col gap-5 overflow-y-auto h-full">
       <section>
-        <h2 className="text-base font-semibold text-slate-100">WildNetwork</h2>
+        <h2 className="text-base font-semibold text-slate-100">Wildlife Network</h2>
         <p className="mt-1 leading-relaxed">
-          A live, open map of where birds and animals are, and where they are going. WildNetwork aggregates detections from acoustic stations, camera traps,
+          A live, open map of where birds and animals are, and where they are going. Wildlife Network aggregates detections from acoustic stations, camera traps,
           community observations and tracking networks into one event stream, then watches for movement: species whose range centre shifts, whose numbers surge
           or fade, and who shows up somewhere new. Weather at each species&apos; centre is matched day by day.
         </p>
@@ -22,7 +22,7 @@ export default function AboutPanel() {
           <Link href="https://github.com/wlnw-org/wildnetwork">github.com/wlnw-org/wildnetwork</Link>.
         </p>
         <p className="mt-2">
-          WildNetwork is free and has no ads. Hosting and the open data releases cost money: if it is useful to you, you can{" "}
+          Wildlife Network is free and has no ads. Hosting and the open data releases cost money: if it is useful to you, you can{" "}
           <Link href="https://github.com/sponsors/arunrajiah">support it on GitHub Sponsors</Link>.
         </p>
         <p className="mt-2">

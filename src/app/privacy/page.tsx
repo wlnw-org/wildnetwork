@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Privacy",
   alternates: { canonical: "/privacy" },
-  description: "What WildNetwork collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
+  description: "What Wildlife Network collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
 };
 
 const UPDATED = "20 October 2026";
@@ -18,7 +18,7 @@ export default function Privacy() {
         <p className="mt-1 text-sm text-slate-500">Updated {UPDATED}</p>
 
         <p className="mt-6">
-          WildNetwork is a free, non-commercial, open source project run by Arun Rajiah in Chennai, India. There are no accounts and no ads, and no data is sold.
+          Wildlife Network is a free, non-commercial, open source project run by Arun Rajiah in Chennai, India. There are no accounts and no ads, and no data is sold.
           This page lists everything the site collects. Questions or requests: <a href="mailto:arunrajiah@gmail.com" className="text-cyan-400 hover:underline">arunrajiah@gmail.com</a>.
         </p>
 

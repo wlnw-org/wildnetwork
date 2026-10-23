@@ -14,7 +14,7 @@ interface Step { target: string | null; title: string; text: string; place: "cen
 export function tourSteps(askEnabled: boolean): Step[] {
   return [
     { target: null, place: "center", title: "A live map of wildlife",
-      text: "WildNetwork shows where birds, bats and other animals are right now, from thousands of community stations and observers. Each dot is a recent detection: blue from BirdWeather stations, amber from GBIF, green from iNaturalist, pink from devices sending directly." },
+      text: "Wildlife Network shows where birds, bats and other animals are right now, from thousands of community stations and observers. Each dot is a recent detection: blue from BirdWeather stations, amber from GBIF, green from iNaturalist, pink from devices sending directly." },
     { target: "search", place: "bottom", title: "Find a species",
       text: "Type a name to see where it is being heard and seen, how its range centre is shifting, and when it arrives in each region, with the uncertainty of each estimate." },
     { target: "classes", place: "bottom", title: "Birds, bats, insects, amphibians",
@@ -24,7 +24,7 @@ export function tourSteps(askEnabled: boolean): Step[] {
     { target: "slider", place: "top", title: "Replay time",
       text: "Play the last hours of detections, or pick a species and play a whole year of its movement, week by week." },
     { target: "contribute", place: "right", title: "Add your own station",
-      text: "A BirdNET-Pi, BirdNET-Go, camera trap, bat detector or a WildNetwork Base can send its detections here. Everything is open: the methods, the data downloads and the API." },
+      text: "A BirdNET-Pi, BirdNET-Go, camera trap, bat detector or a Wildlife Network Base can send its detections here. Everything is open: the methods, the data downloads and the API." },
   ];
 }
 

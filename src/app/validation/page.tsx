@@ -7,7 +7,7 @@ import data from "@/data/validation.json";
 export const metadata: Metadata = {
   title: "Validation: arrival dates against human observers",
   alternates: { canonical: "/validation" },
-  description: "How WildNetwork's arrival dates compare with independent human observations, including where they are wrong.",
+  description: "How Wildlife Network's arrival dates compare with independent human observations, including where they are wrong.",
 };
 
 interface Pair { sci: string; common: string | null; lat: number; lon: number; ours: string; inat: string; diffWeeks: number; n: number; inatN: number }
@@ -52,21 +52,21 @@ export default function Validation() {
         <p className="mt-1 text-sm text-slate-500">Run on {fmt(S.generatedAt)} 2026 · methods {S.methods} · weeks {fmt(S.weeks[0])} 2025 to {fmt(S.weeks[1])} 2026</p>
 
         <p className="mt-6">
-          WildNetwork estimates when a species arrives in a region from acoustic detections. This page compares those estimates with an independent source:
+          Wildlife Network estimates when a species arrives in a region from acoustic detections. This page compares those estimates with an independent source:
           photographs and recordings submitted by people to iNaturalist, for the same species, the same 5 degree cells and the same weeks. The two sources
           share no data and have different biases, so agreement between them is meaningful, and disagreement is informative.
         </p>
 
         <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Tile label="Arrivals compared" value={String(S.comparable)} note={`${S.species} species`} />
-          <Tile label="Median difference" value={`${S.medianDiff > 0 ? "+" : ""}${S.medianDiff} week`} note="WildNetwork is later" />
+          <Tile label="Median difference" value={`${S.medianDiff > 0 ? "+" : ""}${S.medianDiff} week`} note="Wildlife Network is later" />
           <Tile label="Within 1 week" value={`${S.within1}%`} note={`${S.within2}% within 2, ${S.within4}% within 4`} />
           <Tile label="Mean absolute error" value={`${S.mae} weeks`} note={`correlation ${S.pearson}`} />
         </div>
 
         <H2>What was compared</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
-          <li>The {S.candidates} best sampled arrivals in WildNetwork between February and mid July 2026, at most six cells per species so that no species dominates. The sample was taken by detection count, not chosen by hand.</li>
+          <li>The {S.candidates} best sampled arrivals in Wildlife Network between February and mid July 2026, at most six cells per species so that no species dominates. The sample was taken by detection count, not chosen by hand.</li>
           <li>For each, iNaturalist&apos;s weekly count of research grade observations of that species in that cell.</li>
           <li>The <b>same rule</b> on both sides: the arrival is the first week a species reaches a tenth of its seasonal peak, after at least six weeks below that level, and stays there the following week.</li>
           <li>{S.comparable} of {S.candidates} could be compared. In {S.notComparable} cases iNaturalist had too few observations or showed no clear seasonal arrival, and {S.failed} requests failed.</li>
@@ -74,7 +74,7 @@ export default function Validation() {
 
         <H2>Result</H2>
         <figure className="mt-3">
-          <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img" aria-label="Scatter plot of WildNetwork arrival week against iNaturalist arrival week">
+          <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img" aria-label="Scatter plot of Wildlife Network arrival week against iNaturalist arrival week">
             {months.map((m) => (
               <g key={m}>
                 <line x1={sx(day(m))} x2={sx(day(m))} y1={PAD.t} y2={H - PAD.b} stroke="#1e293b" />
@@ -86,17 +86,17 @@ export default function Validation() {
             <line x1={sx(lo)} y1={sy(lo)} x2={sx(hi)} y2={sy(hi)} stroke="#64748b" strokeDasharray="4 4" />
             {pairs.map((p, i) => (
               <circle key={i} cx={sx(day(p.inat))} cy={sy(day(p.ours))} r={4} fill="#22d3ee" fillOpacity={0.55} stroke="#020617" strokeWidth={1}>
-                <title>{`${p.common ?? p.sci} (${p.lat}°, ${p.lon}°): WildNetwork ${fmt(p.ours)}, iNaturalist ${fmt(p.inat)}, difference ${p.diffWeeks} weeks`}</title>
+                <title>{`${p.common ?? p.sci} (${p.lat}°, ${p.lon}°): Wildlife Network ${fmt(p.ours)}, iNaturalist ${fmt(p.inat)}, difference ${p.diffWeeks} weeks`}</title>
               </circle>
             ))}
             <text x={(W + PAD.l) / 2} y={H - 4} textAnchor="middle" fontSize={12} fill="#cbd5e1">Arrival week, iNaturalist observers</text>
-            <text x={14} y={H / 2} textAnchor="middle" fontSize={12} fill="#cbd5e1" transform={`rotate(-90 14 ${H / 2})`}>Arrival week, WildNetwork</text>
+            <text x={14} y={H / 2} textAnchor="middle" fontSize={12} fill="#cbd5e1" transform={`rotate(-90 14 ${H / 2})`}>Arrival week, Wildlife Network</text>
           </svg>
-          <figcaption className="mt-1 text-sm text-slate-500">Each dot is one species in one cell. Dots on the dashed line agree exactly; above it, WildNetwork is later. Hover a dot for the species.</figcaption>
+          <figcaption className="mt-1 text-sm text-slate-500">Each dot is one species in one cell. Dots on the dashed line agree exactly; above it, Wildlife Network is later. Hover a dot for the species.</figcaption>
         </figure>
 
         <figure className="mt-8">
-          <svg viewBox="0 0 640 200" className="w-full h-auto" role="img" aria-label="Histogram of the difference in weeks between WildNetwork and iNaturalist arrival dates">
+          <svg viewBox="0 0 640 200" className="w-full h-auto" role="img" aria-label="Histogram of the difference in weeks between Wildlife Network and iNaturalist arrival dates">
             {binKeys.map((b, i) => {
               const n = bins.get(b) ?? 0, bw = 36, x = 40 + i * 39, h = (n / maxBin) * 140;
               return (
@@ -108,9 +108,9 @@ export default function Validation() {
               );
             })}
             <line x1={36} x2={628} y1={160} y2={160} stroke="#334155" />
-            <text x={332} y={196} textAnchor="middle" fontSize={12} fill="#cbd5e1">WildNetwork minus iNaturalist, weeks</text>
+            <text x={332} y={196} textAnchor="middle" fontSize={12} fill="#cbd5e1">Wildlife Network minus iNaturalist, weeks</text>
           </svg>
-          <figcaption className="mt-1 text-sm text-slate-500">Most arrivals agree to the week or are one week later in WildNetwork.</figcaption>
+          <figcaption className="mt-1 text-sm text-slate-500">Most arrivals agree to the week or are one week later in Wildlife Network.</figcaption>
         </figure>
 
         <H2>Reading it honestly</H2>
@@ -125,7 +125,7 @@ export default function Validation() {
         <H2>Where it fails</H2>
         <H3>Species that are quiet when they arrive</H3>
         <p>
-          Ruby-throated Hummingbird is 9 to 15 weeks late in all six cells tested: WildNetwork puts its arrival in June and July, while people photograph it
+          Ruby-throated Hummingbird is 9 to 15 weeks late in all six cells tested: Wildlife Network puts its arrival in June and July, while people photograph it
           from late March. Hummingbirds make little sound in spring and a great deal around feeders in late summer, so a threshold set relative to the peak
           is crossed far too late. Rufous Hummingbird shows the same miss in one of its three cells and agrees within a week in the other two. Expect this for any species whose calling changes strongly through the season.
         </p>
@@ -137,7 +137,7 @@ export default function Validation() {
 
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-sm">
-            <thead><tr className="text-left text-slate-400 border-b border-slate-800"><th className="py-1.5 pr-3 font-medium">Species</th><th className="py-1.5 pr-3 font-medium">Cell</th><th className="py-1.5 pr-3 font-medium">WildNetwork</th><th className="py-1.5 pr-3 font-medium">iNaturalist</th><th className="py-1.5 font-medium text-right">Weeks</th></tr></thead>
+            <thead><tr className="text-left text-slate-400 border-b border-slate-800"><th className="py-1.5 pr-3 font-medium">Species</th><th className="py-1.5 pr-3 font-medium">Cell</th><th className="py-1.5 pr-3 font-medium">Wildlife Network</th><th className="py-1.5 pr-3 font-medium">iNaturalist</th><th className="py-1.5 font-medium text-right">Weeks</th></tr></thead>
             <tbody className="tabular-nums">
               {worst.map((p, i) => (
                 <tr key={i} className="border-b border-slate-900">

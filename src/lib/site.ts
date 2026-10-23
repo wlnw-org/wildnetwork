@@ -1,5 +1,5 @@
 export const SITE = "https://wlnw.org";
-export const SITE_NAME = "WildNetwork";
+export const SITE_NAME = "Wildlife Network";
 export const SITE_DESCRIPTION =
   "A live, open map of bird, bat and other animal movement, built from thousands of community sensors. See where a species is now, when it arrives, and how it moves through the year.";
 
@@ -7,7 +7,7 @@ export const SITE_DESCRIPTION =
 export const speciesSlug = (scientificName: string) => scientificName.toLowerCase().replace(/\s+/g, "-");
 
 /** Open data releases (GBIF-derived only), newest first. Built by scripts/release.mts and attached to a GitHub release. */
-/** Concept DOI: always resolves to the newest release, so it is the one to cite for "the WildNetwork open data". */
+/** Concept DOI: always resolves to the newest release, so it is the one to cite for "the Wildlife Network open data". */
 export const DATA_CONCEPT_DOI = "10.5281/zenodo.23193453";
 
 export const DATA_RELEASES: { date: string; url: string; zip: string; weeks: string; rows: { weekly: number; effort: number; arrivals: number; datasets: number; taxa?: number }; doi?: string; notes?: string }[] = [

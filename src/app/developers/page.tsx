@@ -6,7 +6,7 @@ import { DATA_RELEASES } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Developers and researchers: the open API",
   alternates: { canonical: "/developers" },
-  description: "How to read WildNetwork's measures from R or Python, push detections from a device, and when to use the citable data releases instead.",
+  description: "How to read Wildlife Network's measures from R or Python, push detections from a device, and when to use the citable data releases instead.",
 };
 
 const SITE = "https://wlnw.org";
