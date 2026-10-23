@@ -81,7 +81,7 @@ export const inaturalist: PullConnector = {
       u.searchParams.set("order_by", "id");
       u.searchParams.set("order", "asc");
       if (idAbove) u.searchParams.set("id_above", String(idAbove));
-      const res = await fetch(u, { headers: { "user-agent": "wildnetwork/0.1 (+https://github.com/arunrajiah)" } });
+      const res = await fetch(u, { headers: { "user-agent": "WildlifeNetwork/0.1 (+https://wlnw.org; https://github.com/wlnw-org/wildnetwork)" } });
       if (!res.ok) throw new Error(`inaturalist ${res.status}`);
       const json = (await res.json()) as { results: Obs[] };
       if (json.results.length === 0) break;

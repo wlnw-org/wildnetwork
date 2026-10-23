@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Arun Rajiah", url: "https://www.arunrajiah.com" }],
   creator: "Arun Rajiah",
   keywords: ["bird migration map", "live bird migration", "wildlife movement", "bat activity", "bird arrival dates", "phenology", "BirdNET", "camera trap", "bioacoustics", "open data"],
-  openGraph: { type: "website", siteName: SITE_NAME, locale: "en_GB", url: "/", title: "Wildlife Network: live map of bird and wildlife migration", description: SITE_DESCRIPTION },
+  openGraph: { type: "website", siteName: SITE_NAME, locale: "en_GB" },
   twitter: { card: "summary_large_image", title: "Wildlife Network: live map of bird and wildlife migration", description: SITE_DESCRIPTION },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
   ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),

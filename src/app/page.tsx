@@ -3,7 +3,11 @@ import Link from "next/link";
 import WorldMap from "@/components/WorldMap";
 import { SITE, SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
 
-export const metadata: Metadata = { alternates: { canonical: "/" } };
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  // Only the home page carries these; other pages would otherwise share the home page's title and URL in link previews.
+  openGraph: { type: "website", url: "/", title: "Wildlife Network: live map of bird and wildlife migration", description: SITE_DESCRIPTION },
+};
 
 const jsonLd = {
   "@context": "https://schema.org",

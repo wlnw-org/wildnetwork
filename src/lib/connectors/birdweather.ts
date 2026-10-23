@@ -84,7 +84,7 @@ export const birdweather: PullConnector = {
       for (let page = 0; page < pass.pages; page++) {
         const res = await fetch(ENDPOINT, {
           method: "POST",
-          headers: { "content-type": "application/json", "user-agent": "wildnetwork/0.1 (+https://github.com/arunrajiah)" },
+          headers: { "content-type": "application/json", "user-agent": "WildlifeNetwork/0.1 (+https://wlnw.org; https://github.com/wlnw-org/wildnetwork)" },
           body: JSON.stringify({ query: QUERY, variables: { from, to, after, first: PAGE, conf: MIN_CONFIDENCE, classes: pass.classes } }),
         });
         if (!res.ok) throw new Error(`birdweather ${res.status}: ${(await res.text()).slice(0, 200)}`);

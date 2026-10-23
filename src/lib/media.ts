@@ -13,7 +13,7 @@ export interface SpeciesMedia {
   iconic: string | null;
 }
 
-const UA = "wildnetwork/0.1 (https://github.com/wlnw-org/wildnetwork)";
+const UA = "WildlifeNetwork/0.1 (+https://wlnw.org; https://github.com/wlnw-org/wildnetwork)";
 
 type Found = Omit<SpeciesMedia, "scientificName" | "iconic">;
 

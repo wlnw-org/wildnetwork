@@ -141,7 +141,7 @@ async function query(q: string, key: string, fetcher: typeof fetch, timeoutMs: n
   const u = `${XC_API}?query=${encodeURIComponent(q)}&per_page=100&key=${encodeURIComponent(key)}`;
   let r: Response;
   try {
-    r = await fetcher(u, { headers: { "user-agent": "wildnetwork/0.1 (https://github.com/wlnw-org/wildnetwork)" }, signal: AbortSignal.timeout(timeoutMs) });
+    r = await fetcher(u, { headers: { "user-agent": "WildlifeNetwork/0.1 (+https://wlnw.org; https://github.com/wlnw-org/wildnetwork)" }, signal: AbortSignal.timeout(timeoutMs) });
   } catch (e) {
     throw new XcError(`xeno-canto unreachable: ${(e as Error).name}`);
   }
