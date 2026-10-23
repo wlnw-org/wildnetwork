@@ -15,9 +15,20 @@ const csp = [
   "form-action 'self'",
 ].join("; ");
 
+const CANONICAL = "https://wlnw.org";
+
 const nextConfig: NextConfig = {
   // Connectors read the sensitive taxa list at runtime.
   outputFileTracingIncludes: { "/api/**": ["./scripts/sensitive_species.txt"] },
+  // The site moved from wildnetwork.arunrajiah.com to wlnw.org on 2026-10-23. Pages on the old host redirect
+  // permanently. /api/ and /agent/ keep answering there, because installed wdx-agents and the BirdEcho app
+  // POST to the old host and most HTTP clients drop the body (or fail) when a POST is redirected.
+  async redirects() {
+    return [
+      { source: "/:path*", has: [{ type: "host", value: "www.wlnw.org" }], destination: `${CANONICAL}/:path*`, permanent: true },
+      { source: "/:path((?!api/|agent/).*)", has: [{ type: "host", value: "wildnetwork.arunrajiah.com" }], destination: `${CANONICAL}/:path`, permanent: true },
+    ];
+  },
   async headers() {
     return [{
       source: "/:path*",

@@ -2,7 +2,7 @@
 
 The WildNetwork code is open source under the GNU AGPL v3 (see LICENSE), and you are welcome to run, study, change and share it under that licence.
 
-The name "WildNetwork" and the WildNetwork logo are not covered by the code licence. They identify the project run by Arun Rajiah at wildnetwork.arunrajiah.com, so that people know which map, data releases and methods they are relying on.
+The name "WildNetwork" and the WildNetwork logo are not covered by the code licence. They identify the project run by Arun Rajiah at wlnw.org, so that people know which map, data releases and methods they are relying on.
 
 ## You may, without asking
 

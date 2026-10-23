@@ -9,7 +9,7 @@ The first screen after install asks what the user has, then sends them down the 
 | Choice | What the app does | Sharing with WildNetwork |
 | --- | --- | --- |
 | **WildNetwork Base** | The "Add a Base" flow below. | Automatic: the Base sends detections itself, or the phone carries them out. |
-| **BirdWeather station** (PUC, or a BirdNET-Pi or BirdNET-Go uploading to BirdWeather) | The existing BirdWeather connect: station id, or a token for a private station. | Already included on WildNetwork as anonymous counts. Offer the optional opt-in at `https://wildnetwork.arunrajiah.com/stations/join` (opens in the browser; the token is entered there, never sent through the app). Say clearly: do not also install wdx-agent, or detections are counted twice. |
+| **BirdWeather station** (PUC, or a BirdNET-Pi or BirdNET-Go uploading to BirdWeather) | The existing BirdWeather connect: station id, or a token for a private station. | Already included on WildNetwork as anonymous counts. Offer the optional opt-in at `https://wlnw.org/stations/join` (opens in the browser; the token is entered there, never sent through the app). Say clearly: do not also install wdx-agent, or detections are counted twice. |
 | **BirdNET-Pi** | The existing local connect (address on the home network). | Ask "Is it also uploading to BirdWeather?" If yes: nothing to do (see above). If no: offer "Share with WildNetwork". Register it with `POST /api/v1/devices` (`model: "birdnet-pi"`, `source: "birdnet-pi"`), then show the one-line wdx-agent install command with the key filled in, to copy into the Pi's terminal. |
 | **BirdNET-Go** | The existing local connect. | Same as BirdNET-Pi, with `model` and `source` `"birdnet-go"`. |
 | **Recorder without internet** (AudioMoth, Song Meter) | Explain that SD card import is coming in a later release; let them register the device now. | `POST /api/v1/devices` with `model: "audiomoth"` (or `"song-meter"`) and `source: "audiomoth"`. |
@@ -63,7 +63,7 @@ No endpoint ever returns the API key.
 
 | Request | What it does |
 | --- | --- |
-| `POST https://wildnetwork.arunrajiah.com/api/v1/devices` | Body `{name, model: "wildnetwork-base", hardwareId, contact?}`. Returns `{deviceId, apiKey, source: "wildnetwork-base", eventsEndpoint, statusEndpoint}`. 5 per IP per day. |
+| `POST https://wlnw.org/api/v1/devices` | Body `{name, model: "wildnetwork-base", hardwareId, contact?}`. Returns `{deviceId, apiKey, source: "wildnetwork-base", eventsEndpoint, statusEndpoint}`. 5 per IP per day. |
 | `POST /api/v1/events` | Header `Authorization: Bearer <apiKey>`. NDJSON WDX events; used for data pickup. |
 | `POST /api/v1/devices/status` | A health report; the Base's wdx-agent sends these itself. |
 | `GET /api/v1/devices` | Registered devices with their latest health report (no hardware ids, no locations). |

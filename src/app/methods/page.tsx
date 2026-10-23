@@ -304,7 +304,7 @@ export default function Methods() {
         </p>
         <p className="mt-3">
           Suggested citation: Rajiah, A. (2026). WildNetwork: an open map of wildlife movement from community sensors. Methods version {METHODS_VERSION}.
-          https://wildnetwork.arunrajiah.com/methods
+          https://wlnw.org/methods
         </p>
         <p className="mt-3">
           Found a result that is wrong for a species you know? That is the most useful report we can get. Please{" "}

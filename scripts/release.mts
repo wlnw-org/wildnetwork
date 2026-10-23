@@ -82,7 +82,7 @@ const datasets = await csv("datasets.csv", ["dataset_key", "title", "doi", "data
 
 const doc = `# WildNetwork open data release ${RELEASE_NO} (${today})
 
-Weekly records of birds, bats, amphibians and insects on a 5 degree grid, with observation effort and seasonal arrival dates, from openly licensed records published through GBIF.org. Made by WildNetwork (https://wildnetwork.arunrajiah.com), methods version ${METHODS_VERSION}.
+Weekly records of birds, bats, amphibians and insects on a 5 degree grid, with observation effort and seasonal arrival dates, from openly licensed records published through GBIF.org. Made by WildNetwork (https://wlnw.org), methods version ${METHODS_VERSION}.
 
 Weeks covered: ${range.first} to ${range.last} (weeks start on Monday). Licence: CC BY 4.0. Please cite this release and the GBIF datasets listed in datasets.csv.
 
@@ -108,7 +108,7 @@ Weeks covered: ${range.first} to ${range.last} (weeks start on Monday). Licence:
 All records of a class in a cell and week, the denominator for effort correction. A species' share of its class (records / effort records) removes most of the difference between busy and quiet places. WildNetwork treats a cell-week as watched by observers at ${OBSERVED.MIN_EFFORT_WEEK} bird records (${OBSERVED.SMALL_MIN_EFFORT_WEEK} for other classes).
 
 ### arrivals.csv (${arrivals.toLocaleString("en-GB")} rows)
-Seasonal timing per species and cell, from this data alone. arrival_low and arrival_high give a 90% interval for the arrival week, from re-detecting it on weekly counts redrawn 40 times with the series' own overdispersion (gamma-Poisson); arrival_support is the share of those redraws that found a season at all (below 0.5, treat the arrival as weak). arrival_week is the first week the species reaches a tenth of its seasonal peak share after at least six weeks below it, in a cell watched in the weeks before. peak_per_1000 is the peak share per 1,000 records of its class. Full definition and known limits: https://wildnetwork.arunrajiah.com/methods
+Seasonal timing per species and cell, from this data alone. arrival_low and arrival_high give a 90% interval for the arrival week, from re-detecting it on weekly counts redrawn 40 times with the series' own overdispersion (gamma-Poisson); arrival_support is the share of those redraws that found a season at all (below 0.5, treat the arrival as weak). arrival_week is the first week the species reaches a tenth of its seasonal peak share after at least six weeks below it, in a cell watched in the weeks before. peak_per_1000 is the peak share per 1,000 records of its class. Full definition and known limits: https://wlnw.org/methods
 
 ### taxa.csv (${taxa.toLocaleString("en-GB")} rows)
 One row per species in this release: GBIF species key, name, English name, class, total records, cells and weeks with records.
@@ -119,7 +119,7 @@ To join other data (for example BirdNET or eBird names, which follow other taxon
 The GBIF datasets whose records fall in the classes and weeks above, with DOIs, the dataset's own licence, and how many of its records were used (only records individually licensed CC0 or CC BY 4.0 are used, even where the dataset as a whole carries a stricter licence such as CC BY-NC). Cite them as GBIF asks: https://www.gbif.org/citation-guidelines
 
 ## How this release was made
-- Code: https://github.com/wlnw-org/wildnetwork at commit ${COMMIT}, script scripts/release.mts; methods version ${METHODS_VERSION} (definitions at https://wildnetwork.arunrajiah.com/methods).
+- Code: https://github.com/wlnw-org/wildnetwork at commit ${COMMIT}, script scripts/release.mts; methods version ${METHODS_VERSION} (definitions at https://wlnw.org/methods).
 - Weekly counts: GBIF occurrence search API (https://api.gbif.org/v1/occurrence/search), one facet query per 5 degree cell and week, facet=speciesKey, with license=CC0_1_0 and CC_BY_4_0, hasCoordinate=true, hasGeospatialIssue=false, occurrenceStatus=PRESENT, basisOfRecord in HUMAN_OBSERVATION, MACHINE_OBSERVATION, OBSERVATION, OCCURRENCE, and taxonKey 212 (Aves), 734 (Chiroptera), 131 (Amphibia), 216 (Insecta). Cells queried: every 5 degree cell with at least 10 such bird records in the 90 days before the cell list was built.
 - Effort: the same counts summed over all species of a class per cell and week.
 - Arrivals: computed from these counts alone by computeSeasons("gbif") in src/lib/phenology.ts.
@@ -129,7 +129,7 @@ The GBIF datasets whose records fall in the classes and weeks above, with DOIs, 
 Counts are records, not animals: they follow where and when people look and report. Coverage is uneven (strongest in northern and western Europe and North America); use effort.csv to judge it. GBIF receives records a week or two after they are made, so the most recent weeks are under-counted and are left out of this release.
 
 ## Citation
-Rajiah, A. (${today.slice(0, 4)}). WildNetwork open data release ${today} [Data set]. https://wildnetwork.arunrajiah.com/data
+Rajiah, A. (${today.slice(0, 4)}). WildNetwork open data release ${today} [Data set]. https://wlnw.org/data
 `;
 writeFileSync(`${dir}/README.md`, doc);
 writeFileSync(`${dir}/CITATION.cff`, `cff-version: 1.2.0
@@ -143,7 +143,7 @@ authors:
 date-released: ${today}
 version: "${RELEASE_NO}"
 license: CC-BY-4.0
-url: "https://wildnetwork.arunrajiah.com/data"
+url: "https://wlnw.org/data"
 repository-code: "https://github.com/wlnw-org/wildnetwork"
 `);
 execSync(`cd release && rm -f ${name}.zip && zip -qr ${name}.zip ${name}`);

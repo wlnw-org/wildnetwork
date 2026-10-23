@@ -14,7 +14,7 @@ export default function Image() {
         </div>
         <div style={{ fontSize: 120, fontWeight: 700, marginTop: 30, letterSpacing: -3 }}>WildNetwork</div>
         <div style={{ fontSize: 44, marginTop: 20, color: "#cbd5e1", lineHeight: 1.3 }}>Where birds, bats and other animals are now, and where they are going.</div>
-        <div style={{ fontSize: 30, marginTop: 50, color: "#64748b" }}>wildnetwork.arunrajiah.com</div>
+        <div style={{ fontSize: 30, marginTop: 50, color: "#64748b" }}>wlnw.org</div>
       </div>
     ),
     size,

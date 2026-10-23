@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "How to read WildNetwork's measures from R or Python, push detections from a device, and when to use the citable data releases instead.",
 };
 
-const SITE = "https://wildnetwork.arunrajiah.com";
+const SITE = "https://wlnw.org";
 
 const PY = `import requests, pandas as pd
 

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "How to send detections from a bird station, bat detector or camera trap to WildNetwork, whether you already have a device or want to set one up.",
 };
 
-const SITE = "https://wildnetwork.arunrajiah.com";
+const SITE = "https://wlnw.org";
 const AGENT = "https://github.com/arunrajiah/wdx-agent";
 
 export default function Contribute() {

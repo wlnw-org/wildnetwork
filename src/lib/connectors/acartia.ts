@@ -11,7 +11,7 @@ import type { PullConnector } from "./types";
  * Not kept: submitter_did, signature, witness usernames, photo_url, and the free-text comments (they name observers).
  */
 export const API = "https://acartia.io/api/v1/sightings/current";
-const UA = "WildNetwork/0.1 (+https://wildnetwork.arunrajiah.com; https://github.com/wlnw-org/wildnetwork)";
+const UA = "WildNetwork/0.1 (+https://wlnw.org; https://github.com/wlnw-org/wildnetwork)";
 
 /** Editable: Acartia's common names (case-insensitive) to scientific names. Unknown names are kept as "unmapped". */
 export const SPECIES: Record<string, string> = {

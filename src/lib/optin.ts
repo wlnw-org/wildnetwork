@@ -8,7 +8,7 @@ import { sql } from "@/lib/db";
 
 const REST = "https://app.birdweather.com/api/v1";
 const GQL = "https://app.birdweather.com/graphql";
-const UA = "wildnetwork/0.1 (https://wildnetwork.arunrajiah.com; arunrajiah@gmail.com)";
+const UA = "wildnetwork/0.1 (https://wlnw.org; arunrajiah@gmail.com)";
 
 const key = () => createHash("sha256").update(process.env.OPTIN_KEY ?? `optin:${process.env.CRON_SECRET ?? ""}`).digest();
 

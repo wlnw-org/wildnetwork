@@ -4,7 +4,7 @@
 
 **A live, open map of where birds and animals are, and where they are going.**
 
-Live site: **https://wildnetwork.arunrajiah.com**
+Live site: **https://wlnw.org**
 
 WildNetwork gathers wildlife detections from acoustic stations, camera traps and community observations into one open event stream, then looks for movement: species whose range centre is shifting, whose numbers are surging or fading, and who has turned up somewhere new. Weather is matched to each species day by day.
 
@@ -15,7 +15,7 @@ It is free, open source, and built so that anyone with a Raspberry Pi can contri
 ## Contents
 
 - [What you can do with it](#what-you-can-do-with-it)
-- [Methods and limits](https://wildnetwork.arunrajiah.com/methods) and [validation](https://wildnetwork.arunrajiah.com/validation)
+- [Methods and limits](https://wlnw.org/methods) and [validation](https://wlnw.org/validation)
 - [Contribute data from your own device](#contribute-data-from-your-own-device)
 - [How it works](#how-it-works)
 - [Open API](#open-api)
@@ -40,14 +40,14 @@ It is free, open source, and built so that anyone with a Raspberry Pi can contri
 
 ## Contribute data from your own device
 
-The step by step guide, for people who already have a device and for people starting from nothing, is at **[wildnetwork.arunrajiah.com/contribute](https://wildnetwork.arunrajiah.com/contribute)**. Stations that already report to BirdWeather are included automatically and should not install the agent as well.
+The step by step guide, for people who already have a device and for people starting from nothing, is at **[wlnw.org/contribute](https://wlnw.org/contribute)**. Stations that already report to BirdWeather are included automatically and should not install the agent as well.
 
 Building a new station? The open **[WildNetwork Base](https://github.com/arunrajiah/wildnetwork-base)** (Raspberry Pi, microphone, solar) identifies birds on the device and sends to WildNetwork by itself; flash its SD card image (beta) onto a Raspberry Pi and set it up from a phone or a browser.
 
 If you run BirdNET-Pi or BirdNET-Go on a Raspberry Pi:
 
 ```bash
-curl -fsSL https://wildnetwork.arunrajiah.com/agent/install.sh | bash
+curl -fsSL https://wlnw.org/agent/install.sh | bash
 ```
 
 That installs **[wdx-agent](https://github.com/arunrajiah/wdx-agent)**, a single dependency free Python file (Apache 2.0). It finds your detection database, registers a device key, and starts sending. Your location is rounded to about 1 km on the device before anything is sent.
@@ -70,11 +70,11 @@ Hardware lists, configuration, privacy settings and troubleshooting are in the [
 Get a key, then POST [WDX 0.1](https://github.com/arunrajiah/wildlife-detection-exchange) events as one JSON object, a JSON array, or NDJSON:
 
 ```bash
-curl -X POST https://wildnetwork.arunrajiah.com/api/v1/register \
+curl -X POST https://wlnw.org/api/v1/register \
   -H 'content-type: application/json' \
   -d '{"name":"my-station","source":"other"}'
 
-curl -X POST https://wildnetwork.arunrajiah.com/api/v1/events \
+curl -X POST https://wlnw.org/api/v1/events \
   -H "Authorization: Bearer wn_..." \
   -H "content-type: application/x-ndjson" \
   --data-binary @events.wdx.ndjson
@@ -102,7 +102,7 @@ Keys are tied to one source system. Events are validated against the WDX schema,
 
 - **One format.** Every record, whatever its origin, becomes a WDX event. Connectors never write to tables directly.
 - **Live window plus rollups.** Raw events are kept for the live map. History is kept as counts per species, per 5 degree cell, per day and per week, which is what movement analysis needs and stays small.
-- **Movement is measured, not drawn, and corrected for effort.** Every measure uses a species' share of all detections in a cell, never its raw count, so more stations do not look like more birds. The definitions, thresholds and known limits are published at **[wildnetwork.arunrajiah.com/methods](https://wildnetwork.arunrajiah.com/methods)**.
+- **Movement is measured, not drawn, and corrected for effort.** Every measure uses a species' share of all detections in a cell, never its raw count, so more stations do not look like more birds. The definitions, thresholds and known limits are published at **[wlnw.org/methods](https://wlnw.org/methods)**.
 
 ## Open API
 
@@ -115,7 +115,7 @@ All read endpoints are public and need no key.
 | `GET /api/v1/species?hours=24&q=robin` | Species ranked by detections |
 | `GET /api/v1/species/{scientific name}` | 30 day series, range centre, weather |
 | `GET /api/v1/species/{scientific name}/movement` | Weekly frames for the past year |
-| `GET /api/v1/arrivals?species=&lat=&lon=&format=csv` | Arrival, peak and departure week per species and cell ([validated](https://wildnetwork.arunrajiah.com/validation)) |
+| `GET /api/v1/arrivals?species=&lat=&lon=&format=csv` | Arrival, peak and departure week per species and cell ([validated](https://wlnw.org/validation)) |
 | `?group=bat` on events, species, insights, arrivals | Limit to one class: `avian`, `bat`, `amphibian`, `insect`, `mammal` |
 | `GET /api/v1/insights` | Moving, surging, fading, arriving (effort corrected, with the methods version) |
 | `GET /api/v1/media?names=A,B` | Species photo and description with attribution |
@@ -162,7 +162,7 @@ The public site runs this way, and it fits in free tiers to start.
 5. Deploy the app to Vercel (`vercel --prod`) with `DATABASE_URL` and `CRON_SECRET` set.
 6. Schedule the pull and rollup endpoints (below). Neon scales to zero when idle, so the first request after a quiet period takes about a second.
 
-**Ask box (optional).** Set `ASK_ENABLED=true` to switch on plain language questions, answered by an AI model that can only read this site's own data through four lookups (see [methods](https://wildnetwork.arunrajiah.com/methods#ask)). The free route needs no payment card: create a key in [Google AI Studio](https://aistudio.google.com/apikey), leave billing off, and store it as `GOOGLE_GENERATIVE_AI_API_KEY` in your host's secret store (`vercel env add GOOGLE_GENERATIVE_AI_API_KEY production`), never in a file. Without that key the app uses the [Vercel AI Gateway](https://vercel.com/docs/ai-gateway), which needs no key on Vercel but does need a card on the account.
+**Ask box (optional).** Set `ASK_ENABLED=true` to switch on plain language questions, answered by an AI model that can only read this site's own data through four lookups (see [methods](https://wlnw.org/methods#ask)). The free route needs no payment card: create a key in [Google AI Studio](https://aistudio.google.com/apikey), leave billing off, and store it as `GOOGLE_GENERATIVE_AI_API_KEY` in your host's secret store (`vercel env add GOOGLE_GENERATIVE_AI_API_KEY production`), never in a file. Without that key the app uses the [Vercel AI Gateway](https://vercel.com/docs/ai-gateway), which needs no key on Vercel but does need a card on the account.
 
 **Analytics (optional).** Set `NEXT_PUBLIC_GA_ID` to a Google Analytics 4 measurement id. Visitors are asked first, and nothing is loaded from Google unless they allow it. Leave it unset for no analytics at all.
 
@@ -243,7 +243,7 @@ Eight open source projects for listening to, identifying and mapping wildlife. T
 
 | I want to | Use | What it is |
 |---|---|---|
-| See where birds and wildlife are moving, or download the data | [WildNetwork](https://github.com/arunrajiah/wildnetwork) (this project) | The live map and open data: [wildnetwork.arunrajiah.com](https://wildnetwork.arunrajiah.com) |
+| See where birds and wildlife are moving, or download the data | [WildNetwork](https://github.com/arunrajiah/wildnetwork) (this project) | The live map and open data: [wlnw.org](https://wlnw.org) |
 | Build a monitoring station from open hardware | [WildNetwork Base](https://github.com/arunrajiah/wildnetwork-base) | Software and a ready-to-flash SD card image (beta) for the open WildNetwork station (Raspberry Pi, microphone, solar) |
 | Share detections from a BirdNET-Pi, BirdNET-Go, camera trap or bat detector you already have | [wdx-agent](https://github.com/arunrajiah/wdx-agent) | One small program that sends your station's detections. BirdWeather stations are already included and need nothing |
 | Follow your own station on your phone | [BirdEcho](https://github.com/arunrajiah/birdecho) | Android app for BirdNET-Pi, BirdNET-Go and BirdWeather stations |

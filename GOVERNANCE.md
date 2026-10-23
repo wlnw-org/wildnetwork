@@ -6,7 +6,7 @@ WildNetwork is an open platform for seeing how birds and animals move across the
 
 ## Roles
 
-- **Maintainer:** [Arun Rajiah](https://www.arunrajiah.com) (@arunrajiah). Sets direction, reviews and merges, operates the public site at wildnetwork.arunrajiah.com, and has the final say when agreement cannot be reached.
+- **Maintainer:** [Arun Rajiah](https://www.arunrajiah.com) (@arunrajiah). Sets direction, reviews and merges, operates the public site at wlnw.org, and has the final say when agreement cannot be reached.
 - **Committers:** contributors invited by the maintainer after a sustained record of good work. They can review and merge.
 - **Contributors:** everyone who opens an issue, a pull request, or runs a device that shares data.
 - **Science advisers:** ecologists and data partners who review how movement is measured and presented. Their review is sought on any change to the insight methods.

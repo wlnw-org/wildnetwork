@@ -13,7 +13,7 @@ If the map shows a record that could put an animal or a person at risk (a nest o
 
 ## In scope
 
-- The public site and API at wildnetwork.arunrajiah.com
+- The public site and API at wlnw.org
 - Device key registration and the ingest endpoint
 - The installer served at `/agent/install.sh`
 
