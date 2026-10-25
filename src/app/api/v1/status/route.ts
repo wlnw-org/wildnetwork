@@ -8,6 +8,7 @@ import { BIRDWEATHER_PAUSED } from "@/lib/sources";
 import { refreshGbifWeekly } from "@/lib/gbif";
 import { refreshSourceEffort } from "@/lib/rollups";
 import { refreshOptins } from "@/lib/optin";
+import { weeklyReindex } from "@/lib/storage";
 
 export const maxDuration = 300;
 
@@ -55,6 +56,9 @@ export async function GET() {
       ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '6 hours'
       RETURNING connector`;
     if (gb.length) { await refreshGbifWeekly(3, 200_000); await refreshSourceEffort("28"); }
+    // Index bloat from all-day upserts is most of the database's growth: rebuilt online once a week (src/lib/storage.ts).
+    const rx = await weeklyReindex().catch(() => null);
+    if (rx) console.log(`weekly reindex: ${rx.beforeMb} MB -> ${rx.afterMb} MB`);
   });
   // Opted-in BirdWeather stations: their own daily counts, every 30 minutes, in their own background task.
   if (BACKGROUND_WRITES) after(async () => {

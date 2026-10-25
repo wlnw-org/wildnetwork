@@ -1,4 +1,5 @@
 import { sql } from "@/lib/db";
+import { emergencyTrim } from "@/lib/storage";
 import { ingestEvents, upsertDeployments } from "@/lib/wdx/ingest";
 import { validateWdx } from "@/lib/wdx/validate";
 import { acartia } from "./acartia";
@@ -79,6 +80,7 @@ export async function prune(): Promise<void> {
   // Stations that stop reporting (removed, or made private) are forgotten after 30 days.
   await sql`DELETE FROM deployments d WHERE d.source_system = 'birdweather' AND d.last_seen < now() - interval '30 days'
     AND NOT EXISTS (SELECT 1 FROM events e WHERE e.deployment_id = d.id)`;
+  await emergencyTrim();
 }
 
 export async function pullAll(only?: string | null): Promise<RunResult[]> {

@@ -1,4 +1,5 @@
 import { sql } from "@/lib/db";
+import { STORAGE } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export async function GET() {
     const body = {
       ok: !stale,
       checkedAt: new Date().toISOString(),
-      database: { ok: true, ms, sizeMb: row.size_mb },
+      database: { ok: true, ms, sizeMb: row.size_mb, capMb: STORAGE.CAP_MB, storageWarning: row.size_mb >= STORAGE.WARN_MB },
       lastPullAt: row.last_pull ? new Date(row.last_pull).toISOString() : null,
       lastEventAt: row.last_event ? new Date(row.last_event).toISOString() : null,
       stale,

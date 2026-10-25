@@ -52,3 +52,24 @@ jobs:
         run: |
           n=$(gh issue list --repo "$GITHUB_REPOSITORY" --label outage --state open --json number --jq '.[0].number')
           [ -n "$n" ] && gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "All services responded at $(date -u +'%Y-%m-%d %H:%M UTC')." || true
+      - name: Warn when the database nears its storage cap
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          h=$(curl -s --max-time 30 https://wlnw.org/api/v1/health || echo '{}')
+          size=$(echo "$h" | jq -r '.database.sizeMb // empty')
+          cap=$(echo "$h" | jq -r '.database.capMb // 1024')
+          [ -z "$size" ] && { echo "no size in health response"; exit 0; }
+          echo "database ${size} MB of ${cap} MB"
+          n=$(gh issue list --repo "$GITHUB_REPOSITORY" --label storage --state open --json number --jq '.[0].number')
+          if [ "$size" -ge 850 ]; then
+            body="Database is ${size} MB of ${cap} MB ($(date -u +'%Y-%m-%d %H:%M UTC')). Above the cap, writes fail. Above 950 MB the site shortens its live windows by itself (src/lib/storage.ts); see CLAUDE.md STORAGE BUDGET for what else can be trimmed."
+            if [ -z "$n" ]; then
+              gh label create storage --repo "$GITHUB_REPOSITORY" --color fbca04 --description "Database storage" 2>/dev/null || true
+              gh issue create --repo "$GITHUB_REPOSITORY" --label storage --title "Database storage above 850 MB" --body "$body"
+            else
+              gh issue comment "$n" --repo "$GITHUB_REPOSITORY" --body "$body"
+            fi
+          elif [ -n "$n" ] && [ "$size" -lt 800 ]; then
+            gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "Database back to ${size} MB."
+          fi

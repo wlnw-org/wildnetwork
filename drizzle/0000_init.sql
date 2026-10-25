@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS deployments (
   first_seen         timestamptz NOT NULL DEFAULT now(),
   last_seen          timestamptz NOT NULL DEFAULT now()
 );
-CREATE INDEX IF NOT EXISTS deployments_geom_idx ON deployments USING gist (geom);
 CREATE INDEX IF NOT EXISTS deployments_source_idx ON deployments (source_system);
 
 -- One WDX detection event. Columns are denormalised from the WDX JSON for fast map queries; raw keeps the full event.
@@ -46,7 +45,6 @@ CREATE TABLE IF NOT EXISTS events (
 );
 CREATE INDEX IF NOT EXISTS events_start_idx ON events (event_start DESC);
 CREATE INDEX IF NOT EXISTS events_species_start_idx ON events (scientific_name, event_start DESC);
-CREATE INDEX IF NOT EXISTS events_geom_idx ON events USING gist (geom);
 CREATE INDEX IF NOT EXISTS events_source_idx ON events (source_system, event_start DESC);
 
 -- API keys for producers pushing WDX events.
