@@ -17,6 +17,7 @@ export const DATA_RELEASES: { date: string; url: string; zip: string; weeks: str
     zip: "https://github.com/wlnw-org/wildnetwork/releases/download/data-2026-10-25/wildnetwork-open-2026-10-25.zip",
     weeks: "20 Oct 2025 to 5 Oct 2026",
     rows: { weekly: 364108, effort: 16345, arrivals: 4716, datasets: 287, taxa: 17069 },
+    doi: "10.5281/zenodo.23649030",
     notes: "Release 3: a year up to 5 October 2026, arrival weeks with 90% intervals and how often a season was found (arrival_low, arrival_high, arrival_support), methods 0.12, published as Wildlife Network at wlnw.org.",
   },
   {
