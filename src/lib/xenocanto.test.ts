@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { areaFor, buildQuery, creditLine, fetchClips, licenseInfo, parseLength, parseResponse, rankClips, XcError, type XcClip } from "./xenocanto";
+import { areaFor, buildQuery, creditLine, fetchClips, licenseInfo, parseLength, parseNear, parseResponse, pickNear, rankClips, XcError, type XcClip } from "./xenocanto";
 
 const rec = (o: Record<string, unknown> = {}) => ({
   id: "100", gen: "Eudynamys", sp: "scolopaceus", status: "identified", rec: "A. Recordist", cnt: "India", loc: "Guindy, Chennai",
@@ -146,4 +146,52 @@ test("fetchClips does not call XC for classes it does not cover", async () => {
   const { f, urls } = mockXc(page(), page());
   assert.deepEqual(await fetchClips("Foo bar", "other", "asia", "k", f), []);
   assert.equal(urls.length, 0);
+});
+
+test("parseResponse reads recording coordinates as numbers, accepting lon or lng and dropping bad values", () => {
+  const [a, b, c] = parseResponse(page(
+    rec({ id: "1", lat: "13.0067", lon: "80.2206" }),
+    rec({ id: "2", lat: 14.5, lng: "121.0" }),
+    rec({ id: "3", lat: "", lon: "999" }),
+  ), NAME);
+  assert.deepEqual([a.lat, a.lon], [13.0067, 80.2206]);
+  assert.deepEqual([b.lat, b.lon], [14.5, 121]);
+  assert.deepEqual([c.lat, c.lon], [null, null]);
+});
+
+test("parseNear rounds to whole degrees and rejects anything else", () => {
+  assert.deepEqual(parseNear("13.08,80.27"), { lat: 13, lon: 80 });
+  assert.deepEqual(parseNear("-33.9,151.2"), { lat: -34, lon: 151 });
+  for (const bad of [null, "", "13", "91,0", "0,181", "13,80;drop", "abc,def"]) assert.equal(parseNear(bad), null);
+});
+
+/** A pooled clip with a country and coordinates, already in quality order. */
+const at = (id: string, country: string, lat: number | null, lon: number | null, recordist = `R${id}`): XcClip =>
+  ({ ...clip(id, "A", "song", 30), country, lat, lon, recordist });
+
+test("pickNear puts the country of the nearest recording first (Chennai gets India, not the Philippines)", () => {
+  const pool = [at("ph1", "Philippines", 14.6, 121.0), at("ph2", "Philippines", 15.0, 120.5), at("in1", "India", 12.97, 77.59), at("in2", "India", 19.07, 72.88)];
+  assert.deepEqual(pickNear(pool, { lat: 13, lon: 80 }).map((c) => c.id), ["in1", "in2"]);
+  assert.deepEqual(pickNear(pool, { lat: 15, lon: 121 }).map((c) => c.id), ["ph1", "ph2"]);
+});
+
+test("pickNear tops up from other countries and keeps pool order without a point or coordinates", () => {
+  const pool = [at("ph1", "Philippines", 14.6, 121.0), at("in1", "India", 12.97, 77.59)];
+  assert.deepEqual(pickNear(pool, { lat: 13, lon: 80 }).map((c) => c.id), ["in1", "ph1"]);
+  assert.deepEqual(pickNear(pool, null).map((c) => c.id), ["ph1", "in1"]);
+  const noCoords = [at("a", "Philippines", null, null), at("b", "India", null, null)];
+  assert.deepEqual(pickNear(noCoords, { lat: 13, lon: 80 }).map((c) => c.id), ["a", "b"]);
+  assert.deepEqual(pickNear([], { lat: 13, lon: 80 }), []);
+});
+
+test("pickNear still prefers two different recordists within the country", () => {
+  const pool = [at("in1", "India", 13, 80, "Same"), at("in2", "India", 13.1, 80.1, "Same"), at("in3", "India", 12, 77, "Other")];
+  assert.deepEqual(pickNear(pool, { lat: 13, lon: 80 }).map((c) => c.id), ["in1", "in3"]);
+});
+
+test("fetchClips with a pool size makes no extra XC call when the area already has two", async () => {
+  const { f, urls } = mockXc(page(rec({ id: "1" }), rec({ id: "2" }), rec({ id: "3", rec: "B" })), page());
+  const pool = await fetchClips(NAME, "avian", "asia", "secret", f, 4000, 24);
+  assert.deepEqual(pool.map((c) => c.id).sort(), ["1", "2", "3"]);
+  assert.equal(urls.length, 1);
 });

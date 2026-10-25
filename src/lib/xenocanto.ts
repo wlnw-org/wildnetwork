@@ -25,11 +25,15 @@ export interface XcClip {
   location: string;
   country: string;
   license: { name: string; url: string };
+  /** Where the recording was made, from XC. Used only on our server to rank by country; never sent to XC. */
+  lat?: number | null;
+  lon?: number | null;
 }
 
 interface XcRecording {
   id?: string; gen?: string; sp?: string; en?: string; rec?: string; cnt?: string; loc?: string; type?: string;
   q?: string; length?: string; file?: string | null; url?: string; lic?: string; status?: string;
+  lat?: string | number | null; lon?: string | number | null; lng?: string | number | null;
   sono?: { small?: string; med?: string; large?: string; full?: string };
   _meta?: { redacted_fields?: Record<string, string> };
 }
@@ -79,6 +83,12 @@ export function creditLine(c: Pick<XcClip, "recordist" | "location" | "country">
 }
 
 /** Recordings XC returned that we can play: identified, not redacted, with an https audio URL and a known CC licence. */
+/** XC sends coordinates as strings ("lat": "42.8373"); the docs also name the longitude "lng". */
+function coord(v: string | number | null | undefined, max: number): number | null {
+  const n = typeof v === "number" ? v : v == null || v === "" ? NaN : Number(v);
+  return Number.isFinite(n) && Math.abs(n) <= max ? n : null;
+}
+
 export function parseResponse(json: unknown, scientificName: string): XcClip[] {
   const recs = (json as { recordings?: XcRecording[] } | null)?.recordings;
   if (!Array.isArray(recs)) return [];
@@ -97,6 +107,7 @@ export function parseResponse(json: unknown, scientificName: string): XcClip[] {
       sonogram: /^https:\/\/xeno-canto\.org\//.test(sono) ? sono : null,
       type: (r.type ?? "").trim(), quality: (r.q ?? "").trim().toUpperCase(), seconds: parseLength(r.length),
       recordist: (r.rec ?? "").trim(), location: (r.loc ?? "").trim(), country: (r.cnt ?? "").trim(), license,
+      lat: coord(r.lat, 90), lon: coord(r.lon ?? r.lng, 180),
     });
   }
   return out;
@@ -154,15 +165,51 @@ async function query(q: string, key: string, fetcher: typeof fetch, timeoutMs: n
  * Up to MAX_CLIPS clips for a species: the best from the given area first, topped up from anywhere.
  * Returns [] when XC has nothing (safe to cache); throws XcError when XC failed (do not cache).
  */
-export async function fetchClips(scientificName: string, group: string | null, area: XcArea | null, key: string, fetcher: typeof fetch = fetch, timeoutMs = 4000): Promise<XcClip[]> {
+export async function fetchClips(scientificName: string, group: string | null, area: XcArea | null, key: string, fetcher: typeof fetch = fetch, timeoutMs = 4000, limit = MAX_CLIPS): Promise<XcClip[]> {
   const local = area ? buildQuery(scientificName, group, area) : null;
   const any = buildQuery(scientificName, group, null);
   if (!any) return [];
   let picked: XcClip[] = [];
-  if (local) picked = rankClips(parseResponse(await query(local, key, fetcher, timeoutMs), scientificName), group);
+  if (local) picked = rankClips(parseResponse(await query(local, key, fetcher, timeoutMs), scientificName), group, limit);
   if (picked.length < MAX_CLIPS) {
-    const more = rankClips(parseResponse(await query(any, key, fetcher, timeoutMs), scientificName), group, MAX_CLIPS + picked.length);
-    picked = [...picked, ...more.filter((c) => !picked.some((p) => p.id === c.id))].slice(0, MAX_CLIPS);
+    const more = rankClips(parseResponse(await query(any, key, fetcher, timeoutMs), scientificName), group, limit + picked.length);
+    picked = [...picked, ...more.filter((c) => !picked.some((p) => p.id === c.id))].slice(0, limit);
   }
   return picked;
+}
+
+/** Candidates kept per species and area, so the country choice below needs no extra XC request. */
+export const POOL_SIZE = 24;
+
+/** A point rounded to whole degrees (about 100 km), the most the browser ever sends for this. */
+export interface Near { lat: number; lon: number }
+
+export function parseNear(s: string | null | undefined): Near | null {
+  const m = /^(-?\d{1,2}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)$/.exec((s ?? "").trim());
+  if (!m) return null;
+  const lat = Math.round(Number(m[1])), lon = Math.round(Number(m[2]));
+  return Math.abs(lat) <= 90 && Math.abs(lon) <= 180 ? { lat, lon } : null;
+}
+
+/**
+ * The final clips for a viewer near a point. The country of the nearest pooled recording counts as "the viewer's
+ * country", and recordings from it come first, keeping the pool's quality order; then the rest. Without a point,
+ * or with no coordinates in the pool, the pool order stands. Two clips still prefer two different recordists.
+ */
+export function pickNear(pool: XcClip[], near: Near | null, limit = MAX_CLIPS): XcClip[] {
+  let ordered = pool;
+  if (near) {
+    const dist = (c: XcClip) => {
+      if (c.lat == null || c.lon == null) return Infinity;
+      const dx = (c.lon - near.lon) * Math.cos(((c.lat + near.lat) / 2) * Math.PI / 180), dy = c.lat - near.lat;
+      return dx * dx + dy * dy;
+    };
+    const nearest = pool.reduce<XcClip | null>((b, c) => (dist(c) < (b ? dist(b) : Infinity) ? c : b), null);
+    const home = nearest?.country;
+    if (home) ordered = [...pool.filter((c) => c.country === home), ...pool.filter((c) => c.country !== home)];
+  }
+  const out: XcClip[] = [];
+  for (const c of ordered) if (out.length < limit && !out.some((o) => o.recordist === c.recordist)) out.push(c);
+  for (const c of ordered) if (out.length < limit && !out.includes(c)) out.push(c);
+  return out;
 }

@@ -13,19 +13,19 @@ function soloPlay(e: React.SyntheticEvent<HTMLAudioElement>) {
  * Up to two reference recordings from xeno-canto, streamed from xeno-canto itself (preload="none": nothing loads until play).
  * Hidden while loading, when there are none, and when the proxy or xeno-canto fails.
  */
-export default function ListenBlock({ name, area }: { name: string; area: XcArea | null }) {
+export default function ListenBlock({ name, area, near }: { name: string; area: XcArea | null; near?: string | null }) {
   const [res, setRes] = useState<{ key: string; clips: XcClip[] } | null>(null);
   // Recordists can withdraw recordings at any time; a clip whose audio no longer loads is dropped until the cache refreshes.
   const [gone, setGone] = useState<string[]>([]);
-  const key = `${name}|${area ?? ""}`;
+  const key = `${name}|${area ?? ""}|${near ?? ""}`;
   useEffect(() => {
     let cancelled = false;
-    const q = new URLSearchParams({ species: name, ...(area ? { area } : {}) });
+    const q = new URLSearchParams({ species: name, ...(area ? { area } : {}), ...(near ? { near } : {}) });
     fetch(`/api/v1/recordings?${q}`).then((r) => (r.ok ? r.json() : { clips: [] }))
       .then((d: { clips?: XcClip[] }) => { if (!cancelled) setRes({ key, clips: Array.isArray(d.clips) ? d.clips : [] }); })
       .catch(() => { if (!cancelled) setRes({ key, clips: [] }); });
     return () => { cancelled = true; };
-  }, [name, area, key]);
+  }, [name, area, near, key]);
 
   const clips = (res?.key === key ? res.clips : []).filter((c) => !gone.includes(c.id));
   if (clips.length === 0) return null;
