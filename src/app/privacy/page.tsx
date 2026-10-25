@@ -62,7 +62,8 @@ export default function Privacy() {
         <p>
           Reference recordings in species panels are streamed straight from xeno-canto.org, and only when you press play (the sonogram image loads with the panel).
           Your browser then contacts xeno-canto, which sees your IP address. To pick the recordings, this site sends xeno-canto the species name and, for most species,
-          the continent in view. Never your location or a detection&apos;s coordinates.
+          the continent in view. Never your location or a detection&apos;s coordinates. Your browser also sends this site the centre of the map rounded to
+          whole degrees (about 100 km), used only to put recordings from that country first; it is not passed to xeno-canto, and it is not sent for sensitive species.
         </p>
 
         <H2>Removal and your rights</H2>
