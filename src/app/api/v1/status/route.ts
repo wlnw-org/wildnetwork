@@ -9,6 +9,7 @@ import { refreshGbifWeekly } from "@/lib/gbif";
 import { refreshSourceEffort } from "@/lib/rollups";
 import { refreshOptins } from "@/lib/optin";
 import { weeklyReindex } from "@/lib/storage";
+import { checkAlerts } from "@/lib/alerts";
 
 export const maxDuration = 300;
 
@@ -67,6 +68,12 @@ export async function GET() {
       ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '30 minutes'
       RETURNING connector`;
     if (oi.length) await refreshOptins(90_000);
+    // Species arrival emails, every 6 hours (src/lib/alerts.ts).
+    const al = await sql`
+      INSERT INTO pull_state (connector, last_run_at) VALUES ('_alerts_lock', now())
+      ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '6 hours'
+      RETURNING connector`;
+    if (al.length) { const r = await checkAlerts(60_000).catch((e) => { console.error("alerts", e); return null; }); if (r?.sent) console.log(`alerts: ${r.sent} sent of ${r.checked} due`); }
   });
   return Response.json({
     ask: process.env.ASK_ENABLED === "true" && !BIRDWEATHER_PAUSED,

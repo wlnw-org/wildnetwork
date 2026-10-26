@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "What Wildlife Network collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
 };
 
-const UPDATED = "20 October 2026";
+const UPDATED = "26 October 2026";
 
 export default function Privacy() {
   return (
@@ -53,6 +53,15 @@ export default function Privacy() {
           <li><b>BirdWeather stations</b> appear only as approximate positions (rounded to 1 degree) without names or identifiers; individual detections are kept for 3 hours (bat detections for 24). Stations that stop reporting are deleted after 30 days.</li>
           <li><b>iNaturalist and GBIF records</b> are public records used under their CC0 or CC BY licences; observers are credited as their publishers ask.</li>
         </ul>
+
+        <h2 id="alerts" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Species alerts</h2>
+        <p>
+          If you ask to be emailed when a species arrives near you, the site stores your email address (encrypted), the species, the place name you typed and the
+          5 degree square it falls in, the optional answer to &quot;I am a...&quot;, and a keyed hash of your IP address to limit sign-ups. The place name is looked up
+          once with the Open-Meteo geocoder; no coordinates are kept. Emails are sent through Resend (United States), which processes your address to deliver them.
+          Nothing is sent until you confirm; unconfirmed requests are deleted after 7 days. Every email has a link that deletes the alert at once. Your address is
+          used for nothing else and never shared. The anonymous counts of alerts per species and per &quot;I am a...&quot; answer may be reported to funders.
+        </p>
 
         <H2>Hosting</H2>
         <p>

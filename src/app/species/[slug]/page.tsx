@@ -5,6 +5,8 @@ import { BIRDWEATHER_PAUSED } from "@/lib/sources";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { sql } from "@/lib/db";
+import AlertForm from "@/components/AlertForm";
+import { ALERTS_ENABLED } from "@/lib/alerts";
 import { getSpeciesMedia } from "@/lib/media";
 import { REGION } from "@/lib/methods";
 import { regionSlug } from "@/lib/regions";
@@ -118,6 +120,12 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
         <p className="mt-3">
           <Link href={`/?species=${encodeURIComponent(d.name)}`} className="inline-block rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400">See the {title} on the live map</Link>
         </p>
+        {ALERTS_ENABLED && !BIRDWEATHER_PAUSED && (
+          <section id="alert" className="mt-6 rounded-lg border border-white/10 bg-white/5 p-4">
+            <h2 className="text-lg font-semibold text-slate-100">Get an email when the {title} arrives near you</h2>
+            <AlertForm species={d.name} title={title} />
+          </section>
+        )}
 
         {d.story.length > 0 && (
           <>
