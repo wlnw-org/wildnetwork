@@ -30,6 +30,7 @@ export default function Home() {
         <p>{SITE_DESCRIPTION}</p>
         <nav aria-label="Pages">
           <Link href="/species">Species: migration and arrival dates</Link>
+          <Link href="/arrivals">When do birds arrive? Arrival dates by region</Link>
           <Link href="/methods">Methods</Link>
           <Link href="/validation">Validation</Link>
           <Link href="/contribute">Contribute data</Link>

@@ -29,6 +29,7 @@ export default async function SpeciesIndex() {
         {BIRDWEATHER_PAUSED && <PausedNotice className="mt-4" />}
         <p className="mt-3">
           {rows.length.toLocaleString("en-GB")} species have a full seasonal record so far. Each page shows where the species is being detected now, when it arrives in each region, and how its range moves with the weather.
+          Or browse <Link href="/arrivals" className="text-cyan-400 hover:underline">arrival dates by region</Link>, month by month.
         </p>
         {groups.map(({ g, items }) => (
           <section key={g}>
