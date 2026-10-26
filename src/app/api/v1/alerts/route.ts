@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     ON CONFLICT (email_hash, scientific_name, cell_lat, cell_lon) DO UPDATE SET role = COALESCE(EXCLUDED.role, alert_subs.role)
     RETURNING token, confirmed_at IS NOT NULL AS confirmed`;
   if (row.confirmed) return Response.json({ ok: true, place: geo.label, message: `You already have this alert for ${geo.label}.` });
-  const sent = await sendConfirmation(email, row.token, sp.vernacular_name ?? sp.scientific_name, geo.label);
+  const sent = await sendConfirmation(email, row.token, sp.vernacular_name ?? sp.scientific_name, geo.label, sp.scientific_name);
   if (!sent) return Response.json({ error: "Could not send the confirmation email right now. Please try again later." }, { status: 503 });
   return Response.json({ ok: true, place: geo.label, message: `Almost done: check your inbox and confirm. Your area is the 5 degree square around ${geo.label}.` });
 }

@@ -1,6 +1,8 @@
 import { randomBytes } from "node:crypto";
 import { hashIp } from "@/lib/auth";
 import { sql } from "@/lib/db";
+import { arrivalHtml, confirmHtml, emailImage } from "@/lib/emails";
+import { getSpeciesMedia } from "@/lib/media";
 import { decryptToken, encryptToken } from "@/lib/optin";
 import { SITE, SITE_NAME, speciesSlug } from "@/lib/site";
 
@@ -37,13 +39,13 @@ async function sentToday(): Promise<number> {
   return n;
 }
 
-export async function sendMail(kind: string, to: string, subject: string, text: string, unsubscribeUrl?: string): Promise<boolean> {
+export async function sendMail(kind: string, to: string, subject: string, text: string, unsubscribeUrl?: string, html?: string): Promise<boolean> {
   if (!ALERTS_ENABLED || (await sentToday()) >= DAILY_CAP) return false;
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: `Bearer ${process.env.RESEND_API_KEY}`, "content-type": "application/json" },
     body: JSON.stringify({
-      from: process.env.ALERTS_FROM, to: [to], subject, text,
+      from: process.env.ALERTS_FROM, to: [to], subject, text, ...(html ? { html } : {}),
       ...(unsubscribeUrl ? { headers: { "List-Unsubscribe": `<${unsubscribeUrl}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } } : {}),
     }),
     signal: AbortSignal.timeout(10_000),
@@ -58,11 +60,20 @@ const unsubscribeUrl = (token: string) => `${SITE}/alerts/unsubscribe?token=${to
 /** For the one-click List-Unsubscribe POST that mail clients send (RFC 8058). */
 const oneClickUrl = (token: string) => `${SITE}/api/v1/alerts?token=${token}`;
 
-export async function sendConfirmation(email: string, token: string, species: string, place: string): Promise<boolean> {
+/** Photo for an email: the cached species image, at email width. Never blocks sending. */
+async function photo(scientificName: string): Promise<{ url: string | null; credit: string | null }> {
+  const m = await getSpeciesMedia(scientificName).catch(() => null);
+  return { url: m ? emailImage(m.thumbUrl, m.imageUrl) : null, credit: m ? [m.attribution, m.license].filter(Boolean).join(", ") || null : null };
+}
+
+export async function sendConfirmation(email: string, token: string, species: string, place: string, scientificName: string): Promise<boolean> {
+  const confirmUrl = `${SITE}/alerts/confirm?token=${token}`;
+  const img = await photo(scientificName);
   return sendMail("confirm", email, `Confirm your ${species} alert`,
     `Someone (hopefully you) asked ${SITE_NAME} to email this address when the ${species} arrives near ${place}.\n\n` +
     `Confirm: ${SITE}/alerts/confirm?token=${token}\n\n` +
-    `If this was not you, ignore this email: nothing is sent without confirmation and the request is deleted after 7 days.\n\n${SITE_NAME}, ${SITE}`);
+    `If this was not you, ignore this email: nothing is sent without confirmation and the request is deleted after 7 days.\n\n${SITE_NAME}, ${SITE}`,
+    undefined, confirmHtml({ name: species, place, confirmUrl, imageUrl: img.url }));
 }
 
 const fmtWeek = (d: string) => new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", timeZone: "UTC" });
@@ -95,6 +106,12 @@ export async function checkAlerts(budgetMs = 60_000): Promise<{ checked: number;
     if (Date.now() - t0 > budgetMs) break;
     if (d.absent < ARRIVAL.ABSENT_WEEKS) continue; // present all along, or not watched enough to call it an arrival
     const name = d.vernacular_name ?? d.scientific_name;
+    const img = await photo(d.scientific_name);
+    const html = arrivalHtml({
+      name, scientificName: d.scientific_name, place: d.place, week: fmtWeek(d.week), records: d.n, absentWeeks: d.absent,
+      imageUrl: img.url, imageCredit: img.credit, speciesUrl: `${SITE}/species/${speciesSlug(d.scientific_name)}`,
+      mapUrl: `${SITE}/?species=${encodeURIComponent(d.scientific_name)}`, unsubscribeUrl: unsubscribeUrl(d.token),
+    });
     const ok = await sendMail("alert", decryptToken(d.email_enc), `${name} has arrived near ${d.place}`,
       `The ${name} (${d.scientific_name}) was recorded ${d.n} ${d.n === 1 ? "time" : "times"} in your area in the week of ${fmtWeek(d.week)}, ` +
       `after ${d.absent} watched weeks without a record. Your area is the 5 degree square around ${d.place}.\n\n` +
@@ -102,7 +119,7 @@ export async function checkAlerts(budgetMs = 60_000): Promise<{ checked: number;
       `Live map: ${SITE}/?species=${encodeURIComponent(d.scientific_name)}\n\n` +
       `Records come from acoustic sensors and open biodiversity records, and automatic identification makes mistakes. How this is measured: ${SITE}/methods\n\n` +
       `You will hear about this species again only after it has been away for a while. Stop these emails: ${unsubscribeUrl(d.token)}`,
-      oneClickUrl(d.token));
+      oneClickUrl(d.token), html);
     if (!ok) break; // daily cap or mail error: try again next run
     await sql`UPDATE alert_subs SET last_alert_at = now(), last_alert_week = ${d.week} WHERE id = ${d.id}`;
     sent++;
