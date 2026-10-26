@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use Wildlife Network software, please cite it. To cite the data, use the Zenodo DOI of the release you used (see https://wlnw.org/data)."
+type: software
+title: "Wildlife Network"
+abstract: "Open platform that aggregates bird, bat and other wildlife detections from acoustic sensors, camera traps and open biodiversity records (GBIF, iNaturalist) into a live world map, with effort-corrected arrival dates, range movement and uncertainty intervals. Detections are exchanged in the open WDX format."
+authors:
+  - family-names: Rajiah
+    given-names: Arun
+    email: arunrajiah@gmail.com
+license: AGPL-3.0-only
+url: "https://wlnw.org"
+repository-code: "https://github.com/wlnw-org/wildnetwork"
+keywords:
+  - bioacoustics
+  - bird migration
+  - phenology
+  - biodiversity
+  - GBIF
+  - BirdNET
+  - open data
+references:
+  - type: dataset
+    title: "Wildlife Network open data"
+    doi: 10.5281/zenodo.23193453
+    authors:
+      - family-names: Rajiah
+        given-names: Arun

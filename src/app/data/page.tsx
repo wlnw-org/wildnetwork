@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { METHODS_VERSION, OBSERVED } from "@/lib/methods";
-import { DATA_CONCEPT_DOI, DATA_RELEASES } from "@/lib/site";
+import { DATA_CONCEPT_DOI, DATA_RELEASES, SITE, SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Open data: weekly wildlife records, effort and arrival dates",
@@ -11,10 +11,49 @@ export const metadata: Metadata = {
 
 const fmt = (d: string) => new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
+/** schema.org Dataset, so the releases appear in Google Dataset Search and other dataset indexes. */
+function datasetJsonLd() {
+  const latest = DATA_RELEASES[0];
+  if (!latest) return null;
+  const creator = { "@type": "Person", name: "Arun Rajiah", email: "arunrajiah@gmail.com" };
+  return {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "@id": `${SITE}/data`,
+    name: "Wildlife Network open data: weekly bird, bat, amphibian and insect records, observation effort and arrival dates",
+    alternateName: `${SITE_NAME} open data`,
+    description:
+      "Weekly counts of openly licensed (CC0 and CC BY 4.0) GBIF occurrence records per species on a global 5 degree grid, for birds (Aves), bats (Chiroptera), " +
+      "amphibians (Amphibia) and insects (Insecta), with the total records per class, cell and week (observation effort) for effort correction, and seasonal " +
+      "arrival, peak and departure weeks per species and cell with 90% intervals. Every row carries the GBIF species key; datasets.csv lists every contributing " +
+      "GBIF dataset with its DOI. Versioned releases archived on Zenodo.",
+    url: `${SITE}/data`,
+    identifier: [`https://doi.org/${DATA_CONCEPT_DOI}`, ...(latest.doi ? [`https://doi.org/${latest.doi}`] : [])],
+    sameAs: `https://doi.org/${DATA_CONCEPT_DOI}`,
+    version: String(DATA_RELEASES.length),
+    datePublished: DATA_RELEASES[DATA_RELEASES.length - 1].date,
+    dateModified: latest.date,
+    license: "https://creativecommons.org/licenses/by/4.0/",
+    isAccessibleForFree: true,
+    creator,
+    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE },
+    keywords: ["bird migration", "phenology", "arrival dates", "biodiversity", "GBIF", "occurrence data", "sampling effort", "bats", "amphibians", "insects", "macroecology", "species distribution"],
+    ...(latest.period ? { temporalCoverage: latest.period } : {}),
+    spatialCoverage: { "@type": "Place", name: "Global, 5 degree grid", geo: { "@type": "GeoShape", box: "-90 -180 90 180" } },
+    variableMeasured: ["week", "cell_lat", "cell_lon", "class", "gbif_species_key", "scientific_name", "records", "arrival_week", "arrival_low", "arrival_high", "arrival_support", "peak_week", "departure_week", "peak_per_1000"],
+    isBasedOn: "https://www.gbif.org",
+    citation: latest.doi ? `Rajiah, A. (${latest.date.slice(0, 4)}). Wildlife Network open data release ${latest.date}. Zenodo. https://doi.org/${latest.doi}` : undefined,
+    distribution: [{ "@type": "DataDownload", encodingFormat: "application/zip", contentUrl: latest.zip }],
+    includedInDataCatalog: { "@type": "DataCatalog", name: "Zenodo", url: "https://zenodo.org" },
+  };
+}
+
 export default function Data() {
   const latest = DATA_RELEASES[0];
+  const ld = datasetJsonLd();
   return (
     <main className="min-h-screen bg-slate-950 text-slate-300">
+      {ld && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, "\\u003c") }} />}
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <Link href="/" className="text-sm text-cyan-400 hover:underline">← Back to the map</Link>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Open data</h1>
