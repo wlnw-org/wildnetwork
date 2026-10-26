@@ -20,9 +20,9 @@ export default function AlertForm({ species, title, compact = false }: { species
     setState({ ok: r.ok, msg: d.message ?? d.error ?? "Something went wrong." });
   }
   if (state.ok) return <p className="mt-3 rounded-lg border border-cyan-400/30 bg-cyan-400/5 p-4 text-slate-100">{state.msg}</p>;
-  const input = "rounded-md border border-white/15 bg-slate-900 px-3 py-2 text-slate-100 placeholder:text-slate-500";
+  const input = "w-full min-w-0 rounded-md border border-white/15 bg-slate-900 px-3 py-2 text-slate-100 placeholder:text-slate-500";
   return (
-    <form onSubmit={submit} className={`mt-3 grid gap-2 ${compact ? "text-sm" : "sm:grid-cols-2"}`}>
+    <form onSubmit={submit} className={`mt-3 gap-2 ${compact ? "flex flex-col text-sm" : "grid sm:grid-cols-2"}`}>
       <input name="email" type="email" required placeholder="Your email" aria-label="Your email" className={input} />
       <input name="place" required placeholder="Your town or city" aria-label="Your town or city" className={input} />
       <select name="role" aria-label="Who you are (optional)" className={input} defaultValue="">
