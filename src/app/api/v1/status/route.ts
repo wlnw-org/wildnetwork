@@ -9,7 +9,7 @@ import { refreshGbifWeekly } from "@/lib/gbif";
 import { refreshSourceEffort } from "@/lib/rollups";
 import { refreshOptins } from "@/lib/optin";
 import { weeklyReindex } from "@/lib/storage";
-import { checkAlerts } from "@/lib/alerts";
+import { ALERTS_ENABLED, checkAlerts } from "@/lib/alerts";
 
 export const maxDuration = 300;
 
@@ -77,6 +77,7 @@ export async function GET() {
   });
   return Response.json({
     ask: process.env.ASK_ENABLED === "true" && !BIRDWEATHER_PAUSED,
+    alerts: ALERTS_ENABLED && !BIRDWEATHER_PAUSED,
     paused: BIRDWEATHER_PAUSED ? ["birdweather"] : [],
     live: newest > Date.now() - 15 * 60_000,
     lastPullAt: newest ? new Date(newest).toISOString() : null,

@@ -27,7 +27,7 @@ interface Insights {
 }
 
 interface Movement { scientificName: string; frames: { week: string; total: number; index: number; cells: [number, number, number, number][]; centroids: { region: string; n: number; lat: number; lon: number }[] }[] }
-interface Status { ask?: boolean; paused?: string[]; live: boolean; lastPullAt: string | null; events1h: number; sensors: number; detections: number; species: number }
+interface Status { ask?: boolean; alerts?: boolean; paused?: string[]; live: boolean; lastPullAt: string | null; events1h: number; sensors: number; detections: number; species: number }
 
 const CLASSES: { key: string; label: string }[] = [
   { key: "all", label: "All" }, { key: "avian", label: "Birds" }, { key: "bat", label: "Bats" },
@@ -511,7 +511,7 @@ export default function WorldMap() {
         <aside className="absolute left-[4.375rem] top-11 bottom-0 w-[24rem] max-w-[calc(100vw-4.375rem)] bg-slate-900/95 backdrop-blur-xl border-r border-white/10 flex flex-col z-10">
           {status?.paused?.length ? <PausedNotice className="m-2 mb-0 shrink-0" /> : null}
           {species ? (
-            <SpeciesPanel name={species} area={listenArea} near={listenNear} onClose={() => selectSpecies(null)} />
+            <SpeciesPanel name={species} area={listenArea} near={listenNear} alerts={!!status?.alerts} onClose={() => selectSpecies(null)} />
           ) : tab === "about" ? (
             <AboutPanel />
           ) : tab === "ask" ? (

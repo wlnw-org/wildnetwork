@@ -5,7 +5,7 @@ import { track } from "@/components/Analytics";
 const ROLES = [["", "I am a... (optional)"], ["researcher", "Researcher"], ["birder", "Birder or naturalist"], ["educator", "Teacher or educator"], ["station owner", "Station owner"], ["other", "Other"]];
 
 /** "Email me when it arrives near me". The place name is geocoded on the server; only its 5 degree square is kept. */
-export default function AlertForm({ species, title }: { species: string; title: string }) {
+export default function AlertForm({ species, title, compact = false }: { species: string; title: string; compact?: boolean }) {
   const [state, setState] = useState<{ busy?: boolean; ok?: boolean; msg?: string }>({});
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -22,14 +22,14 @@ export default function AlertForm({ species, title }: { species: string; title: 
   if (state.ok) return <p className="mt-3 rounded-lg border border-cyan-400/30 bg-cyan-400/5 p-4 text-slate-100">{state.msg}</p>;
   const input = "rounded-md border border-white/15 bg-slate-900 px-3 py-2 text-slate-100 placeholder:text-slate-500";
   return (
-    <form onSubmit={submit} className="mt-3 grid gap-2 sm:grid-cols-2">
+    <form onSubmit={submit} className={`mt-3 grid gap-2 ${compact ? "text-sm" : "sm:grid-cols-2"}`}>
       <input name="email" type="email" required placeholder="Your email" aria-label="Your email" className={input} />
       <input name="place" required placeholder="Your town or city" aria-label="Your town or city" className={input} />
       <select name="role" aria-label="Who you are (optional)" className={input} defaultValue="">
         {ROLES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
       </select>
       <button disabled={state.busy} className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400 disabled:opacity-60">
-        {state.busy ? "Sending..." : `Email me when the ${title} arrives`}
+        {state.busy ? "Sending..." : compact ? "Email me when it arrives" : `Email me when the ${title} arrives`}
       </button>
       {state.msg && <p className="sm:col-span-2 text-sm text-rose-300">{state.msg}</p>}
       <p className="sm:col-span-2 text-xs text-slate-500">

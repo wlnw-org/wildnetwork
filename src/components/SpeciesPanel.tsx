@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { track } from "./Analytics";
+import AlertForm from "./AlertForm";
 import ListenBlock from "./ListenBlock";
 import type { XcArea } from "@/lib/xenocanto";
 
@@ -58,7 +59,7 @@ const CLASS_NOUN: Record<string, string> = { avian: "", bat: "bat", amphibian: "
 interface Arrival { cellLat: number; cellLon: number; region: string; arrivalWeek: string; arrivalLow?: string | null; arrivalHigh?: string | null; arrivalSupport?: number | null; peakWeek: string; departureWeek: string | null; detections: number }
 interface Media { title: string | null; thumbUrl: string | null; imageUrl: string | null; extract: string | null; pageUrl: string | null; source: string; attribution: string | null; license: string | null }
 
-export default function SpeciesPanel({ name, area = null, near = null, onClose }: { name: string; area?: XcArea | null; near?: string | null; onClose: () => void }) {
+export default function SpeciesPanel({ name, area = null, near = null, alerts = false, onClose }: { name: string; area?: XcArea | null; near?: string | null; alerts?: boolean; onClose: () => void }) {
   const [data, setData] = useState<SpeciesDetail | null>(null);
   const [media, setMedia] = useState<Media | null>(null);
   const [arrivals, setArrivals] = useState<{ name: string; rows: Arrival[] } | null>(null);
@@ -111,6 +112,7 @@ export default function SpeciesPanel({ name, area = null, near = null, onClose }
           <p className="mt-1.5 text-[11px] text-slate-500">Written from the numbers below by fixed rules. <Link href="/methods#words" className="text-cyan-500 hover:underline">How</Link>.</p>
         </section>
       )}
+      {alerts && <AlertBlock key={name} name={name} title={data.vernacularName ?? data.scientificName} />}
       <ListenBlock name={name} area={area} near={near} />
       <dl className="grid grid-cols-3 gap-2 text-xs">
         <Stat label="Detections, 30d" value={total.toLocaleString()} />
@@ -252,6 +254,23 @@ function HeardVsSeen({ name }: { name: string }) {
         {twoSourceWords(d).map((line) => <li key={line}>{line}</li>)}
       </ul>
       <p className="mt-1.5 text-[11px] text-slate-500">Same cells and weeks only; each line is the species&apos; share of its own source, scaled to its peak. <Link href="/methods#two-sources" className="text-cyan-500 hover:underline">How</Link>.</p>
+    </section>
+  );
+}
+
+/** Arrival alert: a button that opens the same form as the species page. */
+function AlertBlock({ name, title }: { name: string; title: string }) {
+  const [open, setOpen] = useState(false);
+  if (!open) return (
+    <button onClick={() => setOpen(true)} className="flex items-center justify-center gap-2 rounded-md border border-amber-400/40 bg-amber-400/10 px-3 py-2 text-sm font-medium text-amber-200 hover:bg-amber-400/20">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+      Alert me when it arrives near me
+    </button>
+  );
+  return (
+    <section aria-label="Arrival alert" className="rounded-md border border-amber-400/30 bg-amber-400/5 px-3 py-2.5">
+      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-200">Arrival alert</h3>
+      <AlertForm species={name} title={title} compact />
     </section>
   );
 }

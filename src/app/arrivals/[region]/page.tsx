@@ -86,6 +86,9 @@ export default async function RegionArrivals({ params }: { params: Promise<{ reg
             <p className="mt-3">
               <Link href="/" className="inline-block rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400">See them on the live map</Link>
             </p>
+            <p className="mt-3 text-sm text-slate-400">
+              Want to know the week one reaches you? Open a species and use <b className="text-amber-200">Get an email when it arrives near you</b>: one email when it turns up in your area after weeks away.
+            </p>
           </>
         )}
 
