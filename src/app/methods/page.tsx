@@ -157,7 +157,7 @@ export default function Methods() {
         </p>
         <p className="mt-3">
           These dates were compared with independent human observations: see the <Link href="/validation" className="text-cyan-400 hover:underline">validation</Link>.
-          In short, they agree within one week for 70 percent of arrivals, run about one week late, and fail for species that are quiet on arrival and for
+          In short (re-run on 27 October 2026 with methods 0.12), they agree within one week for 69 percent of arrivals, run about one week late, and fail for species that are quiet on arrival and for
           residents whose singing season starts.
         </p>
 
