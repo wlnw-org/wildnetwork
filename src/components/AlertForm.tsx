@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { track } from "@/components/Analytics";
 
 const ROLES = [["", "I am a... (optional)"], ["researcher", "Researcher"], ["birder", "Birder or naturalist"], ["educator", "Teacher or educator"], ["station owner", "Station owner"], ["other", "Other"]];
@@ -7,6 +7,13 @@ const ROLES = [["", "I am a... (optional)"], ["researcher", "Researcher"], ["bir
 /** "Email me when it arrives near me". The place name is geocoded on the server; only its 5 degree square is kept. */
 export default function AlertForm({ species, title, compact = false }: { species: string; title: string; compact?: boolean }) {
   const [state, setState] = useState<{ busy?: boolean; ok?: boolean; msg?: string }>({});
+  const [place, setPlace] = useState("");
+  // Suggest the visitor's town from the IP area (editable; nothing is stored until they submit).
+  useEffect(() => {
+    let live = true;
+    fetch("/api/v1/near").then((r) => r.json() as Promise<{ city?: string | null }>).then((n) => { if (live && n.city) setPlace((p) => p || n.city!); }).catch(() => {});
+    return () => { live = false; };
+  }, []);
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
@@ -24,7 +31,7 @@ export default function AlertForm({ species, title, compact = false }: { species
   return (
     <form onSubmit={submit} className={`mt-3 gap-2 ${compact ? "flex flex-col text-sm" : "grid sm:grid-cols-2"}`}>
       <input name="email" type="email" required placeholder="Your email" aria-label="Your email" className={input} />
-      <input name="place" required placeholder="Your town or city" aria-label="Your town or city" className={input} />
+      <input name="place" required placeholder="Your town or city" aria-label="Your town or city" className={input} value={place} onChange={(e) => setPlace(e.target.value)} />
       <select name="role" aria-label="Who you are (optional)" className={input} defaultValue="">
         {ROLES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
       </select>

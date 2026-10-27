@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "What Wildlife Network collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
 };
 
-const UPDATED = "26 October 2026";
+const UPDATED = "27 October 2026";
 
 export default function Privacy() {
   return (
@@ -64,6 +64,10 @@ export default function Privacy() {
         </p>
 
         <H2>Hosting</H2>
+        <p>
+          Vercel tells the site the approximate area of your IP address (a city, and a position this site rounds to whole degrees, about 100 km). It is used
+          only to start the map near you and to suggest your town in the alert form, and it is not stored or logged.
+        </p>
         <p>
           The site runs on Vercel and its database on Neon, both in the United States. Vercel processes IP addresses and request details to serve pages and protect
           the service, and keeps them in logs for a short time. No other cookies or tracking are used.

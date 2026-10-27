@@ -107,6 +107,13 @@ export default function WorldMap() {
     const map = new MLMapClass({ container: containerRef.current, style: STYLE, center: [10, 25], zoom: 1.7, minZoom: 1.3, renderWorldCopies: false, attributionControl: false });
     map.addControl(new AttributionControl({ compact: true, customAttribution: "BirdWeather · GBIF publishers (CC0/CC BY) · iNaturalist (CC0/CC-BY) · WDX producers" }));
     map.addControl(new NavigationControl({ showCompass: false }), "top-right");
+    // Start near the visitor (IP area, whole degrees, from /api/v1/near) unless a species link sets the view; zoom out for the world.
+    if (!new URLSearchParams(window.location.search).has("species")) {
+      fetch("/api/v1/near").then((r) => r.json() as Promise<{ lat?: number; lon?: number }>).then((n) => {
+        if (cancelled || n.lat == null || n.lon == null) return;
+        map.easeTo({ center: [n.lon, n.lat], zoom: 4, duration: 1800, padding: { top: 0, bottom: 0, right: 0, left: window.innerWidth >= 768 ? 420 : 0 } });
+      }).catch(() => {});
+    }
     map.on("load", () => {
       map.addSource("cells", { type: "geojson", data: EMPTY });
       map.addSource("deployments", { type: "geojson", data: EMPTY });
