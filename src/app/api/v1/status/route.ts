@@ -10,6 +10,7 @@ import { refreshSourceEffort } from "@/lib/rollups";
 import { refreshOptins } from "@/lib/optin";
 import { weeklyReindex } from "@/lib/storage";
 import { ALERTS_ENABLED, checkAlerts } from "@/lib/alerts";
+import { sendDigests } from "@/lib/studies";
 
 export const maxDuration = 300;
 
@@ -73,7 +74,13 @@ export async function GET() {
       INSERT INTO pull_state (connector, last_run_at) VALUES ('_alerts_lock', now())
       ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '6 hours'
       RETURNING connector`;
-    if (al.length) { const r = await checkAlerts(60_000).catch((e) => { console.error("alerts", e); return null; }); if (r?.sent) console.log(`alerts: ${r.sent} sent of ${r.checked} due`); }
+    if (al.length) {
+      const r = await checkAlerts(60_000).catch((e) => { console.error("alerts", e); return null; });
+      if (r?.sent) console.log(`alerts: ${r.sent} sent of ${r.checked} due`);
+      // Study-area digests ride on the same 6-hourly slot; each study gets at most one a week (src/lib/studies.ts).
+      const dg = await sendDigests(60_000).catch((e) => { console.error("digests", e); return 0; });
+      if (dg) console.log(`study digests: ${dg} sent`);
+    }
   });
   return Response.json({
     ask: process.env.ASK_ENABLED === "true" && !BIRDWEATHER_PAUSED,

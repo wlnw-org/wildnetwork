@@ -39,3 +39,6 @@ export const DATA_RELEASES: { date: string; url: string; zip: string; weeks: str
     doi: "10.5281/zenodo.23193454",
   },
 ];
+
+/** Published uses of the data (papers, theses, notebooks, reports), newest first, shown on /research. Add entries as they appear. */
+export const DATA_USES: { title: string; authors: string; year: number; url: string; kind: "paper" | "preprint" | "thesis" | "notebook" | "report" }[] = [];

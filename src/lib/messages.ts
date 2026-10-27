@@ -17,6 +17,7 @@ const AL1 = "One email when it arrives in your area after weeks away, never more
 const AL2 = "Your address is stored encrypted and used for nothing else.";
 
 const es: Dict = {
+  "Research": "Investigación",
   "{i} of {n}": "{i} de {n}", 
   "Live": "En vivo", "Stale": "Sin actualizar", "updated {t}": "actualizado {t}", "Animal class": "Grupo de animales",
   "Search a species": "Buscar una especie", "No species found": "No se encontró ninguna especie",
@@ -62,6 +63,7 @@ const es: Dict = {
 };
 
 const fr: Dict = {
+  "Research": "Recherche",
   "{i} of {n}": "{i} sur {n}", 
   "Live": "En direct", "Stale": "Pas à jour", "updated {t}": "mis à jour {t}", "Animal class": "Groupe d'animaux",
   "Search a species": "Chercher une espèce", "No species found": "Aucune espèce trouvée",
@@ -107,6 +109,7 @@ const fr: Dict = {
 };
 
 const de: Dict = {
+  "Research": "Forschung",
   "{i} of {n}": "{i} von {n}", 
   "Live": "Live", "Stale": "Veraltet", "updated {t}": "aktualisiert {t}", "Animal class": "Tiergruppe",
   "Search a species": "Art suchen", "No species found": "Keine Art gefunden",
@@ -152,6 +155,7 @@ const de: Dict = {
 };
 
 const pt: Dict = {
+  "Research": "Investigação",
   "{i} of {n}": "{i} de {n}", 
   "Live": "Ao vivo", "Stale": "Desatualizado", "updated {t}": "atualizado {t}", "Animal class": "Grupo de animais",
   "Search a species": "Pesquisar uma espécie", "No species found": "Nenhuma espécie encontrada",
@@ -197,6 +201,7 @@ const pt: Dict = {
 };
 
 const hi: Dict = {
+  "Research": "शोध",
   "{i} of {n}": "{n} में से {i}", 
   "Live": "लाइव", "Stale": "पुराना", "updated {t}": "{t} अपडेट हुआ", "Animal class": "जीव समूह",
   "Search a species": "प्रजाति खोजें", "No species found": "कोई प्रजाति नहीं मिली",
@@ -242,6 +247,7 @@ const hi: Dict = {
 };
 
 const ta: Dict = {
+  "Research": "ஆய்வு",
   "{i} of {n}": "{n} இல் {i}", 
   "Live": "நேரலை", "Stale": "பழையது", "updated {t}": "{t} புதுப்பிக்கப்பட்டது", "Animal class": "உயிரினக் குழு",
   "Search a species": "இனத்தைத் தேடுங்கள்", "No species found": "இனம் எதுவும் கிடைக்கவில்லை",

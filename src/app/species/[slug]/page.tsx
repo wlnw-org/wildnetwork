@@ -148,6 +148,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
             </table>
             <p className="mt-2 text-sm">
               <a href={`/api/v1/arrivals?species=${encodeURIComponent(d.name)}&format=csv`} className="text-cyan-400 hover:underline" rel="nofollow">Download every area as CSV</a>
+              {" · "}<Link href={`/species/${speciesSlug(d.name)}/review`} className="text-cyan-400 hover:underline">Review these arrival dates</Link> (researchers, ORCID sign-in)
             </p>
           </>
         )}

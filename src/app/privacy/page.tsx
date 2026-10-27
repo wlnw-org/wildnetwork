@@ -63,6 +63,15 @@ export default function Privacy() {
           used for nothing else and never shared. The anonymous counts of alerts per species and per &quot;I am a...&quot; answer may be reported to funders.
         </p>
 
+        <h2 id="research" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Researchers</h2>
+        <p>
+          Signing in with ORCID (for study areas and reviews) stores your ORCID iD and the public name ORCID returns, and when you last signed in. A signed
+          cookie keeps you signed in for 30 days; it holds only your iD and name. Study areas you create, their collaborators, and your reviews of arrival
+          estimates are public, with your name and ORCID iD. An email you give for a study digest is stored encrypted and used only for that digest.
+          A study proposal stores your name, email (encrypted), institution, the area and your question, read only by the maintainer. Ask us to delete any of
+          it, or delete a study yourself.
+        </p>
+
         <H2>Hosting</H2>
         <p>
           Vercel tells the site the approximate area of your IP address (a city, and a position this site rounds to whole degrees, about 100 km). It is used

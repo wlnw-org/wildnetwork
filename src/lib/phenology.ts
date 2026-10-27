@@ -87,7 +87,13 @@ export async function computeSeasons(source?: string): Promise<{ pairs: number; 
   // Range check (methods 0.11): bird recordings GBIF says are far outside the species' range never become arrival dates.
   // The GBIF-only computation is not filtered: GBIF records are the reference.
   const outliers = new Set(source === "gbif" ? [] : (await sql<{ k: string }[]>`
-    SELECT scientific_name || '|' || cell_lat || ',' || cell_lon AS k FROM range_outliers`).map((r) => r.k));
+    SELECT scientific_name || '|' || cell_lat || ',' || cell_lon AS k FROM range_outliers
+    UNION
+    -- Expert review (methods 0.13): at least two signed-in researchers call it a misidentification or a resident, and they
+    -- outnumber those who call it correct.
+    SELECT scientific_name || '|' || cell_lat || ',' || cell_lon FROM arrival_reviews GROUP BY scientific_name, cell_lat, cell_lon
+    HAVING COUNT(*) FILTER (WHERE verdict IN ('misid', 'resident')) >= 2
+       AND COUNT(*) FILTER (WHERE verdict IN ('misid', 'resident')) > COUNT(*) FILTER (WHERE verdict = 'correct')`).map((r) => r.k));
 
   const out: Record<string, unknown>[] = [];
   let pairs = 0;

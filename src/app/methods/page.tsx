@@ -156,6 +156,10 @@ export default function Methods() {
           so recordings of it there are treated as misidentifications, while Long-eared Owl (about 10,000 records) is kept.
         </p>
         <p className="mt-3">
+          <span id="review"><b>Expert review.</b></span> Researchers signed in with ORCID can mark any arrival estimate as correct, a misidentification, a
+          resident (song onset, not an arrival) or unsure, from a <Link href="/studies" className="text-cyan-400 hover:underline">study area</Link> or a species&apos;
+          review page. When at least two call it a misidentification or a resident, and they outnumber those who call it correct, that species and
+          cell gets no arrival date at the next daily recompute. Reviews are public, with the reviewer&apos;s name and ORCID iD.{" "}
           These dates were compared with independent human observations: see the <Link href="/validation" className="text-cyan-400 hover:underline">validation</Link>.
           In short (re-run on 27 October 2026 with methods 0.12), they agree within one week for 69 percent of arrivals, run about one week late, and fail for species that are quiet on arrival and for
           residents whose singing season starts.
@@ -318,6 +322,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.13</b> (27 October 2026): <a href="#review" className="text-cyan-400 hover:underline">expert review</a> of arrival dates by researchers signed in with ORCID; an estimate two or more reviewers reject (and fewer accept) is dropped.</li>
           <li><b>0.12</b> (20 October 2026): a <b>marine</b> class for OBIS, Orcasound and Acartia records, corrected only against other marine records. Human sightings carry no confidence score and count as one record each, like iNaturalist and GBIF records.</li>
           <li><b>0.11</b> (7 October 2026): <a href="#range" className="text-cyan-400 hover:underline">range check</a> for arrival dates: birds that GBIF has almost never recorded around a well surveyed cell no longer get an arrival date there from recordings.</li>
           <li><b>0.10</b> (7 October 2026): confidence intervals from resampling for range shifts, surging and fading, arrival weeks and heard versus seen; Moving and Surging lists show only changes whose 95% interval excludes no change.</li>

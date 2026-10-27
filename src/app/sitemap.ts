@@ -19,6 +19,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE}/stations/join`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE}/stations`, lastModified: now, changeFrequency: "daily", priority: 0.6 },
     { url: `${SITE}/arrivals`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${SITE}/research`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${SITE}/studies`, lastModified: now, changeFrequency: "daily", priority: 0.6 },
     ...REGIONS.map((r) => ({ url: `${SITE}/arrivals/${r.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 })),
   ];
   // Only species with a seasonal record: those pages have something to say.

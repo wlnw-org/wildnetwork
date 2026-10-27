@@ -514,6 +514,10 @@ export default function WorldMap() {
           <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14" /><circle cx="12" cy="12" r="9" /></svg>
           {t("Add data")}
         </Link>
+        <Link href="/research" className="w-14 h-14 rounded-md flex flex-col items-center justify-center gap-1 text-[10px] text-slate-400 hover:bg-white/5 hover:text-slate-200">
+          <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3" /><path d="M7.5 15h9" /></svg>
+          {t("Research")}
+        </Link>
         <Link href="/methods" className="w-14 h-14 rounded-md flex flex-col items-center justify-center gap-1 text-[10px] text-slate-400 hover:bg-white/5 hover:text-slate-200">
           <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h9l4 4v14H6z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
           {t("Methods")}
