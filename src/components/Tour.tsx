@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { track } from "./Analytics";
+import { useT } from "@/lib/i18n";
 
 /**
  * First-visit walkthrough of the map. Each step points at an element marked data-tour="…"; a step whose element is
@@ -9,22 +10,23 @@ import { track } from "./Analytics";
  */
 export const TOUR_KEY = "wn_tour_v1";
 
-interface Step { target: string | null; title: string; text: string; place: "center" | "bottom" | "right" | "top" }
+/** text is a list of pieces, each translated on its own (step 4 adds a sentence only when Ask is on). */
+interface Step { target: string | null; title: string; text: string[]; place: "center" | "bottom" | "right" | "top" }
 
 export function tourSteps(askEnabled: boolean): Step[] {
   return [
     { target: null, place: "center", title: "A live map of wildlife",
-      text: "Wildlife Network shows where birds, bats and other animals are right now, from thousands of community stations and observers. Each dot is a recent detection: blue from BirdWeather stations, amber from GBIF, green from iNaturalist, pink from devices sending directly." },
+      text: ["Wildlife Network shows where birds, bats and other animals are right now, from thousands of community stations and observers. Each dot is a recent detection: blue from BirdWeather stations, amber from GBIF, green from iNaturalist, pink from devices sending directly."] },
     { target: "search", place: "bottom", title: "Find a species",
-      text: "Type a name to see where it is being heard and seen, how its range centre is shifting, and when it arrives in each region, with the uncertainty of each estimate." },
+      text: ["Type a name to see where it is being heard and seen, how its range centre is shifting, and when it arrives in each region, with the uncertainty of each estimate."] },
     { target: "classes", place: "bottom", title: "Birds, bats, insects, amphibians",
-      text: "Switch the animal class. Every measure is worked out per class, so a sparse group is not drowned out by birds." },
+      text: ["Switch the animal class. Every measure is worked out per class, so a sparse group is not drowned out by birds."] },
     { target: "rail", place: "right", title: "Now, Feed and About",
-      text: `Now shows what is changing: species moving, surging or fading, and the latest arrivals. Feed lists the newest detections.${askEnabled ? " Ask answers questions in plain words from the same data." : ""} About has the sources, credits and privacy notes.` },
+      text: ["Now shows what is changing: species moving, surging or fading, and the latest arrivals. Feed lists the newest detections.", ...(askEnabled ? [" Ask answers questions in plain words from the same data."] : []), " About has the sources, credits and privacy notes."] },
     { target: "slider", place: "top", title: "Replay time",
-      text: "Play the last hours of detections, or pick a species and play a whole year of its movement, week by week." },
+      text: ["Play the last hours of detections, or pick a species and play a whole year of its movement, week by week."] },
     { target: "contribute", place: "right", title: "Add your own station",
-      text: "A BirdNET-Pi, BirdNET-Go, camera trap, bat detector or a Wildlife Network Base can send its detections here. Everything is open: the methods, the data downloads and the API." },
+      text: ["A BirdNET-Pi, BirdNET-Go, camera trap, bat detector or a Wildlife Network Base can send its detections here. Everything is open: the methods, the data downloads and the API."] },
   ];
 }
 
@@ -41,6 +43,7 @@ function visibleRect(target: string | null): DOMRect | null {
 }
 
 export default function Tour({ open, auto, askEnabled, onClose }: { open: boolean; auto: boolean; askEnabled: boolean; onClose: () => void }) {
+  const t = useT();
   const steps = tourSteps(askEnabled);
   const [i, setI] = useState(0);
   // Re-rendered on resize so the spotlight follows the element; the rect itself is read from the DOM while rendering.
@@ -91,21 +94,21 @@ export default function Tour({ open, auto, askEnabled, onClose }: { open: boolea
   const last = i === steps.length - 1;
 
   return (
-    <div className="absolute inset-0 z-40" role="dialog" aria-modal="true" aria-label="Welcome tour">
+    <div className="absolute inset-0 z-40" role="dialog" aria-modal="true" aria-label={t("Welcome tour")}>
       {rect ? (
         <div className="absolute rounded-lg pointer-events-none" style={{ left: rect.left - PAD, top: rect.top - PAD, width: rect.width + 2 * PAD, height: rect.height + 2 * PAD, boxShadow: "0 0 0 9999px rgba(2, 6, 23, 0.72)", outline: "2px solid rgba(34, 211, 238, 0.9)" }} />
       ) : (
         <div className="absolute inset-0 bg-slate-950/75" />
       )}
       <div className="absolute rounded-xl bg-slate-900 border border-white/15 shadow-2xl p-4 text-slate-100" style={{ width: Math.min(CARD_W, vw - 24), ...cardStyle }}>
-        <div className="text-[11px] uppercase tracking-wider text-slate-400">{i + 1} of {steps.length}</div>
-        <h2 className="mt-1 text-base font-semibold">{step.title}</h2>
-        <p className="mt-1.5 text-sm text-slate-300 leading-relaxed">{step.text}</p>
+        <div className="text-[11px] uppercase tracking-wider text-slate-400">{t("{i} of {n}", { i: i + 1, n: steps.length })}</div>
+        <h2 className="mt-1 text-base font-semibold">{t(step.title)}</h2>
+        <p className="mt-1.5 text-sm text-slate-300 leading-relaxed">{step.text.map((x) => t(x)).join("")}</p>
         <div className="mt-3 flex items-center gap-2">
-          <button onClick={() => go(1)} className="rounded-md bg-cyan-500 px-3 py-1.5 text-sm font-medium text-slate-950 hover:bg-cyan-400">{last ? "Start exploring" : "Next"}</button>
-          {i > 0 && <button onClick={() => go(-1)} className="rounded-md px-3 py-1.5 text-sm text-slate-300 hover:bg-white/10">Back</button>}
+          <button onClick={() => go(1)} className="rounded-md bg-cyan-500 px-3 py-1.5 text-sm font-medium text-slate-950 hover:bg-cyan-400">{last ? t("Start exploring") : t("Next")}</button>
+          {i > 0 && <button onClick={() => go(-1)} className="rounded-md px-3 py-1.5 text-sm text-slate-300 hover:bg-white/10">{t("Back")}</button>}
           <span className="flex-1" />
-          {!last && <button onClick={() => finish("skip")} className="text-sm text-slate-400 hover:text-white">Skip</button>}
+          {!last && <button onClick={() => finish("skip")} className="text-sm text-slate-400 hover:text-white">{t("Skip")}</button>}
         </div>
       </div>
     </div>

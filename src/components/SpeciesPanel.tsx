@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { track } from "./Analytics";
 import AlertForm from "./AlertForm";
+import { useT } from "@/lib/i18n";
 import ListenBlock from "./ListenBlock";
 import type { XcArea } from "@/lib/xenocanto";
 
@@ -60,6 +61,7 @@ interface Arrival { cellLat: number; cellLon: number; region: string; arrivalWee
 interface Media { title: string | null; thumbUrl: string | null; imageUrl: string | null; extract: string | null; pageUrl: string | null; source: string; attribution: string | null; license: string | null }
 
 export default function SpeciesPanel({ name, area = null, near = null, alerts = false, onClose }: { name: string; area?: XcArea | null; near?: string | null; alerts?: boolean; onClose: () => void }) {
+  const t = useT();
   const [data, setData] = useState<SpeciesDetail | null>(null);
   const [media, setMedia] = useState<Media | null>(null);
   const [arrivals, setArrivals] = useState<{ name: string; rows: Arrival[] } | null>(null);
@@ -95,7 +97,7 @@ export default function SpeciesPanel({ name, area = null, near = null, alerts = 
           <img src={media.thumbUrl ?? media.imageUrl} alt={media.title ?? name} className="w-full h-40 object-cover" />
         ) : <div className="w-full h-16 bg-slate-800" />}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900 to-transparent h-20" />
-        <button onClick={onClose} aria-label="Close" className="absolute top-2 right-2 rounded-full bg-slate-900/70 text-slate-200 hover:text-white w-7 h-7 text-sm">✕</button>
+        <button onClick={onClose} aria-label={t("Close")} className="absolute top-2 right-2 rounded-full bg-slate-900/70 text-slate-200 hover:text-white w-7 h-7 text-sm">✕</button>
         <div className="absolute left-4 bottom-2">
           <h2 className="text-base font-semibold leading-tight drop-shadow">{data.vernacularName ?? data.scientificName}</h2>
           <p className="text-xs text-slate-300 italic">{data.scientificName}</p>
@@ -104,31 +106,31 @@ export default function SpeciesPanel({ name, area = null, near = null, alerts = 
       <div className="px-4 flex flex-col gap-3">
       {media?.extract && <p className="text-xs text-slate-300 leading-relaxed">{media.extract.split(". ").slice(0, 2).join(". ").replace(/\.$/, "")}.{media.pageUrl && <> <a href={media.pageUrl} target="_blank" rel="noreferrer" className="text-cyan-500 hover:underline">Wikipedia</a></>}</p>}
       {data.story && data.story.length > 0 && (
-        <section aria-label="In words" className="rounded-md border border-white/10 bg-white/5 px-3 py-2.5">
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">In words</h3>
+        <section aria-label={t("In words")} className="rounded-md border border-white/10 bg-white/5 px-3 py-2.5">
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">{t("In words")}</h3>
           <ul className="space-y-1.5 text-[13px] leading-relaxed text-slate-200">
             {data.story.map((line) => <li key={line}>{line}</li>)}
           </ul>
-          <p className="mt-1.5 text-[11px] text-slate-500">Written from the numbers below by fixed rules. <Link href="/methods#words" className="text-cyan-500 hover:underline">How</Link>.</p>
+          <p className="mt-1.5 text-[11px] text-slate-500">{t("Written from the numbers below by fixed rules.")} <Link href="/methods#words" className="text-cyan-500 hover:underline">{t("How")}</Link>.</p>
         </section>
       )}
       {alerts && <AlertBlock key={name} name={name} title={data.vernacularName ?? data.scientificName} />}
       <ListenBlock name={name} area={area} near={near} />
       <dl className="grid grid-cols-3 gap-2 text-xs">
-        <Stat label="Detections, 30d" value={total.toLocaleString()} />
-        <Stat label="Range centre drift" value={drift == null ? "n/a" : `${Math.abs(drift).toFixed(1)}° ${drift > 0 ? "north" : "south"}`} />
-        <Stat label="Frequency vs max temp" value={corr == null ? "n/a" : `r = ${corr.toFixed(2)}`} />
+        <Stat label={t("Detections, 30d")} value={total.toLocaleString()} />
+        <Stat label={t("Range centre drift")} value={drift == null ? "n/a" : `${Math.abs(drift).toFixed(1)}° ${drift > 0 ? t("north") : t("south")}`} />
+        <Stat label={t("Frequency vs max temp")} value={corr == null ? "n/a" : `r = ${corr.toFixed(2)}`} />
       </dl>
       <Line title={`Relative frequency (per 1,000${CLASS_NOUN[data.group ?? "avian"] ? " " + CLASS_NOUN[data.group ?? "avian"] : ""})`} values={days.map((d) => d.index)} labels={labels} format={(v) => (v >= 10 ? v.toFixed(0) : v >= 1 ? v.toFixed(1) : v.toFixed(2))} color="#22d3ee" />
-      <Line title="Range centre latitude" values={days.map((d) => d.lat)} labels={labels} format={(v) => `${v.toFixed(1)}°`} color="#a78bfa" />
-      <Line title="Max temperature at range centre (°C)" values={days.map((d) => d.weather?.tmax ?? null)} labels={labels} format={(v) => `${v.toFixed(0)}°`} color="#fb923c" />
-      <Line title="Max wind at range centre (km/h)" values={days.map((d) => d.weather?.wind ?? null)} labels={labels} format={(v) => `${v.toFixed(0)}`} color="#94a3b8" />
+      <Line title={t("Range centre latitude")} values={days.map((d) => d.lat)} labels={labels} format={(v) => `${v.toFixed(1)}°`} color="#a78bfa" />
+      <Line title={t("Max temperature at range centre (°C)")} values={days.map((d) => d.weather?.tmax ?? null)} labels={labels} format={(v) => `${v.toFixed(0)}°`} color="#fb923c" />
+      <Line title={t("Max wind at range centre (km/h)")} values={days.map((d) => d.weather?.wind ?? null)} labels={labels} format={(v) => `${v.toFixed(0)}`} color="#94a3b8" />
       <ArrivalTable rows={arrivals?.name === name ? arrivals.rows : null} name={name} />
       <HeardVsSeen name={name} />
       <p className="text-[11px] text-slate-500 pb-4">
         Effort corrected: figures are the species&apos; share of all {CLASS_NOUN[data.group ?? "avian"] || "bird"} detections, so more stations do not look like more animals.{" "}
-        <Link href="/methods" className="text-cyan-500 hover:underline">How this is measured, and its limits</Link>.{" "}
-        <Link href={`/species/${name.toLowerCase().replace(/\s+/g, "-")}`} className="text-cyan-500 hover:underline">Page for this species</Link>.
+        <Link href="/methods" className="text-cyan-500 hover:underline">{t("How this is measured, and its limits")}</Link>.{" "}
+        <Link href={`/species/${name.toLowerCase().replace(/\s+/g, "-")}`} className="text-cyan-500 hover:underline">{t("Page for this species")}</Link>.
         Sources: {data.sources.map((s) => SOURCE_LABEL[s] ?? s).join(", ")}. Weather: Open-Meteo ERA5 at the range centre. Map squares show the change in share, last 3 days against the week before.
         {media?.attribution && <> Photo: {media.attribution} ({media.license}).</>}
       </p>
@@ -139,6 +141,7 @@ export default function SpeciesPanel({ name, area = null, near = null, alerts = 
 
 /** Arrival week by latitude band for the continent with the most cells: the classic "arrival front". */
 function ArrivalTable({ rows, name }: { rows: Arrival[] | null; name: string }) {
+  const t = useT();
   if (!rows) return null;
   if (rows.length === 0) return <div className="text-xs text-slate-500">Seasonal timing: no clear arrival in the past year (a resident here, or too few detections).</div>;
   const byRegion = new Map<string, Arrival[]>();
@@ -160,7 +163,7 @@ function ArrivalTable({ rows, name }: { rows: Arrival[] | null; name: string }) 
         <a href={`/api/v1/arrivals?species=${encodeURIComponent(name)}&format=csv`} onClick={() => track("download_csv", { species: name })} className="text-cyan-500 hover:underline">CSV</a>
       </div>
       <table className="mt-1 w-full text-xs tabular-nums">
-        <thead><tr className="text-left text-slate-500"><th className="font-normal py-0.5">Latitude</th><th className="font-normal">Arrives</th><th className="font-normal">Peaks</th><th className="font-normal text-right">Cells</th></tr></thead>
+        <thead><tr className="text-left text-slate-500"><th className="font-normal py-0.5">{t("Latitude")}</th><th className="font-normal">{t("Arrives")}</th><th className="font-normal">{t("Peaks")}</th><th className="font-normal text-right">{t("Cells")}</th></tr></thead>
         <tbody>
           {[...bands.entries()].sort((a, b) => b[0] - a[0]).map(([lat, rs]) => (
             <tr key={lat} className="border-t border-white/5 text-slate-200">
@@ -172,7 +175,7 @@ function ArrivalTable({ rows, name }: { rows: Arrival[] | null; name: string }) 
           ))}
         </tbody>
       </table>
-      <p className="mt-1 text-[11px] text-slate-500">First week the species reaches a tenth of its seasonal peak after at least six weeks away (median across cells; ± is the typical 90% uncertainty). Typically within a week of human sightings, about a week late; for residents it marks the start of singing. <Link href="/validation" className="text-cyan-500 hover:underline">Validation</Link>.</p>
+      <p className="mt-1 text-[11px] text-slate-500">First week the species reaches a tenth of its seasonal peak after at least six weeks away (median across cells; ± is the typical 90% uncertainty). Typically within a week of human sightings, about a week late; for residents it marks the start of singing. <Link href="/validation" className="text-cyan-500 hover:underline">{t("Validation")}</Link>.</p>
     </div>
   );
 }
@@ -224,6 +227,7 @@ function twoSourceWords(d: TwoSources): string[] {
 
 /** Heard versus seen: acoustic detections against human records in the same cells and weeks. */
 function HeardVsSeen({ name }: { name: string }) {
+  const t = useT();
   const [d, setD] = useState<TwoSources | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -238,8 +242,8 @@ function HeardVsSeen({ name }: { name: string }) {
   const y = (v: number) => PAD.t + (1 - v) * (H - PAD.t - PAD.b);
   const path = (v: number[]) => v.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p).toFixed(1)}`).join("");
   return (
-    <section aria-label="Heard versus seen" className="rounded-md border border-white/10 bg-white/5 px-3 py-2.5">
-      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Heard versus seen</h3>
+    <section aria-label={t("Heard versus seen")} className="rounded-md border border-white/10 bg-white/5 px-3 py-2.5">
+      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">{t("Heard versus seen")}</h3>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Weekly share in recordings and in human sightings, each scaled to its own peak">
         <path d={path(a)} fill="none" stroke="#22d3ee" strokeWidth={2} />
         <path d={path(o)} fill="none" stroke="#f59e0b" strokeWidth={2} />
@@ -261,15 +265,16 @@ function HeardVsSeen({ name }: { name: string }) {
 /** Arrival alert: a button that opens the same form as the species page. */
 function AlertBlock({ name, title }: { name: string; title: string }) {
   const [open, setOpen] = useState(false);
+  const t = useT();
   if (!open) return (
     <button onClick={() => setOpen(true)} className="flex items-center justify-center gap-2 rounded-md border border-amber-400/40 bg-amber-400/10 px-3 py-2 text-sm font-medium text-amber-200 hover:bg-amber-400/20">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
-      Alert me when it arrives near me
+      {t("Alert me when it arrives near me")}
     </button>
   );
   return (
-    <section aria-label="Arrival alert" className="rounded-md border border-amber-400/30 bg-amber-400/5 px-3 py-2.5">
-      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-200">Arrival alert</h3>
+    <section aria-label={t("Arrival alert")} className="rounded-md border border-amber-400/30 bg-amber-400/5 px-3 py-2.5">
+      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-200">{t("Arrival alert")}</h3>
       <AlertForm species={name} title={title} compact />
     </section>
   );

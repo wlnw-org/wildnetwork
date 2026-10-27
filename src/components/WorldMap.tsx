@@ -12,6 +12,7 @@ import { track } from "./Analytics";
 import SpeciesPanel, { type SpeciesDetail } from "./SpeciesPanel";
 import { areaFor, type XcArea } from "@/lib/xenocanto";
 import Tour, { TOUR_KEY } from "./Tour";
+import { LANGS, setLang, useLang, useT, type Lang } from "@/lib/i18n";
 
 
 type FC = GeoJSON.FeatureCollection<GeoJSON.Geometry, Record<string, unknown>>;
@@ -49,6 +50,9 @@ const REVIEWED: Record<string, boolean> = { "speciesnet-studio": true, "wildnetw
 const esc = (v: unknown) => String(v ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
 export default function WorldMap() {
+  const t = useT();
+  const lang = useLang();
+  useEffect(() => { document.documentElement.lang = lang; }, [lang]);
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MLMap | null>(null);
   const [ready, setReady] = useState(false);
@@ -460,27 +464,27 @@ export default function WorldMap() {
         <span className="font-semibold tracking-tight">Wildlife Network</span>
         <span className="flex items-center gap-1.5 text-[11px] text-slate-400">
           <span className={`inline-block w-2 h-2 rounded-full ${status?.live ? "bg-[#7fd320]" : "bg-[#d0031b]"}`} />
-          {status?.live ? "Live" : "Stale"}{status?.lastPullAt && <span className="hidden sm:inline"> · updated {relTime(status.lastPullAt)}</span>}
+          {status?.live ? t("Live") : t("Stale")}{status?.lastPullAt && <span className="hidden sm:inline"> · {t("updated {t}", { t: relTime(status.lastPullAt, t) })}</span>}
         </span>
         <div className="flex-1" />
-        <div data-tour="classes" className="hidden lg:flex items-center gap-1" role="group" aria-label="Animal class">
+        <div data-tour="classes" className="hidden lg:flex items-center gap-1" role="group" aria-label={t("Animal class")}>
           {CLASSES.map((c) => (
             <button key={c.key} onClick={() => { track("select_class", { class: c.key }); setGroup(c.key); selectSpecies(null); if (tab === null) setTab("now"); }}
               className={`text-xs rounded px-2 py-1 ${group === c.key ? "bg-white/90 text-slate-900 font-medium" : "text-slate-300 hover:bg-white/10"}`}>
-              {c.label}
+              {t(c.label)}
             </button>
           ))}
         </div>
-        <select data-tour="classes" value={group} onChange={(e) => { setGroup(e.target.value); selectSpecies(null); }} aria-label="Animal class"
+        <select data-tour="classes" value={group} onChange={(e) => { setGroup(e.target.value); selectSpecies(null); }} aria-label={t("Animal class")}
           className="lg:hidden rounded-md bg-white/10 px-2 py-1 text-sm outline-none">
-          {CLASSES.map((c) => <option key={c.key} value={c.key} className="text-slate-900">{c.label}</option>)}
+          {CLASSES.map((c) => <option key={c.key} value={c.key} className="text-slate-900">{t(c.label)}</option>)}
         </select>
         <div data-tour="search" className="relative w-64 max-w-[40vw]">
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search a species"
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("Search a species")}
             className="w-full rounded-md bg-white/10 px-2.5 py-1 text-sm outline-none focus:bg-white/15 placeholder:text-slate-500" />
           {query.trim().length >= 2 && (
             <div className="absolute top-full mt-1 left-0 right-0 max-h-72 overflow-y-auto rounded-md bg-slate-900 border border-slate-700 shadow-xl">
-              {results.length === 0 && <div className="px-3 py-2 text-sm text-slate-500">No species found</div>}
+              {results.length === 0 && <div className="px-3 py-2 text-sm text-slate-500">{t("No species found")}</div>}
               {results.slice(0, 20).map((s) => (
                 <button key={s.scientificName} onClick={() => { pick(s.scientificName); setQuery(""); }} className="w-full text-left px-3 py-1.5 hover:bg-slate-800 text-sm flex items-center gap-2">
                   <Thumb src={thumbs[s.scientificName]} size={6} />
@@ -492,26 +496,30 @@ export default function WorldMap() {
           )}
         </div>
         <span className="hidden md:inline text-[11px] text-slate-500 tabular-nums">
-          {status ? `${status.detections.toLocaleString()} detections · ${status.species.toLocaleString()} species · ${status.sensors.toLocaleString()} sensors` : ""}
+          {status ? t("{d} detections · {s} species · {n} sensors", { d: status.detections.toLocaleString(), s: status.species.toLocaleString(), n: status.sensors.toLocaleString() }) : ""}
         </span>
+        <select value={lang} onChange={(e) => { setLang(e.target.value as Lang); track("select_language", { lang: e.target.value }); }} aria-label={t("Language")} title={t("Language")}
+          className="rounded-md bg-white/10 px-1.5 py-1 text-xs outline-none max-w-[6.5rem]">
+          {LANGS.map((l) => <option key={l.code} value={l.code} className="text-slate-900">{l.label}</option>)}
+        </select>
       </header>
 
       {/* Icon rail */}
       <nav data-tour="rail" className="absolute left-0 top-11 bottom-0 w-[4.375rem] bg-black/80 backdrop-blur-xl border-r border-white/10 flex flex-col items-center py-2 gap-1 z-20">
-        <RailButton label="Now" active={tab === "now" && !species} onClick={() => { setTab("now"); selectSpecies(null); }} icon={<path d="M3 12h4l3-8 4 16 3-8h4" />} />
-        <RailButton label="Feed" active={tab === "feed" && !species} onClick={() => { setTab("feed"); selectSpecies(null); }} icon={<><path d="M4 6h16M4 12h16M4 18h10" /></>} />
-        {status?.ask && <RailButton label="Ask" active={tab === "ask" && !species} onClick={() => { setTab("ask"); selectSpecies(null); }} icon={<><path d="M4 5h16v11H9l-5 4z" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.4M12 15.5h.01" /></>} />}
-        <RailButton label="About" active={tab === "about" && !species} onClick={() => { setTab("about"); selectSpecies(null); }} icon={<><circle cx="12" cy="12" r="9" /><path d="M12 8h.01M11 12h1v4h1" /></>} />
+        <RailButton label={t("Now")} active={tab === "now" && !species} onClick={() => { setTab("now"); selectSpecies(null); }} icon={<path d="M3 12h4l3-8 4 16 3-8h4" />} />
+        <RailButton label={t("Feed")} active={tab === "feed" && !species} onClick={() => { setTab("feed"); selectSpecies(null); }} icon={<><path d="M4 6h16M4 12h16M4 18h10" /></>} />
+        {status?.ask && <RailButton label={t("Ask")} active={tab === "ask" && !species} onClick={() => { setTab("ask"); selectSpecies(null); }} icon={<><path d="M4 5h16v11H9l-5 4z" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.4M12 15.5h.01" /></>} />}
+        <RailButton label={t("About")} active={tab === "about" && !species} onClick={() => { setTab("about"); selectSpecies(null); }} icon={<><circle cx="12" cy="12" r="9" /><path d="M12 8h.01M11 12h1v4h1" /></>} />
         <Link data-tour="contribute" href="/contribute" className="w-14 h-14 rounded-md flex flex-col items-center justify-center gap-1 text-[10px] text-slate-400 hover:bg-white/5 hover:text-slate-200">
           <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14" /><circle cx="12" cy="12" r="9" /></svg>
-          Add data
+          {t("Add data")}
         </Link>
         <Link href="/methods" className="w-14 h-14 rounded-md flex flex-col items-center justify-center gap-1 text-[10px] text-slate-400 hover:bg-white/5 hover:text-slate-200">
           <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h9l4 4v14H6z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
-          Methods
+          {t("Methods")}
         </Link>
         <div className="flex-1" />
-        <RailButton label="Hide" active={false} onClick={() => { setTab(null); selectSpecies(null); }} icon={<path d="M15 6l-6 6 6 6" />} />
+        <RailButton label={t("Hide")} active={false} onClick={() => { setTab(null); selectSpecies(null); }} icon={<path d="M15 6l-6 6 6 6" />} />
       </nav>
 
       {/* Panel */}
@@ -526,7 +534,7 @@ export default function WorldMap() {
             <AskPanel onPick={pick} />
           ) : tab === "feed" ? (
             <div className="flex-1 overflow-y-auto">
-              <div className="px-4 py-2 text-[11px] text-slate-500 border-b border-white/5">{loading ? "Loading latest detections" : `Latest detections · ${detections.toLocaleString()}`} in the last {hours < 24 ? hours + "h" : hours / 24 + "d"}</div>
+              <div className="px-4 py-2 text-[11px] text-slate-500 border-b border-white/5">{loading ? t("Loading latest detections") : t("Latest detections · {n} in the last {w}", { n: detections.toLocaleString(), w: hours < 24 ? hours + "h" : hours / 24 + "d" })}</div>
               {events.features.slice(0, 200).map((f, i) => {
                 const p = f.properties as Record<string, string>;
                 return (
@@ -534,10 +542,10 @@ export default function WorldMap() {
                     <button onClick={() => pick(p.sci)} className="shrink-0"><Thumb src={thumbs[p.sci]} size={10} /></button>
                     <button onClick={() => pick(p.sci)} className="min-w-0 flex-1 text-left">
                       <div className="text-sm truncate">{p.common ?? p.sci}</div>
-                      <div className="text-[11px] text-slate-500 truncate">{p.source}{Number(p.n) > 1 ? ` · ${p.n} detections` : ""} · conf {Number(p.conf).toFixed(2)}</div>
+                      <div className="text-[11px] text-slate-500 truncate">{p.source}{Number(p.n) > 1 ? ` · ${t("{n} detections", { n: p.n })}` : ""} · conf {Number(p.conf).toFixed(2)}</div>
                     </button>
-                    <span className="text-[11px] text-slate-400 tabular-nums shrink-0">{relTime(p.t)}</span>
-                    <button onClick={() => flyTo(f)} aria-label="Jump to location" className="shrink-0 w-7 h-7 rounded hover:bg-white/10 text-slate-400 hover:text-white grid place-items-center">
+                    <span className="text-[11px] text-slate-400 tabular-nums shrink-0">{relTime(p.t, t)}</span>
+                    <button onClick={() => flyTo(f)} aria-label={t("Jump to location")} className="shrink-0 w-7 h-7 rounded hover:bg-white/10 text-slate-400 hover:text-white grid place-items-center">
                       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4" /></svg>
                     </button>
                   </div>
@@ -551,47 +559,47 @@ export default function WorldMap() {
                   {group === "marine"
                     ? <>Marine records from OBIS, Orcasound hydrophones and Acartia sightings, measured against other marine records only. Killer whale records are shown 24 hours late, to protect endangered orcas.</>
                     : <>{CLASSES.find((c) => c.key === group)?.label} are measured against other {CLASSES.find((c) => c.key === group)?.label.toLowerCase()} only, from the stations able to detect them.</>}{" "}
-                  Coverage is thin, so treat these as early signals. <Link href="/methods#classes" className="text-cyan-500 hover:underline">How this works</Link>.
+                  {t("Coverage is thin, so treat these as early signals.")} <Link href="/methods#classes" className="text-cyan-500 hover:underline">{t("How this works")}</Link>.
                 </p>
               )}
               {insights?.summary && insights.summary.length > 0 && (
-                <section aria-label="This week in words" className="rounded-md border border-white/10 bg-white/5 px-3 py-2.5">
-                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">This week in words</h3>
+                <section aria-label={t("This week in words")} className="rounded-md border border-white/10 bg-white/5 px-3 py-2.5">
+                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">{t("This week in words")}</h3>
                   <ul className="space-y-1.5 text-[13px] leading-relaxed text-slate-200">
                     {insights.summary.map((line) => <li key={line}>{line}</li>)}
                   </ul>
                 </section>
               )}
-              <Section title="Latest arrivals" hint="Most recent arrival week, from the weekly history">
+              <Section title={t("Latest arrivals")} hint={t("Most recent arrival week, from the weekly history")}>
                 {insights?.seasonal?.map((a) => (
                   <Row key={a.scientificName} thumb={thumbs[a.scientificName]} onClick={() => pick(a.scientificName)} name={a.vernacularName ?? a.scientificName} sci={`${a.scientificName} · ${a.cellLat}°, ${a.cellLon}°`}
                     value={new Date(a.week + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" })} tone="neutral" />
                 ))}
               </Section>
-              <Section title="Most recorded" hint="Latest four weeks with data">
+              <Section title={t("Most recorded")} hint={t("Latest four weeks with data")}>
                 {insights?.common?.map((s) => (
                   <Row key={s.scientificName} thumb={thumbs[s.scientificName]} onClick={() => pick(s.scientificName)} name={s.vernacularName ?? s.scientificName} sci={s.scientificName} value={s.n.toLocaleString()} tone="neutral" />
                 ))}
               </Section>
-              <Section title="Moving" hint="Range centre shift, 95% interval">
+              <Section title={t("Moving")} hint={t("Range centre shift, 95% interval")}>
                 {insights?.drift.map((d) => (
                   <Row key={d.scientificName + d.region} thumb={thumbs[d.scientificName]} onClick={() => pick(d.scientificName)} name={d.vernacularName ?? d.scientificName} sci={`${d.scientificName} · ${d.region}${d.driftLow != null && d.driftHigh != null ? ` · ${Math.abs(d.driftLow) < Math.abs(d.driftHigh) ? Math.abs(d.driftLow).toFixed(0) : Math.abs(d.driftHigh).toFixed(0)} to ${Math.max(Math.abs(d.driftLow), Math.abs(d.driftHigh)).toFixed(0)}°` : ""}`}
                     value={`${Math.abs(d.driftDeg).toFixed(1)}° ${d.driftDeg > 0 ? "N" : "S"}`} tone={d.driftDeg > 0 ? "warm" : "cool"} />
                 ))}
               </Section>
-              <Section title="Surging and fading" hint="Yesterday vs 7 days, 95% interval">
+              <Section title={t("Surging and fading")} hint={t("Yesterday vs 7 days, 95% interval")}>
                 {insights?.movers.map((m) => (
                   <Row key={m.scientificName} thumb={thumbs[m.scientificName]} onClick={() => pick(m.scientificName)} name={m.vernacularName ?? m.scientificName} sci={`${m.scientificName}${m.ratioLow != null && m.ratioHigh != null ? ` · ${m.ratio >= 1 ? "×" + m.ratioLow.toFixed(1) + " to ×" + m.ratioHigh.toFixed(1) : "÷" + (1 / m.ratioHigh).toFixed(1) + " to ÷" + (1 / m.ratioLow).toFixed(1)}` : ""}`}
                     value={`${m.ratio >= 1 ? "×" + m.ratio.toFixed(1) : "÷" + (1 / m.ratio).toFixed(1)}`} tone={m.ratio >= 1 ? "warm" : "cool"} />
                 ))}
               </Section>
-              <Section title="New arrivals" hint="First in 12 days, in a watched 5° cell">
+              <Section title={t("New arrivals")} hint={t("First in 12 days, in a watched 5° cell")}>
                 {insights?.arrivals.map((a) => (
                   <Row key={`${a.scientificName}${a.cellLat}${a.cellLon}`} thumb={thumbs[a.scientificName]} onClick={() => pick(a.scientificName)} name={a.vernacularName ?? a.scientificName} sci={a.scientificName}
                     value={`${a.cellLat}°, ${a.cellLon}°`} tone="neutral" />
                 ))}
               </Section>
-              <Section title="Most detected" hint={group === "bat" ? "Last 24h" : `Last ${hours}h`}>
+              <Section title={t("Most detected")} hint={group === "bat" ? t("Last 24h") : t("Last {h}h", { h: hours })}>
                 {speciesList.slice(0, 15).map((s) => (
                   <Row key={s.scientificName} thumb={thumbs[s.scientificName]} onClick={() => pick(s.scientificName)} name={s.vernacularName ?? s.scientificName} sci={s.scientificName} value={s.count.toLocaleString()} tone="neutral" />
                 ))}
@@ -599,8 +607,8 @@ export default function WorldMap() {
             </div>
           )}
           <div className="px-4 py-2 border-t border-white/5 text-[11px] text-slate-400 flex flex-wrap gap-x-3 gap-y-1">
-            <Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label="WDX devices" /><Legend color="#60a5fa" label="Acartia" /><Legend color="#2dd4bf" label="Orcasound" /><Legend color="#38bdf8" label="OBIS" />
-            <span className="text-slate-500">{deployments.features.length.toLocaleString()} sensors</span>
+            <Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label={t("WDX devices")} /><Legend color="#60a5fa" label="Acartia" /><Legend color="#2dd4bf" label="Orcasound" /><Legend color="#38bdf8" label="OBIS" />
+            <span className="text-slate-500">{t("{n} sensors", { n: deployments.features.length.toLocaleString() })}</span>
           </div>
         </aside>
       )}
@@ -609,38 +617,38 @@ export default function WorldMap() {
       <div className={`absolute top-14 right-14 z-10 rounded-md bg-black/70 backdrop-blur-xl border border-white/10 px-3 py-2 text-[11px] text-slate-300 ${panelOpen ? "max-md:hidden" : ""}`}>
         {activeFrame ? (
           <>
-            <div className="text-slate-400 mb-1">Share of all detections that week</div>
-            <div className="flex items-center gap-2"><span>low</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, rgba(34,211,238,0.08), rgba(34,211,238,0.75))" }} /><span>high</span></div>
-            <div className="flex items-center gap-2 mt-1"><span className="inline-block w-5 h-0.5 bg-slate-100" /><span>range centre, last 10 weeks</span></div>
+            <div className="text-slate-400 mb-1">{t("Share of all detections that week")}</div>
+            <div className="flex items-center gap-2"><span>{t("low")}</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, rgba(34,211,238,0.08), rgba(34,211,238,0.75))" }} /><span>{t("high")}</span></div>
+            <div className="flex items-center gap-2 mt-1"><span className="inline-block w-5 h-0.5 bg-slate-100" /><span>{t("range centre, last 10 weeks")}</span></div>
           </>
         ) : species ? (
           <>
-            <div className="text-slate-400 mb-1">Change in share, 3 days vs week before</div>
-            <div className="flex items-center gap-2"><span>fading</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #3b82f6, #64748b, #ea580c)" }} /><span>surging</span></div>
+            <div className="text-slate-400 mb-1">{t("Change in share, 3 days vs week before")}</div>
+            <div className="flex items-center gap-2"><span>{t("fading")}</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #3b82f6, #64748b, #ea580c)" }} /><span>{t("surging")}</span></div>
           </>
         ) : (
           <>
-            <div className="text-slate-400 mb-1" title="The newest detections from each source, refreshed every few minutes. Measures use full counts, not these dots.">{group === "bat" ? "Bat detections, last 24h" : `Detections, last ${hours}h (sample)`}</div>
-            <div className="flex flex-wrap gap-x-3 gap-y-0.5"><Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label="Devices" /><Legend color="#60a5fa" label="Acartia" /><Legend color="#2dd4bf" label="Orcasound" /><Legend color="#38bdf8" label="OBIS" /><Legend color="#475569" label="Sensor" /></div>
+            <div className="text-slate-400 mb-1" title="The newest detections from each source, refreshed every few minutes. Measures use full counts, not these dots.">{group === "bat" ? t("Bat detections, last 24h") : t("Detections, last {h}h (sample)", { h: hours })}</div>
+            <div className="flex flex-wrap gap-x-3 gap-y-0.5"><Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label={t("Devices")} /><Legend color="#60a5fa" label="Acartia" /><Legend color="#2dd4bf" label="Orcasound" /><Legend color="#38bdf8" label="OBIS" /><Legend color="#475569" label={t("Sensor")} /></div>
           </>
         )}
         {!species && (
           <div className="mt-1.5 pt-1.5 border-t border-white/10">
             <label className="flex items-center gap-1.5 cursor-pointer select-none" title="OBIS, Orcasound hydrophones and Acartia sightings, last 12 months">
               <input type="checkbox" checked={showMarine} onChange={(e) => { setShowMarine(e.target.checked); track("toggle_marine", { on: e.target.checked ? 1 : 0 }); }} className="accent-[#60a5fa]" />
-              <span>Marine records</span>
+              <span>{t("Marine records")}</span>
             </label>
             <label className="flex items-center gap-1.5 cursor-pointer select-none">
               <input type="checkbox" checked={showCoverage} onChange={(e) => { setShowCoverage(e.target.checked); if (e.target.checked) track("show_coverage"); }} className="accent-[#a78bfa]" />
-              <span>Coverage</span>
+              <span>{t("Coverage")}</span>
             </label>
             {showCoverage && (
               <div className="mt-1 space-y-0.5">
-                <Legend color="#a78bfa" label={`Recordings and sightings${coverage ? ` (${coverage.summary.both})` : ""}`} />
-                <Legend color="#22d3ee" label={`Recordings only${coverage ? ` (${coverage.summary.acoustic})` : ""}`} />
-                <Legend color="#f59e0b" label={`Sightings only${coverage ? ` (${coverage.summary.observed})` : ""}`} />
-                <Legend color="#64748b" label="Too thin to use" />
-                <Link href="/methods#coverage" className="block text-cyan-500 hover:underline">What counts as watched</Link>
+                <Legend color="#a78bfa" label={`${t("Recordings and sightings")}${coverage ? ` (${coverage.summary.both})` : ""}`} />
+                <Legend color="#22d3ee" label={`${t("Recordings only")}${coverage ? ` (${coverage.summary.acoustic})` : ""}`} />
+                <Legend color="#f59e0b" label={`${t("Sightings only")}${coverage ? ` (${coverage.summary.observed})` : ""}`} />
+                <Legend color="#64748b" label={t("Too thin to use")} />
+                <Link href="/methods#coverage" className="block text-cyan-500 hover:underline">{t("What counts as watched")}</Link>
               </div>
             )}
           </div>
@@ -651,15 +659,15 @@ export default function WorldMap() {
       <div data-tour="slider" className={`absolute right-3 md:right-6 bottom-9 left-[5.25rem] ${panelOpen ? "max-md:hidden md:left-[30rem]" : "md:left-24"} h-[3.75rem] rounded-lg bg-black/70 backdrop-blur-xl border border-white/10 px-4 flex items-center gap-3 z-10 transition-[left]`}>
         {species ? (
           <>
-            <span className="text-[11px] uppercase tracking-wider text-slate-400 shrink-0 whitespace-nowrap">{activeFrame ? new Date(activeFrame.week).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "2-digit" }) : "Movement"}</span>
+            <span className="text-[11px] uppercase tracking-wider text-slate-400 shrink-0 whitespace-nowrap">{activeFrame ? new Date(activeFrame.week).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "2-digit" }) : t("Movement")}</span>
             <button disabled={frames.length === 0} onClick={() => { if (!mvPlaying) track("play_year", { species: species ?? "" }); setMvPlaying((p) => !p); if (frame === null) setFrame(0); }} className="rounded bg-[#006cd9] hover:bg-[#2b84e6] disabled:opacity-40 text-sm px-3 py-1 font-medium whitespace-nowrap shrink-0">
-              {mvPlaying ? "Pause" : "Play year"}
+              {mvPlaying ? t("Pause") : t("Play year")}
             </button>
-            <input type="range" min={0} max={Math.max(0, frames.length - 1)} aria-label="Week" step={1} value={frame ?? Math.max(0, frames.length - 1)} disabled={frames.length === 0}
+            <input type="range" min={0} max={Math.max(0, frames.length - 1)} aria-label={t("Week")} step={1} value={frame ?? Math.max(0, frames.length - 1)} disabled={frames.length === 0}
               onChange={(e) => { setMvPlaying(false); setFrame(Number(e.target.value)); }} className="flex-1 min-w-0 accent-[#006cd9]" />
-            <button onClick={() => { setMvPlaying(false); setFrame(null); }} className="text-xs text-slate-400 hover:text-white">Live</button>
+            <button onClick={() => { setMvPlaying(false); setFrame(null); }} className="text-xs text-slate-400 hover:text-white">{t("Live")}</button>
             <span className="text-xs text-slate-300 tabular-nums whitespace-nowrap text-right hidden lg:inline">
-              {frames.length === 0 ? "No weekly history yet" : activeFrame ? `Week of ${new Date(activeFrame.week).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })} · ${activeFrame.index.toFixed(1)} per 1,000` : `${frames.length} weeks available`}
+              {frames.length === 0 ? t("No weekly history yet") : activeFrame ? t("Week of {d} · {v} per 1,000", { d: new Date(activeFrame.week).toLocaleDateString(lang, { day: "numeric", month: "short", year: "numeric" }), v: activeFrame.index.toFixed(1) }) : t("{n} weeks available", { n: frames.length })}
             </span>
           </>
         ) : (
@@ -673,13 +681,13 @@ export default function WorldMap() {
           ))}
         </div>
         <button onClick={() => { setPlaying((p) => !p); if (playhead === null) setPlayhead(0); }} className="rounded bg-[#006cd9] hover:bg-[#2b84e6] text-sm px-3 py-1 font-medium">
-          {playing ? "Pause" : "Play"}
+          {playing ? t("Pause") : t("Play")}
         </button>
         <input type="range" min={0} max={total} step={total / 600} value={playhead ?? total}
           onChange={(e) => { setPlaying(false); setPlayhead(Number(e.target.value)); }} className="flex-1 accent-[#006cd9]" />
-        <button onClick={() => { setPlaying(false); setPlayhead(null); }} className="text-xs text-slate-400 hover:text-white">All</button>
+        <button onClick={() => { setPlaying(false); setPlayhead(null); }} className="text-xs text-slate-400 hover:text-white">{t("All")}</button>
         <span className="text-xs text-slate-300 tabular-nums w-40 text-right hidden sm:inline">
-          {loading ? "Loading" : playhead === null ? `${detections.toLocaleString()} detections` : new Date(windowStart + playhead).toLocaleString()}
+          {loading ? t("Loading") : playhead === null ? t("{n} detections", { n: detections.toLocaleString() }) : new Date(windowStart + playhead).toLocaleString(lang)}
         </span>
           </>
         )}
@@ -690,12 +698,12 @@ export default function WorldMap() {
   );
 }
 
-function relTime(iso: string) {
+function relTime(iso: string, t: (text: string, vars?: Record<string, string | number>) => string) {
   const s = Math.max(0, (Date.now() - Date.parse(iso)) / 1000);
-  if (s < 60) return `${Math.round(s)}s ago`;
-  if (s < 3600) return `${Math.round(s / 60)}m ago`;
-  if (s < 86400) return `${Math.round(s / 3600)}h ago`;
-  return `${Math.round(s / 86400)}d ago`;
+  if (s < 60) return t("{n}s ago", { n: Math.round(s) });
+  if (s < 3600) return t("{n}m ago", { n: Math.round(s / 60) });
+  if (s < 86400) return t("{n}h ago", { n: Math.round(s / 3600) });
+  return t("{n}d ago", { n: Math.round(s / 86400) });
 }
 
 function RailButton({ label, active, onClick, icon }: { label: string; active: boolean; onClick: () => void; icon: React.ReactNode }) {
