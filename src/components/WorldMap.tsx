@@ -63,7 +63,8 @@ export default function WorldMap() {
   const [query, setQuery] = useState("");
   const [events, setEvents] = useState<FC>(EMPTY);
   const [sightings, setSightings] = useState<FC>(EMPTY);
-  const [showMarine, setShowMarine] = useState(true);
+  // Off on first load (the legend toggle turns it on); choosing the Marine class or a species shows its records regardless.
+  const [showMarine, setShowMarine] = useState(false);
   const [deployments, setDeployments] = useState<FC>(EMPTY);
   const [cells, setCells] = useState<FC>(EMPTY);
   const [fetchedAt, setFetchedAt] = useState(0);
@@ -243,7 +244,7 @@ export default function WorldMap() {
     return () => { map.off("moveend", onMove); };
   }, [ready]);
   useEffect(() => {
-    if (!showMarine || !(group === "all" || group === "marine" || !!species)) { const t = setTimeout(() => setSightings(EMPTY), 0); return () => clearTimeout(t); }
+    if (!(group === "marine" || !!species || (showMarine && group === "all"))) { const t = setTimeout(() => setSightings(EMPTY), 0); return () => clearTimeout(t); }
     let cancelled = false;
     const get = () => fetch(`/api/v1/marine?${new URLSearchParams({ days: String(MARINE_DAYS), perCell: species ? "500" : marineView ? "15" : "40", ...(species ? { species } : {}), ...(marineView ? { bbox: marineView } : {}) })}`)
       .then((r) => r.json() as Promise<FC>).then((fc) => { if (!cancelled) setSightings(fc); }).catch(() => {});
