@@ -27,8 +27,8 @@ export default function Privacy() {
           Every page loads Google Analytics, which counts visits so the project can show funders and researchers how it is used. It records the pages you view, the
           features you use (choosing a species or animal class, playing a year, downloading a CSV, showing coverage), your approximate location at city level,
           your device and browser, and the site you came from. It sets cookies (named <code className="text-slate-200">_ga</code>) to recognise a returning browser.
-          Google processes your IP address to do this. Advertising features are off. The data is kept for the period set in the project&apos;s Analytics account
-          (Google&apos;s default is two months) and then deleted by Google. Google&apos;s own policy:{" "}
+          Google processes your IP address to do this. Advertising features are off. Detailed visit data is kept for 14 months and then
+          deleted by Google; reports keep only totals after that. Google&apos;s own policy:{" "}
           <a href="https://policies.google.com/privacy" className="text-cyan-400 hover:underline">policies.google.com/privacy</a>.
         </p>
         <p className="mt-2">
