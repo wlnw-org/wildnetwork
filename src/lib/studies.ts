@@ -52,7 +52,7 @@ export async function studyDashboard(s: Study) {
         WHERE g.grp = ${s.grp} AND g.is_species AND w.week >= CURRENT_DATE - 56 AND ${inBox(s)} ${speciesFilter(s)}
         GROUP BY 1),
       e AS (SELECT SUM(detections)::float AS d FROM effort_weekly WHERE grp = ${s.grp} AND week >= CURRENT_DATE - 56 AND ${inBox(s)})
-      SELECT w.*, CASE WHEN e.d > 0 THEN 1000 * w.n / e.d ELSE 0 END AS share FROM w, e ORDER BY n DESC LIMIT 30`,
+      SELECT w.*, CASE WHEN e.d > 0 THEN 1000.0 * w.n / e.d ELSE 0 END::float AS share FROM w, e ORDER BY n DESC LIMIT 30`,
     // Arrival estimates in the box, with their intervals and support.
     sql<{ scientific_name: string; vernacular_name: string | null; cell_lat: number; cell_lon: number; arrival: string; low: string | null; high: string | null; support: number | null; peak: string }[]>`
       SELECT p.scientific_name, p.vernacular_name, p.cell_lat, p.cell_lon, p.arrival_week::text AS arrival, p.arrival_low::text AS low,
