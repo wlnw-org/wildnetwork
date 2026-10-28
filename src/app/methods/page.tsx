@@ -255,7 +255,7 @@ export default function Methods() {
             all; below 0.5, treat the arrival as weak. The arrival table shows the typical half-width as ±weeks.</li>
           <li><b>Heard versus seen.</b> The correlation&apos;s 95% interval comes from resampling blocks of {BOOT.BLOCK_WEEKS} weeks ({BOOT.B} times), which keeps the
             series&apos; week-to-week dependence; a plain formula would make it look too certain.</li>
-          <li>The 30-day movement sentence on the species panel carries a 95% interval from a residual block bootstrap: a straight line is fitted through the daily range centres, its residuals are resampled in blocks of 3 days, and the same first-3-days against last-3-days difference is recomputed 400 times; the spread of those differences around the line's own shift is placed around the observed shift. When that interval includes no change, the sentence says the shift is not a clear move. Not yet covered: the range centre line on the daily chart.</li>
+          <li>The 30-day movement sentence on the species panel carries a 95% interval from a residual block bootstrap: a straight line is fitted through the daily range centres, its residuals are resampled in blocks of 3 days, and the same first-3-days against last-3-days difference is recomputed 400 times; the spread of those differences around the line&apos;s own shift is placed around the observed shift. When that interval includes no change, the sentence says the shift is not a clear move. Not yet covered: the range centre line on the daily chart.</li>
         </ul>
         <p className="mt-2">
           These intervals capture sampling noise among cells and in counts. They do not capture misidentification by the classifier, or bias from where stations and
