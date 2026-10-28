@@ -12,6 +12,16 @@ export const DATA_CONCEPT_DOI = "10.5281/zenodo.23193453";
 
 export const DATA_RELEASES: { date: string; url: string; zip: string; weeks: string; rows: { weekly: number; effort: number; arrivals: number; datasets: number; taxa?: number }; doi?: string; notes?: string; period?: string }[] = [
   {
+    date: "2026-10-28",
+    url: "https://github.com/wlnw-org/wildnetwork/releases/tag/data-2026-10-28",
+    zip: "https://github.com/wlnw-org/wildnetwork/releases/download/data-2026-10-28/wildnetwork-open-2026-10-28.zip",
+    weeks: "27 Oct 2025 to 12 Oct 2026",
+    period: "2025-10-27/2026-10-18",
+    rows: { weekly: 352350, effort: 15986, arrivals: 4724, datasets: 284, taxa: 16765 },
+    doi: "10.5281/zenodo.23731681",
+    notes: "Release 4: methods 0.13 (arrival estimates on the site can be reviewed by researchers; this file's GBIF-only arrivals are unfiltered so the two can be compared), a year up to 12 October 2026.",
+  },
+  {
     date: "2026-10-25",
     url: "https://github.com/wlnw-org/wildnetwork/releases/tag/data-2026-10-25",
     zip: "https://github.com/wlnw-org/wildnetwork/releases/download/data-2026-10-25/wildnetwork-open-2026-10-25.zip",
