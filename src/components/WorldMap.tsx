@@ -575,9 +575,13 @@ export default function WorldMap() {
 
       {/* Top bar */}
       <header className="absolute top-0 inset-x-0 h-11 bg-black/80 backdrop-blur-xl border-b border-white/10 flex items-center px-3 gap-3 z-20">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.svg" alt="" className="w-6 h-6 rounded-md" />
-        <span className="font-semibold tracking-tight">Wildlife Network</span>
+        {/* Home: a full load of / resets the view, the panel and any species or place in the address. */}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+        <a href="/" className="flex items-center gap-3 shrink-0" aria-label="Wildlife Network home">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.svg" alt="" className="w-6 h-6 rounded-md" />
+          <span className="font-semibold tracking-tight">Wildlife Network</span>
+        </a>
         <span className="flex items-center gap-1.5 text-[11px] text-slate-400">
           <span className={`inline-block w-2 h-2 rounded-full ${status?.live ? "bg-[#7fd320]" : "bg-[#d0031b]"}`} />
           {status?.live ? t("Live") : t("Stale")}{status?.lastPullAt && <span className="hidden sm:inline"> · {t("updated {t}", { t: relTime(status.lastPullAt, t) })}</span>}
@@ -622,7 +626,7 @@ export default function WorldMap() {
         <span className="hidden md:inline text-[11px] text-slate-500 tabular-nums">
           {status ? t("{d} detections · {s} species · {n} sensors", { d: status.detections.toLocaleString(), s: status.species.toLocaleString(), n: status.sensors.toLocaleString() }) : ""}
         </span>
-        <select value={lang} onChange={(e) => { setLang(e.target.value as Lang); track("select_language", { lang: e.target.value }); }} aria-label={t("Language")} title={t("Language")}
+        <select data-tour="lang" value={lang} onChange={(e) => { setLang(e.target.value as Lang); track("select_language", { lang: e.target.value }); }} aria-label={t("Language")} title={t("Language")}
           className="rounded-md bg-white/10 px-1.5 py-1 text-xs outline-none max-w-[6.5rem]">
           {LANGS.map((l) => <option key={l.code} value={l.code} className="text-slate-900">{l.label}</option>)}
         </select>
@@ -638,7 +642,7 @@ export default function WorldMap() {
           <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14" /><circle cx="12" cy="12" r="9" /></svg>
           {t("Add data")}
         </Link>
-        <Link href="/research" className="w-14 h-14 rounded-md flex flex-col items-center justify-center gap-1 text-[10px] text-slate-400 hover:bg-white/5 hover:text-slate-200">
+        <Link data-tour="research" href="/research" className="w-14 h-14 rounded-md flex flex-col items-center justify-center gap-1 text-[10px] text-slate-400 hover:bg-white/5 hover:text-slate-200">
           <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3" /><path d="M7.5 15h9" /></svg>
           {t("Research")}
         </Link>

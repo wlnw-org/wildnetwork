@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "What Wildlife Network collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
 };
 
-const UPDATED = "27 October 2026";
+const UPDATED = "28 October 2026";
 
 export default function Privacy() {
   return (
@@ -25,7 +25,7 @@ export default function Privacy() {
         <H2>Visit statistics</H2>
         <p>
           Every page loads Google Analytics, which counts visits so the project can show funders and researchers how it is used. It records the pages you view, the
-          features you use (choosing a species or animal class, playing a year, downloading a CSV, showing coverage), your approximate location at city level,
+          features you use (choosing a species or animal class, playing a year, downloading a CSV, showing coverage, and the kind of visitor you pick in the welcome tour if you pick one), your approximate location at city level,
           your device and browser, and the site you came from. It sets cookies (named <code className="text-slate-200">_ga</code>) to recognise a returning browser.
           Google processes your IP address to do this. Advertising features are off. Detailed visit data is kept for 14 months and then
           deleted by Google; reports keep only totals after that. Google&apos;s own policy:{" "}
