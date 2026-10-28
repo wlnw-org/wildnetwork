@@ -102,10 +102,12 @@ export function shiftInterval(lats: number[], seed: string): [number, number] | 
   const t = lats.map((_, i) => i), mt = mean(t), ml = mean(lats);
   const b = t.reduce((a, x, i) => a + (x - mt) * (lats[i] - ml), 0) / t.reduce((a, x) => a + (x - mt) ** 2, 0);
   const fit = t.map((x) => ml + b * (x - mt)), res = lats.map((y, i) => y - fit[i]);
+  // The noise is measured around the fitted shift and then centred on the observed one, so the interval always contains it.
+  const obs = mean(lats.slice(-3)) - mean(lats.slice(0, 3)), fitShift = mean(fit.slice(-3)) - mean(fit.slice(0, 3));
   const r = rng(seedOf(seed)), shifts: number[] = [];
   for (let k = 0; k < BOOT.B; k++) {
     const idx = blockResample(n, 3, r), y = fit.map((f, i) => f + res[idx[i]]);
-    shifts.push(mean(y.slice(-3)) - mean(y.slice(0, 3)));
+    shifts.push(obs + mean(y.slice(-3)) - mean(y.slice(0, 3)) - fitShift);
   }
   return interval(shifts);
 }
