@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { track } from "./Analytics";
 import AlertForm from "./AlertForm";
-import { useT } from "@/lib/i18n";
+import { useLang, useT } from "@/lib/i18n";
 import ListenBlock from "./ListenBlock";
 import type { XcArea } from "@/lib/xenocanto";
 
@@ -58,10 +58,11 @@ const SOURCE_LABEL: Record<string, string> = { birdweather: "BirdWeather", gbif:
 const CLASS_NOUN: Record<string, string> = { avian: "", bat: "bat", amphibian: "frog", insect: "insect", mammal: "mammal", marine: "marine", other: "other" };
 
 interface Arrival { cellLat: number; cellLon: number; region: string; arrivalWeek: string; arrivalLow?: string | null; arrivalHigh?: string | null; arrivalSupport?: number | null; peakWeek: string; departureWeek: string | null; detections: number }
-interface Media { title: string | null; thumbUrl: string | null; imageUrl: string | null; extract: string | null; pageUrl: string | null; source: string; attribution: string | null; license: string | null }
+interface Media { title: string | null; thumbUrl: string | null; imageUrl: string | null; extract: string | null; pageUrl: string | null; source: string; attribution: string | null; license: string | null; names?: Record<string, string> }
 
 export default function SpeciesPanel({ name, area = null, near = null, alerts = false, onClose }: { name: string; area?: XcArea | null; near?: string | null; alerts?: boolean; onClose: () => void }) {
   const t = useT();
+  const lang = useLang();
   const [data, setData] = useState<SpeciesDetail | null>(null);
   const [media, setMedia] = useState<Media | null>(null);
   const [arrivals, setArrivals] = useState<{ name: string; rows: Arrival[] } | null>(null);
@@ -99,7 +100,7 @@ export default function SpeciesPanel({ name, area = null, near = null, alerts = 
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900 to-transparent h-20" />
         <button onClick={onClose} aria-label={t("Close")} className="absolute top-2 right-2 rounded-full bg-slate-900/70 text-slate-200 hover:text-white w-7 h-7 text-sm">✕</button>
         <div className="absolute left-4 bottom-2">
-          <h2 className="text-base font-semibold leading-tight drop-shadow">{data.vernacularName ?? data.scientificName}</h2>
+          <h2 className="text-base font-semibold leading-tight drop-shadow">{media?.names?.[lang] ?? data.vernacularName ?? data.scientificName}</h2>
           <p className="text-xs text-slate-300 italic">{data.scientificName}</p>
         </div>
       </div>
