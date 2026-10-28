@@ -222,7 +222,10 @@ export default function WorldMap() {
       const showCell = (e: MapLayerMouseEvent) => {
         const f = e.features?.[0];
         const h = historyRef.current;
-        if (!f || !h.period) return;
+        // The dot and its icon are two layers under one click: open a single popup.
+        const ev = e.originalEvent as MouseEvent & { wnCell?: boolean };
+        if (!f || !h.period || ev.wnCell) return;
+        ev.wnCell = true;
         const p = f.properties as Record<string, string | number>;
         const lat = Number(p.cellLat), lon = Number(p.cellLon);
         const label = h.period === "12m" ? "last 12 months" : h.period === "30d" ? "last 30 days" : "last 7 days";
