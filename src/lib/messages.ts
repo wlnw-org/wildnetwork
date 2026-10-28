@@ -422,7 +422,8 @@ const HISTORY: Record<string, Dict> = {
   "Arrivals in this period": "Llegadas en este periodo",
   "No arrival estimates fall in this period yet (open records arrive one to two weeks late).": "Aún no hay llegadas estimadas en este periodo (los registros abiertos llegan con una o dos semanas de retraso).",
   "{r} records of {s} species": "{r} registros de {s} especies",
-  "Each dot is a species recorded in that area over the period, placed at a station in the area when there is one. Click a dot for its records. Single detections are only kept for the live hours.": "Cada punto es una especie registrada en esa zona durante el periodo, situada en una estación de la zona si la hay. Haz clic en un punto para ver sus registros. Las detecciones individuales solo se guardan durante las horas en vivo."
+  "Each dot is a species recorded in that area over the period, placed at a station in the area when there is one. Click a dot for its records. Single detections are only kept for the live hours.": "Cada punto es una especie registrada en esa zona durante el periodo, situada en una estación de la zona si la hay. Haz clic en un punto para ver sus registros. Las detecciones individuales solo se guardan durante las horas en vivo.",
+  "species per area": "especies por zona"
  },
  "fr": {
   "Last 7 days": "7 derniers jours",
@@ -433,7 +434,8 @@ const HISTORY: Record<string, Dict> = {
   "Arrivals in this period": "Arrivées sur cette période",
   "No arrival estimates fall in this period yet (open records arrive one to two weeks late).": "Aucune arrivée estimée sur cette période pour l'instant (les données ouvertes arrivent avec une à deux semaines de retard).",
   "{r} records of {s} species": "{r} données de {s} espèces",
-  "Each dot is a species recorded in that area over the period, placed at a station in the area when there is one. Click a dot for its records. Single detections are only kept for the live hours.": "Chaque point est une espèce enregistrée dans cette zone sur la période, placée sur une station de la zone s'il y en a une. Cliquez sur un point pour ses données. Les détections individuelles ne sont gardées que pour les heures en direct."
+  "Each dot is a species recorded in that area over the period, placed at a station in the area when there is one. Click a dot for its records. Single detections are only kept for the live hours.": "Chaque point est une espèce enregistrée dans cette zone sur la période, placée sur une station de la zone s'il y en a une. Cliquez sur un point pour ses données. Les détections individuelles ne sont gardées que pour les heures en direct.",
+  "species per area": "espèces par zone"
  },
  "de": {
   "Last 7 days": "Letzte 7 Tage",
@@ -444,7 +446,8 @@ const HISTORY: Record<string, Dict> = {
   "Arrivals in this period": "Ankünfte in diesem Zeitraum",
   "No arrival estimates fall in this period yet (open records arrive one to two weeks late).": "Noch keine geschätzten Ankünfte in diesem Zeitraum (offene Daten kommen ein bis zwei Wochen später).",
   "{r} records of {s} species": "{r} Nachweise von {s} Arten",
-  "Each dot is a species recorded in that area over the period, placed at a station in the area when there is one. Click a dot for its records. Single detections are only kept for the live hours.": "Jeder Punkt ist eine Art, die in diesem Gebiet im Zeitraum erfasst wurde, an einer Station im Gebiet platziert, falls es eine gibt. Klicken Sie auf einen Punkt für die Nachweise. Einzelne Erkennungen werden nur für die Live-Stunden gespeichert."
+  "Each dot is a species recorded in that area over the period, placed at a station in the area when there is one. Click a dot for its records. Single detections are only kept for the live hours.": "Jeder Punkt ist eine Art, die in diesem Gebiet im Zeitraum erfasst wurde, an einer Station im Gebiet platziert, falls es eine gibt. Klicken Sie auf einen Punkt für die Nachweise. Einzelne Erkennungen werden nur für die Live-Stunden gespeichert.",
+  "species per area": "Arten je Gebiet"
  },
  "pt": {
   "Last 7 days": "Últimos 7 dias",
@@ -455,7 +458,8 @@ const HISTORY: Record<string, Dict> = {
   "Arrivals in this period": "Chegadas neste período",
   "No arrival estimates fall in this period yet (open records arrive one to two weeks late).": "Ainda não há chegadas estimadas neste período (os registros abertos chegam com uma a duas semanas de atraso).",
   "{r} records of {s} species": "{r} registros de {s} espécies",
-  "Each dot is a species recorded in that area over the period, placed at a station in the area when there is one. Click a dot for its records. Single detections are only kept for the live hours.": "Cada ponto é uma espécie registada nessa área durante o período, colocada numa estação da área quando existe. Clique num ponto para ver os registos. Detecções individuais só ficam guardadas nas horas ao vivo."
+  "Each dot is a species recorded in that area over the period, placed at a station in the area when there is one. Click a dot for its records. Single detections are only kept for the live hours.": "Cada ponto é uma espécie registada nessa área durante o período, colocada numa estação da área quando existe. Clique num ponto para ver os registos. Detecções individuais só ficam guardadas nas horas ao vivo.",
+  "species per area": "espécies por área"
  },
  "hi": {
   "Last 7 days": "पिछले 7 दिन",
@@ -466,7 +470,8 @@ const HISTORY: Record<string, Dict> = {
   "Arrivals in this period": "इस अवधि में आगमन",
   "No arrival estimates fall in this period yet (open records arrive one to two weeks late).": "इस अवधि में अभी कोई अनुमानित आगमन नहीं (खुले रिकॉर्ड एक से दो सप्ताह देर से आते हैं)।",
   "{r} records of {s} species": "{s} प्रजातियों के {r} रिकॉर्ड",
-  "Each dot is a species recorded in that area over the period, placed at a station in the area when there is one. Click a dot for its records. Single detections are only kept for the live hours.": "हर बिंदु उस अवधि में उस क्षेत्र में दर्ज एक प्रजाति है, जहाँ स्टेशन हो वहाँ रखा गया। रिकॉर्ड देखने के लिए बिंदु पर क्लिक करें। अलग-अलग पहचान केवल लाइव घंटों के लिए रखी जाती हैं।"
+  "Each dot is a species recorded in that area over the period, placed at a station in the area when there is one. Click a dot for its records. Single detections are only kept for the live hours.": "हर बिंदु उस अवधि में उस क्षेत्र में दर्ज एक प्रजाति है, जहाँ स्टेशन हो वहाँ रखा गया। रिकॉर्ड देखने के लिए बिंदु पर क्लिक करें। अलग-अलग पहचान केवल लाइव घंटों के लिए रखी जाती हैं।",
+  "species per area": "प्रति क्षेत्र प्रजातियाँ"
  },
  "ta": {
   "Last 7 days": "கடந்த 7 நாட்கள்",
@@ -477,7 +482,8 @@ const HISTORY: Record<string, Dict> = {
   "Arrivals in this period": "இந்தக் காலத்தில் வந்தவை",
   "No arrival estimates fall in this period yet (open records arrive one to two weeks late).": "இந்தக் காலத்தில் இன்னும் மதிப்பிடப்பட்ட வருகைகள் இல்லை (திறந்த பதிவுகள் ஒன்று முதல் இரண்டு வாரங்கள் தாமதமாக வருகின்றன).",
   "{r} records of {s} species": "{s} இனங்களின் {r} பதிவுகள்",
-  "Each dot is a species recorded in that area over the period, placed at a station in the area when there is one. Click a dot for its records. Single detections are only kept for the live hours.": "ஒவ்வொரு புள்ளியும் அந்தக் காலத்தில் அந்தப் பகுதியில் பதிவான ஒரு இனம், பகுதியில் நிலையம் இருந்தால் அங்கே வைக்கப்படுகிறது. பதிவுகளுக்குப் புள்ளியைக் கிளிக் செய்யுங்கள். தனித்தனி கண்டறிதல்கள் நேரலை மணிநேரங்களுக்கு மட்டுமே வைக்கப்படுகின்றன."
+  "Each dot is a species recorded in that area over the period, placed at a station in the area when there is one. Click a dot for its records. Single detections are only kept for the live hours.": "ஒவ்வொரு புள்ளியும் அந்தக் காலத்தில் அந்தப் பகுதியில் பதிவான ஒரு இனம், பகுதியில் நிலையம் இருந்தால் அங்கே வைக்கப்படுகிறது. பதிவுகளுக்குப் புள்ளியைக் கிளிக் செய்யுங்கள். தனித்தனி கண்டறிதல்கள் நேரலை மணிநேரங்களுக்கு மட்டுமே வைக்கப்படுகின்றன.",
+  "species per area": "பகுதிவாரியான இனங்கள்"
  }
 };
 

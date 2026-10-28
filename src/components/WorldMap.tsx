@@ -777,7 +777,7 @@ export default function WorldMap() {
           </>
         ) : (
           <>
-            <div className="text-slate-400 mb-1" title="The newest detections from each source, refreshed every few minutes. Measures use full counts, not these dots.">{group === "bat" ? t("Bat detections, last 24h") : t("Detections, last {h}h (sample)", { h: hours })}</div>
+            <div className="text-slate-400 mb-1" title="The newest detections from each source, refreshed every few minutes. Measures use full counts, not these dots.">{period ? (period === "12m" ? t("Last 12 months") : period === "30d" ? t("Last 30 days") : t("Last 7 days")) + " · " + t("species per area") : group === "bat" ? t("Bat detections, last 24h") : t("Detections, last {h}h (sample)", { h: hours })}</div>
             <div className="flex flex-wrap gap-x-3 gap-y-0.5"><Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label={t("Devices")} /><Legend color="#60a5fa" label="Acartia" /><Legend color="#2dd4bf" label="Orcasound" /><Legend color="#38bdf8" label="OBIS" /><Legend color="#475569" label={t("Sensor")} /></div>
           </>
         )}
