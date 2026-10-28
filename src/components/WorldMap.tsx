@@ -10,6 +10,7 @@ import AboutPanel from "./AboutPanel";
 import AskPanel from "./AskPanel";
 import { track } from "./Analytics";
 import SpeciesPanel, { type SpeciesDetail } from "./SpeciesPanel";
+import PlacePanel, { type PickedPlace } from "./PlacePanel";
 import { areaFor, type XcArea } from "@/lib/xenocanto";
 import Tour, { TOUR_KEY } from "./Tour";
 import { LANGS, setLang, useLang, useT, type Lang } from "@/lib/i18n";
@@ -75,7 +76,9 @@ export default function WorldMap() {
   const [playhead, setPlayhead] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [thumbs, setThumbs] = useState<Record<string, string | null>>({});
-  const [tab, setTab] = useState<"now" | "feed" | "ask" | "about" | null>("now");
+  const [tab, setTab] = useState<"now" | "feed" | "ask" | "about" | "place" | null>("now");
+  const [place, setPlace] = useState<PickedPlace | null>(null);
+  const [placeHits, setPlaceHits] = useState<(PickedPlace & { key: string })[]>([]);
   const [loading, setLoading] = useState(true);
   const [group, setGroup] = useState("all");
   const [results, setResults] = useState<Species[]>([]);
@@ -112,7 +115,11 @@ export default function WorldMap() {
     map.addControl(new AttributionControl({ compact: true, customAttribution: "BirdWeather · GBIF publishers (CC0/CC BY) · iNaturalist (CC0/CC-BY) · WDX producers" }));
     map.addControl(new NavigationControl({ showCompass: false }), "top-right");
     // Start near the visitor (IP area, whole degrees, from /api/v1/near) unless a species link sets the view; zoom out for the world.
-    if (!new URLSearchParams(window.location.search).has("species")) {
+    const qs = new URLSearchParams(window.location.search);
+    const dl = { lat: Number(qs.get("lat")), lon: Number(qs.get("lon")) };
+    if (qs.has("lat") && Number.isFinite(dl.lat) && Number.isFinite(dl.lon)) {
+      map.jumpTo({ center: [dl.lon, dl.lat], zoom: 6 });
+    } else if (!qs.has("species")) {
       fetch("/api/v1/near").then((r) => r.json() as Promise<{ lat?: number; lon?: number }>).then((n) => {
         if (cancelled || n.lat == null || n.lon == null) return;
         map.easeTo({ center: [n.lon, n.lat], zoom: 4, duration: 1800, padding: { top: 0, bottom: 0, right: 0, left: window.innerWidth >= 768 ? 420 : 0 } });
@@ -447,6 +454,31 @@ export default function WorldMap() {
     const id = setTimeout(() => { setSpecies(name); setTab("now"); }, 0);
     return () => clearTimeout(id);
   }, []);
+  // Deep link from the place pages: /?lat=13.08&lon=80.27 opens that area's panel.
+  useEffect(() => {
+    const qs = new URLSearchParams(window.location.search);
+    const lat = Number(qs.get("lat")), lon = Number(qs.get("lon"));
+    if (!qs.has("lat") || !Number.isFinite(lat) || !Number.isFinite(lon)) return;
+    const id = setTimeout(() => { setPlace({ label: "This area", lat, lon }); setTab("place"); }, 0);
+    return () => clearTimeout(id);
+  }, []);
+  // Place suggestions for the search box (server-side geocoder), debounced.
+  useEffect(() => {
+    const q = query.trim();
+    if (q.length < 3) { const id = setTimeout(() => setPlaceHits([]), 0); return () => clearTimeout(id); }
+    let off = false;
+    const id = setTimeout(() => {
+      fetch(`/api/v1/places?q=${encodeURIComponent(q)}`).then((r) => r.json() as Promise<{ places: { name: string; admin1: string | null; country: string | null; lat: number; lon: number; slug: string }[] }>)
+        .then((d) => { if (!off) setPlaceHits(d.places.slice(0, 5).map((p) => ({ key: `${p.slug}${p.lat}`, slug: p.slug, lat: p.lat, lon: p.lon, label: [p.name, p.admin1, p.country].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(", ") }))); })
+        .catch(() => {});
+    }, 350);
+    return () => { off = true; clearTimeout(id); };
+  }, [query]);
+  const goPlace = (p: PickedPlace) => {
+    selectSpecies(null); setPlace(p); setTab("place"); setQuery("");
+    mapRef.current?.flyTo({ center: [p.lon, p.lat], zoom: 7, duration: 1200 });
+    track("select_place", { place: p.slug ?? "" });
+  };
   const flyTo = (f: GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>) => {
     const c = (f.geometry as GeoJSON.Point).coordinates as [number, number];
     mapRef.current?.flyTo({ center: c, zoom: Math.max(mapRef.current.getZoom(), 6), duration: 900 });
@@ -480,11 +512,19 @@ export default function WorldMap() {
           {CLASSES.map((c) => <option key={c.key} value={c.key} className="text-slate-900">{t(c.label)}</option>)}
         </select>
         <div data-tour="search" className="relative w-64 max-w-[40vw]">
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("Search a species")}
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("Search a species or place")}
             className="w-full rounded-md bg-white/10 px-2.5 py-1 text-sm outline-none focus:bg-white/15 placeholder:text-slate-500" />
           {query.trim().length >= 2 && (
             <div className="absolute top-full mt-1 left-0 right-0 max-h-72 overflow-y-auto rounded-md bg-slate-900 border border-slate-700 shadow-xl">
-              {results.length === 0 && <div className="px-3 py-2 text-sm text-slate-500">{t("No species found")}</div>}
+              {placeHits.length > 0 && <div className="px-3 pt-2 pb-1 text-[10px] uppercase tracking-wider text-slate-500">{t("Places")}</div>}
+              {placeHits.map((p) => (
+                <button key={p.key} onClick={() => goPlace(p)} className="w-full text-left px-3 py-1.5 hover:bg-slate-800 text-sm flex items-center gap-2">
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 21s-6-5.5-6-11a6 6 0 1 1 12 0c0 5.5-6 11-6 11z" /><circle cx="12" cy="10" r="2" /></svg>
+                  <span className="truncate">{p.label}</span>
+                </button>
+              ))}
+              {placeHits.length > 0 && results.length > 0 && <div className="px-3 pt-2 pb-1 text-[10px] uppercase tracking-wider text-slate-500">{t("Species")}</div>}
+              {results.length === 0 && placeHits.length === 0 && <div className="px-3 py-2 text-sm text-slate-500">{t("No species found")}</div>}
               {results.slice(0, 20).map((s) => (
                 <button key={s.scientificName} onClick={() => { pick(s.scientificName); setQuery(""); }} className="w-full text-left px-3 py-1.5 hover:bg-slate-800 text-sm flex items-center gap-2">
                   <Thumb src={thumbs[s.scientificName]} size={6} />
@@ -532,6 +572,8 @@ export default function WorldMap() {
           {status?.paused?.length ? <PausedNotice className="m-2 mb-0 shrink-0" /> : null}
           {species ? (
             <SpeciesPanel name={species} area={listenArea} near={listenNear} alerts={!!status?.alerts} onClose={() => selectSpecies(null)} />
+          ) : tab === "place" && place ? (
+            <PlacePanel place={place} group={group} onPick={pick} onClose={() => { setPlace(null); setTab("now"); }} />
           ) : tab === "about" ? (
             <AboutPanel />
           ) : tab === "ask" ? (

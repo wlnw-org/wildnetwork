@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { sql } from "@/lib/db";
+import PLACES from "@/data/places.json";
 import { REGIONS } from "@/lib/regions";
 import { SITE, speciesSlug } from "@/lib/site";
 
@@ -21,6 +22,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE}/arrivals`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE}/research`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE}/studies`, lastModified: now, changeFrequency: "daily", priority: 0.6 },
+    { url: `${SITE}/places`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    ...PLACES.map((p) => ({ url: `${SITE}/places/${p.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.6 })),
     ...REGIONS.map((r) => ({ url: `${SITE}/arrivals/${r.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 })),
   ];
   // Only species with a seasonal record: those pages have something to say.
