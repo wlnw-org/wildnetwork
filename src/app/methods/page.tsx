@@ -255,7 +255,7 @@ export default function Methods() {
             all; below 0.5, treat the arrival as weak. The arrival table shows the typical half-width as ±weeks.</li>
           <li><b>Heard versus seen.</b> The correlation&apos;s 95% interval comes from resampling blocks of {BOOT.BLOCK_WEEKS} weeks ({BOOT.B} times), which keeps the
             series&apos; week-to-week dependence; a plain formula would make it look too certain.</li>
-          <li>The 30-day movement sentence on the species panel carries a 95% interval from a residual block bootstrap: a straight line is fitted through the daily range centres, its residuals are resampled in blocks of 3 days, and the same first-3-days against last-3-days difference is recomputed 400 times; the spread of those differences around the line&apos;s own shift is placed around the observed shift. When that interval includes no change, the sentence says the shift is not a clear move. Not yet covered: the range centre line on the daily chart.</li>
+          <li>The 30-day movement sentence on the species panel carries a 95% interval from a residual block bootstrap: a straight line is fitted through the daily range centres, its residuals are resampled in blocks of 3 days, and the same first-3-days against last-3-days difference is recomputed 400 times; the spread of those differences around the line&apos;s own shift is placed around the observed shift. When that interval includes no change, the sentence says the shift is not a clear move. The range centre line on the species panel&apos;s daily chart has a shaded 95% band: each day&apos;s cells are resampled with replacement 400 times and the share-weighted mean latitude recomputed; days with fewer than 3 cells have no band.</li>
         </ul>
         <p className="mt-2">
           These intervals capture sampling noise among cells and in counts. They do not capture misidentification by the classifier, or bias from where stations and
@@ -323,7 +323,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
-          <li><b>0.14</b> (28 October 2026): the 30-day range-centre sentence has a 95% interval, and says when a shift of 2 degrees or more is within day-to-day variation (see <a href="#uncertainty" className="text-cyan-400 hover:underline">Uncertainty</a>).</li>
+          <li><b>0.14</b> (28 October 2026): the 30-day range-centre sentence has a 95% interval, and says when a shift of 2 degrees or more is within day-to-day variation; the daily range-centre chart shows a 95% band from resampling each day&apos;s cells (see <a href="#uncertainty" className="text-cyan-400 hover:underline">Uncertainty</a>).</li>
           <li><b>0.13</b> (27 October 2026): <a href="#review" className="text-cyan-400 hover:underline">expert review</a> of arrival dates by researchers signed in with ORCID; an estimate two or more reviewers reject (and fewer accept) is dropped.</li>
           <li><b>0.12</b> (20 October 2026): a <b>marine</b> class for OBIS, Orcasound and Acartia records, corrected only against other marine records. Human sightings carry no confidence score and count as one record each, like iNaturalist and GBIF records.</li>
           <li><b>0.11</b> (7 October 2026): <a href="#range" className="text-cyan-400 hover:underline">range check</a> for arrival dates: birds that GBIF has almost never recorded around a well surveyed cell no longer get an arrival date there from recordings.</li>

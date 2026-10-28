@@ -15,26 +15,36 @@ export interface SpeciesDetail {
   methods?: string;
   group?: string;
   story?: string[];
-  daily: { day: string; n: number; high: number | null; effort: number; index: number; lat: number | null; lon: number | null; cells: number; weather: { tmax: number | null; tmin: number | null; precip: number | null; wind: number | null; windDir: number | null } | null }[];
+  daily: { day: string; n: number; high: number | null; effort: number; index: number; lat: number | null; latLow?: number | null; latHigh?: number | null; lon: number | null; cells: number; weather: { tmax: number | null; tmin: number | null; precip: number | null; wind: number | null; windDir: number | null } | null }[];
   cells: { lat: number; lon: number; n: number; recent: number | null; earlier: number | null }[];
 }
 
 const W = 560, H = 96, PAD = { l: 36, r: 8, t: 10, b: 18 };
 
-function Line({ values, labels, format, color, title }: { values: (number | null)[]; labels: string[]; format: (v: number) => string; color: string; title: string }) {
+/** A single-series line; low/high, when given, draw a shaded 95% band and show the interval on hover. */
+function Line({ values, labels, format, color, title, low, high }: { values: (number | null)[]; labels: string[]; format: (v: number) => string; color: string; title: string; low?: (number | null)[]; high?: (number | null)[] }) {
   const [hover, setHover] = useState<number | null>(null);
   const nums = values.filter((v): v is number => v != null);
   if (nums.length < 2) return <div className="text-xs text-slate-500 py-4">{title}: not enough data yet</div>;
-  const min = Math.min(...nums), max = Math.max(...nums);
+  const bandNums = [...(low ?? []), ...(high ?? [])].filter((v): v is number => v != null);
+  const min = Math.min(...nums, ...bandNums), max = Math.max(...nums, ...bandNums);
   const x = (i: number) => PAD.l + (i / (values.length - 1)) * (W - PAD.l - PAD.r);
   const y = (v: number) => PAD.t + (1 - (v - min) / (max - min || 1)) * (H - PAD.t - PAD.b);
   const d = values.map((v, i) => (v == null ? null : `${x(i)},${y(v)}`)).reduce<string>((acc, p, i) => (p == null ? acc : acc + (acc && values[i - 1] != null ? " L" : " M") + p), "");
+  // Band: contiguous runs of days that have both ends, drawn as closed polygons.
+  let band = "";
+  if (low && high) {
+    let run: number[] = [];
+    const flush = () => { if (run.length > 1) band += ` M${run.map((i) => `${x(i)},${y(high[i]!)}`).join(" L")} L${[...run].reverse().map((i) => `${x(i)},${y(low[i]!)}`).join(" L")} Z`; run = []; };
+    values.forEach((_, i) => { if (low[i] != null && high[i] != null) run.push(i); else flush(); });
+    flush();
+  }
   const hi = hover != null && values[hover] != null ? hover : nums.length ? values.lastIndexOf(nums[nums.length - 1]) : null;
   return (
     <div>
       <div className="flex items-baseline justify-between text-xs">
         <span className="text-slate-400 truncate pr-2">{title}</span>
-        {hi != null && <span className="text-slate-200 tabular-nums whitespace-nowrap">{labels[hi].slice(5)} · {format(values[hi]!)}</span>}
+        {hi != null && <span className="text-slate-200 tabular-nums whitespace-nowrap">{labels[hi].slice(5)} · {format(values[hi]!)}{low?.[hi] != null && high?.[hi] != null ? <span className="text-slate-400"> ({format(low[hi]!)} to {format(high[hi]!)})</span> : null}</span>}
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-24" role="img" aria-label={title}
         onMouseLeave={() => setHover(null)}
@@ -44,6 +54,7 @@ function Line({ values, labels, format, color, title }: { values: (number | null
         <text x={PAD.l - 4} y={y(min) + 4} textAnchor="end" fontSize={10} fill="#94a3b8">{format(min)}</text>
         <text x={PAD.l} y={H - 4} fontSize={10} fill="#64748b">{labels[0].slice(5)}</text>
         <text x={W - PAD.r} y={H - 4} textAnchor="end" fontSize={10} fill="#64748b">{labels[labels.length - 1].slice(5)}</text>
+        {band && <path d={band} fill={color} fillOpacity={0.18} stroke="none" />}
         <path d={d} fill="none" stroke={color} strokeWidth={2} strokeLinejoin="round" />
         {hi != null && <>
           <line x1={x(hi)} x2={x(hi)} y1={PAD.t} y2={H - PAD.b} stroke="#475569" strokeWidth={1} />
@@ -123,7 +134,7 @@ export default function SpeciesPanel({ name, area = null, near = null, alerts = 
         <Stat label={t("Frequency vs max temp")} value={corr == null ? "n/a" : `r = ${corr.toFixed(2)}`} />
       </dl>
       <Line title={`Relative frequency (per 1,000${CLASS_NOUN[data.group ?? "avian"] ? " " + CLASS_NOUN[data.group ?? "avian"] : ""})`} values={days.map((d) => d.index)} labels={labels} format={(v) => (v >= 10 ? v.toFixed(0) : v >= 1 ? v.toFixed(1) : v.toFixed(2))} color="#22d3ee" />
-      <Line title={t("Range centre latitude")} values={days.map((d) => d.lat)} labels={labels} format={(v) => `${v.toFixed(1)}°`} color="#a78bfa" />
+      <Line title={t("Range centre latitude")} values={days.map((d) => d.lat)} low={days.map((d) => d.latLow ?? null)} high={days.map((d) => d.latHigh ?? null)} labels={labels} format={(v) => `${v.toFixed(1)}°`} color="#a78bfa" />
       <Line title={t("Max temperature at range centre (°C)")} values={days.map((d) => d.weather?.tmax ?? null)} labels={labels} format={(v) => `${v.toFixed(0)}°`} color="#fb923c" />
       <Line title={t("Max wind at range centre (km/h)")} values={days.map((d) => d.weather?.wind ?? null)} labels={labels} format={(v) => `${v.toFixed(0)}`} color="#94a3b8" />
       <ArrivalTable rows={arrivals?.name === name ? arrivals.rows : null} name={name} />

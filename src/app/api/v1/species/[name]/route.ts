@@ -1,6 +1,7 @@
 import { sql } from "@/lib/db";
 import { METHODS_VERSION, minEffortDay } from "@/lib/methods";
 import { getClimate, getYearSpan, speciesStory, type DayPoint } from "@/lib/story";
+import { BOOT, interval, resample, rng, seedOf } from "@/lib/uncertainty";
 
 
 /**
@@ -12,7 +13,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ name: string }
 
   // Effort is taken from the species' own class (a bat is measured against bat detections).
   const [{ grp } = { grp: "avian" }] = await sql<{ grp: string }[]>`SELECT grp FROM species_group WHERE scientific_name = ${name}`;
-  const [daily, cells, info] = await Promise.all([
+  const [daily, cells, info, dayCells] = await Promise.all([
     // Daily series over the species' range (cells where it was detected in the window), effort corrected:
     // index = detections per 1,000 detections of all species; centre = weighted by per-cell share.
     sql`
@@ -60,7 +61,30 @@ export async function GET(_req: Request, ctx: { params: Promise<{ name: string }
     sql`SELECT MIN(vernacular_name) vernacular_name, array_agg(DISTINCT source_system) sources FROM (
           SELECT vernacular_name, source_system FROM species_daily WHERE scientific_name = ${name}
           UNION ALL SELECT vernacular_name, source_system FROM species_weekly WHERE scientific_name = ${name} AND week >= CURRENT_DATE - 371) x`,
+    // Per day and cell: the share weight and latitude behind each day's range centre, for its interval.
+    sql<{ day: string; lat: number; w: number }[]>`
+      SELECT sp.day::text AS day, sp.cell_lat + 2.5 AS lat, sp.n / e.detections::float AS w
+      FROM (SELECT day, cell_lat, cell_lon, SUM(count)::float AS n FROM species_daily
+            WHERE scientific_name = ${name} AND day >= CURRENT_DATE - 30 AND day < CURRENT_DATE GROUP BY 1, 2, 3) sp
+      JOIN effort_daily e ON e.day = sp.day AND e.cell_lat = sp.cell_lat AND e.cell_lon = sp.cell_lon AND e.grp = ${grp} AND e.detections >= ${minEffortDay()}`,
   ]);
+
+  // 95% interval of each day's range centre (methods 0.14): resample that day's cells with replacement and recompute the
+  // share-weighted mean latitude. Days with fewer than 3 cells get none: one or two cells cannot show the spread.
+  const latCi = new Map<string, [number, number]>();
+  const byDay = new Map<string, { lat: number; w: number }[]>();
+  for (const c of dayCells) byDay.set(c.day, [...(byDay.get(c.day) ?? []), { lat: Number(c.lat), w: Number(c.w) }]);
+  for (const [day, cs] of byDay) {
+    if (cs.length < 3) continue;
+    const r = rng(seedOf(`${name}|lat|${day}`)), draws: number[] = [];
+    for (let k = 0; k < BOOT.B; k++) {
+      let sw = 0, sl = 0;
+      for (const i of resample(cs.length, r)) { sw += cs[i].w; sl += cs[i].w * cs[i].lat; }
+      if (sw > 0) draws.push(sl / sw);
+    }
+    const ci = interval(draws);
+    if (ci) latCi.set(day, ci);
+  }
 
   // Weather at each day's centroid. Group days by 1-degree cell so repeated centroids share one request.
   const weather: Record<string, { tmax: number | null; tmin: number | null; precip: number | null; wind: number | null; windDir: number | null }> = {};
@@ -101,7 +125,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ name: string }
     // Plain language summary; each sentence comes from a fixed template, see /methods.
     story: speciesStory(name, days, climate, span, grp === "avian" ? 50 : 10),
     arrivalTemperature: climate,
-    daily: daily.map((d) => ({ day: d.day, n: d.n, high: d.high, effort: Number(d.effort), index: Number(d.idx), lat: d.lat == null ? null : Number(d.lat), lon: d.lon == null ? null : Number(d.lon), cells: d.cells, weather: weather[String(d.day)] ?? null })),
+    daily: daily.map((d) => ({ day: d.day, n: d.n, high: d.high, effort: Number(d.effort), index: Number(d.idx), lat: d.lat == null ? null : Number(d.lat), latLow: latCi.get(String(d.day))?.[0] ?? null, latHigh: latCi.get(String(d.day))?.[1] ?? null, lon: d.lon == null ? null : Number(d.lon), cells: d.cells, weather: weather[String(d.day)] ?? null })),
     // recent / earlier are per-1,000 shares; null when the cell was not observed enough in that period
     cells: cells.map((c) => ({ lat: c.cell_lat, lon: c.cell_lon, n: c.n, recent: c.recent == null ? null : Number(c.recent), earlier: c.earlier == null ? null : Number(c.earlier) })),
   }, { headers: { "cache-control": "public, s-maxage=600, stale-while-revalidate=3600" } });
