@@ -1,5 +1,6 @@
 import { sql } from "@/lib/db";
 import { METHODS_VERSION, REGION } from "@/lib/methods";
+import { BOOT, blockResample, interval, rng, seedOf } from "@/lib/uncertainty";
 
 /**
  * Text summaries. Every sentence is produced by a fixed template from numbers computed here,
@@ -90,6 +91,25 @@ export async function getYearSpan(name: string, grp: string): Promise<{ region: 
   return { region: best[0], minLat: lo.lat, minWeek: lo.week, maxLat: hi.lat, maxWeek: hi.week, weeks: present.length };
 }
 
+/**
+ * 95% interval for the head-versus-tail shift of the daily range centre (methods 0.14): fit a straight line through the
+ * daily centres, resample the residuals in blocks of 3 days (keeping day-to-day correlation), rebuild the series and
+ * recompute the same 3-day difference. It measures how much day-to-day noise alone could move the number.
+ */
+export function shiftInterval(lats: number[], seed: string): [number, number] | null {
+  const n = lats.length;
+  if (n < 8) return null;
+  const t = lats.map((_, i) => i), mt = mean(t), ml = mean(lats);
+  const b = t.reduce((a, x, i) => a + (x - mt) * (lats[i] - ml), 0) / t.reduce((a, x) => a + (x - mt) ** 2, 0);
+  const fit = t.map((x) => ml + b * (x - mt)), res = lats.map((y, i) => y - fit[i]);
+  const r = rng(seedOf(seed)), shifts: number[] = [];
+  for (let k = 0; k < BOOT.B; k++) {
+    const idx = blockResample(n, 3, r), y = fit.map((f, i) => f + res[idx[i]]);
+    shifts.push(mean(y.slice(-3)) - mean(y.slice(0, 3)));
+  }
+  return interval(shifts);
+}
+
 const latText = (lat: number) => `${Math.abs(round(lat))}°${lat >= 0 ? "N" : "S"}`;
 
 /** Sentences for one species. Returns [] when nothing can be said with the stated minimums. */
@@ -104,8 +124,13 @@ export function speciesStory(name: string, daily: DayPoint[], climate: Climate |
     const head = located.slice(0, 3), tail = located.slice(-3);
     const dLat = mean(tail.map((d) => d.lat!)) - mean(head.map((d) => d.lat!));
     const t0 = head.map((d) => d.weather?.tmax).filter((v): v is number => v != null), t1 = tail.map((d) => d.weather?.tmax).filter((v): v is number => v != null);
-    if (Math.abs(dLat) >= 2) {
-      let s = `Over the last ${located.length} days its range centre moved about ${round(Math.abs(dLat))}° ${dLat > 0 ? "north" : "south"}, roughly ${round(Math.abs(dLat) * KM_PER_DEG, -1).toLocaleString("en-GB")} km.`;
+    const ci = shiftInterval(located.map((d) => d.lat!), `${name}|shift`);
+    const clear = !ci || ci[0] > 0 || ci[1] < 0;
+    if (Math.abs(dLat) >= 2 && !clear) {
+      out.push(`Its range centre shifted about ${round(Math.abs(dLat))}° ${dLat > 0 ? "north" : "south"} over the last ${located.length} days, but day-to-day variation is as large as that (95% interval ${round(ci![0], 1)} to ${round(ci![1], 1)}° of latitude), so this is not a clear move.`);
+    } else if (Math.abs(dLat) >= 2) {
+      const ciText = ci ? ` (95% interval ${round(Math.min(Math.abs(ci[0]), Math.abs(ci[1])), 1)} to ${round(Math.max(Math.abs(ci[0]), Math.abs(ci[1])), 1)}°)` : "";
+      let s = `Over the last ${located.length} days its range centre moved about ${round(Math.abs(dLat))}° ${dLat > 0 ? "north" : "south"}${ciText}, roughly ${round(Math.abs(dLat) * KM_PER_DEG, -1).toLocaleString("en-GB")} km.`;
       if (t0.length && t1.length && Math.abs(mean(t1) - mean(t0)) >= 2) s += ` Daytime highs where it is concentrated went from ${round(mean(t0))}°C to ${round(mean(t1))}°C.`;
       out.push(s);
     } else {

@@ -189,7 +189,7 @@ export default function Methods() {
           free text: each one appears only when its condition is met, and says nothing otherwise. (The Ask box is different and is described below.)
         </p>
         <ul className="mt-2 list-disc pl-5 space-y-2">
-          <li><b>Recent movement.</b> The mean range centre of the last 3 days against the first 3 days of the window. Reported as a move when the difference is at least 2 degrees of latitude, with the distance at 111 km per degree. Written only when the species averages at least 50 detections a day (10 for classes other than birds) at both ends of the window, so a handful of stray detections cannot produce a move. The temperature change is added when daytime highs at the centre differ by 2°C or more.</li>
+          <li><b>Recent movement.</b> The mean range centre of the last 3 days against the first 3 days of the window. Reported as a move when the difference is at least 2 degrees of latitude, with the distance at 111 km per degree. Written only when the species averages at least 50 detections a day (10 for classes other than birds) at both ends of the window, so a handful of stray detections cannot produce a move. The temperature change is added when daytime highs at the centre differ by 2°C or more. It carries a 95% interval (see <a href="#uncertainty" className="text-cyan-400 hover:underline">Uncertainty</a>); when that interval includes no change, the sentence says the shift is within day-to-day variation instead of reporting a move.</li>
           <li><b>First heard where highs are around X°C.</b> For up to 50 of the species&apos; best sampled cells with an arrival date, the mean daily maximum temperature at the cell centre during the arrival week (ERA5 via Open-Meteo). The sentence gives the median and the middle half across cells, from at least 5 cells. If that middle half is within 6°C across 15 degrees of latitude or more, it adds that timing follows temperature; if it is wider than 10°C, that temperature alone does not explain it.</li>
           <li><b>The yearly span.</b> The lowest and highest weekly range centre in the continent with most detections, using only weeks when the species reaches a tenth of its peak week, so stray detections out of season are ignored. Needs 8 such weeks and a span of 8 degrees or more.</li>
           <li><b>Rain and wind.</b> The mean relative frequency on days with 5 mm of rain or more against days with under 1 mm, and on days with gusts of 30 km/h or more against days under 20 km/h, at the range centre. Needs 3 days in each group and a difference of 15 percent or more.</li>
@@ -255,7 +255,7 @@ export default function Methods() {
             all; below 0.5, treat the arrival as weak. The arrival table shows the typical half-width as ±weeks.</li>
           <li><b>Heard versus seen.</b> The correlation&apos;s 95% interval comes from resampling blocks of {BOOT.BLOCK_WEEKS} weeks ({BOOT.B} times), which keeps the
             series&apos; week-to-week dependence; a plain formula would make it look too certain.</li>
-          <li>Not yet covered: the 30-day sentences in the species panel and the range centre shown on the daily chart.</li>
+          <li>The 30-day movement sentence on the species panel carries a 95% interval from a residual block bootstrap: a straight line is fitted through the daily range centres, its residuals are resampled in blocks of 3 days, and the same first-3-days against last-3-days difference is recomputed 400 times. When that interval includes no change, the sentence says the shift is not a clear move. Not yet covered: the range centre line on the daily chart.</li>
         </ul>
         <p className="mt-2">
           These intervals capture sampling noise among cells and in counts. They do not capture misidentification by the classifier, or bias from where stations and
@@ -323,6 +323,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.14</b> (28 October 2026): the 30-day range-centre sentence has a 95% interval, and says when a shift of 2 degrees or more is within day-to-day variation (see <a href="#uncertainty" className="text-cyan-400 hover:underline">Uncertainty</a>).</li>
           <li><b>0.13</b> (27 October 2026): <a href="#review" className="text-cyan-400 hover:underline">expert review</a> of arrival dates by researchers signed in with ORCID; an estimate two or more reviewers reject (and fewer accept) is dropped.</li>
           <li><b>0.12</b> (20 October 2026): a <b>marine</b> class for OBIS, Orcasound and Acartia records, corrected only against other marine records. Human sightings carry no confidence score and count as one record each, like iNaturalist and GBIF records.</li>
           <li><b>0.11</b> (7 October 2026): <a href="#range" className="text-cyan-400 hover:underline">range check</a> for arrival dates: birds that GBIF has almost never recorded around a well surveyed cell no longer get an arrival date there from recordings.</li>
