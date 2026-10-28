@@ -173,13 +173,17 @@ export default function WorldMap() {
       // Past periods: one marker per cell at its centre, for the cell's most recorded species (icons from zoom 3.5, as for live dots).
       map.addSource("history-pts", { type: "geojson", data: EMPTY });
       map.addLayer({
+        id: "history-glow", type: "circle", source: "history-pts",
+        paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 1, 6, 8, 14], "circle-color": SOURCE_COLOR as never, "circle-opacity": 0.18, "circle-blur": 1 },
+      });
+      map.addLayer({
         id: "history-pts", type: "circle", source: "history-pts",
-        paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 1, 3, 8, 7], "circle-color": SOURCE_COLOR as never, "circle-opacity": 0.95, "circle-stroke-width": 1, "circle-stroke-color": "#020617" },
+        paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 1, 2.5, 8, 6], "circle-color": SOURCE_COLOR as never, "circle-opacity": 0.95, "circle-stroke-width": 0.5, "circle-stroke-color": "#020617" },
       });
       registerIcons(map).then(() => {
         if (!map.getLayer("history-icons")) map.addLayer({
           id: "history-icons", type: "symbol", source: "history-pts", minzoom: 3.5, filter: ["!=", ["get", "group"], "Unknown"],
-          layout: { "icon-image": ICON_IMAGE as never, "icon-size": ["interpolate", ["linear"], ["zoom"], 3.5, 0.55, 8, 0.9], "icon-allow-overlap": true },
+          layout: { "icon-image": ICON_IMAGE as never, "icon-size": ["interpolate", ["linear"], ["zoom"], 3.5, 0.45, 8, 0.8], "icon-padding": 1 },
         });
         if (map.getLayer("events-icons")) return;
         map.addLayer({
@@ -218,7 +222,7 @@ export default function WorldMap() {
           }).catch(() => {});
         }
       };
-      // Past period: the cell's top species for the period, each one opens the species panel.
+      // Past period: the clicked species and its records in that area, then the area's other top species; names open the species panel.
       const showCell = (e: MapLayerMouseEvent) => {
         const f = e.features?.[0];
         const h = historyRef.current;
@@ -229,10 +233,12 @@ export default function WorldMap() {
         const p = f.properties as Record<string, string | number>;
         const lat = Number(p.cellLat), lon = Number(p.cellLon);
         const label = h.period === "12m" ? "last 12 months" : h.period === "30d" ? "last 30 days" : "last 7 days";
-        const head = `<b>${lat}° to ${lat + 5}°, ${lon}° to ${lon + 5}°</b><br/><span style="font-size:11px;color:#94a3b8">Most recorded, ${label} · ${Math.round(Number(p.n)).toLocaleString()} records</span>`;
+        const src = String(p.source) === "birdweather" ? "BirdWeather stations" : String(p.source) === "gbif" ? "GBIF records" : String(p.source) === "inaturalist" ? "iNaturalist" : String(p.source);
+        const head = `<button data-sci="${esc(p.sci)}" style="background:none;border:0;padding:0;cursor:pointer;text-align:left;color:#e2e8f0;font:13px system-ui"><b>${esc(p.common ?? p.sci)}</b><br/><i>${esc(p.sci)}</i></button>`
+          + `<br/>${Math.round(Number(p.n)).toLocaleString()} records, ${label}<br/><span style="font-size:11px;color:#94a3b8">Mostly from ${esc(src)}, in the area ${lat}° to ${lat + 5}°, ${lon}° to ${lon + 5}°. The dot marks the area, not where it was recorded.</span>`;
         const popup = new Popup({ closeButton: true, maxWidth: "280px" })
           .setLngLat((f.geometry as GeoJSON.Point).coordinates as [number, number])
-          .setHTML(`<div style="font:13px system-ui;color:#e2e8f0">${head}<div style="margin-top:6px;color:#94a3b8">Loading</div></div>`)
+          .setHTML(`<div style="font:13px system-ui;color:#e2e8f0">${head}</div>`)
           .addTo(map);
         popup.getElement().addEventListener("click", (ev) => {
           const b = (ev.target as HTMLElement).closest("[data-sci]") as HTMLElement | null;
@@ -241,8 +247,8 @@ export default function WorldMap() {
         fetch(`/api/v1/history/cell?period=${h.period}&group=${h.group}&lat=${lat}&lon=${lon}`).then((r) => r.json())
           .then((d: { species?: { sci: string; common: string | null; n: number }[] }) => {
             if (!popup.isOpen()) return;
-            const rows = (d.species ?? []).map((x) => `<button data-sci="${esc(x.sci)}" style="display:flex;width:100%;gap:8px;justify-content:space-between;padding:3px 0;background:none;border:0;color:#e2e8f0;cursor:pointer;text-align:left;font:13px system-ui"><span style="color:#22d3ee">${esc(x.common ?? x.sci)}</span><span style="color:#94a3b8">${Math.round(x.n).toLocaleString()}</span></button>`).join("");
-            popup.setHTML(`<div style="font:13px system-ui;color:#e2e8f0">${head}<div style="margin-top:6px">${rows || "No species records"}</div></div>`);
+            const rows = (d.species ?? []).filter((x) => x.sci !== p.sci).slice(0, 8).map((x) => `<button data-sci="${esc(x.sci)}" style="display:flex;width:100%;gap:8px;justify-content:space-between;padding:3px 0;background:none;border:0;color:#e2e8f0;cursor:pointer;text-align:left;font:13px system-ui"><span style="color:#22d3ee">${esc(x.common ?? x.sci)}</span><span style="color:#94a3b8">${Math.round(x.n).toLocaleString()}</span></button>`).join("");
+            popup.setHTML(`<div style="font:13px system-ui;color:#e2e8f0">${head}${rows ? `<div style="margin-top:8px;font-size:11px;color:#94a3b8">Also most recorded here</div><div>${rows}</div>` : ""}</div>`);
           }).catch(() => {});
       };
       for (const layer of ["history-pts", "history-icons"]) {
@@ -398,19 +404,26 @@ export default function WorldMap() {
     return () => { off = true; };
   }, [period, group]);
   const historyData = history && history.key === historyKey ? history.data : null;
-  const historyFC = useMemo<FC>(() => {
-    if (!historyData?.cells.length) return EMPTY;
-    const max = Math.log10(Math.max(...historyData.cells.map((c) => c.n)) + 1);
-    return { type: "FeatureCollection", features: historyData.cells.map((c) => ({
-      type: "Feature", properties: { share: Math.log10(c.n + 1) / max, n: c.n },
-      geometry: { type: "Polygon", coordinates: [[[c.lon, c.lat], [c.lon + 5, c.lat], [c.lon + 5, c.lat + 5], [c.lon, c.lat + 5], [c.lon, c.lat]]] },
-    })) } as FC;
-  }, [historyData]);
 
-  const historyPts = useMemo<FC>(() => ({ type: "FeatureCollection", features: (historyData?.cells ?? []).filter((c) => c.sci).map((c) => ({
-    type: "Feature", properties: { cellLat: c.lat, cellLon: c.lon, n: c.n, sci: c.sci, common: c.common, group: c.grp, source: c.src },
-    geometry: { type: "Point", coordinates: [c.lon + 2.5, c.lat + 2.5] },
-  })) }) as FC, [historyData]);
+  // Past period dots: one per species per cell, placed on a station inside the cell when there is one (chosen by a hash
+  // of the name, so a species keeps its spot between renders), otherwise at a hashed spot well inside the cell.
+  const historyPts = useMemo<FC>(() => {
+    if (!historyData?.points) return EMPTY;
+    const stations = new Map<string, [number, number][]>();
+    for (const f of deployments.features) {
+      const [x, y] = (f.geometry as GeoJSON.Point).coordinates;
+      const k = `${Math.floor(y / 5) * 5},${Math.floor(x / 5) * 5}`;
+      (stations.get(k) ?? stations.set(k, []).get(k)!).push([x, y]);
+    }
+    const hash = (str: string) => { let h = 2166136261; for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619); return h >>> 0; };
+    return { type: "FeatureCollection", features: historyData.points.map(([lat, lon, sci, common, grp, src, n]) => {
+      const h = hash(sci + lat + lon), st = stations.get(`${lat},${lon}`);
+      const jx = ((h & 0xff) / 255 - 0.5) * 0.3, jy = (((h >> 8) & 0xff) / 255 - 0.5) * 0.3;
+      const at: [number, number] = st?.length ? [st[h % st.length][0] + jx, st[h % st.length][1] + jy]
+        : [lon + 0.5 + ((h & 0xffff) / 65535) * 4, lat + 0.5 + ((h >>> 16) / 65535) * 4];
+      return { type: "Feature", properties: { cellLat: lat, cellLon: lon, n, sci, common, group: grp, source: src }, geometry: { type: "Point", coordinates: at } };
+    }) } as FC;
+  }, [historyData, deployments]);
 
   const shareScale = useMemo(() => {
     const all = frames.flatMap((f) => f.cells.map((c) => c[3])).sort((a, b) => a - b);
@@ -457,7 +470,7 @@ export default function WorldMap() {
       return;
     }
     if (period && !species) {
-      weekSrc?.setData(historyFC); trackSrc?.setData(EMPTY);
+      weekSrc?.setData(EMPTY); trackSrc?.setData(EMPTY);
       (map.getSource("history-pts") as GeoJSONSource)?.setData(historyPts);
       (map.getSource("cells") as GeoJSONSource)?.setData(EMPTY);
       (map.getSource("events") as GeoJSONSource)?.setData(EMPTY);
@@ -477,7 +490,7 @@ export default function WorldMap() {
       fc = { ...events, features: [...events.features, ...sightings.features] };
     }
     (map.getSource("events") as GeoJSONSource)?.setData(fc);
-  }, [events, sightings, deployments, cells, species, playhead, ready, windowStart, liveHours, activeFrame, frames, frame, shareScale, period, historyFC, historyPts]);
+  }, [events, sightings, deployments, cells, species, playhead, ready, windowStart, liveHours, activeFrame, frames, frame, shareScale, period, historyPts]);
 
   useEffect(() => {
     if (!playing) return;

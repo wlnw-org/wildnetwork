@@ -7,6 +7,7 @@ import { sql } from "@/lib/db";
  * Returns per-cell record totals for the map, the most recorded species, and arrivals whose estimated week falls in the period.
  */
 const PERIODS = { "7d": 7, "30d": 30, "12m": 364 } as const;
+const POINTS_PER_CELL = 12;
 // Map icon group, as in the events route.
 const ICON_GRP = sql`CASE g.grp WHEN 'marine' THEN 'Marine' WHEN 'bat' THEN 'bat' WHEN 'avian' THEN 'Aves' WHEN 'amphibian' THEN 'Amphibia' WHEN 'insect' THEN 'Insecta' WHEN 'mammal' THEN 'Mammalia' ELSE 'Unknown' END`;
 type Period = keyof typeof PERIODS;
@@ -51,23 +52,26 @@ export async function GET(req: Request) {
       FROM phenology p JOIN species_group g USING (scientific_name)
       WHERE p.arrival_week >= CURRENT_DATE - ${days}::int AND (p.arrival_support IS NULL OR p.arrival_support >= 0.5) ${grpSpecies}
       ORDER BY p.scientific_name, p.arrival_week`,
-    // The most recorded species per cell, with the source that recorded it most: drawn as one icon per cell.
-    sql<{ lat: number; lon: number; sci: string; common: string | null; grp: string; src: string }[]>`
+    // The most recorded species per cell (up to POINTS_PER_CELL), with the source that recorded each most: drawn as dots like the live map.
+    sql<{ lat: number; lon: number; sci: string; common: string | null; grp: string; src: string; n: number }[]>`
       WITH s AS (
         SELECT t.cell_lat, t.cell_lon, t.scientific_name, MIN(t.vernacular_name) AS common, SUM(t.count) AS n,
                (array_agg(t.source_system ORDER BY t.count DESC))[1] AS src, MIN(${ICON_GRP}) AS grp
         FROM ${table} t JOIN species_group g USING (scientific_name)
-        WHERE ${since} AND g.is_species ${grpSpecies} GROUP BY 1, 2, 3)
-      SELECT DISTINCT ON (cell_lat, cell_lon) cell_lat AS lat, cell_lon AS lon, scientific_name AS sci, common, grp, src
-      FROM s ORDER BY cell_lat, cell_lon, n DESC`,
+        WHERE ${since} AND g.is_species AND g.grp <> 'other' ${grpSpecies} GROUP BY 1, 2, 3)
+      SELECT lat, lon, sci, common, grp, src, n FROM (
+        SELECT cell_lat AS lat, cell_lon AS lon, scientific_name AS sci, common, grp, src, n::float AS n,
+               ROW_NUMBER() OVER (PARTITION BY cell_lat, cell_lon ORDER BY n DESC) AS r FROM s) x
+      WHERE r <= ${POINTS_PER_CELL}`,
   ]);
-  const lead = new Map(leaders.map((l) => [`${l.lat},${l.lon}`, l]));
   // Widespread arrivals first (seen arriving in the most areas), so one-off records do not lead the list.
   const recentArrivals = arrivals.sort((a, b) => b.cells - a.cells || b.arrival.localeCompare(a.arrival)).slice(0, 25);
   const records = cells.reduce((s, c) => s + c.n, 0);
   return Response.json(
     { period, group: g, from: span?.from ?? null, to: span?.to ?? null, records, species: totals?.species ?? 0,
-      cells: cells.map((c) => { const l = lead.get(`${c.lat},${c.lon}`); return l ? { ...c, sci: l.sci, common: l.common, grp: l.grp, src: l.src } : c; }), top, arrivals: recentArrivals, arrivalCount: arrivals.length },
+      cells,
+      // [lat, lon, scientific name, common name, icon group, source, records]: compact, there can be several thousand.
+      points: leaders.map((l) => [l.lat, l.lon, l.sci, l.common, l.grp, l.src, Math.round(l.n)]), top, arrivals: recentArrivals, arrivalCount: arrivals.length },
     { headers: { "cache-control": "public, s-maxage=21600, stale-while-revalidate=86400" } },
   );
 }
