@@ -86,6 +86,10 @@ Weekly records of birds, bats, amphibians and insects on a 5 degree grid, with o
 
 Weeks covered: ${range.first} to ${range.last} (weeks start on Monday). Licence: CC BY 4.0. Please cite this release and the GBIF datasets listed in datasets.csv.
 
+## Changes since the previous release
+- Methods ${METHODS_VERSION}: researchers signed in with ORCID can review the arrival estimates published on wlnw.org, and a species-cell pair is dropped there when at least two reviewers mark it a misidentification or a resident and they outnumber those who accept it. The arrivals in this file are computed from GBIF records alone and are not filtered by those reviews, so they can be compared with them.
+- The year now runs to the week of 12 October 2026 (one week later than release 3).
+
 ## What is and is not included
 
 - Included: records published to GBIF under CC0 1.0 or CC BY 4.0 only, classes Aves, Chiroptera (bats), Amphibia and Insecta, human observations and machine observations with coordinates and no geospatial issues.
