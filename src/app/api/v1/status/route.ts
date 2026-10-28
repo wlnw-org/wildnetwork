@@ -10,6 +10,7 @@ import { refreshSourceEffort } from "@/lib/rollups";
 import { refreshOptins } from "@/lib/optin";
 import { weeklyReindex } from "@/lib/storage";
 import { ALERTS_ENABLED, checkAlerts } from "@/lib/alerts";
+import { warmHistory } from "@/lib/history";
 import { sendDigests } from "@/lib/studies";
 
 export const maxDuration = 300;
@@ -80,6 +81,17 @@ export async function GET() {
       // Study-area digests ride on the same 6-hourly slot; each study gets at most one a week (src/lib/studies.ts).
       const dg = await sendDigests(60_000).catch((e) => { console.error("digests", e); return 0; });
       if (dg) console.log(`study digests: ${dg} sent`);
+    }
+  });
+  // Past-period map summaries (7d / 30d / 12m per class): hourly check, each summary renewed after 3.5 hours (src/lib/history.ts).
+  if (BACKGROUND_WRITES) after(async () => {
+    const hl = await sql`
+      INSERT INTO pull_state (connector, last_run_at) VALUES ('_history_lock', now())
+      ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '1 hour'
+      RETURNING connector`;
+    if (hl.length) {
+      const n = await warmHistory(240_000).catch((e) => { console.error("history warm", e); return 0; });
+      console.log(`history: ${n} summaries refreshed`);
     }
   });
   return Response.json({
