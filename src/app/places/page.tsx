@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PageLang, T } from "@/components/T";
 import PLACES from "@/data/places.json";
 
 export const metadata: Metadata = {
@@ -15,11 +16,14 @@ export default function Places() {
   return (
     <main className="min-h-screen bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <nav className="text-sm text-slate-500"><Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / Places</nav>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Birds and wildlife near you</h1>
+        <nav className="text-sm text-slate-500 flex items-center gap-2">
+          <span><Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / <T k="Places" /></span>
+          <span className="ml-auto"><PageLang /></span>
+        </nav>
+        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><T k="Birds and wildlife near you" /></h1>
         <p className="mt-3">
-          Each report shows what arrived around a city in the last four weeks, what is expected in the next six, and what is recorded most, for birds, bats,
-          frogs and insects. Not listed? Type any town into the search box on the <Link href="/" className="text-cyan-400 hover:underline">live map</Link>.
+          <T k="Each report shows what arrived around a city in the last four weeks, what is expected in the next six, and what is recorded most, for birds, bats, frogs and insects." />{" "}
+          <Link href="/" className="text-cyan-400 hover:underline"><T k="Not listed? Type any town into the search box on the live map." /></Link>
         </p>
         <div className="mt-6 space-y-4">
           {byCountry.map(([country, ps]) => (

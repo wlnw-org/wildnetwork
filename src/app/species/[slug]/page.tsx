@@ -8,6 +8,7 @@ import { sql } from "@/lib/db";
 import AlertForm from "@/components/AlertForm";
 import { ALERTS_ENABLED } from "@/lib/alerts";
 import { getSpeciesMedia } from "@/lib/media";
+import { LocalName, PageLang, T } from "@/components/T";
 import { REGION } from "@/lib/methods";
 import { regionSlug } from "@/lib/regions";
 import { SITE, speciesSlug } from "@/lib/site";
@@ -15,7 +16,6 @@ import { getClimate, getYearSpan, speciesStory } from "@/lib/story";
 
 export const revalidate = 3600;
 
-const CLASS_LABEL: Record<string, string> = { avian: "bird", bat: "bat", amphibian: "frog or toad", insect: "insect", mammal: "mammal", marine: "marine mammal", other: "animal" };
 const fmtWeek = (d: string) => new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
 type Related = { scientific_name: string; vernacular_name: string | null };
@@ -73,6 +73,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
   const d = await load((await params).slug);
   if (!d) notFound();
   const title = d.common ?? d.name;
+  const nm = d.media?.names ?? null;
   const url = `${SITE}/species/${speciesSlug(d.name)}`;
   const jsonLd = {
     "@context": "https://schema.org",
@@ -90,10 +91,11 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
     <main className="min-h-screen bg-slate-950 text-slate-300">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <nav className="text-sm text-slate-500">
-          <Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / <Link href="/species" className="text-cyan-400 hover:underline">Species</Link>
+        <nav className="text-sm text-slate-500 flex items-center gap-2">
+          <span><Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / <Link href="/species" className="text-cyan-400 hover:underline"><T k="Species" /></Link></span>
+          <span className="ml-auto"><PageLang /></span>
         </nav>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">{title}</h1>
+        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><LocalName en={title} names={nm} /></h1>
         {d.common && <p className="mt-1 text-slate-400 italic">{d.name}</p>}
         {BIRDWEATHER_PAUSED && <PausedNotice className="mt-4" />}
 
@@ -107,70 +109,70 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
         {d.media?.extract && (
           <p className="mt-5">
             {d.media.extract}{" "}
-            {d.media.pageUrl && <a href={d.media.pageUrl} className="text-cyan-400 hover:underline" rel="noopener">Source</a>}
+            {d.media.pageUrl && <a href={d.media.pageUrl} className="text-cyan-400 hover:underline" rel="noopener"><T k="Source" /></a>}
           </p>
         )}
 
-        <h2 className="mt-8 text-xl font-semibold text-slate-100">Where is the {title} now?</h2>
+        <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="Where is the {name} now?" v={{ name: title }} names={nm} /></h2>
         <p className="mt-2">
           {d.recent.n > 0
-            ? `In the last 8 weeks this ${CLASS_LABEL[d.grp] ?? "animal"} was recorded ${d.recent.n.toLocaleString("en-GB")} times across ${d.recent.cells} ${d.recent.cells === 1 ? "area" : "areas"} (each area is a 5 degree square).`
-            : "No records in the last 8 weeks. It may be out of season where the observers and sensors are."}
+            ? <T k={d.recent.cells === 1 ? "In the last 8 weeks it was recorded {n} times in one area (a 5 degree square)." : "In the last 8 weeks it was recorded {n} times across {c} areas (each area is a 5 degree square)."} v={{ n: d.recent.n.toLocaleString("en-GB"), c: d.recent.cells }} />
+            : <T k="No records in the last 8 weeks. It may be out of season where the observers and sensors are." />}
         </p>
         <p className="mt-3">
-          <Link href={`/?species=${encodeURIComponent(d.name)}`} className="inline-block rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400">See the {title} on the live map</Link>
+          <Link href={`/?species=${encodeURIComponent(d.name)}`} className="inline-block rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400"><T k="See the {name} on the live map" v={{ name: title }} names={nm} /></Link>
         </p>
         {ALERTS_ENABLED && !BIRDWEATHER_PAUSED && (
           <section id="alert" className="mt-6 rounded-lg border border-white/10 bg-white/5 p-4">
-            <h2 className="text-lg font-semibold text-slate-100">Get an email when the {title} arrives near you</h2>
+            <h2 className="text-lg font-semibold text-slate-100"><T k="Get an email when the {name} arrives near you" v={{ name: title }} names={nm} /></h2>
             <AlertForm species={d.name} title={title} />
           </section>
         )}
 
         {d.story.length > 0 && (
           <>
-            <h2 className="mt-8 text-xl font-semibold text-slate-100">How the {title} moves through the year</h2>
+            <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="How the {name} moves through the year" v={{ name: title }} names={nm} /></h2>
             {d.story.map((s) => <p key={s} className="mt-2">{s}</p>)}
           </>
         )}
 
         {d.arrivals.length > 0 && (
           <>
-            <h2 className="mt-8 text-xl font-semibold text-slate-100">When does the {title} arrive?</h2>
-            <p className="mt-2">The week it was first heard regularly in each region, after at least six weeks away. Dates differ from south to north, so a region has a range.</p>
+            <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="When does the {name} arrive?" v={{ name: title }} names={nm} /></h2>
+            <p className="mt-2"><T k="The week it was first heard regularly in each region, after at least six weeks away. Dates differ from south to north, so a region has a range." /></p>
             <table className="mt-3 w-full text-sm">
-              <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium">Region</th><th className="font-medium">First arrival</th><th className="font-medium">Last arrival</th><th className="font-medium">Typical peak</th><th className="font-medium text-right">Areas</th></tr></thead>
+              <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><T k="Region" /></th><th className="font-medium"><T k="First arrival" /></th><th className="font-medium"><T k="Last arrival" /></th><th className="font-medium"><T k="Typical peak" /></th><th className="font-medium text-right"><T k="Areas" /></th></tr></thead>
               <tbody>
                 {d.arrivals.map((a) => (
-                  <tr key={a.region} className="border-b border-white/5"><td className="py-1.5">{regionSlug(a.region) ? <Link href={`/arrivals/${regionSlug(a.region)}`} className="text-cyan-400 hover:underline">{a.region}</Link> : a.region}</td><td>{fmtWeek(a.first)}</td><td>{fmtWeek(a.last)}</td><td>{fmtWeek(a.peak)}</td><td className="text-right">{a.areas}</td></tr>
+                  <tr key={a.region} className="border-b border-white/5"><td className="py-1.5">{regionSlug(a.region) ? <Link href={`/arrivals/${regionSlug(a.region)}`} className="text-cyan-400 hover:underline"><T k={a.region} /></Link> : <T k={a.region} />}</td><td>{fmtWeek(a.first)}</td><td>{fmtWeek(a.last)}</td><td>{fmtWeek(a.peak)}</td><td className="text-right">{a.areas}</td></tr>
                 ))}
               </tbody>
             </table>
             <p className="mt-2 text-sm">
-              <a href={`/api/v1/arrivals?species=${encodeURIComponent(d.name)}&format=csv`} className="text-cyan-400 hover:underline" rel="nofollow">Download every area as CSV</a>
-              {" · "}<Link href={`/species/${speciesSlug(d.name)}/review`} className="text-cyan-400 hover:underline">Review these arrival dates</Link> (researchers, ORCID sign-in)
+              <a href={`/api/v1/arrivals?species=${encodeURIComponent(d.name)}&format=csv`} className="text-cyan-400 hover:underline" rel="nofollow"><T k="Download every area as CSV" /></a>
+              {" · "}<Link href={`/species/${speciesSlug(d.name)}/review`} className="text-cyan-400 hover:underline"><T k="Review these arrival dates" /></Link> <T k="(researchers, ORCID sign-in)" />
             </p>
           </>
         )}
 
         {d.sameTime.length > 0 && d.top && (
           <>
-            <h2 className="mt-8 text-xl font-semibold text-slate-100">Arriving at the same time in {d.top}</h2>
+            <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="Arriving at the same time in {region}" v={{ region: d.top }} /></h2>
             <RelatedList items={d.sameTime} />
-            <p className="mt-2 text-sm"><Link href={`/arrivals/${regionSlug(d.top)}`} className="text-cyan-400 hover:underline">Every arrival in {d.top}, month by month</Link></p>
+            <p className="mt-2 text-sm"><Link href={`/arrivals/${regionSlug(d.top)}`} className="text-cyan-400 hover:underline"><T k="Every arrival in {region}, month by month" v={{ region: d.top }} /></Link></p>
           </>
         )}
         {d.genus.length > 0 && (
           <>
-            <h2 className="mt-8 text-xl font-semibold text-slate-100">Related species</h2>
+            <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="Related species" /></h2>
             <RelatedList items={d.genus} />
           </>
         )}
 
         <p className="mt-8 text-sm text-slate-500">
-          Figures are effort corrected and come from automatic sound identification, which makes mistakes.{" "}
-          <Link href="/methods" className="text-cyan-400 hover:underline">How this is measured</Link> and{" "}
-          <Link href="/validation" className="text-cyan-400 hover:underline">how it compares with human observers</Link>.
+          <T k="Figures are effort corrected and come from automatic sound identification, which makes mistakes." />{" "}
+          <Link href="/methods" className="text-cyan-400 hover:underline"><T k="How this is measured" /></Link>{" · "}
+          <Link href="/validation" className="text-cyan-400 hover:underline"><T k="How it compares with human observers" /></Link>
         </p>
       </div>
     </main>
