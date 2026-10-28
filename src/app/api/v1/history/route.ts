@@ -48,7 +48,8 @@ export async function GET(req: Request) {
       WHERE p.arrival_week >= CURRENT_DATE - ${days}::int AND (p.arrival_support IS NULL OR p.arrival_support >= 0.5) ${grpSpecies}
       ORDER BY p.scientific_name, p.arrival_week`,
   ]);
-  const recentArrivals = arrivals.sort((a, b) => b.arrival.localeCompare(a.arrival) || b.cells - a.cells).slice(0, 25);
+  // Widespread arrivals first (seen arriving in the most areas), so one-off records do not lead the list.
+  const recentArrivals = arrivals.sort((a, b) => b.cells - a.cells || b.arrival.localeCompare(a.arrival)).slice(0, 25);
   const records = cells.reduce((s, c) => s + c.n, 0);
   return Response.json(
     { period, group: g, from: span?.from ?? null, to: span?.to ?? null, records, species: totals?.species ?? 0, cells, top, arrivals: recentArrivals, arrivalCount: arrivals.length },
