@@ -62,6 +62,9 @@ export default function WorldMap() {
   const [hours, setHours] = useState(3);
   const [period, setPeriod] = useState<Period | null>(null);
   const [history, setHistory] = useState<{ key: string; data: History } | null>(null);
+  // Map click handlers are bound once at load, so they read the current period and pick() through refs.
+  const historyRef = useRef<{ period: Period | null; group: string }>({ period: null, group: "all" });
+  const pickRef = useRef<(name: string) => void>(() => {});
   const [species, setSpecies] = useState<string | null>(null);
   // Continent in view when a species is picked: Listen prefers recordings from there. Only this name is sent, never coordinates.
   const [listenArea, setListenArea] = useState<XcArea | null>(null);
@@ -167,7 +170,17 @@ export default function WorldMap() {
         id: "events", type: "circle", source: "events",
         paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 1, 2.5, 8, 6], "circle-color": SOURCE_COLOR as never, "circle-opacity": 0.95, "circle-stroke-width": 0.5, "circle-stroke-color": "#020617" },
       });
+      // Past periods: one marker per cell at its centre, for the cell's most recorded species (icons from zoom 3.5, as for live dots).
+      map.addSource("history-pts", { type: "geojson", data: EMPTY });
+      map.addLayer({
+        id: "history-pts", type: "circle", source: "history-pts",
+        paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 1, 3, 8, 7], "circle-color": SOURCE_COLOR as never, "circle-opacity": 0.95, "circle-stroke-width": 1, "circle-stroke-color": "#020617" },
+      });
       registerIcons(map).then(() => {
+        if (!map.getLayer("history-icons")) map.addLayer({
+          id: "history-icons", type: "symbol", source: "history-pts", minzoom: 3.5, filter: ["!=", ["get", "group"], "Unknown"],
+          layout: { "icon-image": ICON_IMAGE as never, "icon-size": ["interpolate", ["linear"], ["zoom"], 3.5, 0.55, 8, 0.9], "icon-allow-overlap": true },
+        });
         if (map.getLayer("events-icons")) return;
         map.addLayer({
           id: "events-icons", type: "symbol", source: "events", minzoom: 3.5, filter: ["!=", ["get", "group"], "Unknown"],
@@ -205,6 +218,35 @@ export default function WorldMap() {
           }).catch(() => {});
         }
       };
+      // Past period: the cell's top species for the period, each one opens the species panel.
+      const showCell = (e: MapLayerMouseEvent) => {
+        const f = e.features?.[0];
+        const h = historyRef.current;
+        if (!f || !h.period) return;
+        const p = f.properties as Record<string, string | number>;
+        const lat = Number(p.cellLat), lon = Number(p.cellLon);
+        const label = h.period === "12m" ? "last 12 months" : h.period === "30d" ? "last 30 days" : "last 7 days";
+        const head = `<b>${lat}° to ${lat + 5}°, ${lon}° to ${lon + 5}°</b><br/><span style="font-size:11px;color:#94a3b8">Most recorded, ${label} · ${Math.round(Number(p.n)).toLocaleString()} records</span>`;
+        const popup = new Popup({ closeButton: true, maxWidth: "280px" })
+          .setLngLat((f.geometry as GeoJSON.Point).coordinates as [number, number])
+          .setHTML(`<div style="font:13px system-ui;color:#e2e8f0">${head}<div style="margin-top:6px;color:#94a3b8">Loading</div></div>`)
+          .addTo(map);
+        popup.getElement().addEventListener("click", (ev) => {
+          const b = (ev.target as HTMLElement).closest("[data-sci]") as HTMLElement | null;
+          if (b?.dataset.sci) { popup.remove(); pickRef.current(b.dataset.sci); }
+        });
+        fetch(`/api/v1/history/cell?period=${h.period}&group=${h.group}&lat=${lat}&lon=${lon}`).then((r) => r.json())
+          .then((d: { species?: { sci: string; common: string | null; n: number }[] }) => {
+            if (!popup.isOpen()) return;
+            const rows = (d.species ?? []).map((x) => `<button data-sci="${esc(x.sci)}" style="display:flex;width:100%;gap:8px;justify-content:space-between;padding:3px 0;background:none;border:0;color:#e2e8f0;cursor:pointer;text-align:left;font:13px system-ui"><span style="color:#22d3ee">${esc(x.common ?? x.sci)}</span><span style="color:#94a3b8">${Math.round(x.n).toLocaleString()}</span></button>`).join("");
+            popup.setHTML(`<div style="font:13px system-ui;color:#e2e8f0">${head}<div style="margin-top:6px">${rows || "No species records"}</div></div>`);
+          }).catch(() => {});
+      };
+      for (const layer of ["history-pts", "history-icons"]) {
+        map.on("click", layer, showCell);
+        map.on("mouseenter", layer, () => (map.getCanvas().style.cursor = "pointer"));
+        map.on("mouseleave", layer, () => (map.getCanvas().style.cursor = ""));
+      }
       for (const layer of ["events", "events-icons"]) {
         map.on("click", layer, showPopup);
         map.on("mouseenter", layer, () => (map.getCanvas().style.cursor = "pointer"));
@@ -362,6 +404,11 @@ export default function WorldMap() {
     })) } as FC;
   }, [historyData]);
 
+  const historyPts = useMemo<FC>(() => ({ type: "FeatureCollection", features: (historyData?.cells ?? []).filter((c) => c.sci).map((c) => ({
+    type: "Feature", properties: { cellLat: c.lat, cellLon: c.lon, n: c.n, sci: c.sci, common: c.common, group: c.grp, source: c.src },
+    geometry: { type: "Point", coordinates: [c.lon + 2.5, c.lat + 2.5] },
+  })) }) as FC, [historyData]);
+
   const shareScale = useMemo(() => {
     const all = frames.flatMap((f) => f.cells.map((c) => c[3])).sort((a, b) => a - b);
     return all.length ? Math.max(all[Math.floor(all.length * 0.95)], 1e-6) : 1;
@@ -372,6 +419,7 @@ export default function WorldMap() {
     if (!map || !ready) return;
     const weekSrc = map.getSource("week-cells") as GeoJSONSource, trackSrc = map.getSource("track") as GeoJSONSource;
     if (activeFrame) {
+      (map.getSource("history-pts") as GeoJSONSource)?.setData(EMPTY);
       // Shade by the species' share of all detections in the cell, scaled to the year's 95th percentile so weeks are comparable.
       weekSrc?.setData({ type: "FeatureCollection", features: activeFrame.cells.map(([lat, lon, , share]) => ({
         type: "Feature", properties: { share: Math.min(1, Math.sqrt(share / shareScale)) },
@@ -407,12 +455,14 @@ export default function WorldMap() {
     }
     if (period && !species) {
       weekSrc?.setData(historyFC); trackSrc?.setData(EMPTY);
+      (map.getSource("history-pts") as GeoJSONSource)?.setData(historyPts);
       (map.getSource("cells") as GeoJSONSource)?.setData(EMPTY);
       (map.getSource("events") as GeoJSONSource)?.setData(EMPTY);
       (map.getSource("deployments") as GeoJSONSource)?.setData(deployments);
       return;
     }
     weekSrc?.setData(EMPTY); trackSrc?.setData(EMPTY);
+    (map.getSource("history-pts") as GeoJSONSource)?.setData(EMPTY);
     (map.getSource("cells") as GeoJSONSource)?.setData(species ? cells : EMPTY);
     (map.getSource("deployments") as GeoJSONSource)?.setData(deployments);
     let fc = events;
@@ -424,7 +474,7 @@ export default function WorldMap() {
       fc = { ...events, features: [...events.features, ...sightings.features] };
     }
     (map.getSource("events") as GeoJSONSource)?.setData(fc);
-  }, [events, sightings, deployments, cells, species, playhead, ready, windowStart, liveHours, activeFrame, frames, frame, shareScale, period, historyFC]);
+  }, [events, sightings, deployments, cells, species, playhead, ready, windowStart, liveHours, activeFrame, frames, frame, shareScale, period, historyFC, historyPts]);
 
   useEffect(() => {
     if (!playing) return;
@@ -461,6 +511,7 @@ export default function WorldMap() {
     setEvents(EMPTY); setLoading(true);
   };
   const pick = (name: string) => { selectSpecies(name); setTab("now"); track("select_species", { species: name }); };
+  useEffect(() => { pickRef.current = pick; historyRef.current = { period, group }; });
 
   // First-visit walkthrough: opens once the map is ready, unless the visitor came for a species or has seen it. The About panel can replay it.
   const [tour, setTour] = useState<"auto" | "manual" | null>(null);

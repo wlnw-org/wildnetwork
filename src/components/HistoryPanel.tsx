@@ -4,7 +4,7 @@ import { useLang, useT } from "@/lib/i18n";
 export type Period = "7d" | "30d" | "12m";
 export interface History {
   period: Period; group: string; from: string | null; to: string | null; records: number; species: number; arrivalCount: number;
-  cells: { lat: number; lon: number; n: number }[];
+  cells: { lat: number; lon: number; n: number; sci?: string; common?: string | null; grp?: string; src?: string }[];
   top: { scientific_name: string; vernacular_name: string | null; n: number; cells: number }[];
   arrivals: { scientific_name: string; vernacular_name: string | null; arrival: string; lat: number; lon: number; cells: number }[];
 }
@@ -35,7 +35,7 @@ export default function HistoryPanel({ data, loading, onPick, onBack }: { data: 
       {!data || loading ? <div className="px-4 py-3 text-sm text-slate-500">{t("Loading")}</div> : (
         <>
           <div className="px-4 pt-3 text-sm text-slate-300">{t("{r} records of {s} species in {c} areas", { r: fmt(data.records), s: data.species.toLocaleString(lang), c: data.cells.length })}</div>
-          <p className="px-4 pt-1 text-[11px] text-slate-500">{t("Brighter squares had more records. Past periods show daily and weekly totals per 5 degree square; single detections are only kept for the live hours.")}</p>
+          <p className="px-4 pt-1 text-[11px] text-slate-500">{t("Brighter squares had more records; the icon in each is its most recorded species (click it for the top ten). Past periods show daily and weekly totals per 5 degree square; single detections are only kept for the live hours.")}</p>
           {head(t("Arrivals in this period"), data.arrivalCount ? t("{n} species", { n: data.arrivalCount }) : undefined)}
           {data.arrivals.length ? data.arrivals.map((a) => row(a.scientific_name, a.vernacular_name, d(a.arrival)))
             : <p className="px-4 text-sm text-slate-500">{t("No arrival estimates fall in this period yet (open records arrive one to two weeks late).")}</p>}
