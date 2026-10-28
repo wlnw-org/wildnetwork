@@ -1,11 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useT } from "@/lib/i18n";
+import { useLang, useLocalNames, useT } from "@/lib/i18n";
 import type { PlaceReport } from "@/lib/places";
 
 export interface PickedPlace { label: string; lat: number; lon: number; slug?: string }
 
-const fmt = (d: string) => new Date(d + "T00:00:00Z").toLocaleDateString(undefined, { day: "numeric", month: "short", timeZone: "UTC" });
 
 /** Map panel for a searched place: what arrived, what is expected and what is most recorded in its 5 degree cell. */
 export default function PlacePanel({ place, group, onPick, onClose }: { place: PickedPlace; group: string; onPick: (name: string) => void; onClose: () => void }) {
@@ -20,10 +19,13 @@ export default function PlacePanel({ place, group, onPick, onClose }: { place: P
     return () => { off = true; };
   }, [place.lat, place.lon, grp, key]);
   const r = data?.key === key ? data.r : undefined;
+  const lang = useLang();
+  const fmt = (d: string) => new Date(d + "T00:00:00Z").toLocaleDateString(lang === "en" ? "en-GB" : lang, { day: "numeric", month: "short", timeZone: "UTC" });
+  const local = useLocalNames(r ? [...r.recent, ...r.coming, ...r.top].map((x) => x.scientific_name) : []);
 
   const row = (name: string, vern: string | null, note: string) => (
     <button key={name} onClick={() => onPick(name)} className="w-full text-left px-4 py-1.5 hover:bg-white/5 flex items-baseline gap-2 text-sm">
-      <span className="truncate">{vern ?? name}</span><span className="ml-auto shrink-0 text-xs text-slate-500 tabular-nums">{note}</span>
+      <span className="truncate">{local(name, vern)}</span><span className="ml-auto shrink-0 text-xs text-slate-500 tabular-nums">{note}</span>
     </button>
   );
   const head = (children: string) => <h3 className="px-4 pt-4 pb-1 text-[11px] uppercase tracking-wider text-slate-500">{children}</h3>;

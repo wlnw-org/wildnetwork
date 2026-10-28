@@ -1,5 +1,5 @@
 "use client";
-import { useLang, useT } from "@/lib/i18n";
+import { useLang, useLocalNames, useT } from "@/lib/i18n";
 
 export type Period = "7d" | "30d" | "12m";
 export interface History {
@@ -15,14 +15,15 @@ export interface History {
 export default function HistoryPanel({ data, loading, onPick, onBack }: { data: History | null; loading: boolean; onPick: (name: string) => void; onBack: () => void }) {
   const t = useT();
   const lang = useLang();
-  const d = (iso: string, year = false) => new Date(iso + "T00:00:00Z").toLocaleDateString(lang, { day: "numeric", month: "short", ...(year ? { year: "numeric" } : {}), timeZone: "UTC" });
+  const local = useLocalNames(data ? [...data.arrivals.map((a) => a.scientific_name), ...data.top.map((x) => x.scientific_name)] : []);
+  const d = (iso: string, year = false) => new Date(iso + "T00:00:00Z").toLocaleDateString(lang === "en" ? "en-GB" : lang, { day: "numeric", month: "short", ...(year ? { year: "numeric" } : {}), timeZone: "UTC" });
   const fmt = (n: number) => (n >= 1e6 ? `${(n / 1e6).toFixed(n >= 1e8 ? 0 : 1)}M` : n >= 1e4 ? `${Math.round(n / 1e3)}k` : Math.round(n).toLocaleString(lang));
   const head = (text: string, note?: string) => (
     <h3 className="px-4 pt-4 pb-1 text-[11px] uppercase tracking-wider text-slate-500 flex justify-between gap-2"><span>{text}</span>{note && <span className="normal-case tracking-normal">{note}</span>}</h3>
   );
   const row = (name: string, vern: string | null, note: string) => (
     <button key={name} onClick={() => onPick(name)} className="w-full text-left px-4 py-1.5 hover:bg-white/5 flex items-baseline gap-2 text-sm">
-      <span className="truncate">{vern ?? name}</span><span className="ml-auto shrink-0 text-xs text-slate-500 tabular-nums">{note}</span>
+      <span className="truncate">{local(name, vern)}</span><span className="ml-auto shrink-0 text-xs text-slate-500 tabular-nums">{note}</span>
     </button>
   );
   return (

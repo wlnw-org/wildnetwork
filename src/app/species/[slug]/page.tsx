@@ -8,7 +8,8 @@ import { sql } from "@/lib/db";
 import AlertForm from "@/components/AlertForm";
 import { ALERTS_ENABLED } from "@/lib/alerts";
 import { getSpeciesMedia } from "@/lib/media";
-import { LocalName, PageLang, T } from "@/components/T";
+import { LocalDate, LocalName, PageLang, T } from "@/components/T";
+import { getNames } from "@/lib/names";
 import { REGION } from "@/lib/methods";
 import { regionSlug } from "@/lib/regions";
 import { SITE, speciesSlug } from "@/lib/site";
@@ -16,7 +17,6 @@ import { getClimate, getYearSpan, speciesStory } from "@/lib/story";
 
 export const revalidate = 3600;
 
-const fmtWeek = (d: string) => new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
 type Related = { scientific_name: string; vernacular_name: string | null };
 
@@ -73,7 +73,8 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
   const d = await load((await params).slug);
   if (!d) notFound();
   const title = d.common ?? d.name;
-  const nm = d.media?.names ?? null;
+  const names = await getNames([d.name, ...d.genus.map((r) => r.scientific_name), ...d.sameTime.map((r) => r.scientific_name)]);
+  const nm = { ...(names[d.name] ?? {}), ...(d.media?.names ?? {}) };
   const url = `${SITE}/species/${speciesSlug(d.name)}`;
   const jsonLd = {
     "@context": "https://schema.org",
@@ -144,7 +145,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
               <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><T k="Region" /></th><th className="font-medium"><T k="First arrival" /></th><th className="font-medium"><T k="Last arrival" /></th><th className="font-medium"><T k="Typical peak" /></th><th className="font-medium text-right"><T k="Areas" /></th></tr></thead>
               <tbody>
                 {d.arrivals.map((a) => (
-                  <tr key={a.region} className="border-b border-white/5"><td className="py-1.5">{regionSlug(a.region) ? <Link href={`/arrivals/${regionSlug(a.region)}`} className="text-cyan-400 hover:underline"><T k={a.region} /></Link> : <T k={a.region} />}</td><td>{fmtWeek(a.first)}</td><td>{fmtWeek(a.last)}</td><td>{fmtWeek(a.peak)}</td><td className="text-right">{a.areas}</td></tr>
+                  <tr key={a.region} className="border-b border-white/5"><td className="py-1.5">{regionSlug(a.region) ? <Link href={`/arrivals/${regionSlug(a.region)}`} className="text-cyan-400 hover:underline"><T k={a.region} /></Link> : <T k={a.region} />}</td><td><LocalDate iso={a.first} year /></td><td><LocalDate iso={a.last} year /></td><td><LocalDate iso={a.peak} year /></td><td className="text-right">{a.areas}</td></tr>
                 ))}
               </tbody>
             </table>
@@ -158,14 +159,14 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
         {d.sameTime.length > 0 && d.top && (
           <>
             <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="Arriving at the same time in {region}" v={{ region: d.top }} /></h2>
-            <RelatedList items={d.sameTime} />
+            <RelatedList items={d.sameTime} names={names} />
             <p className="mt-2 text-sm"><Link href={`/arrivals/${regionSlug(d.top)}`} className="text-cyan-400 hover:underline"><T k="Every arrival in {region}, month by month" v={{ region: d.top }} /></Link></p>
           </>
         )}
         {d.genus.length > 0 && (
           <>
             <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="Related species" /></h2>
-            <RelatedList items={d.genus} />
+            <RelatedList items={d.genus} names={names} />
           </>
         )}
 
@@ -179,12 +180,12 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
   );
 }
 
-function RelatedList({ items }: { items: Related[] }) {
+function RelatedList({ items, names }: { items: Related[]; names: Record<string, Record<string, string>> }) {
   return (
     <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
       {items.map((r) => (
         <li key={r.scientific_name}>
-          <Link href={`/species/${speciesSlug(r.scientific_name)}`} className="text-cyan-400 hover:underline" prefetch={false}>{r.vernacular_name ?? r.scientific_name}</Link>
+          <Link href={`/species/${speciesSlug(r.scientific_name)}`} className="text-cyan-400 hover:underline" prefetch={false}><LocalName en={r.vernacular_name ?? r.scientific_name} names={names[r.scientific_name]} /></Link>
           {r.vernacular_name && <span className="text-slate-500 italic"> {r.scientific_name}</span>}
         </li>
       ))}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { MESSAGES } from "@/lib/messages";
 
 /**
@@ -60,4 +60,21 @@ export function useLang(): Lang {
 export function useT() {
   const lang = useLang();
   return (text: string, vars?: Record<string, string | number>) => translate(lang, text, vars);
+}
+
+/**
+ * Common names in the visitor's language for the given scientific names (/api/v1/names), English when there is none.
+ * Returns a lookup: local(name, english) -> display name.
+ */
+export function useLocalNames(list: string[]): (sci: string, en: string | null) => string {
+  const lang = useLang();
+  const key = lang === "en" ? "" : [...new Set(list)].sort().join(",");
+  const [names, setNames] = useState<{ key: string; map: Record<string, Record<string, string>> }>({ key: "", map: {} });
+  useEffect(() => {
+    if (!key) return;
+    let off = false;
+    fetch(`/api/v1/names?names=${encodeURIComponent(key)}`).then((r) => r.json()).then((m) => { if (!off) setNames({ key, map: m }); }).catch(() => {});
+    return () => { off = true; };
+  }, [key]);
+  return (sci, en) => (lang !== "en" && names.key === key ? names.map[sci]?.[lang] : undefined) ?? en ?? sci;
 }

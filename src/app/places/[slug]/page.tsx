@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageLang, T } from "@/components/T";
+import { LocalName, PageLang, T, TDate } from "@/components/T";
+import { getNames } from "@/lib/names";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { GROUP_LABEL } from "@/lib/studies";
@@ -10,7 +11,6 @@ import { SITE, speciesSlug } from "@/lib/site";
 export const revalidate = 86400;
 
 const place = cache((slug: string) => placeBySlug(slug));
-const fmt = (d: string) => new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", timeZone: "UTC" });
 const pick = (g?: string) => ((PLACE_GROUPS as readonly string[]).includes(g ?? "") ? g! : "avian");
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ group?: string }> };
@@ -46,8 +46,9 @@ export default async function PlacePage({ params, searchParams }: Props) {
         about: { "@type": "Place", name: placeLabel(p), geo: { "@type": "GeoCoordinates", latitude: p.lat, longitude: p.lon } } },
     ],
   };
+  const names = await getNames([...r.recent, ...r.coming, ...r.top].map((x) => x.scientific_name));
   const Species = ({ name, vern }: { name: string; vern: string | null }) => (
-    <Link href={`/species/${speciesSlug(name)}`} className="text-cyan-400 hover:underline">{vern ?? name}</Link>
+    <Link href={`/species/${speciesSlug(name)}`} className="text-cyan-400 hover:underline"><LocalName en={vern ?? name} names={names[name]} /></Link>
   );
   return (
     <main className="min-h-screen bg-slate-950 text-slate-300">
@@ -76,10 +77,10 @@ export default async function PlacePage({ params, searchParams }: Props) {
         </div>
 
         <H2><T k="Arrived in the last four weeks" /></H2>
-        <List items={r.recent} empty={<T k="None arrived here in these weeks last year, as far as the records show." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-500"><T k="around {d}" v={{ d: fmt(a.arrival) }} /></span></>} />
+        <List items={r.recent} empty={<T k="None arrived here in these weeks last year, as far as the records show." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-500"><TDate k="around {d}" iso={a.arrival} /></span></>} />
 
         <H2><T k="Expected in the next six weeks" /></H2>
-        <List items={r.coming} empty={<T k="No arrivals expected here in the next six weeks, going by last year." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-500"><T k="around {d}" v={{ d: fmt(a.arrival) }} />{a.support != null && a.support < 0.5 ? <> <T k="(weak evidence)" /></> : null}</span></>} />
+        <List items={r.coming} empty={<T k="No arrivals expected here in the next six weeks, going by last year." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-500"><TDate k="around {d}" iso={a.arrival} />{a.support != null && a.support < 0.5 ? <> <T k="(weak evidence)" /></> : null}</span></>} />
         <p className="mt-2 text-xs text-slate-500"><T k="Dates are last year's first regular records after at least six weeks away, with each species' own uncertainty on its page. Each species page can email you when it turns up." /></p>
 
         <H2><T k="Most recorded, last eight weeks" /></H2>

@@ -30,3 +30,16 @@ export function PageLang() {
     </select>
   );
 }
+
+/** A date (YYYY-MM-DD) in the visitor's language, e.g. "12 octobre" or "12 அக்டோபர்". */
+export function LocalDate({ iso, year = false }: { iso: string; year?: boolean }) {
+  const lang = useLang();
+  return <>{new Date(iso + "T00:00:00Z").toLocaleDateString(lang === "en" ? "en-GB" : lang, { day: "numeric", month: "long", ...(year ? { year: "numeric" } : {}), timeZone: "UTC" })}</>;
+}
+
+/** Translated text with a {d} date placeholder filled in the visitor's language, e.g. "around {d}". */
+export function TDate({ k, iso }: { k: string; iso: string }) {
+  const lang = useLang();
+  const t = useT();
+  return <>{t(k, { d: new Date(iso + "T00:00:00Z").toLocaleDateString(lang === "en" ? "en-GB" : lang, { day: "numeric", month: "long", timeZone: "UTC" }) })}</>;
+}
