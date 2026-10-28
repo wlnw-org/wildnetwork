@@ -410,6 +410,76 @@ const PLACES: Record<string, Dict> = {
   "Full report for {p}": "{p} முழு அறிக்கை"
  }
 };
-export const MESSAGES: Record<string, Dict> = Object.fromEntries(Object.entries({ es, fr, de, pt, hi, ta }).map(([k, d]) => [k, { ...d, ...PLACES[k] }]));
+
+// Past periods (map slider 7d / 30d / 12m and the history panel).
+const HISTORY: Record<string, Dict> = {
+ "es": {
+  "Last 7 days": "Últimos 7 días",
+  "Last 30 days": "Últimos 30 días",
+  "Last 12 months": "Últimos 12 meses",
+  "Back to live": "Volver a en vivo",
+  "{r} records of {s} species in {c} areas": "{r} registros de {s} especies en {c} zonas",
+  "Brighter squares had more records. Past periods show daily and weekly totals per 5 degree square; single detections are only kept for the live hours.": "Los cuadrados más brillantes tuvieron más registros. Los periodos pasados muestran totales diarios y semanales por cuadrado de 5 grados; las detecciones individuales solo se guardan durante las horas en vivo.",
+  "Arrivals in this period": "Llegadas en este periodo",
+  "No arrival estimates fall in this period yet (open records arrive one to two weeks late).": "Aún no hay llegadas estimadas en este periodo (los registros abiertos llegan con una o dos semanas de retraso).",
+  "{r} records of {s} species": "{r} registros de {s} especies"
+ },
+ "fr": {
+  "Last 7 days": "7 derniers jours",
+  "Last 30 days": "30 derniers jours",
+  "Last 12 months": "12 derniers mois",
+  "Back to live": "Retour au direct",
+  "{r} records of {s} species in {c} areas": "{r} données de {s} espèces dans {c} zones",
+  "Brighter squares had more records. Past periods show daily and weekly totals per 5 degree square; single detections are only kept for the live hours.": "Les carrés plus lumineux ont plus de données. Les périodes passées montrent des totaux quotidiens et hebdomadaires par carré de 5 degrés ; les détections individuelles ne sont gardées que pour les heures en direct.",
+  "Arrivals in this period": "Arrivées sur cette période",
+  "No arrival estimates fall in this period yet (open records arrive one to two weeks late).": "Aucune arrivée estimée sur cette période pour l'instant (les données ouvertes arrivent avec une à deux semaines de retard).",
+  "{r} records of {s} species": "{r} données de {s} espèces"
+ },
+ "de": {
+  "Last 7 days": "Letzte 7 Tage",
+  "Last 30 days": "Letzte 30 Tage",
+  "Last 12 months": "Letzte 12 Monate",
+  "Back to live": "Zurück zu live",
+  "{r} records of {s} species in {c} areas": "{r} Nachweise von {s} Arten in {c} Gebieten",
+  "Brighter squares had more records. Past periods show daily and weekly totals per 5 degree square; single detections are only kept for the live hours.": "Hellere Quadrate hatten mehr Nachweise. Vergangene Zeiträume zeigen Tages- und Wochensummen je 5-Grad-Quadrat; einzelne Erkennungen werden nur für die Live-Stunden gespeichert.",
+  "Arrivals in this period": "Ankünfte in diesem Zeitraum",
+  "No arrival estimates fall in this period yet (open records arrive one to two weeks late).": "Noch keine geschätzten Ankünfte in diesem Zeitraum (offene Daten kommen ein bis zwei Wochen später).",
+  "{r} records of {s} species": "{r} Nachweise von {s} Arten"
+ },
+ "pt": {
+  "Last 7 days": "Últimos 7 dias",
+  "Last 30 days": "Últimos 30 dias",
+  "Last 12 months": "Últimos 12 meses",
+  "Back to live": "Voltar ao vivo",
+  "{r} records of {s} species in {c} areas": "{r} registros de {s} espécies em {c} áreas",
+  "Brighter squares had more records. Past periods show daily and weekly totals per 5 degree square; single detections are only kept for the live hours.": "Quadrados mais claros tiveram mais registros. Períodos passados mostram totais diários e semanais por quadrado de 5 graus; detecções individuais só ficam guardadas nas horas ao vivo.",
+  "Arrivals in this period": "Chegadas neste período",
+  "No arrival estimates fall in this period yet (open records arrive one to two weeks late).": "Ainda não há chegadas estimadas neste período (os registros abertos chegam com uma a duas semanas de atraso).",
+  "{r} records of {s} species": "{r} registros de {s} espécies"
+ },
+ "hi": {
+  "Last 7 days": "पिछले 7 दिन",
+  "Last 30 days": "पिछले 30 दिन",
+  "Last 12 months": "पिछले 12 महीने",
+  "Back to live": "लाइव पर लौटें",
+  "{r} records of {s} species in {c} areas": "{c} क्षेत्रों में {s} प्रजातियों के {r} रिकॉर्ड",
+  "Brighter squares had more records. Past periods show daily and weekly totals per 5 degree square; single detections are only kept for the live hours.": "चमकीले वर्गों में अधिक रिकॉर्ड थे। पिछली अवधियाँ हर 5 डिग्री वर्ग के दैनिक और साप्ताहिक योग दिखाती हैं; अलग-अलग पहचान केवल लाइव घंटों के लिए रखी जाती हैं।",
+  "Arrivals in this period": "इस अवधि में आगमन",
+  "No arrival estimates fall in this period yet (open records arrive one to two weeks late).": "इस अवधि में अभी कोई अनुमानित आगमन नहीं (खुले रिकॉर्ड एक से दो सप्ताह देर से आते हैं)।",
+  "{r} records of {s} species": "{s} प्रजातियों के {r} रिकॉर्ड"
+ },
+ "ta": {
+  "Last 7 days": "கடந்த 7 நாட்கள்",
+  "Last 30 days": "கடந்த 30 நாட்கள்",
+  "Last 12 months": "கடந்த 12 மாதங்கள்",
+  "Back to live": "நேரலைக்குத் திரும்பு",
+  "{r} records of {s} species in {c} areas": "{c} பகுதிகளில் {s} இனங்களின் {r} பதிவுகள்",
+  "Brighter squares had more records. Past periods show daily and weekly totals per 5 degree square; single detections are only kept for the live hours.": "பிரகாசமான சதுரங்களில் அதிக பதிவுகள். கடந்த காலங்கள் ஒவ்வொரு 5 டிகிரி சதுரத்துக்கும் தினசரி, வாராந்திர மொத்தங்களைக் காட்டுகின்றன; தனித்தனி கண்டறிதல்கள் நேரலை மணிநேரங்களுக்கு மட்டுமே வைக்கப்படுகின்றன.",
+  "Arrivals in this period": "இந்தக் காலத்தில் வந்தவை",
+  "No arrival estimates fall in this period yet (open records arrive one to two weeks late).": "இந்தக் காலத்தில் இன்னும் மதிப்பிடப்பட்ட வருகைகள் இல்லை (திறந்த பதிவுகள் ஒன்று முதல் இரண்டு வாரங்கள் தாமதமாக வருகின்றன).",
+  "{r} records of {s} species": "{s} இனங்களின் {r} பதிவுகள்"
+ }
+};
+export const MESSAGES: Record<string, Dict> = Object.fromEntries(Object.entries({ es, fr, de, pt, hi, ta }).map(([k, d]) => [k, { ...d, ...PLACES[k], ...HISTORY[k] }]));
 export const TOUR_TEXT = { T1, T2, T3, T4, T4A, T4B, T5, T6 };
 export const ALERT_TEXT = { AL1, AL2 };

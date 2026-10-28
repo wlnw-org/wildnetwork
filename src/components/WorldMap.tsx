@@ -11,6 +11,7 @@ import AskPanel from "./AskPanel";
 import { track } from "./Analytics";
 import SpeciesPanel, { type SpeciesDetail } from "./SpeciesPanel";
 import PlacePanel, { type PickedPlace } from "./PlacePanel";
+import HistoryPanel, { type History, type Period } from "./HistoryPanel";
 import { areaFor, type XcArea } from "@/lib/xenocanto";
 import Tour, { TOUR_KEY } from "./Tour";
 import { LANGS, setLang, useLang, useT, type Lang } from "@/lib/i18n";
@@ -38,7 +39,8 @@ const CLASSES: { key: string; label: string }[] = [
 
 const EMPTY: FC = { type: "FeatureCollection", features: [] };
 const STYLE = "https://tiles.openfreemap.org/styles/dark";
-const HOURS = [1, 3]; // the live window; longer history is in the weekly movement playback
+const HOURS = [1, 3]; // the live window of single detections
+const PERIODS: Period[] = ["7d", "30d", "12m"]; // past periods, drawn from the daily and weekly rollups
 // Validated for the dark surface (dataviz validator): sources are categorical, change is diverging.
 const SOURCE_COLOR: unknown[] = ["match", ["get", "source"], "birdweather", "#0891b2", "inaturalist", "#65a30d", "gbif", "#f59e0b", "wildnetwork-base", "#a78bfa", "acartia", "#60a5fa", "orcasound", "#2dd4bf", "obis", "#38bdf8", "#db2777"];
 // Marine records (OBIS, Orcasound, Acartia) are mostly older than the 1 to 3 hour live window (OBIS lags by months and killer
@@ -58,6 +60,8 @@ export default function WorldMap() {
   const mapRef = useRef<MLMap | null>(null);
   const [ready, setReady] = useState(false);
   const [hours, setHours] = useState(3);
+  const [period, setPeriod] = useState<Period | null>(null);
+  const [history, setHistory] = useState<{ key: string; data: History } | null>(null);
   const [species, setSpecies] = useState<string | null>(null);
   // Continent in view when a species is picked: Listen prefers recordings from there. Only this name is sent, never coordinates.
   const [listenArea, setListenArea] = useState<XcArea | null>(null);
@@ -339,6 +343,25 @@ export default function WorldMap() {
       geometry: { type: "Polygon", coordinates: [[[c.lon, c.lat], [c.lon + 5, c.lat], [c.lon + 5, c.lat + 5], [c.lon, c.lat + 5], [c.lon, c.lat]]] },
     })) } : EMPTY);
   }, [showCoverage, species, coverage, ready]);
+  // Past period: totals per cell, most recorded and arrivals from /api/v1/history (cached for hours at the edge).
+  const historyKey = period ? `${period}|${group}` : null;
+  useEffect(() => {
+    if (!period) return;
+    let off = false;
+    fetch(`/api/v1/history?period=${period}&group=${group}`).then((r) => r.json() as Promise<History>)
+      .then((d) => { if (!off) setHistory({ key: `${period}|${group}`, data: d }); }).catch(() => {});
+    return () => { off = true; };
+  }, [period, group]);
+  const historyData = history && history.key === historyKey ? history.data : null;
+  const historyFC = useMemo<FC>(() => {
+    if (!historyData?.cells.length) return EMPTY;
+    const max = Math.log10(Math.max(...historyData.cells.map((c) => c.n)) + 1);
+    return { type: "FeatureCollection", features: historyData.cells.map((c) => ({
+      type: "Feature", properties: { share: Math.log10(c.n + 1) / max, n: c.n },
+      geometry: { type: "Polygon", coordinates: [[[c.lon, c.lat], [c.lon + 5, c.lat], [c.lon + 5, c.lat + 5], [c.lon, c.lat + 5], [c.lon, c.lat]]] },
+    })) } as FC;
+  }, [historyData]);
+
   const shareScale = useMemo(() => {
     const all = frames.flatMap((f) => f.cells.map((c) => c[3])).sort((a, b) => a - b);
     return all.length ? Math.max(all[Math.floor(all.length * 0.95)], 1e-6) : 1;
@@ -382,6 +405,13 @@ export default function WorldMap() {
       (map.getSource("deployments") as GeoJSONSource)?.setData(deployments);
       return;
     }
+    if (period && !species) {
+      weekSrc?.setData(historyFC); trackSrc?.setData(EMPTY);
+      (map.getSource("cells") as GeoJSONSource)?.setData(EMPTY);
+      (map.getSource("events") as GeoJSONSource)?.setData(EMPTY);
+      (map.getSource("deployments") as GeoJSONSource)?.setData(deployments);
+      return;
+    }
     weekSrc?.setData(EMPTY); trackSrc?.setData(EMPTY);
     (map.getSource("cells") as GeoJSONSource)?.setData(species ? cells : EMPTY);
     (map.getSource("deployments") as GeoJSONSource)?.setData(deployments);
@@ -394,7 +424,7 @@ export default function WorldMap() {
       fc = { ...events, features: [...events.features, ...sightings.features] };
     }
     (map.getSource("events") as GeoJSONSource)?.setData(fc);
-  }, [events, sightings, deployments, cells, species, playhead, ready, windowStart, liveHours, activeFrame, frames, frame, shareScale]);
+  }, [events, sightings, deployments, cells, species, playhead, ready, windowStart, liveHours, activeFrame, frames, frame, shareScale, period, historyFC]);
 
   useEffect(() => {
     if (!playing) return;
@@ -574,6 +604,8 @@ export default function WorldMap() {
             <SpeciesPanel name={species} area={listenArea} near={listenNear} alerts={!!status?.alerts} onClose={() => selectSpecies(null)} />
           ) : tab === "place" && place ? (
             <PlacePanel place={place} group={group} onPick={pick} onClose={() => { setPlace(null); setTab("now"); }} />
+          ) : tab === "now" && period ? (
+            <HistoryPanel data={historyData} loading={!historyData} onPick={pick} onBack={() => setPeriod(null)} />
           ) : tab === "about" ? (
             <AboutPanel />
           ) : tab === "ask" ? (
@@ -720,12 +752,24 @@ export default function WorldMap() {
           <>
         <div className="flex gap-1">
           {HOURS.map((h) => (
-            <button key={h} onClick={() => { setHours(h); setPlayhead(null); setPlaying(false); }}
-              className={`text-xs rounded px-2 py-1 ${h === hours ? "bg-white/90 text-slate-900 font-medium" : "bg-white/10 hover:bg-white/20"}`}>
+            <button key={h} onClick={() => { setHours(h); setPeriod(null); setPlayhead(null); setPlaying(false); }}
+              className={`text-xs rounded px-2 py-1 ${h === hours && !period ? "bg-white/90 text-slate-900 font-medium" : "bg-white/10 hover:bg-white/20"}`}>
               {h < 24 ? `${h}h` : `${h / 24}d`}
             </button>
           ))}
+          <span className="w-px bg-white/15 mx-0.5" aria-hidden />
+          {PERIODS.map((p) => (
+            <button key={p} onClick={() => { setPeriod(p); setPlayhead(null); setPlaying(false); setTab("now"); track("select_period", { period: p }); }} title={t(p === "7d" ? "Last 7 days" : p === "30d" ? "Last 30 days" : "Last 12 months")}
+              className={`text-xs rounded px-2 py-1 ${p === period ? "bg-white/90 text-slate-900 font-medium" : "bg-white/10 hover:bg-white/20"}`}>
+              {p}
+            </button>
+          ))}
         </div>
+        {period ? (
+          <span className="flex-1 min-w-0 text-xs text-slate-300 truncate">
+            {historyData ? t("{r} records of {s} species", { r: Math.round(historyData.records).toLocaleString(lang), s: historyData.species.toLocaleString(lang) }) : t("Loading")}
+          </span>
+        ) : (<>
         <button onClick={() => { setPlaying((p) => !p); if (playhead === null) setPlayhead(0); }} className="rounded bg-[#006cd9] hover:bg-[#2b84e6] text-sm px-3 py-1 font-medium">
           {playing ? t("Pause") : t("Play")}
         </button>
@@ -735,6 +779,7 @@ export default function WorldMap() {
         <span className="text-xs text-slate-300 tabular-nums w-40 text-right hidden sm:inline">
           {loading ? t("Loading") : playhead === null ? t("{n} detections", { n: detections.toLocaleString() }) : new Date(windowStart + playhead).toLocaleString(lang)}
         </span>
+        </>)}
           </>
         )}
       </div>
