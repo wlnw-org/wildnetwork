@@ -19,6 +19,8 @@ export const PHENOLOGY = {
   RESIDENT_WEEK_SHARE: 0.7,
   /** at a mean level of at least this fraction of the seasonal peak. A resident that falls quiet looks like this; a migrant does not. */
   RESIDENT_LEVEL: 0.02,
+  /** No date when the 90% interval is wider than this (methods 0.16): the redraws cannot agree on the season. */
+  MAX_INTERVAL_WEEKS: 8,
 };
 
 const DAY = 86400_000;
@@ -130,6 +132,8 @@ export async function computeSeasons(source?: string): Promise<{ pairs: number; 
       if (sb) found.push(Date.parse(sb.arrival));
     }
     const ci = interval(found, BOOT.LEVEL_ARRIVAL, 10);
+    // The redraws do not agree when the season starts, or the estimate itself falls outside them: no usable date.
+    if (ci && (ci[1] - ci[0] > PHENOLOGY.MAX_INTERVAL_WEEKS * 7 * DAY || Date.parse(s.arrival) < ci[0] || Date.parse(s.arrival) > ci[1])) return;
     const day = (ms: number) => new Date(ms).toISOString().slice(0, 10);
     const [lat, lon] = cell.split(",").map(Number);
     out.push({ scientific_name: name, vernacular_name: vern, cell_lat: lat, cell_lon: lon, arrival_week: s.arrival, departure_week: s.departure, peak_week: s.peak,

@@ -141,7 +141,7 @@ export default function Methods() {
           tenth of its seasonal peak, after at least 6 consecutive observed weeks below that level, and stays there the following week. The <b>peak week</b>{" "}
           is the highest week of that season, and the <b>departure week</b> is the last week above the threshold before the next 6 week absence, when the data
           reaches that far. A species and cell qualifies with at least 26 observed weeks, 200 detections and 30 detections in its peak week; the cell must have
-          been observed in the week before the arrival, so an outage cannot look like one. Residents, which have no 6 week absence, get no arrival date. Nor does a species that was still recorded in at least 70 percent of its &quot;absent&quot; weeks, at a mean level of at least 2 percent of its peak: that is a resident gone quiet, not a bird that left. A few real migrants with winter or passage records are lost to this rule too.
+          been observed in the week before the arrival, so an outage cannot look like one. Residents, which have no 6 week absence, get no arrival date. Nor does a species that was still recorded in at least 70 percent of its &quot;absent&quot; weeks, at a mean level of at least 2 percent of its peak: that is a resident gone quiet, not a bird that left. A few real migrants with winter or passage records are lost to this rule too. A date is also dropped when its 90% interval is wider than 8 weeks or does not contain the estimate, because the data cannot then say when the season starts.
           The species panel shows the median arrival week per 5 degree latitude band. Download: <code className="text-slate-200">/api/v1/arrivals?species=…&amp;format=csv</code>.
         </p>
         <p className="mt-3" id="range">
@@ -323,6 +323,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.16</b> (30 October 2026): an arrival date whose 90% interval is wider than 8 weeks, or does not contain the estimate, is no longer published.</li>
           <li><b>0.15</b> (30 October 2026): arrival dates need a real absence: a species still recorded through most of the weeks before its &quot;arrival&quot; is treated as a resident that went quiet and gets no date. This removes many song-onset dates for birds such as robins and great tits.</li>
           <li><b>0.14</b> (28 October 2026): the 30-day range-centre sentence has a 95% interval, and says when a shift of 2 degrees or more is within day-to-day variation; the daily range-centre chart shows a 95% band from resampling each day&apos;s cells (see <a href="#uncertainty" className="text-cyan-400 hover:underline">Uncertainty</a>).</li>
           <li><b>0.13</b> (27 October 2026): <a href="#review" className="text-cyan-400 hover:underline">expert review</a> of arrival dates by researchers signed in with ORCID; an estimate two or more reviewers reject (and fewer accept) is dropped.</li>
