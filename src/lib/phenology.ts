@@ -15,6 +15,10 @@ export const PHENOLOGY = {
   MIN_WEEKS_OBSERVED: 26,
   MIN_TOTAL: 200,
   MIN_PEAK_N: 30,
+  /** Not a real absence (methods 0.15): the species was still recorded in this share of the "absent" weeks, */
+  RESIDENT_WEEK_SHARE: 0.7,
+  /** at a mean level of at least this fraction of the seasonal peak. A resident that falls quiet looks like this; a migrant does not. */
+  RESIDENT_LEVEL: 0.02,
 };
 
 const DAY = 86400_000;
@@ -45,15 +49,20 @@ export function detectSeason(series: WeekPoint[], limits = PHENOLOGY): Season | 
     if (ahead < limits.MIN_PRESENT_WEEKS) continue;
     // The week before must have been observed, otherwise an outage would look like an arrival.
     if (i === 0 || Date.parse(series[i].week) - Date.parse(series[i - 1].week) > 8 * DAY) continue;
+    // Still recorded through most of the "absence": a resident gone quiet, so this is song onset rather than an arrival.
+    const gap = series.slice(i - runBefore, i);
+    const recorded = gap.filter((p) => p.n > 0).length / runBefore;
+    const level = gap.reduce((a, p) => a + p.value, 0) / runBefore;
+    if (recorded >= limits.RESIDENT_WEEK_SHARE && level >= series[peakI].value * limits.RESIDENT_LEVEL) continue;
     if (!best || runBefore > best.run) best = { i, run: runBefore };
   }
   if (!best) return null;
 
   // Departure: the last present week before the next long absence, if the data reaches that far.
   let departure: string | null = null;
-  let lastPresent = best.i, gap = 0;
+  let lastPresent = best.i, away = 0;
   for (let j = best.i; j < series.length; j++) {
-    if (present[j]) { lastPresent = j; gap = 0; } else if (++gap >= limits.MIN_ABSENT_WEEKS) { departure = series[lastPresent].week; break; }
+    if (present[j]) { lastPresent = j; away = 0; } else if (++away >= limits.MIN_ABSENT_WEEKS) { departure = series[lastPresent].week; break; }
   }
   // Peak within the season that starts at the arrival.
   let seasonPeak = best.i;
