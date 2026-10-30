@@ -12,6 +12,16 @@ export const DATA_CONCEPT_DOI = "10.5281/zenodo.23193453";
 
 export const DATA_RELEASES: { date: string; url: string; zip: string; weeks: string; rows: { weekly: number; effort: number; arrivals: number; datasets: number; taxa?: number }; doi?: string; notes?: string; period?: string }[] = [
   {
+    date: "2026-10-30",
+    url: "https://github.com/wlnw-org/wildnetwork/releases/tag/data-2026-10-30",
+    zip: "https://github.com/wlnw-org/wildnetwork/releases/download/data-2026-10-30/wildnetwork-open-2026-10-30.zip",
+    weeks: "27 Oct 2025 to 12 Oct 2026",
+    period: "2025-10-27/2026-10-18",
+    rows: { weekly: 352350, effort: 15986, arrivals: 4399, datasets: 286, taxa: 16765 },
+    doi: "10.5281/zenodo.23796380",
+    notes: "Release 5: methods 0.16. Arrival dates need a real absence, so residents that fall quiet no longer get one, and dates whose 90% interval is wider than 8 weeks are dropped. Weekly records and effort are built as before; use this release for arrival dates.",
+  },
+  {
     date: "2026-10-28",
     url: "https://github.com/wlnw-org/wildnetwork/releases/tag/data-2026-10-28",
     zip: "https://github.com/wlnw-org/wildnetwork/releases/download/data-2026-10-28/wildnetwork-open-2026-10-28.zip",
