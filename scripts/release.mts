@@ -87,8 +87,8 @@ Weekly records of birds, bats, amphibians and insects on a 5 degree grid, with o
 Weeks covered: ${range.first} to ${range.last} (weeks start on Monday). Licence: CC BY 4.0. Please cite this release and the GBIF datasets listed in datasets.csv.
 
 ## Changes since the previous release
-- Methods ${METHODS_VERSION}: researchers signed in with ORCID can review the arrival estimates published on wlnw.org, and a species-cell pair is dropped there when at least two reviewers mark it a misidentification or a resident and they outnumber those who accept it. The arrivals in this file are computed from GBIF records alone and are not filtered by those reviews, so they can be compared with them.
-- The year now runs to the week of 12 October 2026 (one week later than release 3).
+- Methods ${METHODS_VERSION}: an arrival now needs a real absence. A species still recorded in at least 70 percent of the weeks before its arrival, at a mean of at least 2 percent of its seasonal peak, gets no arrival date: that is a resident gone quiet, not a bird that left. This changes arrivals.csv only; the weekly records and effort are built the same way as before. Earlier releases keep the old rule, so use this version for arrival dates.
+- The year now runs to the week of ${range.last}.
 
 ## What is and is not included
 
