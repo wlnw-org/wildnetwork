@@ -2,7 +2,7 @@ import { sql } from "@/lib/db";
 import { METHODS_VERSION, MIN_EFFORT_WEEK, OBSERVED, SMALL_CLASS, minEffortWeek } from "@/lib/methods";
 import { BOOT, dispersion, interval, overdispersed, rng, seedOf } from "@/lib/uncertainty";
 
-export interface WeekPoint { week: string; value: number; n: number }
+export interface WeekPoint { week: string; value: number; n: number; effort?: number }
 export interface Season { arrival: string; departure: string | null; peak: string; peakValue: number; total: number; weeks: number; absentWeeks: number }
 
 export const PHENOLOGY = {
@@ -21,6 +21,8 @@ export const PHENOLOGY = {
   RESIDENT_LEVEL: 0.02,
   /** No date when the 90% interval is wider than this (methods 0.16): the redraws cannot agree on the season. */
   MAX_INTERVAL_WEEKS: 8,
+  /** Absent weeks only count when their effort is at least this share of the arrival week's (methods 0.17): otherwise the watchers changed, not the birds. */
+  MIN_COMPARABLE_EFFORT: 0.1,
 };
 
 const DAY = 86400_000;
@@ -55,6 +57,9 @@ export function detectSeason(series: WeekPoint[], limits = PHENOLOGY): Season | 
     const gap = series.slice(i - runBefore, i);
     const recorded = gap.filter((p) => p.n > 0).length / runBefore;
     const level = gap.reduce((a, p) => a + p.value, 0) / runBefore;
+    // The absence must have been watched about as hard as the arrival week: acoustic data starting in a cell is not an arrival.
+    const here = series[i].effort;
+    if (here !== undefined && gap.filter((p) => (p.effort ?? 0) >= here * limits.MIN_COMPARABLE_EFFORT).length < limits.MIN_ABSENT_WEEKS) continue;
     if (recorded >= limits.RESIDENT_WEEK_SHARE && level >= series[peakI].value * limits.RESIDENT_LEVEL) continue;
     if (!best || runBefore > best.run) best = { i, run: runBefore };
   }
@@ -118,7 +123,7 @@ export async function computeSeasons(source?: string): Promise<{ pairs: number; 
     const weeks = effort.get(`${grp}|${cell}`);
     if (!weeks) return;
     const effs = [...weeks.entries()];
-    const series: WeekPoint[] = effs.map(([week, eff]) => { const n = counts.get(week) ?? 0; return { week, n, value: (1000 * n) / eff }; });
+    const series: WeekPoint[] = effs.map(([week, eff]) => { const n = counts.get(week) ?? 0; return { week, n, value: (1000 * n) / eff, effort: eff }; });
     const limits = grp === "avian" ? PHENOLOGY : small;
     const s = detectSeason(series, limits);
     if (!s) return;
@@ -127,7 +132,7 @@ export async function computeSeasons(source?: string): Promise<{ pairs: number; 
     const phi = dispersion(series.map((p) => p.n));
     const found: number[] = [];
     for (let b = 0; b < BOOT.B_ARRIVAL; b++) {
-      const alt = effs.map(([week, eff], i): WeekPoint => { const n = overdispersed(series[i].n, phi, r); return { week, n, value: (1000 * n) / eff }; });
+      const alt = effs.map(([week, eff], i): WeekPoint => { const n = overdispersed(series[i].n, phi, r); return { week, n, value: (1000 * n) / eff, effort: eff }; });
       const sb = detectSeason(alt, limits);
       if (sb) found.push(Date.parse(sb.arrival));
     }

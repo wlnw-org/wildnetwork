@@ -27,3 +27,19 @@ test("a resident recorded right through its quiet weeks gets none", async () => 
 test("constant low false positives below the level still allow an arrival", async () => {
   assert.equal((await detect(series(() => 1)))?.arrival, week(20));
 });
+
+test("a species that only appears when effort jumps gets no arrival", async () => {
+  const s = Array.from({ length: 40 }, (_, i): WeekPoint => {
+    const effort = i < 20 ? 1000 : 1_000_000, n = i < 20 ? 0 : 5000;
+    return { week: week(i), n, value: (1000 * n) / effort, effort };
+  });
+  assert.equal(await detect(s), null);
+});
+
+test("ordinary seasonal changes in effort still allow an arrival", async () => {
+  const s = Array.from({ length: 40 }, (_, i): WeekPoint => {
+    const effort = i < 20 ? 500_000 : 1_000_000, n = i < 20 ? 0 : 5000;
+    return { week: week(i), n, value: (1000 * n) / effort, effort };
+  });
+  assert.equal((await detect(s))?.arrival, week(20));
+});
