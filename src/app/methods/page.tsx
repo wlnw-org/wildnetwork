@@ -161,7 +161,7 @@ export default function Methods() {
           review page. When at least two call it a misidentification or a resident, and they outnumber those who call it correct, that species and
           cell gets no arrival date at the next daily recompute. Reviews are public, with the reviewer&apos;s name and ORCID iD.{" "}
           These dates were compared with independent human observations: see the <Link href="/validation" className="text-cyan-400 hover:underline">validation</Link>.
-          In short (re-run on 27 October 2026 with methods 0.12), they agree within one week for 69 percent of arrivals, run about one week late, and fail for species that are quiet on arrival and for
+          In short (re-run on 30 October 2026 with methods 0.15), they agree within one week for 76 percent of arrivals, run about one week late, and fail for species that are quiet on arrival and for
           residents whose singing season starts.
         </p>
 
@@ -279,7 +279,7 @@ export default function Methods() {
         </div>
         <p className="mt-3">
           The southward passage and its timing match what is known for this species. This is one example chosen because the answer is known. The systematic
-          test is on the <Link href="/validation" className="text-cyan-400 hover:underline">validation page</Link>: 204 arrival dates across 82 species
+          test is on the <Link href="/validation" className="text-cyan-400 hover:underline">validation page</Link>: 221 arrival dates across 86 species
           compared with iNaturalist, including the cases where Wildlife Network is wrong. A comparison with eBird and BirdCast products is still to do.
         </p>
 

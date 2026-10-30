@@ -1,79 +1,27 @@
 {
  "summary": {
-  "generatedAt": "2026-10-27T08:43:35.678Z",
-  "methods": "0.12",
+  "generatedAt": "2026-10-30T05:50:22.112Z",
+  "methods": "0.15",
   "weeks": [
    "2025-10-06",
    "2026-10-25"
   ],
   "candidates": 300,
-  "comparable": 197,
-  "notComparable": 101,
-  "failed": 2,
-  "species": 80,
+  "comparable": 221,
+  "notComparable": 79,
+  "failed": 0,
+  "species": 86,
   "medianDiff": 1,
-  "meanDiff": 1.17,
-  "p10": -1,
+  "meanDiff": 1.4,
+  "p10": 0,
   "p90": 4,
-  "mae": 2.29,
-  "within1": 69,
-  "within2": 81,
-  "within4": 89,
-  "pearson": 0.57
+  "mae": 1.69,
+  "within1": 76,
+  "within2": 86,
+  "within4": 92,
+  "pearson": 0.72
  },
  "pairs": [
-  {
-   "sci": "Phylloscopus collybita",
-   "common": "Common Chiffchaff",
-   "lat": 50,
-   "lon": 5,
-   "ours": "2026-03-09",
-   "inat": "2026-02-23",
-   "diffWeeks": 2,
-   "oursPeak": "2026-03-30",
-   "inatPeak": "2026-04-06",
-   "n": 15337680,
-   "inatN": 513
-  },
-  {
-   "sci": "Turdus migratorius",
-   "common": "American Robin",
-   "lat": 40,
-   "lon": -75,
-   "ours": "2026-03-02",
-   "inat": "2026-02-02",
-   "diffWeeks": 4,
-   "oursPeak": "2026-05-25",
-   "inatPeak": "2026-04-20",
-   "n": 9625323,
-   "inatN": 10002
-  },
-  {
-   "sci": "Turdus migratorius",
-   "common": "American Robin",
-   "lat": 40,
-   "lon": -80,
-   "ours": "2026-02-23",
-   "inat": "2026-02-02",
-   "diffWeeks": 3,
-   "oursPeak": "2026-05-11",
-   "inatPeak": "2026-04-20",
-   "n": 7976676,
-   "inatN": 8073
-  },
-  {
-   "sci": "Turdus migratorius",
-   "common": "American Robin",
-   "lat": 40,
-   "lon": -90,
-   "ours": "2026-02-16",
-   "inat": "2026-02-09",
-   "diffWeeks": 1,
-   "oursPeak": "2026-06-08",
-   "inatPeak": "2026-04-20",
-   "n": 7498845,
-   "inatN": 5559
-  },
   {
    "sci": "Quiscalus quiscula",
    "common": "Common Grackle",
@@ -84,8 +32,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-03-16",
    "inatPeak": "2026-04-20",
-   "n": 6536957,
-   "inatN": 3007
+   "n": 6540782,
+   "inatN": 3009
   },
   {
    "sci": "Dumetella carolinensis",
@@ -97,8 +45,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-06-22",
    "inatPeak": "2026-05-04",
-   "n": 6434046,
-   "inatN": 4809
+   "n": 6434104,
+   "inatN": 4813
   },
   {
    "sci": "Sayornis phoebe",
@@ -110,21 +58,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-03-30",
    "inatPeak": "2026-09-28",
-   "n": 6378425,
-   "inatN": 2116
-  },
-  {
-   "sci": "Phylloscopus collybita",
-   "common": "Common Chiffchaff",
-   "lat": 50,
-   "lon": 0,
-   "ours": "2026-03-02",
-   "inat": "2026-03-02",
-   "diffWeeks": 0,
-   "oursPeak": "2026-03-30",
-   "inatPeak": "2026-03-23",
-   "n": 6288435,
-   "inatN": 571
+   "n": 6378548,
+   "inatN": 2126
   },
   {
    "sci": "Quiscalus quiscula",
@@ -136,8 +71,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-03-23",
    "inatPeak": "2026-05-11",
-   "n": 4655543,
-   "inatN": 1809
+   "n": 4669302,
+   "inatN": 1811
   },
   {
    "sci": "Selasphorus platycercus",
@@ -153,19 +88,6 @@
    "inatN": 428
   },
   {
-   "sci": "Bombycilla cedrorum",
-   "common": "Cedar Waxwing",
-   "lat": 45,
-   "lon": -125,
-   "ours": "2026-05-04",
-   "inat": "2026-05-04",
-   "diffWeeks": 0,
-   "oursPeak": "2026-07-20",
-   "inatPeak": "2026-05-25",
-   "n": 4395081,
-   "inatN": 1905
-  },
-  {
    "sci": "Sylvia atricapilla",
    "common": "Eurasian Blackcap",
    "lat": 50,
@@ -175,7 +97,7 @@
    "diffWeeks": -1,
    "oursPeak": "2026-06-29",
    "inatPeak": "2026-04-20",
-   "n": 4232589,
+   "n": 4232609,
    "inatN": 620
   },
   {
@@ -188,8 +110,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-04-27",
    "inatPeak": "2026-04-20",
-   "n": 4188498,
-   "inatN": 2299
+   "n": 4188530,
+   "inatN": 2304
   },
   {
    "sci": "Troglodytes aedon",
@@ -215,7 +137,7 @@
    "oursPeak": "2026-06-01",
    "inatPeak": "2026-04-27",
    "n": 4018335,
-   "inatN": 564
+   "inatN": 565
   },
   {
    "sci": "Troglodytes aedon",
@@ -231,19 +153,6 @@
    "inatN": 459
   },
   {
-   "sci": "Dumetella carolinensis",
-   "common": "Gray Catbird",
-   "lat": 35,
-   "lon": -80,
-   "ours": "2026-04-20",
-   "inat": "2026-04-13",
-   "diffWeeks": 1,
-   "oursPeak": "2026-05-11",
-   "inatPeak": "2026-04-27",
-   "n": 3661656,
-   "inatN": 2834
-  },
-  {
    "sci": "Troglodytes aedon",
    "common": "House Wren",
    "lat": 40,
@@ -254,7 +163,7 @@
    "oursPeak": "2026-06-29",
    "inatPeak": "2026-05-04",
    "n": 3638559,
-   "inatN": 517
+   "inatN": 518
   },
   {
    "sci": "Quiscalus quiscula",
@@ -266,8 +175,8 @@
    "diffWeeks": -1,
    "oursPeak": "2026-03-30",
    "inatPeak": "2026-04-20",
-   "n": 3373300,
-   "inatN": 1690
+   "n": 3376266,
+   "inatN": 1692
   },
   {
    "sci": "Phylloscopus collybita",
@@ -279,8 +188,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-06-29",
    "inatPeak": "2026-04-20",
-   "n": 3326601,
-   "inatN": 370
+   "n": 3326776,
+   "inatN": 371
   },
   {
    "sci": "Troglodytes aedon",
@@ -318,8 +227,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-05-25",
    "inatPeak": "2026-04-20",
-   "n": 3138807,
-   "inatN": 373
+   "n": 3138838,
+   "inatN": 375
   },
   {
    "sci": "Dumetella carolinensis",
@@ -331,8 +240,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-05-11",
    "inatPeak": "2026-05-11",
-   "n": 3132054,
-   "inatN": 2081
+   "n": 3132067,
+   "inatN": 2082
   },
   {
    "sci": "Passerina ciris",
@@ -345,7 +254,7 @@
    "oursPeak": "2026-06-22",
    "inatPeak": "2026-04-27",
    "n": 2982448,
-   "inatN": 1954
+   "inatN": 1955
   },
   {
    "sci": "Archilochus colubris",
@@ -358,7 +267,7 @@
    "oursPeak": "2026-09-07",
    "inatPeak": "2026-08-17",
    "n": 2957460,
-   "inatN": 698
+   "inatN": 699
   },
   {
    "sci": "Selasphorus platycercus",
@@ -383,8 +292,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-03-30",
    "inatPeak": "2026-04-06",
-   "n": 2710915,
-   "inatN": 1403
+   "n": 2710959,
+   "inatN": 1410
   },
   {
    "sci": "Contopus virens",
@@ -396,8 +305,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-08-10",
    "inatPeak": "2026-08-17",
-   "n": 2590874,
-   "inatN": 629
+   "n": 2590889,
+   "inatN": 633
   },
   {
    "sci": "Tachycineta thalassina",
@@ -422,21 +331,8 @@
    "diffWeeks": -3,
    "oursPeak": "2026-06-15",
    "inatPeak": "2026-04-20",
-   "n": 2485018,
+   "n": 2485059,
    "inatN": 508
-  },
-  {
-   "sci": "Zenaida asiatica",
-   "common": "White-winged Dove",
-   "lat": 30,
-   "lon": -115,
-   "ours": "2026-03-16",
-   "inat": "2026-03-16",
-   "diffWeeks": 0,
-   "oursPeak": "2026-06-29",
-   "inatPeak": "2026-04-20",
-   "n": 2357383,
-   "inatN": 1523
   },
   {
    "sci": "Vireo olivaceus",
@@ -465,32 +361,6 @@
    "inatN": 216
   },
   {
-   "sci": "Phylloscopus collybita",
-   "common": "Common Chiffchaff",
-   "lat": 50,
-   "lon": -5,
-   "ours": "2026-03-16",
-   "inat": "2026-03-02",
-   "diffWeeks": 2,
-   "oursPeak": "2026-06-15",
-   "inatPeak": "2026-04-20",
-   "n": 2309533,
-   "inatN": 1421
-  },
-  {
-   "sci": "Phoenicurus ochruros",
-   "common": "Black Redstart",
-   "lat": 50,
-   "lon": 10,
-   "ours": "2026-03-16",
-   "inat": "2026-03-09",
-   "diffWeeks": 1,
-   "oursPeak": "2026-06-08",
-   "inatPeak": "2026-04-06",
-   "n": 2167002,
-   "inatN": 658
-  },
-  {
    "sci": "Archilochus colubris",
    "common": "Ruby-throated Hummingbird",
    "lat": 30,
@@ -500,8 +370,8 @@
    "diffWeeks": 13,
    "oursPeak": "2026-09-07",
    "inatPeak": "2026-04-20",
-   "n": 2151196,
-   "inatN": 657
+   "n": 2151355,
+   "inatN": 660
   },
   {
    "sci": "Empidonax difficilis",
@@ -514,33 +384,7 @@
    "oursPeak": "2026-05-25",
    "inatPeak": "2026-05-25",
    "n": 2002174,
-   "inatN": 175
-  },
-  {
-   "sci": "Zonotrichia leucophrys",
-   "common": "White-crowned Sparrow",
-   "lat": 45,
-   "lon": -125,
-   "ours": "2026-03-16",
-   "inat": "2026-03-16",
-   "diffWeeks": 0,
-   "oursPeak": "2026-04-20",
-   "inatPeak": "2026-04-20",
-   "n": 1994251,
-   "inatN": 3383
-  },
-  {
-   "sci": "Phylloscopus collybita",
-   "common": "Common Chiffchaff",
-   "lat": 45,
-   "lon": 10,
-   "ours": "2026-03-09",
-   "inat": "2026-02-23",
-   "diffWeeks": 2,
-   "oursPeak": "2026-08-17",
-   "inatPeak": "2026-03-30",
-   "n": 1980085,
-   "inatN": 705
+   "inatN": 177
   },
   {
    "sci": "Quiscalus quiscula",
@@ -552,7 +396,7 @@
    "diffWeeks": 1,
    "oursPeak": "2026-04-13",
    "inatPeak": "2026-04-20",
-   "n": 1974859,
+   "n": 1975767,
    "inatN": 211
   },
   {
@@ -565,21 +409,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-08-10",
    "inatPeak": "2026-05-18",
-   "n": 1933194,
+   "n": 1933201,
    "inatN": 523
-  },
-  {
-   "sci": "Sylvia atricapilla",
-   "common": "Eurasian Blackcap",
-   "lat": 45,
-   "lon": 5,
-   "ours": "2026-03-16",
-   "inat": "2026-03-09",
-   "diffWeeks": 1,
-   "oursPeak": "2026-04-27",
-   "inatPeak": "2026-04-20",
-   "n": 1916378,
-   "inatN": 1188
   },
   {
    "sci": "Phylloscopus collybita",
@@ -591,7 +422,7 @@
    "diffWeeks": 2,
    "oursPeak": "2026-06-22",
    "inatPeak": "2026-04-20",
-   "n": 1733346,
+   "n": 1733423,
    "inatN": 181
   },
   {
@@ -604,8 +435,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-04-13",
    "inatPeak": "2026-04-27",
-   "n": 1669909,
-   "inatN": 2310
+   "n": 1669936,
+   "inatN": 2315
   },
   {
    "sci": "Tachycineta thalassina",
@@ -617,7 +448,7 @@
    "diffWeeks": 4,
    "oursPeak": "2026-05-11",
    "inatPeak": "2026-05-04",
-   "n": 1606658,
+   "n": 1606664,
    "inatN": 507
   },
   {
@@ -630,7 +461,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-07-20",
    "inatPeak": "2026-04-20",
-   "n": 1565415,
+   "n": 1565418,
    "inatN": 515
   },
   {
@@ -643,8 +474,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-04-20",
    "inatPeak": "2026-04-20",
-   "n": 1528094,
-   "inatN": 1120
+   "n": 1528109,
+   "inatN": 1124
   },
   {
    "sci": "Quiscalus quiscula",
@@ -656,7 +487,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-04-06",
    "inatPeak": "2026-04-20",
-   "n": 1493188,
+   "n": 1493681,
    "inatN": 206
   },
   {
@@ -670,7 +501,7 @@
    "oursPeak": "2026-08-10",
    "inatPeak": "2026-05-18",
    "n": 1482064,
-   "inatN": 316
+   "inatN": 317
   },
   {
    "sci": "Muscicapa striata",
@@ -696,7 +527,7 @@
    "oursPeak": "2026-06-22",
    "inatPeak": "2026-04-20",
    "n": 1457853,
-   "inatN": 552
+   "inatN": 553
   },
   {
    "sci": "Progne subis",
@@ -708,7 +539,7 @@
    "diffWeeks": 1,
    "oursPeak": "2026-07-06",
    "inatPeak": "2026-05-25",
-   "n": 1450503,
+   "n": 1450509,
    "inatN": 411
   },
   {
@@ -721,7 +552,7 @@
    "diffWeeks": 1,
    "oursPeak": "2026-06-22",
    "inatPeak": "2026-04-20",
-   "n": 1439346,
+   "n": 1439345,
    "inatN": 218
   },
   {
@@ -735,7 +566,7 @@
    "oursPeak": "2026-08-10",
    "inatPeak": "2026-05-18",
    "n": 1435401,
-   "inatN": 338
+   "inatN": 339
   },
   {
    "sci": "Vireo olivaceus",
@@ -747,7 +578,7 @@
    "diffWeeks": 1,
    "oursPeak": "2026-07-13",
    "inatPeak": "2026-05-25",
-   "n": 1428738,
+   "n": 1428737,
    "inatN": 661
   },
   {
@@ -761,7 +592,7 @@
    "oursPeak": "2026-07-06",
    "inatPeak": "2026-07-06",
    "n": 1418443,
-   "inatN": 661
+   "inatN": 662
   },
   {
    "sci": "Quiscalus quiscula",
@@ -773,8 +604,8 @@
    "diffWeeks": -2,
    "oursPeak": "2026-03-30",
    "inatPeak": "2026-04-20",
-   "n": 1417549,
-   "inatN": 712
+   "n": 1417638,
+   "inatN": 722
   },
   {
    "sci": "Chaetura pelagica",
@@ -786,21 +617,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-05-25",
    "inatPeak": "2026-04-20",
-   "n": 1413178,
-   "inatN": 253
-  },
-  {
-   "sci": "Sylvia atricapilla",
-   "common": "Eurasian Blackcap",
-   "lat": 45,
-   "lon": 10,
-   "ours": "2026-03-30",
-   "inat": "2026-03-16",
-   "diffWeeks": 2,
-   "oursPeak": "2026-06-08",
-   "inatPeak": "2026-04-20",
-   "n": 1407583,
-   "inatN": 774
+   "n": 1413180,
+   "inatN": 254
   },
   {
    "sci": "Apus apus",
@@ -816,19 +634,6 @@
    "inatN": 428
   },
   {
-   "sci": "Spinus spinus",
-   "common": "Eurasian Siskin",
-   "lat": 55,
-   "lon": -5,
-   "ours": "2026-02-09",
-   "inat": "2025-12-22",
-   "diffWeeks": 7,
-   "oursPeak": "2026-05-11",
-   "inatPeak": "2025-12-29",
-   "n": 1402475,
-   "inatN": 195
-  },
-  {
    "sci": "Chaetura pelagica",
    "common": "Chimney Swift",
    "lat": 40,
@@ -838,21 +643,21 @@
    "diffWeeks": 2,
    "oursPeak": "2026-06-01",
    "inatPeak": "2026-05-11",
-   "n": 1381193,
+   "n": 1381200,
    "inatN": 307
   },
   {
    "sci": "Archilochus colubris",
-   "common": "Ruby-throated Hummingbird",
+   "common": "Ruby-Throated Hummingbird",
    "lat": 30,
    "lon": -85,
    "ours": "2026-07-06",
    "inat": "2026-03-23",
    "diffWeeks": 15,
    "oursPeak": "2026-08-24",
-   "inatPeak": "2026-09-14",
-   "n": 1375050,
-   "inatN": 853
+   "inatPeak": "2026-09-07",
+   "n": 1375126,
+   "inatN": 858
   },
   {
    "sci": "Empidonax difficilis",
@@ -864,8 +669,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-06-29",
    "inatPeak": "2026-08-31",
-   "n": 1372922,
-   "inatN": 368
+   "n": 1372926,
+   "inatN": 369
   },
   {
    "sci": "Myiarchus crinitus",
@@ -878,7 +683,7 @@
    "oursPeak": "2026-05-18",
    "inatPeak": "2026-05-04",
    "n": 1325963,
-   "inatN": 630
+   "inatN": 631
   },
   {
    "sci": "Archilochus colubris",
@@ -890,8 +695,8 @@
    "diffWeeks": 13,
    "oursPeak": "2026-09-07",
    "inatPeak": "2026-08-17",
-   "n": 1312615,
-   "inatN": 1178
+   "n": 1312623,
+   "inatN": 1180
   },
   {
    "sci": "Archilochus colubris",
@@ -903,8 +708,8 @@
    "diffWeeks": 13,
    "oursPeak": "2026-08-17",
    "inatPeak": "2026-08-31",
-   "n": 1308917,
-   "inatN": 1916
+   "n": 1308944,
+   "inatN": 1918
   },
   {
    "sci": "Contopus virens",
@@ -916,7 +721,7 @@
    "diffWeeks": 1,
    "oursPeak": "2026-08-03",
    "inatPeak": "2026-05-04",
-   "n": 1292674,
+   "n": 1292681,
    "inatN": 309
   },
   {
@@ -942,21 +747,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-05-11",
    "inatPeak": "2026-05-04",
-   "n": 1257607,
-   "inatN": 656
-  },
-  {
-   "sci": "Phoenicurus ochruros",
-   "common": "Black Redstart",
-   "lat": 50,
-   "lon": 5,
-   "ours": "2026-03-09",
-   "inat": "2026-02-23",
-   "diffWeeks": 2,
-   "oursPeak": "2026-06-01",
-   "inatPeak": "2026-04-20",
-   "n": 1254377,
-   "inatN": 402
+   "n": 1257609,
+   "inatN": 657
   },
   {
    "sci": "Progne subis",
@@ -970,32 +762,6 @@
    "inatPeak": "2026-06-01",
    "n": 1236742,
    "inatN": 34
-  },
-  {
-   "sci": "Agelaius phoeniceus",
-   "common": "Red-winged Blackbird",
-   "lat": 40,
-   "lon": -75,
-   "ours": "2026-02-23",
-   "inat": "2026-03-02",
-   "diffWeeks": -1,
-   "oursPeak": "2026-03-16",
-   "inatPeak": "2026-04-20",
-   "n": 1222683,
-   "inatN": 4959
-  },
-  {
-   "sci": "Turdus migratorius",
-   "common": "American Robin",
-   "lat": 45,
-   "lon": -95,
-   "ours": "2026-03-02",
-   "inat": "2026-03-09",
-   "diffWeeks": -1,
-   "oursPeak": "2026-06-08",
-   "inatPeak": "2026-04-20",
-   "n": 1213925,
-   "inatN": 582
   },
   {
    "sci": "Antrostomus carolinensis",
@@ -1021,11 +787,24 @@
    "oursPeak": "2026-06-15",
    "inatPeak": "2026-04-13",
    "n": 1203652,
-   "inatN": 232
+   "inatN": 234
+  },
+  {
+   "sci": "Sayornis phoebe",
+   "common": "Eastern Phoebe",
+   "lat": 40,
+   "lon": -90,
+   "ours": "2026-03-09",
+   "inat": "2026-03-09",
+   "diffWeeks": 0,
+   "oursPeak": "2026-03-30",
+   "inatPeak": "2026-04-06",
+   "n": 1174171,
+   "inatN": 821
   },
   {
    "sci": "Contopus virens",
-   "common": "Eastern Wood-pewee",
+   "common": "Eastern Wood-Pewee",
    "lat": 40,
    "lon": -75,
    "ours": "2026-05-18",
@@ -1033,21 +812,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-08-17",
    "inatPeak": "2026-05-25",
-   "n": 1161407,
-   "inatN": 393
-  },
-  {
-   "sci": "Setophaga pinus",
-   "common": "Pine Warbler",
-   "lat": 40,
-   "lon": -75,
-   "ours": "2026-03-30",
-   "inat": "2026-03-16",
-   "diffWeeks": 2,
-   "oursPeak": "2026-04-13",
-   "inatPeak": "2026-04-06",
-   "n": 1161315,
-   "inatN": 615
+   "n": 1161408,
+   "inatN": 394
   },
   {
    "sci": "Ficedula hypoleuca",
@@ -1059,7 +825,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-05-11",
    "inatPeak": "2026-05-11",
-   "n": 1122779,
+   "n": 1122786,
    "inatN": 70
   },
   {
@@ -1085,8 +851,8 @@
    "diffWeeks": 15,
    "oursPeak": "2026-09-07",
    "inatPeak": "2026-04-20",
-   "n": 1105870,
-   "inatN": 323
+   "n": 1105896,
+   "inatN": 324
   },
   {
    "sci": "Passerina ciris",
@@ -1102,30 +868,17 @@
    "inatN": 1092
   },
   {
-   "sci": "Sylvia atricapilla",
-   "common": "Eurasian Blackcap",
-   "lat": 50,
-   "lon": 0,
-   "ours": "2026-03-23",
-   "inat": "2026-03-23",
-   "diffWeeks": 0,
-   "oursPeak": "2026-04-27",
-   "inatPeak": "2026-04-06",
-   "n": 1099919,
-   "inatN": 457
-  },
-  {
-   "sci": "Agelaius phoeniceus",
-   "common": "Red-winged Blackbird",
+   "sci": "Sayornis phoebe",
+   "common": "Eastern Phoebe",
    "lat": 40,
-   "lon": -80,
+   "lon": -85,
    "ours": "2026-03-02",
-   "inat": "2026-03-02",
-   "diffWeeks": 0,
-   "oursPeak": "2026-03-09",
-   "inatPeak": "2026-04-20",
-   "n": 1055659,
-   "inatN": 5772
+   "inat": "2026-03-09",
+   "diffWeeks": -1,
+   "oursPeak": "2026-03-30",
+   "inatPeak": "2026-05-11",
+   "n": 1022167,
+   "inatN": 918
   },
   {
    "sci": "Progne subis",
@@ -1137,7 +890,7 @@
    "diffWeeks": 4,
    "oursPeak": "2026-05-18",
    "inatPeak": "2026-04-20",
-   "n": 1016360,
+   "n": 1016399,
    "inatN": 500
   },
   {
@@ -1150,21 +903,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-08-10",
    "inatPeak": "2026-04-20",
-   "n": 1002136,
-   "inatN": 4207
-  },
-  {
-   "sci": "Pandion haliaetus",
-   "common": "Osprey",
-   "lat": 35,
-   "lon": -80,
-   "ours": "2026-03-09",
-   "inat": "2026-03-02",
-   "diffWeeks": 1,
-   "oursPeak": "2026-03-30",
-   "inatPeak": "2026-04-20",
-   "n": 998623,
-   "inatN": 3330
+   "n": 1002145,
+   "inatN": 4218
   },
   {
    "sci": "Luscinia megarhynchos",
@@ -1177,7 +917,7 @@
    "oursPeak": "2026-05-04",
    "inatPeak": "2026-04-27",
    "n": 993079,
-   "inatN": 342
+   "inatN": 343
   },
   {
    "sci": "Vireo griseus",
@@ -1189,21 +929,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-09-07",
    "inatPeak": "2026-04-20",
-   "n": 930165,
-   "inatN": 758
-  },
-  {
-   "sci": "Phoenicurus ochruros",
-   "common": "Black Redstart",
-   "lat": 45,
-   "lon": 15,
-   "ours": "2026-03-09",
-   "inat": "2026-03-09",
-   "diffWeeks": 0,
-   "oursPeak": "2026-06-01",
-   "inatPeak": "2026-04-20",
-   "n": 926975,
-   "inatN": 1315
+   "n": 930175,
+   "inatN": 759
   },
   {
    "sci": "Icterus cucullatus",
@@ -1215,8 +942,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-07-13",
    "inatPeak": "2026-04-20",
-   "n": 921316,
-   "inatN": 2226
+   "n": 921333,
+   "inatN": 2227
   },
   {
    "sci": "Chaetura pelagica",
@@ -1228,34 +955,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-05-18",
    "inatPeak": "2026-06-01",
-   "n": 912847,
+   "n": 912846,
    "inatN": 227
-  },
-  {
-   "sci": "Phoenicurus phoenicurus",
-   "common": "Common Redstart",
-   "lat": 50,
-   "lon": 10,
-   "ours": "2026-04-13",
-   "inat": "2026-03-16",
-   "diffWeeks": 4,
-   "oursPeak": "2026-06-01",
-   "inatPeak": "2026-04-20",
-   "n": 905959,
-   "inatN": 996
-  },
-  {
-   "sci": "Pardalotus striatus",
-   "common": "Striated Pardalote",
-   "lat": -30,
-   "lon": 150,
-   "ours": "2026-02-16",
-   "inat": "2026-01-12",
-   "diffWeeks": 5,
-   "oursPeak": "2026-06-01",
-   "inatPeak": "2026-08-31",
-   "n": 890328,
-   "inatN": 745
   },
   {
    "sci": "Hylocichla mustelina",
@@ -1267,7 +968,7 @@
    "diffWeeks": 1,
    "oursPeak": "2026-06-08",
    "inatPeak": "2026-04-20",
-   "n": 884148,
+   "n": 884149,
    "inatN": 169
   },
   {
@@ -1280,7 +981,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-04-27",
    "inatPeak": "2026-04-27",
-   "n": 872110,
+   "n": 875177,
    "inatN": 271
   },
   {
@@ -1306,8 +1007,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-05-04",
    "inatPeak": "2026-05-04",
-   "n": 849831,
-   "inatN": 347
+   "n": 849830,
+   "inatN": 348
   },
   {
    "sci": "Myiarchus crinitus",
@@ -1319,8 +1020,8 @@
    "diffWeeks": -1,
    "oursPeak": "2026-07-06",
    "inatPeak": "2026-04-20",
-   "n": 843655,
-   "inatN": 280
+   "n": 843657,
+   "inatN": 281
   },
   {
    "sci": "Leiothlypis peregrina",
@@ -1333,7 +1034,7 @@
    "oursPeak": "2026-05-11",
    "inatPeak": "2026-05-11",
    "n": 842791,
-   "inatN": 133
+   "inatN": 135
   },
   {
    "sci": "Selasphorus rufus",
@@ -1345,7 +1046,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-06-22",
    "inatPeak": "2026-04-20",
-   "n": 830134,
+   "n": 830139,
    "inatN": 989
   },
   {
@@ -1397,7 +1098,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-06-01",
    "inatPeak": "2026-04-20",
-   "n": 811191,
+   "n": 811198,
    "inatN": 40
   },
   {
@@ -1423,47 +1124,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-06-29",
    "inatPeak": "2026-06-29",
-   "n": 783987,
+   "n": 783990,
    "inatN": 424
-  },
-  {
-   "sci": "Toxostoma rufum",
-   "common": "Brown Thrasher",
-   "lat": 30,
-   "lon": -85,
-   "ours": "2026-02-09",
-   "inat": "2026-09-14",
-   "diffWeeks": -31,
-   "oursPeak": "2026-04-06",
-   "inatPeak": "2026-09-28",
-   "n": 772363,
-   "inatN": 1010
-  },
-  {
-   "sci": "Motacilla alba",
-   "common": "White Wagtail",
-   "lat": 50,
-   "lon": 5,
-   "ours": "2026-02-23",
-   "inat": "2026-03-02",
-   "diffWeeks": -1,
-   "oursPeak": "2026-09-21",
-   "inatPeak": "2026-04-27",
-   "n": 762532,
-   "inatN": 930
-  },
-  {
-   "sci": "Branta canadensis",
-   "common": "Canada Goose",
-   "lat": 45,
-   "lon": -95,
-   "ours": "2026-02-09",
-   "inat": "2026-03-02",
-   "diffWeeks": -3,
-   "oursPeak": "2026-03-16",
-   "inatPeak": "2026-04-20",
-   "n": 741911,
-   "inatN": 638
   },
   {
    "sci": "Chaetura pelagica",
@@ -1476,20 +1138,7 @@
    "oursPeak": "2026-06-08",
    "inatPeak": "2026-07-27",
    "n": 741793,
-   "inatN": 169
-  },
-  {
-   "sci": "Selasphorus rufus",
-   "common": "Rufous Hummingbird",
-   "lat": 30,
-   "lon": -120,
-   "ours": "2026-06-22",
-   "inat": "2026-02-16",
-   "diffWeeks": 18,
-   "oursPeak": "2026-08-10",
-   "inatPeak": "2026-03-30",
-   "n": 737792,
-   "inatN": 83
+   "inatN": 170
   },
   {
    "sci": "Hirundo rustica",
@@ -1501,34 +1150,8 @@
    "diffWeeks": 2,
    "oursPeak": "2026-08-10",
    "inatPeak": "2026-05-11",
-   "n": 721387,
+   "n": 721402,
    "inatN": 673
-  },
-  {
-   "sci": "Molothrus ater",
-   "common": "Brown-headed Cowbird",
-   "lat": 40,
-   "lon": -90,
-   "ours": "2026-03-02",
-   "inat": "2026-03-23",
-   "diffWeeks": -3,
-   "oursPeak": "2026-04-06",
-   "inatPeak": "2026-04-20",
-   "n": 714111,
-   "inatN": 1207
-  },
-  {
-   "sci": "Agelaius phoeniceus",
-   "common": "Red-winged Blackbird",
-   "lat": 40,
-   "lon": -85,
-   "ours": "2026-02-23",
-   "inat": "2026-02-23",
-   "diffWeeks": 0,
-   "oursPeak": "2026-04-27",
-   "inatPeak": "2026-04-20",
-   "n": 712030,
-   "inatN": 3888
   },
   {
    "sci": "Spizella passerina",
@@ -1540,8 +1163,8 @@
    "diffWeeks": -1,
    "oursPeak": "2026-04-20",
    "inatPeak": "2026-04-20",
-   "n": 703071,
-   "inatN": 527
+   "n": 703092,
+   "inatN": 530
   },
   {
    "sci": "Delichon urbicum",
@@ -1553,7 +1176,7 @@
    "diffWeeks": 4,
    "oursPeak": "2026-07-27",
    "inatPeak": "2026-05-25",
-   "n": 694073,
+   "n": 694074,
    "inatN": 195
   },
   {
@@ -1580,7 +1203,7 @@
    "oursPeak": "2026-07-13",
    "inatPeak": "2026-05-11",
    "n": 677941,
-   "inatN": 1410
+   "inatN": 1412
   },
   {
    "sci": "Passerina cyanea",
@@ -1593,20 +1216,7 @@
    "oursPeak": "2026-08-03",
    "inatPeak": "2026-05-04",
    "n": 661713,
-   "inatN": 935
-  },
-  {
-   "sci": "Molothrus ater",
-   "common": "Brown-headed Cowbird",
-   "lat": 40,
-   "lon": -80,
-   "ours": "2026-03-02",
-   "inat": "2026-03-16",
-   "diffWeeks": -2,
-   "oursPeak": "2026-04-06",
-   "inatPeak": "2026-04-20",
-   "n": 661195,
-   "inatN": 1072
+   "inatN": 936
   },
   {
    "sci": "Pheucticus melanocephalus",
@@ -1619,7 +1229,7 @@
    "oursPeak": "2026-05-18",
    "inatPeak": "2026-05-11",
    "n": 656666,
-   "inatN": 804
+   "inatN": 806
   },
   {
    "sci": "Hirundo rustica",
@@ -1631,8 +1241,8 @@
    "diffWeeks": 3,
    "oursPeak": "2026-08-10",
    "inatPeak": "2026-05-11",
-   "n": 654075,
-   "inatN": 602
+   "n": 654077,
+   "inatN": 604
   },
   {
    "sci": "Leiothlypis peregrina",
@@ -1657,7 +1267,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-05-18",
    "inatPeak": "2026-05-11",
-   "n": 636786,
+   "n": 636787,
    "inatN": 634
   },
   {
@@ -1671,20 +1281,7 @@
    "oursPeak": "2026-07-20",
    "inatPeak": "2026-04-20",
    "n": 635507,
-   "inatN": 246
-  },
-  {
-   "sci": "Passer domesticus",
-   "common": "House Sparrow",
-   "lat": 35,
-   "lon": -75,
-   "ours": "2026-04-13",
-   "inat": "2026-04-06",
-   "diffWeeks": 1,
-   "oursPeak": "2026-06-15",
-   "inatPeak": "2026-06-15",
-   "n": 634748,
-   "inatN": 181
+   "inatN": 247
   },
   {
    "sci": "Merops apiaster",
@@ -1697,11 +1294,11 @@
    "oursPeak": "2026-07-20",
    "inatPeak": "2026-08-10",
    "n": 633561,
-   "inatN": 379
+   "inatN": 380
   },
   {
    "sci": "Agelaius phoeniceus",
-   "common": "Red-winged Blackbird",
+   "common": "Red-Winged Blackbird",
    "lat": 40,
    "lon": -90,
    "ours": "2026-02-16",
@@ -1709,8 +1306,8 @@
    "diffWeeks": -1,
    "oursPeak": "2026-04-27",
    "inatPeak": "2026-04-20",
-   "n": 631982,
-   "inatN": 4460
+   "n": 632479,
+   "inatN": 4465
   },
   {
    "sci": "Chaetura pelagica",
@@ -1722,7 +1319,7 @@
    "diffWeeks": -2,
    "oursPeak": "2026-05-25",
    "inatPeak": "2026-04-20",
-   "n": 626150,
+   "n": 626165,
    "inatN": 71
   },
   {
@@ -1735,8 +1332,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-06-29",
    "inatPeak": "2026-05-04",
-   "n": 623729,
-   "inatN": 482
+   "n": 623730,
+   "inatN": 483
   },
   {
    "sci": "Hylocichla mustelina",
@@ -1748,8 +1345,21 @@
    "diffWeeks": 0,
    "oursPeak": "2026-06-22",
    "inatPeak": "2026-04-20",
-   "n": 622096,
+   "n": 622098,
    "inatN": 102
+  },
+  {
+   "sci": "Phylloscopus collybita",
+   "common": "Common Chiffchaff",
+   "lat": 45,
+   "lon": 15,
+   "ours": "2026-03-16",
+   "inat": "2026-03-09",
+   "diffWeeks": 1,
+   "oursPeak": "2026-04-06",
+   "inatPeak": "2026-04-20",
+   "n": 621258,
+   "inatN": 357
   },
   {
    "sci": "Polioptila caerulea",
@@ -1761,8 +1371,21 @@
    "diffWeeks": -1,
    "oursPeak": "2026-04-13",
    "inatPeak": "2026-04-20",
-   "n": 619498,
+   "n": 619499,
    "inatN": 825
+  },
+  {
+   "sci": "Bombycilla cedrorum",
+   "common": "Cedar Waxwing",
+   "lat": 50,
+   "lon": -115,
+   "ours": "2026-05-25",
+   "inat": "2026-05-25",
+   "diffWeeks": 0,
+   "oursPeak": "2026-08-24",
+   "inatPeak": "2026-06-08",
+   "n": 611322,
+   "inatN": 580
   },
   {
    "sci": "Tachycineta thalassina",
@@ -1778,19 +1401,6 @@
    "inatN": 190
   },
   {
-   "sci": "Tyrannus tyrannus",
-   "common": "Eastern Kingbird",
-   "lat": 35,
-   "lon": -80,
-   "ours": "2026-04-20",
-   "inat": "2026-03-02",
-   "diffWeeks": 7,
-   "oursPeak": "2026-07-27",
-   "inatPeak": "2026-05-11",
-   "n": 603887,
-   "inatN": 1515
-  },
-  {
    "sci": "Piranga rubra",
    "common": "Summer Tanager",
    "lat": 30,
@@ -1800,7 +1410,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-04-20",
    "inatPeak": "2026-04-20",
-   "n": 602831,
+   "n": 602833,
    "inatN": 1031
   },
   {
@@ -1813,7 +1423,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-05-18",
    "inatPeak": "2026-04-27",
-   "n": 600563,
+   "n": 600565,
    "inatN": 78
   },
   {
@@ -1826,21 +1436,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-06-01",
    "inatPeak": "2026-05-04",
-   "n": 598051,
+   "n": 598052,
    "inatN": 63
-  },
-  {
-   "sci": "Molothrus ater",
-   "common": "Brown-headed Cowbird",
-   "lat": 40,
-   "lon": -85,
-   "ours": "2026-03-09",
-   "inat": "2026-03-23",
-   "diffWeeks": -2,
-   "oursPeak": "2026-04-06",
-   "inatPeak": "2026-04-20",
-   "n": 595073,
-   "inatN": 1029
   },
   {
    "sci": "Serinus serinus",
@@ -1852,34 +1449,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-07-20",
    "inatPeak": "2026-04-13",
-   "n": 589691,
+   "n": 589692,
    "inatN": 80
-  },
-  {
-   "sci": "Setophaga americana",
-   "common": "Northern Parula",
-   "lat": 25,
-   "lon": -85,
-   "ours": "2026-03-02",
-   "inat": "2026-02-02",
-   "diffWeeks": 4,
-   "oursPeak": "2026-03-09",
-   "inatPeak": "2026-04-20",
-   "n": 589510,
-   "inatN": 966
-  },
-  {
-   "sci": "Zenaida macroura",
-   "common": "Mourning Dove",
-   "lat": 40,
-   "lon": -100,
-   "ours": "2026-03-02",
-   "inat": "2026-03-09",
-   "diffWeeks": -1,
-   "oursPeak": "2026-07-20",
-   "inatPeak": "2026-05-18",
-   "n": 582015,
-   "inatN": 203
   },
   {
    "sci": "Catharus fuscescens",
@@ -1892,7 +1463,7 @@
    "oursPeak": "2026-06-22",
    "inatPeak": "2026-05-11",
    "n": 578127,
-   "inatN": 391
+   "inatN": 393
   },
   {
    "sci": "Myiarchus crinitus",
@@ -1905,7 +1476,7 @@
    "oursPeak": "2026-05-18",
    "inatPeak": "2026-05-11",
    "n": 572448,
-   "inatN": 507
+   "inatN": 508
   },
   {
    "sci": "Vireo olivaceus",
@@ -1917,7 +1488,7 @@
    "diffWeeks": 1,
    "oursPeak": "2026-06-15",
    "inatPeak": "2026-05-25",
-   "n": 569132,
+   "n": 569130,
    "inatN": 238
   },
   {
@@ -1930,21 +1501,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-07-13",
    "inatPeak": "2026-05-04",
-   "n": 558066,
+   "n": 558067,
    "inatN": 607
-  },
-  {
-   "sci": "Corvus ossifragus",
-   "common": "Fish Crow",
-   "lat": 35,
-   "lon": -95,
-   "ours": "2026-02-23",
-   "inat": "2026-02-09",
-   "diffWeeks": 2,
-   "oursPeak": "2026-03-23",
-   "inatPeak": "2026-03-23",
-   "n": 554959,
-   "inatN": 39
   },
   {
    "sci": "Apus apus",
@@ -1969,8 +1527,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-05-11",
    "inatPeak": "2026-05-11",
-   "n": 547326,
-   "inatN": 855
+   "n": 547324,
+   "inatN": 856
   },
   {
    "sci": "Polioptila caerulea",
@@ -1982,7 +1540,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-03-30",
    "inatPeak": "2026-09-21",
-   "n": 546960,
+   "n": 546970,
    "inatN": 769
   },
   {
@@ -2008,21 +1566,8 @@
    "diffWeeks": -1,
    "oursPeak": "2026-06-29",
    "inatPeak": "2026-05-11",
-   "n": 542628,
+   "n": 542627,
    "inatN": 433
-  },
-  {
-   "sci": "Molothrus ater",
-   "common": "Brown-headed Cowbird",
-   "lat": 40,
-   "lon": -75,
-   "ours": "2026-02-23",
-   "inat": "2026-03-09",
-   "diffWeeks": -2,
-   "oursPeak": "2026-04-06",
-   "inatPeak": "2026-04-20",
-   "n": 537013,
-   "inatN": 1275
   },
   {
    "sci": "Passerina cyanea",
@@ -2035,7 +1580,7 @@
    "oursPeak": "2026-07-27",
    "inatPeak": "2026-05-04",
    "n": 536266,
-   "inatN": 782
+   "inatN": 784
   },
   {
    "sci": "Pheucticus ludovicianus",
@@ -2047,8 +1592,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-05-11",
    "inatPeak": "2026-05-04",
-   "n": 533867,
-   "inatN": 796
+   "n": 533868,
+   "inatN": 797
   },
   {
    "sci": "Charadrius vociferus",
@@ -2060,8 +1605,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-03-02",
    "inatPeak": "2026-05-04",
-   "n": 529893,
-   "inatN": 1540
+   "n": 531274,
+   "inatN": 1541
   },
   {
    "sci": "Coccothraustes vespertinus",
@@ -2073,7 +1618,7 @@
    "diffWeeks": -2,
    "oursPeak": "2026-04-06",
    "inatPeak": "2026-04-20",
-   "n": 518415,
+   "n": 518430,
    "inatN": 66
   },
   {
@@ -2086,8 +1631,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-05-04",
    "inatPeak": "2026-05-11",
-   "n": 517227,
-   "inatN": 430
+   "n": 517230,
+   "inatN": 431
   },
   {
    "sci": "Corvus brachyrhynchos",
@@ -2099,8 +1644,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-04-06",
    "inatPeak": "2026-04-20",
-   "n": 507658,
-   "inatN": 755
+   "n": 507666,
+   "inatN": 757
   },
   {
    "sci": "Vireo gilvus",
@@ -2125,8 +1670,8 @@
    "diffWeeks": 11,
    "oursPeak": "2026-03-23",
    "inatPeak": "2026-04-27",
-   "n": 504259,
-   "inatN": 372
+   "n": 504258,
+   "inatN": 374
   },
   {
    "sci": "Dumetella carolinensis",
@@ -2138,21 +1683,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-06-22",
    "inatPeak": "2026-05-11",
-   "n": 502121,
+   "n": 502131,
    "inatN": 1425
-  },
-  {
-   "sci": "Sayornis saya",
-   "common": "Say's Phoebe",
-   "lat": 35,
-   "lon": -110,
-   "ours": "2026-03-02",
-   "inat": "2026-03-02",
-   "diffWeeks": 0,
-   "oursPeak": "2026-03-23",
-   "inatPeak": "2026-04-20",
-   "n": 497750,
-   "inatN": 667
   },
   {
    "sci": "Vireo olivaceus",
@@ -2177,8 +1709,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-05-18",
    "inatPeak": "2026-05-11",
-   "n": 489836,
-   "inatN": 1111
+   "n": 489837,
+   "inatN": 1112
   },
   {
    "sci": "Antrostomus carolinensis",
@@ -2194,19 +1726,6 @@
    "inatN": 19
   },
   {
-   "sci": "Catharus guttatus",
-   "common": "Hermit Thrush",
-   "lat": 40,
-   "lon": -75,
-   "ours": "2026-04-13",
-   "inat": "2026-10-05",
-   "diffWeeks": -25,
-   "oursPeak": "2026-07-13",
-   "inatPeak": "2026-10-19",
-   "n": 483531,
-   "inatN": 1354
-  },
-  {
    "sci": "Passerina cyanea",
    "common": "Indigo Bunting",
    "lat": 40,
@@ -2217,7 +1736,7 @@
    "oursPeak": "2026-06-29",
    "inatPeak": "2026-05-11",
    "n": 477099,
-   "inatN": 572
+   "inatN": 574
   },
   {
    "sci": "Leucophaeus atricilla",
@@ -2228,9 +1747,9 @@
    "inat": "2026-03-16",
    "diffWeeks": 2,
    "oursPeak": "2026-07-27",
-   "inatPeak": "2026-08-10",
-   "n": 476258,
-   "inatN": 2064
+   "inatPeak": "2026-08-03",
+   "n": 476279,
+   "inatN": 2073
   },
   {
    "sci": "Vireo olivaceus",
@@ -2255,7 +1774,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-06-08",
    "inatPeak": "2026-04-20",
-   "n": 471879,
+   "n": 471887,
    "inatN": 324
   },
   {
@@ -2268,7 +1787,7 @@
    "diffWeeks": 2,
    "oursPeak": "2026-03-30",
    "inatPeak": "2026-09-14",
-   "n": 465633,
+   "n": 465659,
    "inatN": 308
   },
   {
@@ -2281,34 +1800,34 @@
    "diffWeeks": 1,
    "oursPeak": "2026-04-27",
    "inatPeak": "2026-04-20",
-   "n": 463657,
-   "inatN": 616
+   "n": 463966,
+   "inatN": 618
   },
   {
-   "sci": "Tyto alba",
-   "common": "Barn Owl",
-   "lat": 35,
-   "lon": -125,
-   "ours": "2026-05-11",
-   "inat": "2026-09-28",
-   "diffWeeks": -20,
-   "oursPeak": "2026-06-01",
-   "inatPeak": "2026-09-28",
-   "n": 457036,
-   "inatN": 43
+   "sci": "Charadrius vociferus",
+   "common": "Killdeer",
+   "lat": 40,
+   "lon": -90,
+   "ours": "2026-03-02",
+   "inat": "2026-03-02",
+   "diffWeeks": 0,
+   "oursPeak": "2026-09-28",
+   "inatPeak": "2026-05-11",
+   "n": 462628,
+   "inatN": 1252
   },
   {
-   "sci": "Pipilo erythrophthalmus",
-   "common": "Eastern Towhee",
+   "sci": "Setophaga ruticilla",
+   "common": "American Redstart",
    "lat": 40,
    "lon": -75,
-   "ours": "2026-04-06",
-   "inat": "2026-03-30",
-   "diffWeeks": 1,
-   "oursPeak": "2026-05-04",
-   "inatPeak": "2026-04-20",
-   "n": 455401,
-   "inatN": 1215
+   "ours": "2026-05-04",
+   "inat": "2026-05-04",
+   "diffWeeks": 0,
+   "oursPeak": "2026-05-25",
+   "inatPeak": "2026-05-11",
+   "n": 457979,
+   "inatN": 1005
   },
   {
    "sci": "Piranga rubra",
@@ -2321,7 +1840,20 @@
    "oursPeak": "2026-07-27",
    "inatPeak": "2026-05-18",
    "n": 453874,
-   "inatN": 446
+   "inatN": 447
+  },
+  {
+   "sci": "Sylvia atricapilla",
+   "common": "Eurasian Blackcap",
+   "lat": 45,
+   "lon": 15,
+   "ours": "2026-03-30",
+   "inat": "2026-03-30",
+   "diffWeeks": 0,
+   "oursPeak": "2026-04-27",
+   "inatPeak": "2026-04-20",
+   "n": 445303,
+   "inatN": 674
   },
   {
    "sci": "Spinus pinus",
@@ -2333,21 +1865,8 @@
    "diffWeeks": 8,
    "oursPeak": "2026-07-13",
    "inatPeak": "2026-05-11",
-   "n": 436983,
+   "n": 437078,
    "inatN": 70
-  },
-  {
-   "sci": "Alauda arvensis",
-   "common": "Eurasian Skylark",
-   "lat": 55,
-   "lon": 10,
-   "ours": "2026-03-02",
-   "inat": "2026-02-23",
-   "diffWeeks": 1,
-   "oursPeak": "2026-06-22",
-   "inatPeak": "2026-04-20",
-   "n": 433111,
-   "inatN": 100
   },
   {
    "sci": "Myiarchus crinitus",
@@ -2360,7 +1879,7 @@
    "oursPeak": "2026-05-18",
    "inatPeak": "2026-04-20",
    "n": 431750,
-   "inatN": 124
+   "inatN": 125
   },
   {
    "sci": "Empidonax virescens",
@@ -2372,7 +1891,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-07-13",
    "inatPeak": "2026-05-04",
-   "n": 425713,
+   "n": 425714,
    "inatN": 138
   },
   {
@@ -2385,21 +1904,21 @@
    "diffWeeks": 0,
    "oursPeak": "2026-07-20",
    "inatPeak": "2026-05-04",
-   "n": 424203,
+   "n": 424211,
    "inatN": 376
   },
   {
-   "sci": "Serinus serinus",
-   "common": "European Serin",
+   "sci": "Turdus migratorius",
+   "common": "American Robin",
    "lat": 45,
-   "lon": 10,
+   "lon": -100,
    "ours": "2026-03-16",
-   "inat": "2026-01-05",
-   "diffWeeks": 10,
-   "oursPeak": "2026-04-20",
-   "inatPeak": "2026-03-30",
-   "n": 419082,
-   "inatN": 333
+   "inat": "2026-03-23",
+   "diffWeeks": -1,
+   "oursPeak": "2026-06-01",
+   "inatPeak": "2026-04-20",
+   "n": 416918,
+   "inatN": 364
   },
   {
    "sci": "Setophaga dominica",
@@ -2437,7 +1956,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-05-04",
    "inatPeak": "2026-04-20",
-   "n": 394028,
+   "n": 394029,
    "inatN": 112
   },
   {
@@ -2450,8 +1969,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-08-10",
    "inatPeak": "2026-06-08",
-   "n": 389659,
-   "inatN": 1600
+   "n": 389671,
+   "inatN": 1604
   },
   {
    "sci": "Agelaius phoeniceus",
@@ -2463,8 +1982,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-04-27",
    "inatPeak": "2026-04-20",
-   "n": 385526,
-   "inatN": 507
+   "n": 385559,
+   "inatN": 509
   },
   {
    "sci": "Piranga rubra",
@@ -2476,7 +1995,7 @@
    "diffWeeks": 0,
    "oursPeak": "2026-06-22",
    "inatPeak": "2026-04-20",
-   "n": 383212,
+   "n": 383213,
    "inatN": 287
   },
   {
@@ -2502,8 +2021,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-05-04",
    "inatPeak": "2026-08-24",
-   "n": 378676,
-   "inatN": 1897
+   "n": 378724,
+   "inatN": 1932
   },
   {
    "sci": "Chordeiles minor",
@@ -2515,8 +2034,8 @@
    "diffWeeks": -1,
    "oursPeak": "2026-06-29",
    "inatPeak": "2026-07-13",
-   "n": 377914,
-   "inatN": 203
+   "n": 377922,
+   "inatN": 204
   },
   {
    "sci": "Sylvia borin",
@@ -2541,8 +2060,8 @@
    "diffWeeks": 1,
    "oursPeak": "2026-08-10",
    "inatPeak": "2026-06-01",
-   "n": 374576,
-   "inatN": 511
+   "n": 374652,
+   "inatN": 512
   },
   {
    "sci": "Setophaga dominica",
@@ -2554,7 +2073,7 @@
    "diffWeeks": 1,
    "oursPeak": "2026-04-13",
    "inatPeak": "2026-04-06",
-   "n": 374039,
+   "n": 374038,
    "inatN": 127
   },
   {
@@ -2567,8 +2086,8 @@
    "diffWeeks": 0,
    "oursPeak": "2026-05-04",
    "inatPeak": "2026-05-04",
-   "n": 373172,
-   "inatN": 221
+   "n": 373176,
+   "inatN": 222
   },
   {
    "sci": "Pheucticus ludovicianus",
@@ -2580,8 +2099,801 @@
    "diffWeeks": 0,
    "oursPeak": "2026-05-11",
    "inatPeak": "2026-05-11",
-   "n": 362777,
-   "inatN": 1275
+   "n": 362776,
+   "inatN": 1276
+  },
+  {
+   "sci": "Pheucticus ludovicianus",
+   "common": "Rose-breasted Grosbeak",
+   "lat": 40,
+   "lon": -85,
+   "ours": "2026-04-27",
+   "inat": "2026-04-27",
+   "diffWeeks": 0,
+   "oursPeak": "2026-05-11",
+   "inatPeak": "2026-05-04",
+   "n": 362770,
+   "inatN": 1194
+  },
+  {
+   "sci": "Empidonax minimus",
+   "common": "Least Flycatcher",
+   "lat": 45,
+   "lon": -95,
+   "ours": "2026-05-11",
+   "inat": "2026-05-04",
+   "diffWeeks": 1,
+   "oursPeak": "2026-06-08",
+   "inatPeak": "2026-05-18",
+   "n": 358511,
+   "inatN": 21
+  },
+  {
+   "sci": "Leiothlypis peregrina",
+   "common": "Tennessee Warbler",
+   "lat": 45,
+   "lon": -95,
+   "ours": "2026-05-11",
+   "inat": "2026-05-04",
+   "diffWeeks": 1,
+   "oursPeak": "2026-05-11",
+   "inatPeak": "2026-05-18",
+   "n": 353147,
+   "inatN": 86
+  },
+  {
+   "sci": "Mniotilta varia",
+   "common": "Black-and-white Warbler",
+   "lat": 40,
+   "lon": -75,
+   "ours": "2026-04-27",
+   "inat": "2026-04-20",
+   "diffWeeks": 1,
+   "oursPeak": "2026-05-04",
+   "inatPeak": "2026-05-04",
+   "n": 351805,
+   "inatN": 1097
+  },
+  {
+   "sci": "Vireo gilvus",
+   "common": "Warbling Vireo",
+   "lat": 40,
+   "lon": -90,
+   "ours": "2026-04-27",
+   "inat": "2026-04-20",
+   "diffWeeks": 1,
+   "oursPeak": "2026-06-08",
+   "inatPeak": "2026-05-04",
+   "n": 350966,
+   "inatN": 252
+  },
+  {
+   "sci": "Pheucticus melanocephalus",
+   "common": "Black-headed Grosbeak",
+   "lat": 35,
+   "lon": -125,
+   "ours": "2026-04-13",
+   "inat": "2026-03-30",
+   "diffWeeks": 2,
+   "oursPeak": "2026-05-04",
+   "inatPeak": "2026-04-20",
+   "n": 349946,
+   "inatN": 687
+  },
+  {
+   "sci": "Hirundo rustica",
+   "common": "Barn Swallow",
+   "lat": 50,
+   "lon": -5,
+   "ours": "2026-04-20",
+   "inat": "2026-03-30",
+   "diffWeeks": 3,
+   "oursPeak": "2026-08-31",
+   "inatPeak": "2026-04-20",
+   "n": 347158,
+   "inatN": 1424
+  },
+  {
+   "sci": "Spinus tristis",
+   "common": "American Goldfinch",
+   "lat": 50,
+   "lon": -100,
+   "ours": "2026-05-11",
+   "inat": "2026-05-04",
+   "diffWeeks": 1,
+   "oursPeak": "2026-05-25",
+   "inatPeak": "2026-08-31",
+   "n": 346442,
+   "inatN": 61
+  },
+  {
+   "sci": "Myiarchus crinitus",
+   "common": "Great Crested Flycatcher",
+   "lat": 40,
+   "lon": -90,
+   "ours": "2026-05-04",
+   "inat": "2026-05-04",
+   "diffWeeks": 0,
+   "oursPeak": "2026-05-25",
+   "inatPeak": "2026-05-11",
+   "n": 340324,
+   "inatN": 270
+  },
+  {
+   "sci": "Leiothlypis peregrina",
+   "common": "Tennessee Warbler",
+   "lat": 40,
+   "lon": -85,
+   "ours": "2026-05-04",
+   "inat": "2026-05-04",
+   "diffWeeks": 0,
+   "oursPeak": "2026-05-11",
+   "inatPeak": "2026-05-18",
+   "n": 337216,
+   "inatN": 411
+  },
+  {
+   "sci": "Passerina amoena",
+   "common": "Lazuli Bunting",
+   "lat": 40,
+   "lon": -115,
+   "ours": "2026-04-13",
+   "inat": "2026-04-20",
+   "diffWeeks": -1,
+   "oursPeak": "2026-06-22",
+   "inatPeak": "2026-05-18",
+   "n": 331995,
+   "inatN": 343
+  },
+  {
+   "sci": "Myiarchus crinitus",
+   "common": "Great Crested Flycatcher",
+   "lat": 30,
+   "lon": -80,
+   "ours": "2026-04-06",
+   "inat": "2026-04-20",
+   "diffWeeks": -2,
+   "oursPeak": "2026-04-27",
+   "inatPeak": "2026-05-11",
+   "n": 331350,
+   "inatN": 74
+  },
+  {
+   "sci": "Tyrannus tyrannus",
+   "common": "Eastern Kingbird",
+   "lat": 40,
+   "lon": -85,
+   "ours": "2026-05-11",
+   "inat": "2026-05-04",
+   "diffWeeks": 1,
+   "oursPeak": "2026-07-27",
+   "inatPeak": "2026-05-11",
+   "n": 330517,
+   "inatN": 1127
+  },
+  {
+   "sci": "Spiza americana",
+   "common": "Dickcissel",
+   "lat": 35,
+   "lon": -100,
+   "ours": "2026-04-27",
+   "inat": "2026-04-20",
+   "diffWeeks": 1,
+   "oursPeak": "2026-05-11",
+   "inatPeak": "2026-05-18",
+   "n": 329580,
+   "inatN": 159
+  },
+  {
+   "sci": "Delichon urbicum",
+   "common": "Common House-Martin",
+   "lat": 50,
+   "lon": 0,
+   "ours": "2026-05-18",
+   "inat": "2026-04-13",
+   "diffWeeks": 5,
+   "oursPeak": "2026-07-27",
+   "inatPeak": "2026-05-18",
+   "n": 328525,
+   "inatN": 190
+  },
+  {
+   "sci": "Zonotrichia albicollis",
+   "common": "White-throated Sparrow",
+   "lat": 45,
+   "lon": -90,
+   "ours": "2026-04-20",
+   "inat": "2026-04-13",
+   "diffWeeks": 1,
+   "oursPeak": "2026-04-27",
+   "inatPeak": "2026-04-20",
+   "n": 323313,
+   "inatN": 131
+  },
+  {
+   "sci": "Cuculus canorus",
+   "common": "Common Cuckoo",
+   "lat": 50,
+   "lon": 10,
+   "ours": "2026-04-27",
+   "inat": "2026-04-20",
+   "diffWeeks": 1,
+   "oursPeak": "2026-05-04",
+   "inatPeak": "2026-05-11",
+   "n": 323310,
+   "inatN": 192
+  },
+  {
+   "sci": "Charadrius vociferus",
+   "common": "Killdeer",
+   "lat": 40,
+   "lon": -115,
+   "ours": "2026-02-23",
+   "inat": "2026-02-23",
+   "diffWeeks": 0,
+   "oursPeak": "2026-03-16",
+   "inatPeak": "2026-04-20",
+   "n": 321986,
+   "inatN": 657
+  },
+  {
+   "sci": "Setophaga striata",
+   "common": "Blackpoll Warbler",
+   "lat": 40,
+   "lon": -75,
+   "ours": "2026-05-11",
+   "inat": "2026-05-04",
+   "diffWeeks": 1,
+   "oursPeak": "2026-05-18",
+   "inatPeak": "2026-05-18",
+   "n": 320562,
+   "inatN": 481
+  },
+  {
+   "sci": "Hirundo rustica",
+   "common": "Barn Swallow",
+   "lat": 40,
+   "lon": -95,
+   "ours": "2026-04-20",
+   "inat": "2026-04-13",
+   "diffWeeks": 1,
+   "oursPeak": "2026-06-22",
+   "inatPeak": "2026-05-11",
+   "n": 315997,
+   "inatN": 205
+  },
+  {
+   "sci": "Agelaius phoeniceus",
+   "common": "Red-winged Blackbird",
+   "lat": 45,
+   "lon": -100,
+   "ours": "2026-03-16",
+   "inat": "2026-04-13",
+   "diffWeeks": -4,
+   "oursPeak": "2026-05-04",
+   "inatPeak": "2026-04-20",
+   "n": 314530,
+   "inatN": 259
+  },
+  {
+   "sci": "Molothrus ater",
+   "common": "Brown-headed Cowbird",
+   "lat": 45,
+   "lon": -125,
+   "ours": "2026-03-30",
+   "inat": "2026-04-06",
+   "diffWeeks": -1,
+   "oursPeak": "2026-04-27",
+   "inatPeak": "2026-04-27",
+   "n": 310614,
+   "inatN": 957
+  },
+  {
+   "sci": "Scolopax minor",
+   "common": "American Woodcock",
+   "lat": 40,
+   "lon": -75,
+   "ours": "2026-03-23",
+   "inat": "2026-02-23",
+   "diffWeeks": 4,
+   "oursPeak": "2026-03-30",
+   "inatPeak": "2026-04-06",
+   "n": 309895,
+   "inatN": 671
+  },
+  {
+   "sci": "Tachycineta bicolor",
+   "common": "Tree Swallow",
+   "lat": 40,
+   "lon": -75,
+   "ours": "2026-03-23",
+   "inat": "2026-03-23",
+   "diffWeeks": 0,
+   "oursPeak": "2026-05-11",
+   "inatPeak": "2026-05-11",
+   "n": 308270,
+   "inatN": 1679
+  },
+  {
+   "sci": "Leiothlypis celata",
+   "common": "Orange-crowned Warbler",
+   "lat": 45,
+   "lon": -125,
+   "ours": "2026-03-09",
+   "inat": "2026-03-16",
+   "diffWeeks": -1,
+   "oursPeak": "2026-04-13",
+   "inatPeak": "2026-04-06",
+   "n": 308149,
+   "inatN": 617
+  },
+  {
+   "sci": "Sayornis saya",
+   "common": "Say's Phoebe",
+   "lat": 40,
+   "lon": -110,
+   "ours": "2026-03-16",
+   "inat": "2026-03-23",
+   "diffWeeks": -1,
+   "oursPeak": "2026-04-06",
+   "inatPeak": "2026-04-20",
+   "n": 302843,
+   "inatN": 162
+  },
+  {
+   "sci": "Antrostomus carolinensis",
+   "common": "Chuck-will's-widow",
+   "lat": 25,
+   "lon": -100,
+   "ours": "2026-04-20",
+   "inat": "2026-04-13",
+   "diffWeeks": 1,
+   "oursPeak": "2026-05-11",
+   "inatPeak": "2026-04-20",
+   "n": 300209,
+   "inatN": 80
+  },
+  {
+   "sci": "Seiurus aurocapilla",
+   "common": "Ovenbird",
+   "lat": 40,
+   "lon": -80,
+   "ours": "2026-04-27",
+   "inat": "2026-04-27",
+   "diffWeeks": 0,
+   "oursPeak": "2026-05-11",
+   "inatPeak": "2026-05-11",
+   "n": 299190,
+   "inatN": 331
+  },
+  {
+   "sci": "Chordeiles minor",
+   "common": "Common Nighthawk",
+   "lat": 25,
+   "lon": -100,
+   "ours": "2026-04-20",
+   "inat": "2026-04-20",
+   "diffWeeks": 0,
+   "oursPeak": "2026-08-03",
+   "inatPeak": "2026-05-11",
+   "n": 292498,
+   "inatN": 105
+  },
+  {
+   "sci": "Ictinia mississippiensis",
+   "common": "Mississippi Kite",
+   "lat": 30,
+   "lon": -100,
+   "ours": "2026-07-13",
+   "inat": "2026-04-20",
+   "diffWeeks": 12,
+   "oursPeak": "2026-08-10",
+   "inatPeak": "2026-08-10",
+   "n": 290947,
+   "inatN": 1814
+  },
+  {
+   "sci": "Selasphorus rufus",
+   "common": "Rufous Hummingbird",
+   "lat": 30,
+   "lon": -110,
+   "ours": "2026-07-13",
+   "inat": "2026-06-29",
+   "diffWeeks": 2,
+   "oursPeak": "2026-08-10",
+   "inatPeak": "2026-08-31",
+   "n": 290355,
+   "inatN": 86
+  },
+  {
+   "sci": "Vireo gilvus",
+   "common": "Warbling Vireo",
+   "lat": 40,
+   "lon": -85,
+   "ours": "2026-04-27",
+   "inat": "2026-04-27",
+   "diffWeeks": 0,
+   "oursPeak": "2026-05-25",
+   "inatPeak": "2026-05-11",
+   "n": 288745,
+   "inatN": 443
+  },
+  {
+   "sci": "Catharus guttatus",
+   "common": "Hermit Thrush",
+   "lat": 40,
+   "lon": -65,
+   "ours": "2026-04-13",
+   "inat": "2025-12-29",
+   "diffWeeks": 15,
+   "oursPeak": "2026-07-06",
+   "inatPeak": "2025-12-29",
+   "n": 284509,
+   "inatN": 49
+  },
+  {
+   "sci": "Pheucticus ludovicianus",
+   "common": "Rose-breasted Grosbeak",
+   "lat": 40,
+   "lon": -75,
+   "ours": "2026-04-27",
+   "inat": "2026-04-27",
+   "diffWeeks": 0,
+   "oursPeak": "2026-05-11",
+   "inatPeak": "2026-05-11",
+   "n": 284362,
+   "inatN": 821
+  },
+  {
+   "sci": "Helmitheros vermivorum",
+   "common": "Worm-eating Warbler",
+   "lat": 35,
+   "lon": -80,
+   "ours": "2026-04-13",
+   "inat": "2026-04-13",
+   "diffWeeks": 0,
+   "oursPeak": "2026-06-08",
+   "inatPeak": "2026-04-20",
+   "n": 281937,
+   "inatN": 72
+  },
+  {
+   "sci": "Delichon urbicum",
+   "common": "Common House-Martin",
+   "lat": 50,
+   "lon": -5,
+   "ours": "2026-05-18",
+   "inat": "2026-04-06",
+   "diffWeeks": 6,
+   "oursPeak": "2026-08-03",
+   "inatPeak": "2026-05-18",
+   "n": 281870,
+   "inatN": 443
+  },
+  {
+   "sci": "Contopus sordidulus",
+   "common": "Western Wood-Pewee",
+   "lat": 45,
+   "lon": -125,
+   "ours": "2026-05-11",
+   "inat": "2026-05-04",
+   "diffWeeks": 1,
+   "oursPeak": "2026-08-10",
+   "inatPeak": "2026-08-03",
+   "n": 281507,
+   "inatN": 181
+  },
+  {
+   "sci": "Bombycilla cedrorum",
+   "common": "Cedar Waxwing",
+   "lat": 45,
+   "lon": -90,
+   "ours": "2026-05-25",
+   "inat": "2026-05-18",
+   "diffWeeks": 1,
+   "oursPeak": "2026-07-13",
+   "inatPeak": "2026-06-01",
+   "n": 280169,
+   "inatN": 124
+  },
+  {
+   "sci": "Icterus cucullatus",
+   "common": "Hooded Oriole",
+   "lat": 35,
+   "lon": -125,
+   "ours": "2026-03-23",
+   "inat": "2026-03-09",
+   "diffWeeks": 2,
+   "oursPeak": "2026-07-06",
+   "inatPeak": "2026-04-27",
+   "n": 279975,
+   "inatN": 586
+  },
+  {
+   "sci": "Spiza americana",
+   "common": "Dickcissel",
+   "lat": 30,
+   "lon": -95,
+   "ours": "2026-04-27",
+   "inat": "2026-04-20",
+   "diffWeeks": 1,
+   "oursPeak": "2026-07-13",
+   "inatPeak": "2026-04-27",
+   "n": 279126,
+   "inatN": 105
+  },
+  {
+   "sci": "Phoenicurus phoenicurus",
+   "common": "Common Redstart",
+   "lat": 55,
+   "lon": 15,
+   "ours": "2026-04-20",
+   "inat": "2026-04-06",
+   "diffWeeks": 2,
+   "oursPeak": "2026-05-18",
+   "inatPeak": "2026-05-18",
+   "n": 278155,
+   "inatN": 51
+  },
+  {
+   "sci": "Empidonax difficilis",
+   "common": "Pacific-slope Flycatcher",
+   "lat": 30,
+   "lon": -120,
+   "ours": "2026-03-09",
+   "inat": "2026-03-09",
+   "diffWeeks": 0,
+   "oursPeak": "2026-04-13",
+   "inatPeak": "2026-04-27",
+   "n": 278020,
+   "inatN": 462
+  },
+  {
+   "sci": "Piranga olivacea",
+   "common": "Scarlet Tanager",
+   "lat": 35,
+   "lon": -80,
+   "ours": "2026-04-20",
+   "inat": "2026-04-20",
+   "diffWeeks": 0,
+   "oursPeak": "2026-05-04",
+   "inatPeak": "2026-05-04",
+   "n": 277467,
+   "inatN": 495
+  },
+  {
+   "sci": "Piranga olivacea",
+   "common": "Scarlet Tanager",
+   "lat": 40,
+   "lon": -75,
+   "ours": "2026-05-04",
+   "inat": "2026-04-27",
+   "diffWeeks": 1,
+   "oursPeak": "2026-05-18",
+   "inatPeak": "2026-05-11",
+   "n": 276014,
+   "inatN": 742
+  },
+  {
+   "sci": "Tachycineta bicolor",
+   "common": "Tree Swallow",
+   "lat": 40,
+   "lon": -80,
+   "ours": "2026-04-06",
+   "inat": "2026-03-30",
+   "diffWeeks": 1,
+   "oursPeak": "2026-04-13",
+   "inatPeak": "2026-04-20",
+   "n": 274664,
+   "inatN": 1318
+  },
+  {
+   "sci": "Setophaga ruticilla",
+   "common": "American Redstart",
+   "lat": 40,
+   "lon": -95,
+   "ours": "2026-05-04",
+   "inat": "2026-05-04",
+   "diffWeeks": 0,
+   "oursPeak": "2026-05-25",
+   "inatPeak": "2026-05-11",
+   "n": 273786,
+   "inatN": 163
+  },
+  {
+   "sci": "Chordeiles minor",
+   "common": "Common Nighthawk",
+   "lat": 25,
+   "lon": -85,
+   "ours": "2026-04-13",
+   "inat": "2026-04-06",
+   "diffWeeks": 1,
+   "oursPeak": "2026-06-29",
+   "inatPeak": "2026-05-04",
+   "n": 272323,
+   "inatN": 159
+  },
+  {
+   "sci": "Serinus serinus",
+   "common": "European Serin",
+   "lat": 50,
+   "lon": 5,
+   "ours": "2026-03-23",
+   "inat": "2026-03-16",
+   "diffWeeks": 1,
+   "oursPeak": "2026-05-04",
+   "inatPeak": "2026-04-20",
+   "n": 272301,
+   "inatN": 46
+  },
+  {
+   "sci": "Empidonax minimus",
+   "common": "Least Flycatcher",
+   "lat": 50,
+   "lon": -115,
+   "ours": "2026-05-18",
+   "inat": "2026-05-11",
+   "diffWeeks": 1,
+   "oursPeak": "2026-06-22",
+   "inatPeak": "2026-05-18",
+   "n": 270034,
+   "inatN": 72
+  },
+  {
+   "sci": "Melospiza melodia",
+   "common": "Song Sparrow",
+   "lat": 45,
+   "lon": -75,
+   "ours": "2026-03-16",
+   "inat": "2026-03-30",
+   "diffWeeks": -2,
+   "oursPeak": "2026-07-27",
+   "inatPeak": "2026-04-20",
+   "n": 268217,
+   "inatN": 1307
+  },
+  {
+   "sci": "Antrostomus vociferus",
+   "common": "Eastern Whip-poor-will",
+   "lat": 35,
+   "lon": -80,
+   "ours": "2026-04-13",
+   "inat": "2026-03-23",
+   "diffWeeks": 3,
+   "oursPeak": "2026-05-11",
+   "inatPeak": "2026-04-20",
+   "n": 266316,
+   "inatN": 94
+  },
+  {
+   "sci": "Junco hyemalis",
+   "common": "Dark-eyed Junco",
+   "lat": 60,
+   "lon": -150,
+   "ours": "2026-04-27",
+   "inat": "2026-04-27",
+   "diffWeeks": 0,
+   "oursPeak": "2026-05-04",
+   "inatPeak": "2026-06-15",
+   "n": 265661,
+   "inatN": 84
+  },
+  {
+   "sci": "Tyrannus tyrannus",
+   "common": "Eastern Kingbird",
+   "lat": 40,
+   "lon": -80,
+   "ours": "2026-05-11",
+   "inat": "2026-05-04",
+   "diffWeeks": 1,
+   "oursPeak": "2026-08-10",
+   "inatPeak": "2026-05-11",
+   "n": 265440,
+   "inatN": 1163
+  },
+  {
+   "sci": "Cuculus canorus",
+   "common": "Common Cuckoo",
+   "lat": 50,
+   "lon": 5,
+   "ours": "2026-04-20",
+   "inat": "2026-04-13",
+   "diffWeeks": 1,
+   "oursPeak": "2026-05-18",
+   "inatPeak": "2026-04-27",
+   "n": 265281,
+   "inatN": 133
+  },
+  {
+   "sci": "Chordeiles minor",
+   "common": "Common Nighthawk",
+   "lat": 30,
+   "lon": -100,
+   "ours": "2026-04-27",
+   "inat": "2026-04-20",
+   "diffWeeks": 1,
+   "oursPeak": "2026-06-01",
+   "inatPeak": "2026-05-18",
+   "n": 264214,
+   "inatN": 153
+  },
+  {
+   "sci": "Muscicapa striata",
+   "common": "Spotted Flycatcher",
+   "lat": 45,
+   "lon": 10,
+   "ours": "2026-05-04",
+   "inat": "2026-04-20",
+   "diffWeeks": 2,
+   "oursPeak": "2026-08-03",
+   "inatPeak": "2026-06-22",
+   "n": 259414,
+   "inatN": 363
+  },
+  {
+   "sci": "Setophaga citrina",
+   "common": "Hooded Warbler",
+   "lat": 35,
+   "lon": -85,
+   "ours": "2026-04-13",
+   "inat": "2026-04-06",
+   "diffWeeks": 1,
+   "oursPeak": "2026-06-29",
+   "inatPeak": "2026-04-27",
+   "n": 257770,
+   "inatN": 209
+  },
+  {
+   "sci": "Curruca communis",
+   "common": "Greater Whitethroat",
+   "lat": 55,
+   "lon": 10,
+   "ours": "2026-05-04",
+   "inat": "2026-04-27",
+   "diffWeeks": 1,
+   "oursPeak": "2026-05-25",
+   "inatPeak": "2026-05-04",
+   "n": 254091,
+   "inatN": 139
+  },
+  {
+   "sci": "Branta canadensis",
+   "common": "Canada Goose",
+   "lat": 45,
+   "lon": -80,
+   "ours": "2026-03-09",
+   "inat": "2026-03-09",
+   "diffWeeks": 0,
+   "oursPeak": "2026-03-23",
+   "inatPeak": "2026-04-20",
+   "n": 253735,
+   "inatN": 1976
+  },
+  {
+   "sci": "Ficedula hypoleuca",
+   "common": "European Pied Flycatcher",
+   "lat": 60,
+   "lon": 10,
+   "ours": "2026-04-27",
+   "inat": "2026-04-27",
+   "diffWeeks": 0,
+   "oursPeak": "2026-05-25",
+   "inatPeak": "2026-05-04",
+   "n": 253315,
+   "inatN": 15
+  },
+  {
+   "sci": "Passerina caerulea",
+   "common": "Blue Grosbeak",
+   "lat": 35,
+   "lon": -80,
+   "ours": "2026-04-27",
+   "inat": "2026-04-20",
+   "diffWeeks": 1,
+   "oursPeak": "2026-07-27",
+   "inatPeak": "2026-08-10",
+   "n": 252725,
+   "inatN": 686
   }
  ]
 }
