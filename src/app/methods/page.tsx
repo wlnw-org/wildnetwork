@@ -4,6 +4,7 @@ import PausedNotice from "@/components/PausedNotice";
 import { BIRDWEATHER_PAUSED } from "@/lib/sources";
 import { METHODS_VERSION, MIN_CELL_DETECTIONS, MIN_EFFORT_DAY, MIN_EFFORT_WEEK, OBSERVED, RANGE, SMALL_CLASS } from "@/lib/methods";
 import { BOOT } from "@/lib/uncertainty";
+import { PHENOLOGY } from "@/lib/phenology";
 
 export const metadata: Metadata = {
   title: "Methods: how wildlife movement is measured",
@@ -143,6 +144,12 @@ export default function Methods() {
           reaches that far. A species and cell qualifies with at least 26 observed weeks, 200 detections and 30 detections in its peak week; the cell must have
           been observed in the week before the arrival, so an outage cannot look like one. Residents, which have no 6 week absence, get no arrival date. Nor does a species that was still recorded in at least 70 percent of its &quot;absent&quot; weeks, at a mean level of at least 2 percent of its peak: that is a resident gone quiet, not a bird that left. A few real migrants with winter or passage records are lost to this rule too. A date is also dropped when its 90% interval is wider than 8 weeks or does not contain the estimate, because the data cannot then say when the season starts. And at least 6 of the absent weeks must have had at least a tenth of the arrival week&apos;s observation effort, so a species does not seem to arrive just because recording began or grew sharply in that cell.
           The species panel shows the median arrival week per 5 degree latitude band. Download: <code className="text-slate-200">/api/v1/arrivals?species=…&amp;format=csv</code>.
+        </p>
+        <p className="mt-3" id="possibly-arriving">
+          <b>Possibly arriving.</b> Arrival dates need two weeks of presence, so the newest confirmed date is always about 2 to 3 weeks old. The Possibly arriving list is earlier and less sure.
+          It shows a species and cell whose newest one or two weeks, including the current week once it has at least 3 days of data, come after a real absence as defined above, with at least {PHENOLOGY.POSSIBLE_MIN_N} detections and at
+          least {PHENOLOGY.POSSIBLE_LEVEL * 100} percent of the peak of an earlier season in the same cell, and where at least half of {BOOT.B_ARRIVAL} redraws of the weekly counts agree. The default view lists birds only; other classes appear when that class is chosen. These are not arrival dates: they are unreviewed machine identifications, they
+          are not in the arrivals download, and many are classifier errors or do not last. In a test on six past weeks in 2026, 69 percent were confirmed by the following week, from 43 percent in mid August to 100 percent in late March.
         </p>
         <p className="mt-3" id="range">
           <b>Range check.</b> Sound classifiers sometimes mistake one bird for another again and again at the same station, which can look like a season.
@@ -323,6 +330,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.18</b> (31 October 2026): a <a href="#possibly-arriving" className="text-cyan-400 hover:underline">Possibly arriving</a> list shows recent returns not yet confirmed by a second week. Arrival dates themselves do not change.</li>
           <li><b>0.17</b> (30 October 2026): an arrival needs at least 6 absent weeks with at least a tenth of the arrival week&apos;s effort. This removes false arrivals at the point where acoustic data begins, 17 November 2025 for most cells.</li>
           <li><b>0.16</b> (30 October 2026): an arrival date whose 90% interval is wider than 8 weeks, or does not contain the estimate, is no longer published.</li>
           <li><b>0.15</b> (30 October 2026): arrival dates need a real absence: a species still recorded through most of the weeks before its &quot;arrival&quot; is treated as a resident that went quiet and gets no date. This removes many song-onset dates for birds such as robins and great tits.</li>

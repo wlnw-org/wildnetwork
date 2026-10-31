@@ -4,6 +4,7 @@ import type { WeekPoint } from "./phenology";
 
 // phenology.ts imports the database client, which only needs a URL to load; detectSeason itself never connects.
 process.env.DATABASE_URL ??= "postgres://test/test";
+const possible = async (s: WeekPoint[]) => (await import("./phenology")).detectPossibleArrival(s);
 const detect = async (s: WeekPoint[]) => (await import("./phenology")).detectSeason(s);
 
 const week = (i: number) => new Date(Date.UTC(2025, 9, 6) + i * 7 * 86400_000).toISOString().slice(0, 10);
@@ -42,4 +43,22 @@ test("ordinary seasonal changes in effort still allow an arrival", async () => {
     return { week: week(i), n, value: (1000 * n) / effort, effort };
   });
   assert.equal((await detect(s))?.arrival, week(20));
+});
+
+const lateReturn = (last: number) => Array.from({ length: 40 }, (_, i): WeekPoint => {
+  const n = i < 15 ? 100 : i < 38 ? 0 : i === 38 ? last : last;
+  return { week: week(i), n, value: n };
+});
+
+test("a strong newest week after an absence is a possible arrival", async () => {
+  assert.equal((await possible(lateReturn(50)))?.week, week(38));
+});
+
+test("a weak newest week is not a possible arrival", async () => {
+  assert.equal(await possible(lateReturn(15)), null);
+});
+
+test("a species with no earlier season here is not a possible arrival", async () => {
+  const s = Array.from({ length: 40 }, (_, i): WeekPoint => { const n = i === 39 ? 300 : 0; return { week: week(i), n, value: n }; });
+  assert.equal(await possible(s), null);
 });

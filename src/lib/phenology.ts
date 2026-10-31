@@ -23,9 +23,52 @@ export const PHENOLOGY = {
   MAX_INTERVAL_WEEKS: 8,
   /** Absent weeks only count when their effort is at least this share of the arrival week's (methods 0.17): otherwise the watchers changed, not the birds. */
   MIN_COMPARABLE_EFFORT: 0.1,
+  /** Possibly arriving (methods 0.18): the newest week must reach this fraction of the peak of earlier weeks, with this many detections. */
+  POSSIBLE_LEVEL: 0.2,
+  POSSIBLE_MIN_N: 10,
 };
 
 const DAY = 86400_000;
+
+/** The weeks before an arrival were a real, watched absence: comparable effort, and not a resident that only went quiet. */
+function realAbsence(series: WeekPoint[], i: number, run: number, peak: number, limits: typeof PHENOLOGY) {
+  const gap = series.slice(i - run, i);
+  // The absence must have been watched about as hard as the arrival week: acoustic data starting in a cell is not an arrival.
+  const here = series[i].effort;
+  if (here !== undefined && gap.filter((p) => (p.effort ?? 0) >= here * limits.MIN_COMPARABLE_EFFORT).length < limits.MIN_ABSENT_WEEKS) return false;
+  // Still recorded through most of the "absence": a resident gone quiet, so this is song onset rather than an arrival.
+  const recorded = gap.filter((p) => p.n > 0).length / run;
+  const level = gap.reduce((a, p) => a + p.value, 0) / run;
+  return !(recorded >= limits.RESIDENT_WEEK_SHARE && level >= peak * limits.RESIDENT_LEVEL);
+}
+
+/**
+ * A return not yet confirmed: the newest one or two weeks are strong after a real absence, and an earlier season in the data
+ * shows the species belongs here. Returns the first of those weeks. Same absence rules as detectSeason, without the second week.
+ */
+export function detectPossibleArrival(series: WeekPoint[], limits = PHENOLOGY): { week: string; value: number; n: number } | null {
+  if (series.length < limits.MIN_WEEKS_OBSERVED) return null;
+  if (series.reduce((a, p) => a + p.n, 0) < limits.MIN_TOTAL) return null;
+  const last = series.length - 1;
+  let peak = 0;
+  for (const p of series) if (p.value > peak) peak = p.value;
+  const thr = peak * limits.PRESENT_FRACTION;
+  const isIn = (p: WeekPoint) => p.value >= thr && p.value > 0;
+  let i = last;
+  while (i > 0 && isIn(series[i - 1])) i--;
+  if (!isIn(series[last]) || last - i > 1 || i === 0) return null;
+  let run = 0;
+  while (i - run - 1 >= 0 && !isIn(series[i - run - 1])) run++;
+  if (run < limits.MIN_ABSENT_WEEKS) return null;
+  if (Date.parse(series[i].week) - Date.parse(series[i - 1].week) > 8 * DAY) return null;
+  let earlier = series[0];
+  for (let j = 0; j < i; j++) if (series[j].value > earlier.value) earlier = series[j];
+  if (earlier.n < limits.MIN_PEAK_N) return null;
+  const newest = series[last];
+  if (newest.n < limits.POSSIBLE_MIN_N || newest.value < earlier.value * limits.POSSIBLE_LEVEL) return null;
+  if (!realAbsence(series, i, run, earlier.value, limits)) return null;
+  return { week: series[i].week, value: newest.value, n: newest.n };
+}
 
 /**
  * Find the seasonal arrival in a weekly series (observed weeks only, zeros included, sorted by week).
@@ -53,14 +96,7 @@ export function detectSeason(series: WeekPoint[], limits = PHENOLOGY): Season | 
     if (ahead < limits.MIN_PRESENT_WEEKS) continue;
     // The week before must have been observed, otherwise an outage would look like an arrival.
     if (i === 0 || Date.parse(series[i].week) - Date.parse(series[i - 1].week) > 8 * DAY) continue;
-    // Still recorded through most of the "absence": a resident gone quiet, so this is song onset rather than an arrival.
-    const gap = series.slice(i - runBefore, i);
-    const recorded = gap.filter((p) => p.n > 0).length / runBefore;
-    const level = gap.reduce((a, p) => a + p.value, 0) / runBefore;
-    // The absence must have been watched about as hard as the arrival week: acoustic data starting in a cell is not an arrival.
-    const here = series[i].effort;
-    if (here !== undefined && gap.filter((p) => (p.effort ?? 0) >= here * limits.MIN_COMPARABLE_EFFORT).length < limits.MIN_ABSENT_WEEKS) continue;
-    if (recorded >= limits.RESIDENT_WEEK_SHARE && level >= series[peakI].value * limits.RESIDENT_LEVEL) continue;
+    if (!realAbsence(series, i, runBefore, series[peakI].value, limits)) continue;
     if (!best || runBefore > best.run) best = { i, run: runBefore };
   }
   if (!best) return null;
@@ -82,7 +118,10 @@ export function detectSeason(series: WeekPoint[], limits = PHENOLOGY): Season | 
  * With `source`, one source alone against its own effort (used for the open data release and the two-source comparison).
  * Streams rows, so memory stays small.
  */
-export async function computeSeasons(source?: string): Promise<{ pairs: number; rows: Record<string, unknown>[] }> {
+export async function computeSeasons(source?: string): Promise<{ pairs: number; rows: Record<string, unknown>[]; possible: Record<string, unknown>[] }> {
+  // Confirmed arrivals use finished weeks. Without a source, the newest weeks are also read for "possibly arriving".
+  const confirmedUpTo = new Date(Date.now() - 7 * 86400_000).toISOString().slice(0, 10);
+  const newestDays = source ? 7 : 3;
   const effort = new Map<string, Map<string, number>>(); // class|cell -> week -> detections
   const effortRows = source
     ? sql<{ week: string; cell_lat: number; cell_lon: number; grp: string; detections: number }[]>`
@@ -93,7 +132,7 @@ export async function computeSeasons(source?: string): Promise<{ pairs: number; 
         ORDER BY e.week`
     : sql<{ week: string; cell_lat: number; cell_lon: number; grp: string; detections: number }[]>`
         SELECT e.week::text, e.cell_lat, e.cell_lon, e.grp, e.detections FROM effort_weekly e
-        WHERE e.detections >= ${minEffortWeek()} AND e.week <= CURRENT_DATE - 7 ORDER BY e.week`;
+        WHERE e.detections >= ${minEffortWeek()} AND e.week <= CURRENT_DATE - ${newestDays}::int ORDER BY e.week`;
   for (const e of await effortRows) {
     const k = `${e.grp}|${e.cell_lat},${e.cell_lon}`;
     if (!effort.has(k)) effort.set(k, new Map());
@@ -112,6 +151,7 @@ export async function computeSeasons(source?: string): Promise<{ pairs: number; 
        AND COUNT(*) FILTER (WHERE verdict IN ('misid', 'resident')) > COUNT(*) FILTER (WHERE verdict = 'correct')`).map((r) => r.k));
 
   const out: Record<string, unknown>[] = [];
+  const possible: Record<string, unknown>[] = [];
   let pairs = 0;
   let key = "", name = "", vern: string | null = null, cell = "", grp = "avian", counts = new Map<string, number>();
   // Classes with few sensors need lower minimums, scaled the same way as the other measures.
@@ -122,10 +162,28 @@ export async function computeSeasons(source?: string): Promise<{ pairs: number; 
     if (outliers.has(key)) return;
     const weeks = effort.get(`${grp}|${cell}`);
     if (!weeks) return;
-    const effs = [...weeks.entries()];
-    const series: WeekPoint[] = effs.map(([week, eff]) => { const n = counts.get(week) ?? 0; return { week, n, value: (1000 * n) / eff, effort: eff }; });
+    const allEffs = [...weeks.entries()];
+    const effs = allEffs.filter(([week]) => week <= confirmedUpTo);
+    const point = ([week, eff]: [string, number]): WeekPoint => { const n = counts.get(week) ?? 0; return { week, n, value: (1000 * n) / eff, effort: eff }; };
+    const series = effs.map(point);
     const limits = grp === "avian" ? PHENOLOGY : small;
     const s = detectSeason(series, limits);
+    const [lat0, lon0] = cell.split(",").map(Number);
+    if (!source) {
+      const newest = allEffs.map(point);
+      const c = detectPossibleArrival(newest, limits);
+      if (c && c.week !== s?.arrival) {
+        const rp = rng(seedOf(`${key}|possible`));
+        const phiAll = dispersion(newest.map((p) => p.n));
+        let held = 0;
+        for (let b = 0; b < BOOT.B_ARRIVAL; b++) {
+          const alt = allEffs.map(([week, eff], i): WeekPoint => { const n = overdispersed(newest[i].n, phiAll, rp); return { week, n, value: (1000 * n) / eff, effort: eff }; });
+          if (detectPossibleArrival(alt, limits)?.week === c.week) held++;
+        }
+        const support = Math.round((held / BOOT.B_ARRIVAL) * 100) / 100;
+        if (support >= 0.5) possible.push({ scientific_name: name, vernacular_name: vern, cell_lat: lat0, cell_lon: lon0, week: c.week, n: c.n, support, methods_version: METHODS_VERSION });
+      }
+    }
     if (!s) return;
     // Uncertainty: redraw every weekly count with the series' own overdispersion and detect again (see /methods#uncertainty).
     const r = rng(seedOf(`${key}|${source ?? "all"}`));
@@ -148,7 +206,7 @@ export async function computeSeasons(source?: string): Promise<{ pairs: number; 
   await sql<{ scientific_name: string; vernacular_name: string | null; grp: string; cell_lat: number; cell_lon: number; week: string; n: number }[]>`
     SELECT s.scientific_name, MIN(s.vernacular_name) AS vernacular_name, g.grp, s.cell_lat, s.cell_lon, s.week::text, SUM(s.count)::int AS n
     FROM species_weekly s JOIN species_group g USING (scientific_name)
-    WHERE s.week <= CURRENT_DATE - 7 AND g.is_species ${source ? sql`AND s.source_system = ${source}` : sql``}
+    WHERE s.week <= CURRENT_DATE - ${newestDays}::int AND g.is_species ${source ? sql`AND s.source_system = ${source}` : sql``}
     GROUP BY s.scientific_name, g.grp, s.cell_lat, s.cell_lon, s.week
     ORDER BY s.scientific_name, s.cell_lat, s.cell_lon, s.week
   `.cursor(20000, (rows) => {
@@ -159,15 +217,17 @@ export async function computeSeasons(source?: string): Promise<{ pairs: number; 
     }
   });
   flush();
-  return { pairs, rows: out };
+  return { pairs, rows: out, possible };
 }
 
 /** Recompute the phenology table (all sources) that the site's arrival dates come from. */
 export async function recomputePhenology(): Promise<{ pairs: number; seasons: number }> {
-  const { pairs, rows: out } = await computeSeasons();
+  const { pairs, rows: out, possible } = await computeSeasons();
   await sql.begin(async (tx) => {
     await tx`TRUNCATE phenology`;
     for (let i = 0; i < out.length; i += 2000) await tx`INSERT INTO phenology ${tx(out.slice(i, i + 2000))}`;
+    await tx`TRUNCATE arrival_candidates`;
+    for (let i = 0; i < possible.length; i += 2000) await tx`INSERT INTO arrival_candidates ${tx(possible.slice(i, i + 2000))}`;
   });
   return { pairs, seasons: out.length };
 }

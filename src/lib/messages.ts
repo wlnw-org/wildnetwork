@@ -638,6 +638,8 @@ const TOUR2: Record<string, Dict> = {
 // Server-rendered species and place pages (src/components/T.tsx).
 const PAGES: Record<string, Dict> = {
  "es": {
+  "Possibly arriving": "Posibles llegadas",
+  "One strong recent week, not confirmed yet": "Una semana reciente fuerte, aún sin confirmar",
   "Source": "Fuente",
   "Where is the {name} now?": "¿Dónde está ahora {name}?",
   "In the last 8 weeks it was recorded {n} times in one area (a 5 degree square).": "En las últimas 8 semanas se registró {n} veces en una zona (un cuadrado de 5 grados).",
@@ -694,6 +696,8 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "¿No aparece? Escribe cualquier ciudad en el buscador del mapa en vivo."
  },
  "fr": {
+  "Possibly arriving": "Arrivées possibles",
+  "One strong recent week, not confirmed yet": "Une semaine récente marquée, pas encore confirmée",
   "Source": "Source",
   "Where is the {name} now?": "Où se trouve {name} en ce moment ?",
   "In the last 8 weeks it was recorded {n} times in one area (a 5 degree square).": "Ces 8 dernières semaines, elle a été enregistrée {n} fois dans une zone (un carré de 5 degrés).",
@@ -750,6 +754,8 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "Pas dans la liste ? Tapez n'importe quelle ville dans la recherche de la carte en direct."
  },
  "de": {
+  "Possibly arriving": "Mögliche Ankünfte",
+  "One strong recent week, not confirmed yet": "Eine starke letzte Woche, noch nicht bestätigt",
   "Source": "Quelle",
   "Where is the {name} now?": "Wo ist {name} gerade?",
   "In the last 8 weeks it was recorded {n} times in one area (a 5 degree square).": "In den letzten 8 Wochen {n}-mal in einem Gebiet erfasst (einem 5-Grad-Quadrat).",
@@ -806,6 +812,8 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "Nicht dabei? Geben Sie einen beliebigen Ort in die Suche der Live-Karte ein."
  },
  "pt": {
+  "Possibly arriving": "Possíveis chegadas",
+  "One strong recent week, not confirmed yet": "Uma semana recente forte, ainda não confirmada",
   "Source": "Fonte",
   "Where is the {name} now?": "Onde está {name} agora?",
   "In the last 8 weeks it was recorded {n} times in one area (a 5 degree square).": "Nas últimas 8 semanas foi registada {n} vezes numa área (um quadrado de 5 graus).",
@@ -862,6 +870,8 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "Não está na lista? Escreva qualquer cidade na pesquisa do mapa ao vivo."
  },
  "hi": {
+  "Possibly arriving": "संभावित आगमन",
+  "One strong recent week, not confirmed yet": "हाल का एक मज़बूत सप्ताह, अभी पुष्टि नहीं",
   "Source": "स्रोत",
   "Where is the {name} now?": "{name} अभी कहाँ है?",
   "In the last 8 weeks it was recorded {n} times in one area (a 5 degree square).": "पिछले 8 सप्ताह में यह एक क्षेत्र (5 डिग्री वर्ग) में {n} बार दर्ज हुई।",
@@ -918,6 +928,8 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "सूची में नहीं? लाइव मानचित्र की खोज में कोई भी शहर लिखें।"
  },
  "ta": {
+  "Possibly arriving": "வரக்கூடியவை",
+  "One strong recent week, not confirmed yet": "சமீபத்திய ஒரு வலுவான வாரம், இன்னும் உறுதி செய்யப்படவில்லை",
   "Source": "மூலம்",
   "Where is the {name} now?": "{name} இப்போது எங்கே?",
   "In the last 8 weeks it was recorded {n} times in one area (a 5 degree square).": "கடந்த 8 வாரங்களில் ஒரு பகுதியில் (5 டிகிரி சதுரம்) {n} முறை பதிவானது.",

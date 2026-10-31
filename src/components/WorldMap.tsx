@@ -26,6 +26,7 @@ interface Insights {
   drift: { scientificName: string; vernacularName: string | null; region: string; driftDeg: number; latNow: number; n: number; driftLow?: number | null; driftHigh?: number | null }[];
   arrivals: { scientificName: string; vernacularName: string | null; cellLat: number; cellLon: number; n: number }[];
   seasonal?: { scientificName: string; vernacularName: string | null; cellLat: number; cellLon: number; week: string; n: number }[];
+  possible?: { scientificName: string; vernacularName: string | null; cellLat: number; cellLon: number; week: string; n: number }[];
   common?: { scientificName: string; vernacularName: string | null; n: number; cells: number }[];
 }
 
@@ -297,7 +298,7 @@ export default function WorldMap() {
     });
     const rest = [
       fetch(`/api/v1/species?hours=${group === "marine" ? MARINE_DAYS * 24 : group === "bat" ? 24 : hours}${gq ? "&" + gq : ""}`).then((r) => r.json() as Promise<Species[]>).then((sp) => { if (!current()) return; setSpeciesList(sp); wantThumbs(sp.slice(0, 15).map((x) => x.scientificName)); }),
-      fetch(`/api/v1/insights${gq ? "?" + gq : ""}`).then((r) => r.json() as Promise<Insights>).then((ins) => { if (!current()) return; setInsights(ins); wantThumbs([...(ins.seasonal ?? []), ...(ins.common ?? []), ...ins.drift, ...ins.movers, ...ins.arrivals].map((x) => x.scientificName)); }),
+      fetch(`/api/v1/insights${gq ? "?" + gq : ""}`).then((r) => r.json() as Promise<Insights>).then((ins) => { if (!current()) return; setInsights(ins); wantThumbs([...(ins.possible ?? []), ...(ins.seasonal ?? []), ...(ins.common ?? []), ...ins.drift, ...ins.movers, ...ins.arrivals].map((x) => x.scientificName)); }),
       fetch(`/api/v1/status`).then((r) => r.json() as Promise<Status>).then(setStatus),
     ];
     await Promise.allSettled([events, ...rest]);
@@ -718,6 +719,14 @@ export default function WorldMap() {
                     {insights.summary.map((line) => <li key={line}>{line}</li>)}
                   </ul>
                 </section>
+              )}
+              {!!insights?.possible?.length && (
+                <Section title={t("Possibly arriving")} hint={t("One strong recent week, not confirmed yet")}>
+                  {insights.possible.map((a) => (
+                    <Row key={a.scientificName} thumb={thumbs[a.scientificName]} onClick={() => pick(a.scientificName)} name={a.vernacularName ?? a.scientificName} sci={`${a.scientificName} · ${a.cellLat}°, ${a.cellLon}°`}
+                      value={new Date(a.week + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" })} tone="neutral" />
+                  ))}
+                </Section>
               )}
               <Section title={t("Latest arrivals")} hint={t("Most recent arrival week, from the weekly history")}>
                 {insights?.seasonal?.map((a) => (
