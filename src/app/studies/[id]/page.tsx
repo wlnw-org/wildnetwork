@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AskToJoin, JoinRequests } from "@/components/JoinPanel";
 import ReviewButtons, { type Counts } from "@/components/ReviewButtons";
 import ResearchSignIn from "@/components/ResearchSignIn";
 import StudyAdmin from "@/components/StudyAdmin";
 import { getSession, orcidUrl } from "@/lib/orcid";
+import { joinState, pendingRequests } from "@/lib/projects";
 import { speciesSlug } from "@/lib/site";
 import { GROUP_LABEL, getStudy, studyDashboard } from "@/lib/studies";
 
@@ -23,6 +25,8 @@ export default async function StudyPage({ params }: { params: Promise<{ id: stri
   if (!s) notFound();
   const [me, d] = await Promise.all([getSession(), studyDashboard(s)]);
   const role = me?.orcid === s.owner ? "owner" : d.members.some((m) => m.orcid === me?.orcid) ? "member" : null;
+  const join = me ? await joinState({ study: s.id }, me.orcid) : null;
+  const requests = role === "owner" ? await pendingRequests({ study: s.id }) : [];
   const reviews = new Map<string, Counts>();
   for (const r of d.reviews) {
     const k = `${r.scientific_name}|${r.cell_lat},${r.cell_lon}`;
@@ -47,6 +51,8 @@ export default async function StudyPage({ params }: { params: Promise<{ id: stri
         </p>
         <div className="mt-4"><ResearchSignIn next={`/studies/${s.id}`} /></div>
         {role && <StudyAdmin id={s.id} owner={role === "owner"} digest={s.digest} />}
+        {role === "owner" && <JoinRequests requests={requests} hasEmail={!!join?.hasEmail} />}
+        {me && !role && <AskToJoin target={{ study: s.id }} request={join?.request ?? null} hasEmail={!!join?.hasEmail} />}
 
         <H2>Coverage</H2>
         <p>

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "What Wildlife Network collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
 };
 
-const UPDATED = "28 October 2026";
+const UPDATED = "2 November 2026";
 
 export default function Privacy() {
   return (
@@ -67,7 +67,10 @@ export default function Privacy() {
         <p>
           Signing in with ORCID (for study areas and reviews) stores your ORCID iD and the public name ORCID returns, and when you last signed in. A signed
           cookie keeps you signed in for 30 days; it holds only your iD and name. Study areas you create, their collaborators, and your reviews of arrival
-          estimates are public, with your name and ORCID iD. An email you give for a study digest is stored encrypted and used only for that digest.
+          estimates are public, with your name and ORCID iD. An email you give for a study digest is stored encrypted and used for that digest and for requests to join.
+          Projects you post, and the people on them, are public with name and ORCID iD. Posting a project or asking to join one needs an email, stored
+          encrypted. A request to join and its message are seen only by the owner, and the message is deleted once answered. If the owner accepts, the two of you
+          are sent each other&apos;s email address; it goes to no one else.
           A study proposal stores your name, email (encrypted), institution, the area and your question, read only by the maintainer. Ask us to delete any of
           it, or delete a study yourself.
         </p>
