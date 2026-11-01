@@ -1,5 +1,5 @@
 import { sql } from "@/lib/db";
-import { upsertGroups } from "@/lib/rollups";
+import { refreshWeeklyEffort, upsertGroups } from "@/lib/rollups";
 
 /**
  * GBIF occurrence API (https://techdocs.gbif.org/en/openapi/v1/occurrence). Free, keyless, no login.
@@ -11,6 +11,21 @@ export const GBIF = "https://api.gbif.org/v1";
 export const UA = "WildlifeNetwork/0.1 (+https://wlnw.org; https://github.com/wlnw-org/wildnetwork; arunrajiah@gmail.com)";
 export const INAT_DATASET = "50c9509d-22c7-4a22-a47d-8c48425ef4a7";
 export const CELL = 5;
+
+/**
+ * eBird on GBIF is one yearly snapshot, so it stops at the end of its last year (currently early January 2026) and is 15 to 100
+ * times bigger than everything else in a cell. Counted in, every autumn would look huge and then collapse, so it is left out.
+ */
+export const EBIRD_DATASET = "4fa7b334-ce0d-4e88-aaae-2e0c138d049e";
+const ebirdWeeks = new Map<string, Promise<boolean>>();
+const ebirdInWeek = (week: string, end: string) => {
+  if (!ebirdWeeks.has(week)) {
+    const p = baseParams();
+    p.set("datasetKey", EBIRD_DATASET); p.set("eventDate", `${week},${end}`); p.set("limit", "0");
+    ebirdWeeks.set(week, gbifJson<{ count: number }>("/occurrence/search", p).then((j) => j.count > 0).catch((e) => { ebirdWeeks.delete(week); throw e; }));
+  }
+  return ebirdWeeks.get(week)!;
+};
 
 /** Classes pulled, as GBIF taxon keys. Bats are an order inside mammals, so mammals are not pulled as a class. */
 export const CLASS_TAXA: { key: number; grp: string }[] = [
@@ -109,8 +124,15 @@ export async function rollupGbifCellWeek(cell: { lat: number; lon: number }, wee
   p.set("facetLimit", "800");
   p.set("limit", "0");
   const j = await gbifJson<{ count: number; facets: { field: string; counts: { name: string; count: number }[] }[] }>("/occurrence/search", p);
-  const counts = j.facets?.[0]?.counts ?? [];
+  let counts = j.facets?.[0]?.counts ?? [];
   if (!counts.length) return 0;
+  if (await ebirdInWeek(week, end)) {
+    p.set("datasetKey", EBIRD_DATASET);
+    const e = await gbifJson<{ facets: { counts: { name: string; count: number }[] }[] }>("/occurrence/search", p);
+    const minus = new Map((e.facets?.[0]?.counts ?? []).map((x) => [x.name, x.count]));
+    counts = counts.map((x) => ({ ...x, count: x.count - (minus.get(x.name) ?? 0) })).filter((x) => x.count > 0);
+    if (!counts.length) return 0;
+  }
   await resolveTaxa(counts.map((x) => Number(x.name)));
   const rows = counts.flatMap((x) => {
     const t = taxon(Number(x.name));
@@ -161,24 +183,43 @@ export async function gbifCells(force = false): Promise<{ lat: number; lon: numb
 }
 
 /**
- * Keep the weekly history current: the last `weeks` weeks for every active cell, within a time budget
- * (GBIF indexes records days after they are observed, so recent weeks keep changing).
+ * The order weeks are refreshed in, as offsets from this week: the last three weeks, then four older ones, and again, back a
+ * year. GBIF records keep arriving for months, so old weeks are revisited too, and recent weeks about every 14 hours.
  */
-export async function refreshGbifWeekly(weeks = 3, budgetMs = 240_000): Promise<{ cells: number; rows: number; errors: number; done: number; total: number }> {
+export function refreshCycle(backTo = 52, olderPerPass = 4): number[] {
+  const out: number[] = [];
+  for (let w = 3; w <= backTo; w += olderPerPass) {
+    out.push(0, 1, 2);
+    for (let o = w; o < w + olderPerPass && o <= backTo; o++) out.push(o);
+  }
+  return out;
+}
+
+/**
+ * One slice of the rolling GBIF refresh: carries on where the last run stopped, so every cell gets its turn however short the
+ * time budget is. Effort is rebuilt for the weeks touched.
+ */
+export async function refreshGbifWeekly(budgetMs = 200_000): Promise<{ cells: number; rows: number; errors: number; done: number; total: number }> {
   const t0 = Date.now();
   const cells = await gbifCells();
+  const cycle = refreshCycle();
+  const total = cycle.length * cells.length;
+  const [state] = await sql<{ cursor: string | null }[]>`SELECT cursor FROM pull_state WHERE connector = 'gbif_weekly_cursor'`;
+  let at = Number(state?.cursor ?? 0) % total;
   const now = new Date();
-  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - ((now.getUTCDay() + 6) % 7)));
-  const jobs = Array.from({ length: weeks }, (_, w) => new Date(monday.getTime() - w * 7 * 86400_000).toISOString().slice(0, 10)).flatMap((week) => cells.map((cell) => ({ cell, week })));
-  const total = jobs.length;
+  const monday = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - ((now.getUTCDay() + 6) % 7));
+  const touched = new Set<string>();
   let rows = 0, errors = 0, done = 0;
   await Promise.all(Array.from({ length: 2 }, async () => {
-    while (jobs.length && Date.now() - t0 < budgetMs) {
-      const j = jobs.shift()!;
-      try { rows += await rollupGbifCellWeek(j.cell, j.week); } catch { errors++; }
-      done++;
+    while (done < total && Date.now() - t0 < budgetMs) {
+      const i = at; at = (at + 1) % total; done++;
+      const week = new Date(monday - cycle[Math.floor(i / cells.length)] * 7 * 86400_000).toISOString().slice(0, 10);
+      try { rows += await rollupGbifCellWeek(cells[i % cells.length], week); touched.add(week); } catch { errors++; }
     }
   }));
+  await sql`INSERT INTO pull_state (connector, cursor, last_run_at) VALUES ('gbif_weekly_cursor', ${String(at)}, now())
+            ON CONFLICT (connector) DO UPDATE SET cursor = EXCLUDED.cursor, last_run_at = now()`;
+  await refreshWeeklyEffort([...touched]);
   return { cells: cells.length, rows, errors, done, total };
 }
 

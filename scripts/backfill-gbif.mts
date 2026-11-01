@@ -1,6 +1,7 @@
 // Backfill species_weekly from GBIF facets. Usage: pnpm backfill:gbif [weeks=52] [concurrency=2] [skipWeeks=0] [rediscover]
 import { sql } from "../src/lib/db";
 import { gbifCells, rollupGbifCellWeek } from "../src/lib/gbif";
+import { refreshWeeklyEffort } from "../src/lib/rollups";
 
 const weeks = Number(process.argv[2] ?? 52);
 const conc = Number(process.argv[3] ?? 2);
@@ -13,6 +14,7 @@ for (let w = skip; w < skip + weeks; w++) {
   const week = new Date(monday.getTime() - w * 7 * 86400_000).toISOString().slice(0, 10);
   for (const cell of cells) jobs.push({ cell, week });
 }
+const allWeeks = [...new Set(jobs.map((j) => j.week))];
 console.log(`${cells.length} cells x ${weeks} weeks = ${jobs.length} cell-weeks (one query each)`);
 let done = 0, rows = 0, errors = 0;
 const t0 = Date.now();
@@ -28,5 +30,6 @@ await Promise.all(Array.from({ length: conc }, async () => {
     if (++done % 200 === 0) console.log(`${done} done, ${rows} rows, ${errors} errors, ${Math.round((Date.now() - t0) / 1000)}s`);
   }
 }));
+await refreshWeeklyEffort(allWeeks);
 console.log(`finished: ${done} cell-weeks, ${rows} rows, ${errors} errors`);
 await sql.end();

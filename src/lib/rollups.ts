@@ -214,6 +214,23 @@ export async function classifyAll(): Promise<Record<string, number>> {
 }
 
 /** Per-source weekly effort for the comparison and the coverage map. `days` limits it to recent weeks; "all" rebuilds the year. */
+/** Rebuild weekly effort, combined and per source, for weeks whose counts just changed (GBIF's rolling refresh and reloads). */
+export async function refreshWeeklyEffort(weeks: string[]): Promise<void> {
+  if (!weeks.length) return;
+  await sql`
+    INSERT INTO effort_weekly (week, cell_lat, cell_lon, grp, detections, species)
+    SELECT s.week, s.cell_lat, s.cell_lon, ${GRP()}, SUM(s.count), COUNT(DISTINCT s.scientific_name)
+    FROM species_weekly s LEFT JOIN species_group g USING (scientific_name)
+    WHERE s.week = ANY(${weeks}::date[]) GROUP BY 1, 2, 3, 4
+    ON CONFLICT (week, cell_lat, cell_lon, grp) DO UPDATE SET detections = EXCLUDED.detections, species = EXCLUDED.species`;
+  await sql`
+    INSERT INTO effort_weekly_source (week, cell_lat, cell_lon, grp, source_system, detections, species)
+    SELECT s.week, s.cell_lat, s.cell_lon, ${GRP()}, s.source_system, SUM(s.count), COUNT(DISTINCT s.scientific_name)
+    FROM species_weekly s LEFT JOIN species_group g USING (scientific_name)
+    WHERE s.week = ANY(${weeks}::date[]) GROUP BY 1, 2, 3, 4, 5
+    ON CONFLICT (week, cell_lat, cell_lon, grp, source_system) DO UPDATE SET detections = EXCLUDED.detections, species = EXCLUDED.species`;
+}
+
 export async function refreshSourceEffort(days: string | "all" = "14"): Promise<void> {
   const since = days === "all" ? sql`` : sql`AND s.week >= date_trunc('week', CURRENT_DATE)::date - ${Number(days)}::int`;
   await sql`

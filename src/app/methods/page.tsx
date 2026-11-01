@@ -242,7 +242,7 @@ export default function Methods() {
         <H3><span id="coverage" className="scroll-mt-6">Coverage</span></H3>
         <p>
           The coverage layer on the map marks each 5 degree cell by who watches it well enough to use, averaged over four weeks ending two weeks ago (human records reach
-          GBIF a week or two late): <b>recordings</b> at {MIN_EFFORT_WEEK.toLocaleString("en-GB")} or more bird detections a week, <b>sightings</b> at{" "}
+          GBIF late, by a week or two at first and for months after that): <b>recordings</b> at {MIN_EFFORT_WEEK.toLocaleString("en-GB")} or more bird detections a week, <b>sightings</b> at{" "}
           {OBSERVED.MIN_EFFORT_WEEK} or more bird records a week, both, or too thin to use. Check it before drawing conclusions about a region. Available as{" "}
           <code className="text-slate-200">/api/v1/coverage</code>.
         </p>
@@ -330,6 +330,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.19</b> (2 November 2026): GBIF weekly counts are now refreshed in rotation back a year, because records keep arriving for months, and eBird&apos;s yearly snapshot on GBIF is left out of them because it stops at the end of its last year. Weekly GBIF counts rise, mostly in older weeks.</li>
           <li><b>0.18</b> (31 October 2026): a <a href="#possibly-arriving" className="text-cyan-400 hover:underline">Possibly arriving</a> list shows recent returns not yet confirmed by a second week. Arrival dates themselves do not change.</li>
           <li><b>0.17</b> (30 October 2026): an arrival needs at least 6 absent weeks with at least a tenth of the arrival week&apos;s effort. This removes false arrivals at the point where acoustic data begins, 17 November 2025 for most cells.</li>
           <li><b>0.16</b> (30 October 2026): an arrival date whose 90% interval is wider than 8 weeks, or does not contain the estimate, is no longer published.</li>

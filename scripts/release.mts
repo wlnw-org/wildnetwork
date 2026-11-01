@@ -6,7 +6,7 @@ import { execSync } from "node:child_process";
 const COMMIT = execSync("git rev-parse --short HEAD").toString().trim();
 const RELEASE_NO = process.argv[2] ?? "1";
 import { sql } from "../src/lib/db";
-import { CLASS_TAXA, baseParams, gbifJson } from "../src/lib/gbif";
+import { CLASS_TAXA, EBIRD_DATASET, baseParams, gbifJson } from "../src/lib/gbif";
 import { METHODS_VERSION, OBSERVED } from "../src/lib/methods";
 import { computeSeasons } from "../src/lib/phenology";
 
@@ -63,7 +63,7 @@ const p = baseParams();
 for (const c of CLASS_TAXA) p.append("taxonKey", String(c.key));
 p.set("eventDate", `${range.first},${new Date(Date.parse(range.last) + 6 * 86400_000).toISOString().slice(0, 10)}`);
 p.set("facet", "datasetKey"); p.set("facetLimit", "2000"); p.set("limit", "0");
-const facets = (await gbifJson<{ facets: { counts: { name: string; count: number }[] }[] }>("/occurrence/search", p)).facets[0]?.counts ?? [];
+const facets = ((await gbifJson<{ facets: { counts: { name: string; count: number }[] }[] }>("/occurrence/search", p)).facets[0]?.counts ?? []).filter((f) => f.name !== EBIRD_DATASET);
 const sets: Record<string, unknown>[] = [];
 const queue = [...facets];
 await Promise.all(Array.from({ length: 3 }, async () => {

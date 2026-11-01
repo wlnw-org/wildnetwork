@@ -6,7 +6,6 @@ import { recomputePhenology } from "@/lib/phenology";
 import { refreshRollups } from "@/lib/rollups";
 import { BIRDWEATHER_PAUSED } from "@/lib/sources";
 import { refreshGbifWeekly } from "@/lib/gbif";
-import { refreshSourceEffort } from "@/lib/rollups";
 import { refreshOptins } from "@/lib/optin";
 import { weeklyReindex } from "@/lib/storage";
 import { ALERTS_ENABLED, checkAlerts } from "@/lib/alerts";
@@ -53,12 +52,12 @@ export async function GET() {
       ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '23 hours'
       RETURNING connector`;
     if (daily.length) { await refreshRange(60_000).catch(() => null); await recomputePhenology(); }
-    // GBIF weekly history: the last 3 weeks, once every 6 hours, within the function's time budget.
+    // GBIF weekly history: one slice of the rolling refresh every hour, within the function's time budget.
     const gb = await sql`
       INSERT INTO pull_state (connector, last_run_at) VALUES ('_gbif_lock', now())
-      ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '6 hours'
+      ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '1 hour'
       RETURNING connector`;
-    if (gb.length) { await refreshGbifWeekly(3, 200_000); await refreshSourceEffort("28"); }
+    if (gb.length) await refreshGbifWeekly(200_000);
     // Index bloat from all-day upserts is most of the database's growth: rebuilt online once a week (src/lib/storage.ts).
     const rx = await weeklyReindex().catch(() => null);
     if (rx) console.log(`weekly reindex: ${rx.beforeMb} MB -> ${rx.afterMb} MB`);
