@@ -20,7 +20,13 @@ scripts/sensitive_species.txt (one scientific name per line, optional) are gener
 Usage (on a machine with the production DATABASE_URL):
   pip install duckdb
   DATABASE_URL=postgres://... python3 scripts/aws-export.py out
-  aws s3 sync out/ s3://wildnetwork-open-data/ --delete --profile wildnetwork-open-data
+  aws s3 sync out/events/ s3://wildnetwork-open-data/events/ --profile wildnetwork-open-data
+  aws s3 sync out/noncommercial/events/ s3://wildnetwork-open-data/noncommercial/events/ --profile wildnetwork-open-data
+  aws s3 sync out/ s3://wildnetwork-open-data/ --delete --exclude 'events/*' --exclude 'noncommercial/events/*' --profile wildnetwork-open-data
+
+Events are append-only in the bucket: raw events leave the database after their live window (30 days for devices), so
+never sync events/ with --delete, or days that are no longer in the database would be removed from the archive.
+Run at least every three weeks so no device day is missed. Aggregates and the manifest are replaced each run.
 """
 import datetime, hashlib, json, os, pathlib, sys
 

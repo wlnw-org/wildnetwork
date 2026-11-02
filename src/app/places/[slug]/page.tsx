@@ -74,6 +74,7 @@ export default async function PlacePage({ params, searchParams }: Props) {
         <div className="mt-4 flex flex-wrap gap-2 text-sm">
           <Link href={`/?lat=${p.lat.toFixed(2)}&lon=${p.lon.toFixed(2)}`} className="rounded-md bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400"><T k="Open on the live map" /></Link>
           <Link href="/studies/new" className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Make it a study area" /></Link>
+          <Link href={`/report?lat=${p.lat.toFixed(4)}&lon=${p.lon.toFixed(4)}`} className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Site report for a smaller area" /></Link>
         </div>
 
         <H2><T k="Arrived in the last four weeks" /></H2>
