@@ -103,7 +103,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
         {d.media?.imageUrl && (
           <figure className="mt-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={d.media.imageUrl} alt={`${title} (${d.name})`} className="w-full max-h-96 object-cover rounded-lg" />
+            <img src={d.media.imageUrl} alt={`${title} (${d.name})`} className="w-full max-h-96 object-contain rounded-lg bg-slate-900" />
             {(d.media.attribution || d.media.license) && <figcaption className="mt-1 text-xs text-slate-500">Image: {[d.media.attribution, d.media.license, d.media.source].filter(Boolean).join(", ")}</figcaption>}
           </figure>
         )}

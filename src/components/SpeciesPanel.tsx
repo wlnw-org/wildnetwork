@@ -106,7 +106,7 @@ export default function SpeciesPanel({ name, area = null, near = null, alerts = 
       <div className="relative">
         {media?.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={media.thumbUrl ?? media.imageUrl} alt={media.title ?? name} className="w-full h-40 object-cover" />
+          <img src={media.thumbUrl ?? media.imageUrl} alt={media.title ?? name} className="w-full h-40 object-contain bg-slate-900" />
         ) : <div className="w-full h-16 bg-slate-800" />}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900 to-transparent h-20" />
         <button onClick={onClose} aria-label={t("Close")} className="absolute top-2 right-2 rounded-full bg-slate-900/70 text-slate-200 hover:text-white w-7 h-7 text-sm">✕</button>
