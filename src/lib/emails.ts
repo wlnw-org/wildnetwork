@@ -9,6 +9,15 @@ const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&
 const C = { ink: "#0f172a", body: "#334155", muted: "#64748b", line: "#e2e8f0", page: "#eef2f6", dark: "#0b1220", accent: "#06b6d4", accentInk: "#083344", sun: "#f59e0b" };
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
 
+/**
+ * Whole photo, never cropped: a crop often cuts the head off, and Gmail ignores object-fit, so it would squash instead.
+ * The height cap shrinks both sides and the dark cell fills the margins. Outlook ignores the CSS and uses the width attribute.
+ */
+function heroImg(url: string, alt: string, maxHeight: number): string {
+  return `<img src="${esc(url)}" width="600" alt="${esc(alt)}" style="display:block;margin:0 auto;width:auto;max-width:100%;height:auto;max-height:${maxHeight}px;border:0">`;
+}
+const HERO_CELL = `bgcolor="${C.dark}" align="center" style="background:${C.dark};padding:0;line-height:0;font-size:0;border-radius:22px 22px 0 0;overflow:hidden"`;
+
 /** A Wikimedia thumbnail at email width (960 is one of the sizes Wikimedia serves; arbitrary widths return 400) instead of a multi-megabyte original. */
 export function emailImage(thumbUrl: string | null, imageUrl: string | null): string | null {
   if (thumbUrl && /\/\d+px-[^/]+$/.test(thumbUrl)) return thumbUrl.replace(/\/\d+px-([^/]+)$/, "/960px-$1");
@@ -54,7 +63,7 @@ export interface ArrivalEmail {
 
 export function arrivalHtml(e: ArrivalEmail): string {
   const hero = e.imageUrl
-    ? `<tr><td style="padding:0;line-height:0;font-size:0"><a href="${esc(e.mapUrl)}"><img src="${esc(e.imageUrl)}" width="600" alt="${esc(e.name)}" style="display:block;width:100%;max-width:600px;height:auto;max-height:380px;object-fit:cover;border:0;border-radius:22px 22px 0 0"></a></td></tr>`
+    ? `<tr><td ${HERO_CELL}><a href="${esc(e.mapUrl)}">${heroImg(e.imageUrl, e.name, 380)}</a></td></tr>`
     : "";
   const inner = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${hero}
 <tr><td bgcolor="${C.dark}" style="background:${C.dark};padding:26px 30px 28px;${e.imageUrl ? "" : "border-radius:22px 22px 0 0;"}">
@@ -85,7 +94,7 @@ A free, non-commercial, open source project.`;
 
 export function confirmHtml(o: { name: string; place: string; confirmUrl: string; imageUrl: string | null }): string {
   const hero = o.imageUrl
-    ? `<tr><td style="padding:0;line-height:0;font-size:0"><img src="${esc(o.imageUrl)}" width="600" alt="${esc(o.name)}" style="display:block;width:100%;max-width:600px;height:auto;max-height:300px;object-fit:cover;border:0;border-radius:22px 22px 0 0"></td></tr>`
+    ? `<tr><td ${HERO_CELL}>${heroImg(o.imageUrl, o.name, 300)}</td></tr>`
     : "";
   const inner = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${hero}
 <tr><td style="padding:30px 30px 8px">
