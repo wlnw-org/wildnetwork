@@ -1,5 +1,6 @@
 import { sql } from "@/lib/db";
 import { HIDDEN_DEPLOYMENT_SOURCES, PENDING_SOURCES, SOURCES } from "@/lib/sources";
+import { isSensitiveTaxon } from "@/lib/sensitiveTaxa";
 import { SITE } from "@/lib/site";
 
 /**
@@ -20,6 +21,9 @@ export const REPORT_LIMITS = { MAX_KM: 50, DEFAULT_KM: 10, MAX_DAYS: 3 * 366 };
 export const REPORT_GROUPS = ["all", "avian", "bat", "amphibian", "insect"] as const;
 /** Detections at or above this confidence count as high confidence (same threshold as the daily rollups). */
 const HIGH_CONF = 0.85;
+
+/** A station's position is close to exact, so sensitive taxa are counted in the totals but never named against a station. */
+const nameable = (scientificName: string) => !isSensitiveTaxon([scientificName, scientificName.split(" ")[0]]);
 
 /** Roll the current and previous week of our own devices' events into station_weekly. Called by the daily rollup. */
 export async function refreshStationWeekly(): Promise<void> {
@@ -80,7 +84,7 @@ export function parseReportQuery(p: Record<string, string | undefined>): ReportQ
 
 async function summarise(ids: string[], group: string, p: Period): Promise<PeriodSummary> {
   const grp = group === "all" ? sql`` : sql`AND g.grp = ${group}`;
-  // Weeks are labelled by their Monday; a week counts if its Monday falls inside the period.
+  // Weeks are labelled by their Monday; a week counts if any of it falls inside the period.
   const rows = sql`
     SELECT w.* FROM station_weekly w LEFT JOIN species_group g USING (scientific_name)
     WHERE w.deployment_id = ANY(${ids}) AND w.week >= date_trunc('week', ${p.from}::date)::date AND w.week <= ${p.to}::date ${grp}`;
@@ -94,12 +98,12 @@ async function summarise(ids: string[], group: string, p: Period): Promise<Perio
       SELECT scientific_name, MIN(vernacular_name) AS vernacular_name, SUM(count)::int AS n, SUM(high_conf_count)::int AS high,
              COUNT(DISTINCT deployment_id)::int AS stations,
              CASE WHEN t.d > 0 THEN 1000.0 * SUM(count) / t.d ELSE 0 END::float AS per1000
-      FROM r, t GROUP BY scientific_name, t.d ORDER BY n DESC LIMIT 200`,
+      FROM r, t GROUP BY scientific_name, t.d ORDER BY n DESC`,
   ]);
   return {
-    period: p, weeks, top,
+    period: p, weeks, top: top.filter((x) => nameable(x.scientific_name)),
     detections: weeks.reduce((s, w) => s + w.detections, 0),
-    species: top.length,
+    species: top.length, // includes sensitive taxa, which are not listed
     stationWeeks: weeks.reduce((s, w) => s + w.stations, 0),
   };
 }
@@ -114,6 +118,8 @@ export async function siteReport(q: ReportQuery): Promise<SiteReport> {
       AND d.source_system <> ALL(${HIDDEN_DEPLOYMENT_SOURCES})
     ORDER BY km LIMIT 500`;
   const ids = stations.filter((s) => s.kept).map((s) => s.id);
+  // Other sources' stations are only counted per source: no id, name, distance or date (BirdWeather's conditions, see CLAUDE.md).
+  const listed = stations.map((s) => (s.kept ? s : { ...s, id: "", name: null, km: 0, last_seen: "" }));
   const [a, b, first] = await Promise.all([
     summarise(ids, q.group, q.a),
     q.b ? summarise(ids, q.group, q.b) : Promise.resolve(null),
@@ -122,7 +128,7 @@ export async function siteReport(q: ReportQuery): Promise<SiteReport> {
   const inB = new Set(b?.top.map((x) => x.scientific_name));
   const inA = new Set(a.top.map((x) => x.scientific_name));
   return {
-    q, stations, a, b,
+    q, stations: listed, a, b,
     onlyA: b ? a.top.filter((x) => !inB.has(x.scientific_name)) : [],
     onlyB: b ? b.top.filter((x) => !inA.has(x.scientific_name)) : [],
     historyFrom: first[0]?.w ?? null,
@@ -153,6 +159,6 @@ export async function siteReportCsv(q: ReportQuery): Promise<string> {
   return [
     `# Wildlife Network site report ${SITE}/report${reportHref(q)}. Stations within ${q.km} km of ${q.lat}, ${q.lon} that publish to Wildlife Network. Weeks start on Monday. Cite: Wildlife Network (wlnw.org) and the station owners.`,
     "week,station,scientific_name,vernacular_name,detections,high_confidence",
-    ...rows.map((x) => [x.week, x.deployment_id, x.scientific_name, x.vernacular_name, x.count, x.high_conf_count].map(esc).join(",")),
+    ...rows.filter((x) => nameable(x.scientific_name)).map((x) => [x.week, x.deployment_id, x.scientific_name, x.vernacular_name, x.count, x.high_conf_count].map(esc).join(",")),
   ].join("\n");
 }

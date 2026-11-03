@@ -13,10 +13,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-type Props = { searchParams: Promise<Record<string, string | undefined>> };
+type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
 export default async function ReportPage({ searchParams }: Props) {
-  const params = await searchParams;
+  // A repeated URL parameter arrives as an array: use the first.
+  const params = Object.fromEntries(Object.entries(await searchParams).map(([k, v]) => [k, Array.isArray(v) ? v[0] : v]));
   // A town name stands in for coordinates when none are given.
   let placeName: string | null = null;
   if ((!params.lat || !params.lon) && params.place) {
