@@ -1,4 +1,5 @@
 import { sql } from "@/lib/db";
+import { refreshStationWeekly } from "@/lib/siteReport";
 import { GRP } from "@/lib/methods";
 
 import { BIRDWEATHER_PAUSED, PENDING_SOURCES } from "@/lib/sources";
@@ -121,6 +122,7 @@ export async function refreshRollups(): Promise<{ days: string[]; cells: number;
   }));
   for (const day of days) await rollupEventsDay(day);
   await refreshDerived();
+  await refreshStationWeekly();
   return { days, cells: cells.length, rows, errors };
 }
 

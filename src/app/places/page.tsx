@@ -23,7 +23,8 @@ export default function Places() {
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><T k="Birds and wildlife near you" /></h1>
         <p className="mt-3">
           <T k="Each report shows what arrived around a city in the last four weeks, what is expected in the next six, and what is recorded most, for birds, bats, frogs and insects." />{" "}
-          <Link href="/" className="text-cyan-400 hover:underline"><T k="Not listed? Type any town into the search box on the live map." /></Link>
+          <Link href="/" className="text-cyan-400 hover:underline"><T k="Not listed? Type any town into the search box on the live map." /></Link>{" "}
+          <Link href="/report" className="text-cyan-400 hover:underline"><T k="For a single site and your own dates, use a site report." /></Link>
         </p>
         <div className="mt-6 space-y-4">
           {byCountry.map(([country, ps]) => (
