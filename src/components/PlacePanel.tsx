@@ -63,6 +63,9 @@ export default function PlacePanel({ place, group, onPick, onClose }: { place: P
             )}
           </>
         )}
+      <a href={`/report?lat=${place.lat.toFixed(4)}&lon=${place.lon.toFixed(4)}${grp === "avian" ? "" : `&group=${grp}`}`} className={`block mx-4 ${r && place.slug ? "-mt-2" : "mt-4"} mb-4 rounded-md border border-white/15 px-3 py-2 text-center text-sm text-slate-200 hover:bg-white/5`}>
+        {t("Site report for {p}: compare two periods", { p: place.label.split(",")[0] })}
+      </a>
     </div>
   );
 }
