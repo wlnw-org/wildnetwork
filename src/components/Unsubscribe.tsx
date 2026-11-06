@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 
-export default function Unsubscribe({ token }: { token: string }) {
+export default function Unsubscribe({ token, endpoint = "/api/v1/alerts" }: { token: string; endpoint?: string }) {
   const [msg, setMsg] = useState<string | null>(null);
   async function go() {
-    const r = await fetch("/api/v1/alerts", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "unsubscribe", token }) });
+    const r = await fetch(endpoint, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "unsubscribe", token }) });
     const d = await r.json().catch(() => ({}));
     setMsg(d.message ?? d.error ?? "Something went wrong.");
   }

@@ -27,6 +27,7 @@ export default function AboutPanel() {
         </p>
         <p className="mt-2">
           New here? <button onClick={() => window.dispatchEvent(new Event("wn:tour"))} className="text-cyan-400 hover:underline">Take the one-minute tour</button>.
+          What changed lately: <a href="/updates" className="text-cyan-400 hover:underline">updates</a>, also by email.
         </p>
       </section>
 

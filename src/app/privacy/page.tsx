@@ -63,6 +63,15 @@ export default function Privacy() {
           used for nothing else and never shared. The anonymous counts of alerts per species and per &quot;I am a...&quot; answer may be reported to funders.
         </p>
 
+        <h2 id="updates" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Update emails</h2>
+        <p>
+          If you sign up for update emails on <Link href="/updates" className="text-cyan-400 hover:underline">/updates</Link>, the site stores your email address
+          (encrypted), a keyed hash of it to spot repeat sign-ups, a keyed hash of your IP address to limit sign-ups, the dates you signed up and confirmed, and the
+          date of the last update sent to you. Emails are sent through Resend (United States), which processes your address to deliver them. Nothing is sent until
+          you confirm; unconfirmed sign-ups are deleted after 7 days. Every email has a link that deletes your address at once. Your address is used for nothing
+          else and never shared.
+        </p>
+
         <h2 id="research" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Researchers</h2>
         <p>
           Signing in with ORCID (for study areas and reviews) stores your ORCID iD and the public name ORCID returns, and when you last signed in. A signed
