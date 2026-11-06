@@ -8,7 +8,7 @@
   "properties": {
     "wdx": {
       "type": "string",
-      "enum": ["0.1", "0.2", "0.3"],
+      "enum": ["0.1", "0.2", "0.3", "0.4"],
       "description": "WDX spec version this event conforms to."
     },
     "eventId": {
@@ -161,7 +161,22 @@
       },
       "additionalProperties": true
     },
-    "license": { "type": "string" }
+    "license": { "type": "string" },
+    "dataset": {
+      "type": "object",
+      "description": "v0.4: the dataset this event belongs to, for credit and citation.",
+      "required": ["datasetId"],
+      "properties": {
+        "datasetId": { "type": "string", "minLength": 1 },
+        "title": { "type": "string" },
+        "rightsHolder": { "type": "string" },
+        "recordedBy": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "citation": { "type": "string" },
+        "doi": { "type": "string" },
+        "url": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
   },
   "additionalProperties": true
 }

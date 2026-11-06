@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "What Wildlife Network collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
 };
 
-const UPDATED = "3 November 2026";
+const UPDATED = "7 November 2026";
 
 export default function Privacy() {
   return (
@@ -73,6 +73,13 @@ export default function Privacy() {
           are sent each other&apos;s email address; it goes to no one else.
           A study proposal stores your name, email (encrypted), institution, the area and your question, read only by the maintainer. Ask us to delete any of
           it, or delete a study yourself.
+        </p>
+        <p className="mt-3" id="datasets">
+          Uploading a dataset stores what you upload: per detection the site name you used, its coordinates, time, species, confidence and file name, plus the
+          dataset&apos;s description and the people you list, with your ORCID iD as owner. Your detection tables are read in your browser; only the rows you
+          confirm are sent. Drafts and submissions are seen only by you and the reviewer. A live dataset&apos;s page, people and citation are public; its records
+          appear in weekly counts per 5 degree cell, and its download rounds positions to the precision you chose (sensitive species to 1 degree) and does not
+          name sites of sensitive species. Withdrawing a dataset deletes it and all its records at once.
         </p>
 
         <H2>Hosting</H2>

@@ -4,6 +4,7 @@ import { PageLang, T } from "@/components/T";
 import { searchPlaces } from "@/lib/places";
 import { GROUP_LABEL } from "@/lib/studies";
 import { speciesSlug } from "@/lib/site";
+import { credits, type Credit } from "@/lib/datasets";
 import { parseReportQuery, REPORT_GROUPS, REPORT_LIMITS, reportHref, siteReport, type PeriodSummary, type SiteReport, type SpeciesRow } from "@/lib/siteReport";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +27,7 @@ export default async function ReportPage({ searchParams }: Props) {
   }
   const q = parseReportQuery(params);
   const r = q ? await siteReport(q) : null;
+  const contributed = r?.mode === "area" && r.cell ? await credits({ cell: r.cell }) : [];
   return (
     <main className="min-h-screen bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
@@ -40,7 +42,7 @@ export default async function ReportPage({ searchParams }: Props) {
         </p>
         <Form params={params} q={q} />
         {params.place && !q && <p className="mt-4 text-amber-300"><T k="Could not find that place. Try a nearby town, or enter coordinates." /></p>}
-        {r && <Report r={r} placeName={placeName} />}
+        {r && <Report r={r} placeName={placeName} contributed={contributed} />}
       </div>
     </main>
   );
@@ -72,12 +74,12 @@ function Form({ params, q }: { params: Record<string, string | undefined>; q: Re
   );
 }
 
-function Report({ r, placeName }: { r: SiteReport; placeName: string | null }) {
+function Report({ r, placeName, contributed }: { r: SiteReport; placeName: string | null; contributed: Credit[] }) {
   const { q } = r;
   const kept = r.stations.filter((s) => s.kept);
   const others = r.stations.filter((s) => !s.kept);
   const bySource = Object.entries(others.reduce<Record<string, number>>((a, s) => ({ ...a, [s.source_system]: (a[s.source_system] ?? 0) + 1 }), {}));
-  const sourceName = (s: string) => (s === "birdweather" ? "BirdWeather" : s === "inaturalist" ? "iNaturalist" : s === "gbif" ? "GBIF" : s);
+  const sourceName = (s: string) => (s === "birdweather" ? "BirdWeather" : s === "inaturalist" ? "iNaturalist" : s === "gbif" ? "GBIF" : s === "upload" ? "contributed datasets" : s);
   return (
     <>
       <H2><T k="Within {km} km of {place}" v={{ km: q.km, place: placeName ?? `${q.lat}, ${q.lon}` }} /></H2>
@@ -108,6 +110,12 @@ function Report({ r, placeName }: { r: SiteReport; placeName: string | null }) {
           {r.sources.length
             ? <T k={r.b ? "Compared on {list} only: the sources with records in both periods." : "Sources: {list}."} v={{ list: r.sources.map(sourceName).join(", ") }} />
             : <T k="No source has records in both periods here, so there is nothing to compare." />}
+        </p>
+      )}
+      {contributed.length > 0 && (
+        <p className="mt-2 text-sm text-slate-400">
+          <T k="Contributed datasets in this area:" />{" "}
+          {contributed.map((c, i) => <span key={c.id}>{i > 0 && ", "}<Link href={`/datasets/${c.id}`} className="text-cyan-400 hover:underline">{c.title}</Link>{c.institution ? ` (${c.institution})` : ""}</span>)}
         </p>
       )}
       {r.historyFrom && <p className="mt-2 text-sm text-slate-400"><T k={r.mode === "area" ? "History for this area starts in the week of {d}." : "History for these stations starts in the week of {d}."} v={{ d: r.historyFrom }} /></p>}

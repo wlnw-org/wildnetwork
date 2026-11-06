@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { credits } from "@/lib/datasets";
 import Link from "next/link";
 import PausedNotice from "@/components/PausedNotice";
 import { BIRDWEATHER_PAUSED } from "@/lib/sources";
@@ -40,7 +41,7 @@ const load = cache(async (slug: string) => {
   ]);
   const top = arrivals[0]?.region ?? null;
   // Links to neighbouring pages: the same genus, and species arriving in the same region within about ten days.
-  const [genus, sameTime] = await Promise.all([
+  const [genus, sameTime, contributed] = await Promise.all([
     sql<Related[]>`SELECT scientific_name, MIN(vernacular_name) AS vernacular_name FROM phenology
       WHERE split_part(scientific_name, ' ', 1) = ${name.split(" ")[0]} AND scientific_name <> ${name}
       GROUP BY 1 ORDER BY COUNT(*) DESC LIMIT 8`,
@@ -50,8 +51,9 @@ const load = cache(async (slug: string) => {
                  FROM phenology WHERE ${REGION} = ${top} GROUP BY 1)
       SELECT a.scientific_name, a.vernacular_name FROM a, (SELECT w FROM a WHERE scientific_name = ${name}) me
       WHERE a.scientific_name <> ${name} AND abs(a.w - me.w) <= 10 ORDER BY a.n DESC LIMIT 8` : Promise.resolve([] as Related[]),
+    credits({ species: name }),
   ]);
-  return { name, grp: sp.grp, common: names[0]?.vernacular_name ?? null, recent: recent[0], arrivals, media, story: speciesStory(name, [], climate, span), top, genus, sameTime };
+  return { name, grp: sp.grp, common: names[0]?.vernacular_name ?? null, recent: recent[0], arrivals, media, story: speciesStory(name, [], climate, span), top, genus, sameTime, contributed };
 });
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -170,6 +172,12 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
           </>
         )}
 
+        {d.contributed.length > 0 && (
+          <p className="mt-8 text-sm text-slate-400">
+            <T k="Includes records from contributed datasets:" />{" "}
+            {d.contributed.map((c, i) => <span key={c.id}>{i > 0 && ", "}<Link href={`/datasets/${c.id}`} className="text-cyan-400 hover:underline">{c.title}</Link>{c.institution ? ` (${c.institution})` : ""}</span>)}
+          </p>
+        )}
         <p className="mt-8 text-sm text-slate-500">
           <T k="Figures are effort corrected and come from automatic sound identification, which makes mistakes." />{" "}
           <Link href="/methods" className="text-cyan-400 hover:underline"><T k="How this is measured" /></Link>{" · "}

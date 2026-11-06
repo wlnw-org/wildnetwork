@@ -638,6 +638,8 @@ const TOUR2: Record<string, Dict> = {
 // Server-rendered species and place pages (src/components/T.tsx).
 const PAGES: Record<string, Dict> = {
  "es": {
+  "Contributed datasets in this area:": "Conjuntos de datos aportados en esta zona:",
+  "Includes records from contributed datasets:": "Incluye registros de conjuntos de datos aportados:",
   "Add a station to start a record for this exact place.": "Añade una estación para empezar un registro de este lugar exacto.",
   "Also nearby, shown on the live map but not in this report: {list}. Their history is kept by the source, not here.": "También cerca, en el mapa en vivo pero no en este informe: {list}. Su historial lo guarda la fuente, no este sitio.",
   "Animals": "Animales",
@@ -739,6 +741,8 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "¿No aparece? Escribe cualquier ciudad en el buscador del mapa en vivo."
  },
  "fr": {
+  "Contributed datasets in this area:": "Jeux de données contribués dans cette zone :",
+  "Includes records from contributed datasets:": "Comprend des données issues de jeux de données contribués :",
   "Add a station to start a record for this exact place.": "Ajoutez une station pour commencer un relevé de ce lieu précis.",
   "Also nearby, shown on the live map but not in this report: {list}. Their history is kept by the source, not here.": "Aussi à proximité, sur la carte en direct mais pas dans ce rapport : {list}. Leur historique est conservé par la source, pas ici.",
   "Animals": "Animaux",
@@ -840,6 +844,8 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "Pas dans la liste ? Tapez n'importe quelle ville dans la recherche de la carte en direct."
  },
  "de": {
+  "Contributed datasets in this area:": "Beigetragene Datensätze in diesem Gebiet:",
+  "Includes records from contributed datasets:": "Enthält Daten aus beigetragenen Datensätzen:",
   "Add a station to start a record for this exact place.": "Füge eine Station hinzu, um für genau diesen Ort Daten zu sammeln.",
   "Also nearby, shown on the live map but not in this report: {list}. Their history is kept by the source, not here.": "Ebenfalls in der Nähe, auf der Live-Karte, aber nicht in diesem Bericht: {list}. Ihre Daten bewahrt die Quelle auf, nicht diese Seite.",
   "Animals": "Tiere",
@@ -941,6 +947,8 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "Nicht dabei? Geben Sie einen beliebigen Ort in die Suche der Live-Karte ein."
  },
  "pt": {
+  "Contributed datasets in this area:": "Conjuntos de dados contribuídos nesta área:",
+  "Includes records from contributed datasets:": "Inclui registros de conjuntos de dados contribuídos:",
   "Add a station to start a record for this exact place.": "Adicione uma estação para começar um registro deste lugar exato.",
   "Also nearby, shown on the live map but not in this report: {list}. Their history is kept by the source, not here.": "Também por perto, no mapa ao vivo mas não neste relatório: {list}. O histórico delas fica com a fonte, não aqui.",
   "Animals": "Animais",
@@ -1042,6 +1050,8 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "Não está na lista? Escreva qualquer cidade na pesquisa do mapa ao vivo."
  },
  "hi": {
+  "Contributed datasets in this area:": "इस क्षेत्र में योगदान किए गए डेटासेट:",
+  "Includes records from contributed datasets:": "योगदान किए गए डेटासेट के रिकॉर्ड शामिल हैं:",
   "Add a station to start a record for this exact place.": "इस सटीक जगह का रिकॉर्ड शुरू करने के लिए एक स्टेशन जोड़ें।",
   "Also nearby, shown on the live map but not in this report: {list}. Their history is kept by the source, not here.": "पास में और भी हैं, लाइव मानचित्र पर दिखते हैं पर इस रिपोर्ट में नहीं: {list}। उनका इतिहास स्रोत के पास रहता है, यहाँ नहीं।",
   "Animals": "जीव",
@@ -1143,6 +1153,8 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "सूची में नहीं? लाइव मानचित्र की खोज में कोई भी शहर लिखें।"
  },
  "ta": {
+  "Contributed datasets in this area:": "இந்தப் பகுதியில் பங்களிக்கப்பட்ட தரவுத்தொகுப்புகள்:",
+  "Includes records from contributed datasets:": "பங்களிக்கப்பட்ட தரவுத்தொகுப்புகளின் பதிவுகள் அடங்கும்:",
   "Add a station to start a record for this exact place.": "இந்தச் சரியான இடத்துக்கான பதிவைத் தொடங்க ஒரு நிலையத்தைச் சேர்க்கவும்.",
   "Also nearby, shown on the live map but not in this report: {list}. Their history is kept by the source, not here.": "அருகில் மேலும் உள்ளன, நேரலை வரைபடத்தில் தெரியும் ஆனால் இந்த அறிக்கையில் இல்லை: {list}. அவற்றின் வரலாற்றை மூலமே வைத்திருக்கிறது, இங்கு அல்ல.",
   "Animals": "உயிரினங்கள்",

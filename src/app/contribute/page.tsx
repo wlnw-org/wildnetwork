@@ -95,6 +95,10 @@ export default function Contribute() {
           If your software can export a table of detections, the agent can read it. You tell it which columns hold the species, the time and the score. The{" "}
           <A href={`${AGENT}#any-detections-table-csv`}>CSV guide</A> has a worked example.
         </p>
+        <p className="mt-2">
+          Already have results sitting on a drive, from Song Meters, AudioMoths or past field seasons? <Link href="/datasets/new" className="text-cyan-400 hover:underline">Upload them as a dataset</Link>:
+          BirdNET and Kaleidoscope tables are recognised, the records are checked, and the dataset gets its own page, citation and credit wherever it is used.
+        </p>
 
         <H3 id="api">Your own detector or code</H3>
         <p>Send detections straight to the API in the open <A href="https://github.com/arunrajiah/wildlife-detection-exchange">WDX</A> format. Get a key, then post events:</p>

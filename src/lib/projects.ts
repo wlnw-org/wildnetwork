@@ -29,7 +29,7 @@ export interface JoinRequest { id: string; orcid: string; name: string; message:
 export type JoinTarget = { project: string } | { study: string };
 
 /** The maintainer's address is public already, and the starter projects are theirs; everyone else's comes from their own sign-in. */
-const MAINTAINER = { orcid: "0009-0009-5957-5814", email: "arunrajiah@gmail.com" };
+export const MAINTAINER = { orcid: "0009-0009-5957-5814", email: "arunrajiah@gmail.com" };
 const contactEmail = (orcid: string, enc: string | null) => (enc ? decryptToken(enc) : orcid === MAINTAINER.orcid ? MAINTAINER.email : null);
 
 const validEmail = (e: string) => /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,}$/.test(e);

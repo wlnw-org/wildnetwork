@@ -62,6 +62,7 @@ export default async function Research() {
           <Card href="/projects" title="Projects" text="Questions researchers want help with. Ask to join one, or post your own and say what help you need." stat={`${projects.filter((p) => p.open).length} open`} />
           <Card href="/studies" title="Study areas" text="Draw an area, pick a class or species. Get a live dashboard, a weekly digest and an export, and invite collaborators." stat={`${counts.studies} ${counts.studies === 1 ? "study" : "studies"}`} />
           <Card href="#review" title="Expert review" text="Mark arrival estimates you know as right, misidentified or resident. Two agreeing reviewers change the published dates." stat={`${counts.reviews} reviews by ${counts.reviewers}`} />
+          <Card href="/datasets" title="Contribute a dataset" text="Upload detections from your own recorders (BirdNET, Kaleidoscope, any CSV). Checked, credited by name, citable." stat="ORCID sign-in" />
           <Card href="#start" title="Start in 5 minutes" text="Copy a Python or R snippet, or open the starter notebook with the API and the open data release." stat="Python · R · notebook" />
         </div>
 

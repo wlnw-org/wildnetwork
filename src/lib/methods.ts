@@ -1,7 +1,7 @@
 import { sql } from "@/lib/db";
 
 /** Version of the published methods. Bump when a measure changes, and add a line to the changelog on /methods. */
-export const METHODS_VERSION = "0.20";
+export const METHODS_VERSION = "0.21";
 
 /** A cell-day needs this many detections of all species before it counts as observed. */
 export const MIN_EFFORT_DAY = 200;
@@ -47,3 +47,12 @@ export const minAcousticWeek = (grp: string) => (grp === "avian" ? MIN_EFFORT_WE
  * licence counted, has almost never recorded it in that cell or the eight around it, provided the area is well surveyed.
  * Catches repeated misidentifications by acoustic classifiers (for example Eurasian Curlew around Boston). */
 export const RANGE = { MIN_AREA_RECORDS: 1_000_000, MAX_SHARE: 1e-6, SINCE_YEAR: 2000, RECHECK_DAYS: 180 };
+
+/** Contributed datasets (methods 0.21). An uploaded detection is "passed" when the species was recorded by another source in
+ * the same 5 degree cell or the eight around it, within WEEK_WINDOW weeks of the same time of year; "flagged" when it was not
+ * although those cells and weeks were watched (other sources' class effort >= MIN_EFFORT_FACTOR x the weekly minimum);
+ * "unchecked" when the area is too thinly watched to judge. More than BURST_PER_MINUTE detections at one site in one minute
+ * are flagged as a possible test playback. Flagged records stay out of every measure until a reviewer confirms them.
+ * A contributor's first TRUSTED_AFTER datasets are reviewed by a person; later ones go live by themselves when at most
+ * AUTO_LIVE_MAX_FLAGGED of their records are flagged. */
+export const UPLOAD_CHECK = { WEEK_WINDOW: 4, MIN_EFFORT_FACTOR: 3, BURST_PER_MINUTE: 100, TRUSTED_AFTER: 2, AUTO_LIVE_MAX_FLAGGED: 0.2 };

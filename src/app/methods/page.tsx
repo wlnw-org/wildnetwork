@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PausedNotice from "@/components/PausedNotice";
 import { BIRDWEATHER_PAUSED } from "@/lib/sources";
-import { METHODS_VERSION, MIN_CELL_DETECTIONS, MIN_EFFORT_DAY, MIN_EFFORT_WEEK, OBSERVED, RANGE, SMALL_CLASS } from "@/lib/methods";
+import { METHODS_VERSION, MIN_CELL_DETECTIONS, MIN_EFFORT_DAY, MIN_EFFORT_WEEK, OBSERVED, RANGE, SMALL_CLASS, UPLOAD_CHECK } from "@/lib/methods";
 import { BOOT } from "@/lib/uncertainty";
 import { PHENOLOGY } from "@/lib/phenology";
 
@@ -39,7 +39,31 @@ export default function Methods() {
           <li><b>Published observations</b> through <a href="https://www.gbif.org" className="text-cyan-400 hover:underline">GBIF</a>, limited to records their publishers released under CC0 or CC BY 4.0 (mostly national recording schemes such as Artportalen, the Norwegian Species Observation Service and Arter.dk). Live records are those GBIF indexed in the last days; the weekly history is counted straight from GBIF per cell and week, and includes iNaturalist&apos;s licensed records. Each dataset is cited by DOI in the credits.</li>
           <li><b>Community observations</b> from iNaturalist, limited to CC0 and CC BY records.</li>
           <li><b>Device detections</b> pushed by contributors running wdx-agent on BirdNET-Pi, BirdNET-Go or camera traps.</li>
+          <li><b>Contributed datasets</b>: detection tables that researchers upload from their own recorders (see below). They count only once checked and live.</li>
         </ul>
+        <H3><span id="datasets" className="scroll-mt-6">Contributed datasets</span></H3>
+        <p>
+          A researcher signed in with ORCID describes a <Link href="/datasets" className="text-cyan-400 hover:underline">dataset</Link> (people, licence,
+          recorder, classifier and its confidence cut-off) and uploads detection tables from BirdNET, Kaleidoscope or any CSV with a date, a species and a place.
+          Tables are read in the browser first. Rows without a usable date, place or confidence, rows below the chosen cut-off (0.8 unless the owner sets another)
+          and non-animal classes are left out. Names are matched to the GBIF backbone (species, subspecies counted as their species, or genus); names GBIF does not
+          recognise are left out unless the uploader gives the scientific name. The same site, species and time count once. Each record is then checked:
+        </p>
+        <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>Season and place</b>: <i>passed</i> when another source recorded the species in the same 5 degree cell or the eight around it within {UPLOAD_CHECK.WEEK_WINDOW} weeks of the same time of year; <i>flagged</i> when it did not although those cells and weeks were watched (other sources&apos; detections of the class at least {UPLOAD_CHECK.MIN_EFFORT_FACTOR} times the weekly minimum); <i>unchecked</i> when the area is too thinly watched to say.</li>
+          <li><b>Range</b>: flagged when the species is a <a href="#range" className="text-cyan-400 hover:underline">range outlier</a> for that cell.</li>
+          <li><b>Bursts</b>: more than {UPLOAD_CHECK.BURST_PER_MINUTE} detections at one site in one minute are flagged as a possible test playback or stuck classifier.</li>
+        </ul>
+        <p className="mt-2">
+          Passed, unchecked and reviewer-confirmed records count; flagged and rejected ones never do, until a reviewer confirms them after listening to a clip.
+          A contributor&apos;s first {UPLOAD_CHECK.TRUSTED_AFTER} datasets are also looked at by a reviewer before they go live; after that a dataset goes live by
+          itself when at most {Math.round(UPLOAD_CHECK.AUTO_LIVE_MAX_FLAGGED * 100)}% of its records are flagged. Live records are added to the weekly counts per cell
+          as their own source, so effort, shares, arrival dates and site reports include them from the next daily recompute. They are not added to daily
+          counts or to the live map. Every dataset has a page with its citation, its checks and a Darwin Core CSV download under its own licence, with positions
+          rounded to the precision the owner chose (sensitive species to 1 degree). Species pages and site reports name the datasets they draw on. Contributed
+          datasets are not yet in the open data releases.
+        </p>
+        <Src files={[["src/lib/datasets.ts", "datasets"], ["src/lib/uploadParse.ts", "reading tables"]]} />
         <p className="mt-3">
           Detections are not stored one by one for long. They are counted into <b>rollups</b>: the number of detections per species, per 5 degree
           latitude and longitude cell, per day and per week. A 5 degree cell is roughly 550 km north to south. All measures below are computed from these
@@ -350,6 +374,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.21</b> (7 November 2026): <a href="#datasets" className="text-cyan-400 hover:underline">contributed datasets</a>: uploaded detection tables, checked for season, place, range and bursts, count in the weekly measures once live, and are credited by name.</li>
           <li><b>0.20</b> (6 November 2026): <a href="#reports" className="text-cyan-400 hover:underline">site reports</a> for one place and two periods, from
             the station&apos;s own weekly counts, or from the surrounding 5 degree cell when no station publishes nearby.</li>
           <li><b>0.19</b> (2 November 2026): GBIF weekly counts are now refreshed in rotation back a year, because records keep arriving for months, and eBird&apos;s yearly snapshot on GBIF is left out of them because it stops at the end of its last year. Weekly GBIF counts rise, mostly in older weeks.</li>

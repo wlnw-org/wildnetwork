@@ -1,11 +1,11 @@
-// Mirrors wildlife-detection-exchange v0.3 (v0.1 and v0.2 events are also valid) (schema/detection-event.schema.json).
+// Mirrors wildlife-detection-exchange v0.4 (v0.1 to v0.3 events are also valid) (schema/detection-event.schema.json).
 export type SensorType = "acoustic-recorder" | "camera-trap" | "other";
 export type TaxonRank = "species" | "genus" | "family" | "order" | "class" | "unranked";
 export type ReviewStatus = "unreviewed" | "confirmed" | "rejected" | "uncertain";
 export type MediaType = "audio" | "image" | "video";
 
 export interface WdxEvent {
-  wdx: "0.1" | "0.2" | "0.3";
+  wdx: "0.1" | "0.2" | "0.3" | "0.4";
   eventId: string;
   eventStart: string;
   eventEnd?: string;
@@ -43,4 +43,6 @@ export interface WdxEvent {
   review?: { status: ReviewStatus; reviewedBy?: string; reviewedAt?: string };
   source: { system: string; systemVersion?: string; sourceRecordId?: string; provider?: string; trusted?: boolean; providerUrl?: string; occurrenceId?: string; institutionCode?: string };
   license?: string;
+  /** v0.4: the dataset the event belongs to, for credit. */
+  dataset?: { datasetId: string; title?: string; rightsHolder?: string; recordedBy?: string[]; citation?: string; doi?: string; url?: string };
 }
