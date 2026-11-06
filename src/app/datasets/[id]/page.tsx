@@ -11,6 +11,7 @@ import DatasetActions, { type FlagGroup } from "@/components/DatasetActions";
 import DatasetForm from "@/components/DatasetForm";
 import { GROUP_LABELS } from "@/lib/datasetLabels";
 import DatasetUpload from "@/components/DatasetUpload";
+import DatasetKey from "@/components/DatasetKey";
 
 export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ id: string }> };
@@ -110,6 +111,10 @@ export default async function DatasetPage({ params }: Props) {
             {d.status === "draft" && <>
               <h3 className="mt-4 font-semibold text-slate-100">Add detection tables</h3>
               <DatasetUpload id={d.id} method={d.method} minConf={d.min_conf} />
+            </>}
+            {d.status === "draft" && d.owner === me?.orcid && <>
+              <h3 className="mt-6 font-semibold text-slate-100">Upload key</h3>
+              <DatasetKey id={d.id} hasKey={!!d.upload_key_hash} since={d.upload_key_at} />
             </>}
             <div className="mt-6"><DatasetActions id={d.id} status={d.status} records={d.records} reviewer={reviewer} flagged={flagged} /></div>
             <details className="mt-6">

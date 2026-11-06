@@ -1,4 +1,5 @@
-import { randomBytes } from "node:crypto";
+import { randomBytes, timingSafeEqual } from "node:crypto";
+import { hashKey } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { gbifJson } from "@/lib/gbif";
 import { GROUPS, GRP, UPLOAD_CHECK, minAcousticWeek } from "@/lib/methods";
@@ -33,7 +34,7 @@ export interface Dataset {
   license: string; grp: string; method: "machine" | "human"; device: string | null; classifier: string | null; min_conf: number;
   precision_km: number; status: "draft" | "review" | "live" | "withdrawn"; doi: string | null; records: number; species: number;
   sites: number; first_day: string | null; last_day: string | null; checks: Checks | null; review_note: string | null;
-  downloads: number; created_at: string; live_at: string | null;
+  downloads: number; created_at: string; live_at: string | null; upload_key_hash: string | null; upload_key_at: string | null;
 }
 export interface Checks { at: string; total: number; passed: number; unchecked: number; flagged: number; confirmed: number; rejected: number; reasons: Record<string, number>; warnings: string[] }
 
@@ -55,7 +56,7 @@ export function cleanPeople(v: unknown): Person[] {
 }
 
 export async function getDataset(id: string): Promise<Dataset | null> {
-  const [d] = await sql<Dataset[]>`SELECT *, first_day::text, last_day::text, created_at::text, live_at::text FROM datasets WHERE id = ${id}`;
+  const [d] = await sql<Dataset[]>`SELECT *, first_day::text, last_day::text, created_at::text, live_at::text, upload_key_at::text FROM datasets WHERE id = ${id}`;
   return d ?? null;
 }
 export const canManage = (d: Dataset, orcid: string | undefined) => !!orcid && (d.owner === orcid || isReviewer(orcid));
@@ -104,7 +105,7 @@ export async function matchNames(names: string[]): Promise<NameMatch[]> {
 export class DatasetError extends Error {}
 
 /** Adds checked rows to a draft. Names must already be matched (rename maps an unmatched name to one the uploader chose). */
-export async function addRecords(d: Dataset, rows: UploadRow[], rename: Record<string, string>): Promise<{ added: number; duplicates: number; unmatched: number }> {
+export async function addRecords(d: Dataset, rows: UploadRow[], rename: Record<string, string>): Promise<{ added: number; duplicates: number; unmatched: number }> /* unmatched also counts rows below the cut-off */ {
   if (d.status !== "draft") throw new DatasetError("Records can only be added while the dataset is a draft.");
   if ((await databaseMb()) > STORAGE.WARN_MB) throw new DatasetError("Uploads are paused while the database is nearly full. Please try again in a few days.");
   if (d.records + rows.length > DATASET_LIMITS.MAX_RECORDS) throw new DatasetError(`A dataset can hold up to ${DATASET_LIMITS.MAX_RECORDS.toLocaleString("en")} records. Please split it.`);
@@ -115,6 +116,8 @@ export async function addRecords(d: Dataset, rows: UploadRow[], rename: Record<s
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i], m = matches.get(names[i]);
     const ts = Date.parse(r.ts);
+    // The cut-off is enforced here too, since keys let tools send rows that never passed the browser reader.
+    if (d.method === "machine" && (r.confidence === null || !(r.confidence >= d.min_conf))) { unmatched++; continue; }
     if (!m?.scientificName || !Number.isFinite(ts) || !Number.isFinite(r.lat) || !Number.isFinite(r.lon) || Math.abs(r.lat) > 90 || Math.abs(r.lon) > 180) { unmatched++; continue; }
     clean.push({
       dataset_id: d.id, site: String(r.site ?? "").slice(0, 80) || `${r.lat.toFixed(3)},${r.lon.toFixed(3)}`, lat: r.lat, lon: r.lon, ts: new Date(ts),
@@ -344,4 +347,38 @@ export function datasetFields(b: Record<string, unknown>) {
     institution: str("institution", 200), description: str("description", DATASET_LIMITS.TEXT),
     device: str("device", 200), classifier: str("classifier", 200), people: cleanPeople(b.people),
   };
+}
+
+/** Upload keys (one per dataset) let desktop tools and scripts add records, check and submit. Shown once, stored hashed. */
+export const KEY_ACTIONS = ["names", "records", "events", "check", "submit"];
+export async function newUploadKey(id: string): Promise<string> {
+  const raw = `wnds_${randomBytes(24).toString("base64url")}`;
+  await sql`UPDATE datasets SET upload_key_hash = ${hashKey(raw)}, upload_key_at = now() WHERE id = ${id}`;
+  return raw;
+}
+export async function revokeUploadKey(id: string): Promise<void> {
+  await sql`UPDATE datasets SET upload_key_hash = NULL, upload_key_at = NULL WHERE id = ${id}`;
+}
+export function keyMatches(d: Dataset, req: Request): boolean {
+  const auth = req.headers.get("authorization");
+  const raw = auth?.startsWith("Bearer ") ? auth.slice(7).trim() : req.headers.get("x-api-key");
+  if (!raw || !d.upload_key_hash) return false;
+  const a = Buffer.from(hashKey(raw)), b = Buffer.from(d.upload_key_hash);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+/** WDX events (any 0.x) to upload rows, so a tool that already writes WDX can push its files as they are. */
+export function wdxToRows(events: unknown[]): UploadRow[] {
+  const rows: UploadRow[] = [];
+  for (const e of events) {
+    const ev = e as { eventStart?: string; deployment?: { deploymentId?: string; name?: string; latitude?: number; longitude?: number }; detection?: { scientificName?: string; confidence?: number; individualCount?: number }; media?: { fileName?: string; url?: string }; review?: { status?: string } };
+    if (!ev?.eventStart || !ev.detection?.scientificName || ev.review?.status === "rejected") continue;
+    const lat = Number(ev.deployment?.latitude), lon = Number(ev.deployment?.longitude);
+    rows.push({
+      site: String(ev.deployment?.name ?? ev.deployment?.deploymentId ?? "").slice(0, 80), lat, lon, ts: ev.eventStart,
+      name: ev.detection.scientificName, confidence: typeof ev.detection.confidence === "number" ? ev.detection.confidence : null,
+      count: Number(ev.detection.individualCount) || 1, file: ev.media?.fileName ?? null,
+    });
+  }
+  return rows;
 }

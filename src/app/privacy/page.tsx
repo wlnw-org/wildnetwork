@@ -79,7 +79,7 @@ export default function Privacy() {
           dataset&apos;s description and the people you list, with your ORCID iD as owner. Your detection tables are read in your browser; only the rows you
           confirm are sent. Drafts and submissions are seen only by you and the reviewer. A live dataset&apos;s page, people and citation are public; its records
           appear in weekly counts per 5 degree cell, and its download rounds positions to the precision you chose (sensitive species to 1 degree) and does not
-          name sites of sensitive species. Withdrawing a dataset deletes it and all its records at once.
+          name sites of sensitive species. Withdrawing a dataset deletes it and all its records at once. An upload key you create for a dataset is stored only as a hash.
         </p>
 
         <H2>Hosting</H2>
