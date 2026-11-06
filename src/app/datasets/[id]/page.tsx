@@ -8,7 +8,8 @@ import { isSensitiveTaxon } from "@/lib/sensitiveTaxa";
 import { speciesSlug } from "@/lib/site";
 import CopyBlock from "@/components/CopyBlock";
 import DatasetActions, { type FlagGroup } from "@/components/DatasetActions";
-import DatasetForm, { GROUP_LABELS } from "@/components/DatasetForm";
+import DatasetForm from "@/components/DatasetForm";
+import { GROUP_LABELS } from "@/lib/datasetLabels";
 import DatasetUpload from "@/components/DatasetUpload";
 
 export const dynamic = "force-dynamic";
