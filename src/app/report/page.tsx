@@ -36,7 +36,7 @@ export default async function ReportPage({ searchParams }: Props) {
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><T k="What changed at a place" /></h1>
         <p className="mt-3">
           <T k="Pick a place, a radius and dates. The report shows what the listening stations around it recorded, week by week, and can compare two periods, such as before and after a restoration, or this year and last." />{" "}
-          <Link href="/methods" className="text-cyan-400 hover:underline"><T k="Methods" /></Link>
+          <Link href="/methods#reports" className="text-cyan-400 hover:underline"><T k="Methods" /></Link>
         </p>
         <Form params={params} q={q} />
         {params.place && !q && <p className="mt-4 text-amber-300"><T k="Could not find that place. Try a nearby town, or enter coordinates." /></p>}
@@ -83,14 +83,15 @@ function Report({ r, placeName }: { r: SiteReport; placeName: string | null }) {
       <H2><T k="Within {km} km of {place}" v={{ km: q.km, place: placeName ?? `${q.lat}, ${q.lon}` }} /></H2>
       <div className="flex flex-wrap gap-2 text-sm">
         <Link href={`/?lat=${q.lat.toFixed(2)}&lon=${q.lon.toFixed(2)}`} className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Open on the live map" /></Link>
-        {kept.length > 0 && <a href={`/api/v1/report${reportHref(q, "&format=csv")}`} className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Download CSV" /></a>}
+        {r.mode === "stations" && kept.length > 0 && <a href={`/api/v1/report${reportHref(q, "&format=csv")}`} className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Download CSV" /></a>}
       </div>
 
       <H2><T k="Stations listening here" /></H2>
       {kept.length === 0 ? (
         <p>
-          <T k="No station within {km} km keeps its history on Wildlife Network yet, so there is nothing to report for this place." v={{ km: q.km }} />{" "}
-          <Link href="/contribute" className="text-cyan-400 hover:underline"><T k="Add a station to start the record." /></Link>
+          <T k="No station within {km} km keeps its history on Wildlife Network yet." v={{ km: q.km }} />{" "}
+          {r.mode === "area" && r.cell && <T k="So this report uses the weekly counts for the whole 5 degree grid cell around the point ({lat}° to {lat2}°, {lon}° to {lon2}°, about 550 km across), the same counts as the map and study areas. Shown here, not downloadable." v={{ lat: r.cell.lat, lat2: r.cell.lat + 5, lon: r.cell.lon, lon2: r.cell.lon + 5 }} />}{" "}
+          <Link href="/contribute" className="text-cyan-400 hover:underline"><T k="Add a station to start a record for this exact place." /></Link>
         </p>
       ) : (
         <ul className="mt-2 space-y-1 text-sm">
@@ -102,15 +103,24 @@ function Report({ r, placeName }: { r: SiteReport; placeName: string | null }) {
           <T k="Also nearby, shown on the live map but not in this report: {list}. Their history is kept by the source, not here." v={{ list: bySource.map(([s, n]) => `${n} ${sourceName(s)}`).join(", ") }} />
         </p>
       )}
-      {r.historyFrom && <p className="mt-2 text-sm text-slate-400"><T k="History for these stations starts in the week of {d}." v={{ d: r.historyFrom }} /></p>}
+      {r.mode === "area" && (
+        <p className="mt-2 text-sm text-slate-400">
+          {r.sources.length
+            ? <T k={r.b ? "Compared on {list} only: the sources with records in both periods." : "Sources: {list}."} v={{ list: r.sources.map(sourceName).join(", ") }} />
+            : <T k="No source has records in both periods here, so there is nothing to compare." />}
+        </p>
+      )}
+      {r.historyFrom && <p className="mt-2 text-sm text-slate-400"><T k={r.mode === "area" ? "History for this area starts in the week of {d}." : "History for these stations starts in the week of {d}."} v={{ d: r.historyFrom }} /></p>}
 
-      {kept.length > 0 && (
+      {(kept.length > 0 || r.mode === "area") && (
         <>
-          <Period title={r.b ? "Period A" : "Period"} p={r.a} />
-          {r.b && <Period title="Period B" p={r.b} />}
+          <Period title={r.b ? "Period A" : "Period"} p={r.a} area={r.mode === "area"} />
+          {r.b && <Period title="Period B" p={r.b} area={r.mode === "area"} />}
           {r.b && <Change r={r} />}
           <p className="mt-8 text-xs text-slate-500">
-            <T k="Counts are machine detections, not individual animals. Compare shares per 1,000 detections rather than raw counts when the number of stations or weeks differs between periods. Sound only reaches species that call." />
+            {r.mode === "area"
+              ? <T k="Counts mix machine detections and observers' records, not individual animals. Compare shares per 1,000 rather than raw counts: the number of stations and observers changes over time, and BirdWeather's weekly counts only start in mid-November 2025." />
+              : <T k="Counts are machine detections, not individual animals. Compare shares per 1,000 detections rather than raw counts when the number of stations or weeks differs between periods. Sound only reaches species that call." />}
           </p>
         </>
       )}
@@ -118,7 +128,7 @@ function Report({ r, placeName }: { r: SiteReport; placeName: string | null }) {
   );
 }
 
-function Period({ title, p }: { title: string; p: PeriodSummary }) {
+function Period({ title, p, area = false }: { title: string; p: PeriodSummary; area?: boolean }) {
   const max = Math.max(1, ...p.weeks.map((w) => w.detections));
   // Every Monday in the period, so weeks without data show as gaps rather than closing up.
   const byWeek = new Map(p.weeks.map((w) => [w.week, w]));
@@ -129,7 +139,9 @@ function Period({ title, p }: { title: string; p: PeriodSummary }) {
   return (
     <>
       <H2><T k={title} />: {p.period.from} … {p.period.to}</H2>
-      <p className="text-sm"><T k="{d} detections of {s} species, from {w} station weeks." v={{ d: p.detections.toLocaleString("en-GB"), s: p.species, w: p.stationWeeks }} /></p>
+      <p className="text-sm">{area
+        ? <T k="{d} detections and records of {s} species, over {w} weeks." v={{ d: p.detections.toLocaleString("en-GB"), s: p.species, w: p.stationWeeks }} />
+        : <T k="{d} detections of {s} species, from {w} station weeks." v={{ d: p.detections.toLocaleString("en-GB"), s: p.species, w: p.stationWeeks }} />}</p>
       {p.weeks.length > 0 && (
         <svg viewBox={`0 0 ${mondays.length * 12} 60`} className="mt-3 h-20 w-full" preserveAspectRatio="none" role="img" aria-label="Detections per week">
           {mondays.map((m, i) => {

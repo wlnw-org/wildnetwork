@@ -247,6 +247,26 @@ export default function Methods() {
           <code className="text-slate-200">/api/v1/coverage</code>.
         </p>
 
+        <H3><span id="reports" className="scroll-mt-6">Site reports</span></H3>
+        <p>
+          A <Link href="/report" className="text-cyan-400 hover:underline">site report</Link> answers one question for one place: what was recorded around it in a
+          period, and what changed against a second period (before and after a restoration, or this year and last). It works at two scales:
+        </p>
+        <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>Stations.</b> When devices that publish to Wildlife Network are within the chosen radius (up to 50 km), the report uses their own weekly counts per
+            species, kept for as long as the station stays registered. Detections at confidence 0.85 or more are counted as high confidence. Only these rows can be
+            downloaded as CSV.</li>
+          <li><b>Area.</b> With no such station nearby, the report uses the weekly counts for the whole 5 degree cell around the point (BirdWeather detections and
+            GBIF records, as on the map), and the radius plays no part. These are shown, not downloadable, because BirdWeather-derived counts may not be
+            redistributed.</li>
+        </ul>
+        <p className="mt-2">
+          Shares are per 1,000 detections or records of the chosen class in the same weeks and place, so they are the fair comparison when the number of stations,
+          observers or weeks differs. Raw counts are not. &quot;Only in period A&quot; and &quot;only in period B&quot; compare every species recorded, so a
+          species seen once can make the list. Sensitive species count in the totals but are never named. Weeks are labelled by their Monday, and a week counts when
+          any part of it falls inside the period. There is no effort correction across periods beyond the shares, and no uncertainty interval yet.
+        </p>
+
         <H3><span id="uncertainty" className="scroll-mt-6">Uncertainty</span></H3>
         <p>
           Every measure that drives a list or a sentence carries an interval from resampling. The generators are seeded, so the same data always gives the same
@@ -330,6 +350,8 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.20</b> (6 November 2026): <a href="#reports" className="text-cyan-400 hover:underline">site reports</a> for one place and two periods, from
+            the station&apos;s own weekly counts, or from the surrounding 5 degree cell when no station publishes nearby.</li>
           <li><b>0.19</b> (2 November 2026): GBIF weekly counts are now refreshed in rotation back a year, because records keep arriving for months, and eBird&apos;s yearly snapshot on GBIF is left out of them because it stops at the end of its last year. Weekly GBIF counts rise, mostly in older weeks.</li>
           <li><b>0.18</b> (31 October 2026): a <a href="#possibly-arriving" className="text-cyan-400 hover:underline">Possibly arriving</a> list shows recent returns not yet confirmed by a second week. Arrival dates themselves do not change.</li>
           <li><b>0.17</b> (30 October 2026): an arrival needs at least 6 absent weeks with at least a tenth of the arrival week&apos;s effort. This removes false arrivals at the point where acoustic data begins, 17 November 2025 for most cells.</li>

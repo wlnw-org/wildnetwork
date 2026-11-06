@@ -56,8 +56,14 @@ export interface SiteReport {
   b: PeriodSummary | null;
   /** Species recorded in only one of the two periods (when there are two). */
   onlyA: SpeciesRow[]; onlyB: SpeciesRow[];
-  /** Weeks that history is available from, for the kept stations. */
+  /** Week that history is available from: for the kept stations, or for the grid cell in area mode. */
   historyFrom: string | null;
+  /** "stations": our own stations nearby. "area": none nearby, so the 5 degree grid cell around the point is used instead. */
+  mode: "stations" | "area";
+  /** South-west corner of the grid cell used in area mode. */
+  cell: { lat: number; lon: number } | null;
+  /** Area mode: the sources used. With two periods, only those with records in both. */
+  sources: string[];
 }
 
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
@@ -108,6 +114,36 @@ async function summarise(ids: string[], group: string, p: Period): Promise<Perio
   };
 }
 
+/**
+ * Area mode: the weekly counts per 5 degree cell that the map, species pages and study areas already show (BirdWeather
+ * detections and GBIF records). Shown only, never exported, because BirdWeather-derived counts may not be redistributed.
+ */
+async function summariseCell(cell: { lat: number; lon: number }, group: string, p: Period, sources: string[]): Promise<PeriodSummary> {
+  const grp = group === "all" ? sql`` : sql`AND g.grp = ${group}`;
+  const rows = sql`
+    SELECT w.week, w.scientific_name, w.vernacular_name, w.count, COALESCE(w.high_conf_count, 0) AS high_conf_count
+    FROM species_weekly w LEFT JOIN species_group g USING (scientific_name)
+    WHERE w.cell_lat = ${cell.lat} AND w.cell_lon = ${cell.lon} AND COALESCE(g.is_species, true) AND w.source_system = ANY(${sources})
+      AND w.week >= date_trunc('week', ${p.from}::date)::date AND w.week <= ${p.to}::date ${grp}`;
+  const [weeks, top] = await Promise.all([
+    sql<{ week: string; detections: number; species: number; stations: number }[]>`
+      SELECT week::text AS week, SUM(count)::bigint::float8 AS detections, COUNT(DISTINCT scientific_name)::int AS species, 1 AS stations
+      FROM (${rows}) r GROUP BY week ORDER BY week`,
+    sql<SpeciesRow[]>`
+      WITH r AS (${rows}), t AS (SELECT SUM(count)::float AS d FROM r)
+      SELECT scientific_name, MIN(vernacular_name) AS vernacular_name, SUM(count)::bigint::float8 AS n, SUM(high_conf_count)::bigint::float8 AS high,
+             1 AS stations,
+             CASE WHEN t.d > 0 THEN 1000.0 * SUM(count) / t.d ELSE 0 END::float AS per1000
+      FROM r, t GROUP BY scientific_name, t.d ORDER BY n DESC`,
+  ]);
+  return {
+    period: p, weeks, top: top.filter((x) => nameable(x.scientific_name)),
+    detections: weeks.reduce((s, w) => s + Number(w.detections), 0),
+    species: top.length,
+    stationWeeks: weeks.length,
+  };
+}
+
 export async function siteReport(q: ReportQuery): Promise<SiteReport> {
   const stations = await sql<SiteReport["stations"]>`
     SELECT d.id, d.name, d.source_system, d.sensor_type, d.last_seen::text AS last_seen,
@@ -120,10 +156,21 @@ export async function siteReport(q: ReportQuery): Promise<SiteReport> {
   const ids = stations.filter((s) => s.kept).map((s) => s.id);
   // Other sources' stations are only counted per source: no id, name, distance or date (BirdWeather's conditions, see CLAUDE.md).
   const listed = stations.map((s) => (s.kept ? s : { ...s, id: "", name: null, km: 0, last_seen: "" }));
+  const cell = ids.length ? null : { lat: Math.floor(q.lat / 5) * 5, lon: Math.floor(q.lon / 5) * 5 };
+  // Two periods are compared on the sources that have records in both. BirdWeather's weekly counts start in November 2025,
+  // so a comparison with an earlier period would otherwise call every species it hears "only in period A".
+  const inPeriod = async (p: Period) => cell ? (await sql<{ s: string }[]>`
+    SELECT DISTINCT source_system AS s FROM species_weekly
+    WHERE week >= date_trunc('week', ${p.from}::date)::date AND week <= ${p.to}::date AND cell_lat = ${cell.lat} AND cell_lon = ${cell.lon}`).map((r) => r.s) : [];
+  const [srcA, srcB] = await Promise.all([inPeriod(q.a), q.b ? inPeriod(q.b) : Promise.resolve(null)]);
+  const sources = srcB ? srcA.filter((s) => srcB.includes(s)) : srcA;
+  const sum = (p: Period) => (cell ? summariseCell(cell, q.group, p, sources) : summarise(ids, q.group, p));
   const [a, b, first] = await Promise.all([
-    summarise(ids, q.group, q.a),
-    q.b ? summarise(ids, q.group, q.b) : Promise.resolve(null),
-    ids.length ? sql<{ w: string | null }[]>`SELECT MIN(week)::text AS w FROM station_weekly WHERE deployment_id = ANY(${ids})` : Promise.resolve([{ w: null }]),
+    sum(q.a),
+    q.b ? sum(q.b) : Promise.resolve(null),
+    cell
+      ? sql<{ w: string | null }[]>`SELECT MIN(week)::text AS w FROM effort_weekly WHERE cell_lat = ${cell.lat} AND cell_lon = ${cell.lon} AND detections > 0`
+      : sql<{ w: string | null }[]>`SELECT MIN(week)::text AS w FROM station_weekly WHERE deployment_id = ANY(${ids})`,
   ]);
   const inB = new Set(b?.top.map((x) => x.scientific_name));
   const inA = new Set(a.top.map((x) => x.scientific_name));
@@ -132,6 +179,9 @@ export async function siteReport(q: ReportQuery): Promise<SiteReport> {
     onlyA: b ? a.top.filter((x) => !inB.has(x.scientific_name)) : [],
     onlyB: b ? b.top.filter((x) => !inA.has(x.scientific_name)) : [],
     historyFrom: first[0]?.w ?? null,
+    mode: cell ? "area" : "stations",
+    cell,
+    sources: cell ? sources : [],
   };
 }
 

@@ -80,6 +80,8 @@ export async function prune(): Promise<void> {
   // Stations that stop reporting (removed, or made private) are forgotten after 30 days.
   await sql`DELETE FROM deployments d WHERE d.source_system = 'birdweather' AND d.last_seen < now() - interval '30 days'
     AND NOT EXISTS (SELECT 1 FROM events e WHERE e.deployment_id = d.id)`;
+  // Site report history goes with its station: a removed device leaves no weekly counts behind.
+  await sql`DELETE FROM station_weekly w WHERE NOT EXISTS (SELECT 1 FROM deployments d WHERE d.id = w.deployment_id)`;
   await emergencyTrim();
 }
 
