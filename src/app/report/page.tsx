@@ -3,20 +3,26 @@ import Link from "next/link";
 import { PageLang, T } from "@/components/T";
 import { searchPlaces } from "@/lib/places";
 import { GROUP_LABEL } from "@/lib/studies";
-import { speciesSlug } from "@/lib/site";
+import { SITE, speciesSlug } from "@/lib/site";
+import CopyBlock from "@/components/CopyBlock";
 import { credits, type Credit } from "@/lib/datasets";
 import DownloadLink from "@/components/DownloadLink";
 import { openRecordsHref } from "@/lib/openRecords";
 import { parseReportQuery, REPORT_GROUPS, REPORT_LIMITS, reportHref, siteReport, type PeriodSummary, type SiteReport, type SpeciesRow } from "@/lib/siteReport";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
-  title: "Site report: what changed at a place",
-  description: "Pick a place, a radius and dates to see which species the listening stations around it recorded, week by week, and compare two periods, such as before and after a restoration.",
-  robots: { index: false, follow: true },
-};
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const n = (await searchParams).name;
+  const name = parseReportQuery({ lat: "0", lon: "0", name: Array.isArray(n) ? n[0] : n })?.name;
+  return {
+    title: name ? `${name}: site report` : "Site report: what changed at a place",
+    description: "Pick a place, a radius and dates to see which species the listening stations around it recorded, week by week, and compare two periods, such as before and after a restoration.",
+    robots: { index: false, follow: true },
+  };
+}
 
 export default async function ReportPage({ searchParams }: Props) {
   // A repeated URL parameter arrives as an array: use the first.
@@ -58,6 +64,7 @@ function Form({ params, q }: { params: Record<string, string | undefined>; q: Re
       <label className={`${label} col-span-2`}><T k="Town or place" /><input name="place" defaultValue={q ? "" : params.place ?? ""} placeholder="Chennai" className={field} /></label>
       <label className={label}><T k="Latitude" /><input name="lat" inputMode="decimal" defaultValue={q?.lat ?? ""} className={field} /></label>
       <label className={label}><T k="Longitude" /><input name="lon" inputMode="decimal" defaultValue={q?.lon ?? ""} className={field} /></label>
+      <label className={`${label} col-span-2 sm:col-span-4`}><T k="Name of the place (optional, for example a park)" /><input name="name" maxLength={80} defaultValue={q?.name ?? params.name ?? ""} className={field} /></label>
       <label className={label}><T k="Radius (km)" /><input name="km" type="number" min={1} max={REPORT_LIMITS.MAX_KM} defaultValue={q?.km ?? REPORT_LIMITS.DEFAULT_KM} className={field} /></label>
       <label className={label}><T k="Animals" />
         <select name="group" defaultValue={q?.group ?? "all"} className={field}>
@@ -85,6 +92,7 @@ function Report({ r, placeName, contributed }: { r: SiteReport; placeName: strin
   const sourceName = (s: string) => (s === "birdweather" ? "BirdWeather" : s === "inaturalist" ? "iNaturalist" : s === "gbif" ? "GBIF" : s === "upload" ? "contributed datasets" : s);
   return (
     <>
+      {q.name && <h2 className="mt-10 text-2xl font-semibold text-slate-100">{q.name}</h2>}
       <H2><T k="Within {km} km of {place}" v={{ km: q.km, place: placeName ?? `${q.lat}, ${q.lon}` }} /></H2>
       <div className="flex flex-wrap gap-2 text-sm">
         <Link href={`/?lat=${q.lat.toFixed(2)}&lon=${q.lon.toFixed(2)}`} className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Open on the live map" /></Link>
@@ -93,6 +101,8 @@ function Report({ r, placeName, contributed }: { r: SiteReport; placeName: strin
         {r.mode === "area" && r.b && <DownloadLink href={openRecordsHref({ lat: q.lat, lon: q.lon, from: r.b.period.from, to: r.b.period.to, group: q.group })} k="Download open records, period B (CSV)" what="area-records" className={btn} />}
       </div>
 
+      <p className="mt-3 text-sm text-slate-400"><T k="Link to this report:" /></p>
+      <CopyBlock>{`${SITE}/report${reportHref(q)}`}</CopyBlock>
       {r.mode === "area" && <p className="mt-2 text-xs text-slate-500"><T k="The download holds only GBIF records and contributed datasets under CC0 or CC BY 4.0. BirdWeather counts are shown here but are never downloadable." /></p>}
 
       <H2><T k="Stations listening here" /></H2>
@@ -144,7 +154,6 @@ function Report({ r, placeName, contributed }: { r: SiteReport; placeName: strin
 }
 
 function Period({ title, p, area = false }: { title: string; p: PeriodSummary; area?: boolean }) {
-  const max = Math.max(1, ...p.weeks.map((w) => w.detections));
   // Every Monday in the period, so weeks without data show as gaps rather than closing up.
   const byWeek = new Map(p.weeks.map((w) => [w.week, w]));
   const mondays: string[] = [];
@@ -157,18 +166,38 @@ function Period({ title, p, area = false }: { title: string; p: PeriodSummary; a
       <p className="text-sm">{area
         ? <T k="{d} detections and records of {s} species, over {w} weeks." v={{ d: p.detections.toLocaleString("en-GB"), s: p.species, w: p.stationWeeks }} />
         : <T k="{d} detections of {s} species, from {w} station weeks." v={{ d: p.detections.toLocaleString("en-GB"), s: p.species, w: p.stationWeeks }} />}</p>
-      {p.weeks.length > 0 && (
-        <svg viewBox={`0 0 ${mondays.length * 12} 60`} className="mt-3 h-20 w-full" preserveAspectRatio="none" role="img" aria-label="Detections per week">
-          {mondays.map((m, i) => {
-            const w = byWeek.get(m);
-            if (!w) return <rect key={m} x={i * 12 + 1} y={59} width={10} height={1} className="fill-white/10"><title>{`${m}: no data`}</title></rect>;
-            const h = Math.max(1, (w.detections / max) * 58);
-            return <rect key={w.week} x={i * 12 + 1} y={60 - h} width={10} height={h} className="fill-cyan-500/70"><title>{`${w.week}: ${w.detections} detections, ${w.species} species`}</title></rect>;
-          })}
-        </svg>
+      {p.weeks.length > 0 && !area && <Bars mondays={mondays} byWeek={byWeek} value={(w) => w.detections} label="detections" />}
+      {p.weeks.length > 0 && area && (
+        <>
+          <h3 className="mt-4 text-sm font-semibold text-slate-100"><T k="Species richness and records per week" /></h3>
+          <p className="mt-1 text-xs text-slate-500"><T k="Species per week" /></p>
+          <Bars mondays={mondays} byWeek={byWeek} value={(w) => w.species} label="species" />
+          <p className="mt-2 text-xs text-slate-500"><T k="Records per week" /></p>
+          <Bars mondays={mondays} byWeek={byWeek} value={(w) => w.detections} label="records" />
+          <p className="mt-1 text-xs text-slate-500">
+            <T k="Pale bars are weeks below the coverage threshold, where too few records came in to judge. More records always find more species, so compare weeks with similar records, and remember this is a 5 degree square, not the park itself." />
+          </p>
+        </>
       )}
       <SpeciesTable rows={p.top.slice(0, 40)} area={area} />
     </>
+  );
+}
+
+type Week = PeriodSummary["weeks"][number];
+/** One series as weekly bars over every Monday in the period; weeks without data show as gaps, unwatched weeks pale. */
+function Bars({ mondays, byWeek, value, label }: { mondays: string[]; byWeek: Map<string, Week>; value: (w: Week) => number; label: string }) {
+  const max = Math.max(1, ...[...byWeek.values()].map(value));
+  return (
+    <svg viewBox={`0 0 ${mondays.length * 12} 60`} className="mt-1 h-20 w-full" preserveAspectRatio="none" role="img" aria-label={`${label} per week`}>
+      {mondays.map((m, i) => {
+        const w = byWeek.get(m);
+        if (!w) return <rect key={m} x={i * 12 + 1} y={59} width={10} height={1} className="fill-white/10"><title>{`${m}: no data`}</title></rect>;
+        const h = Math.max(1, (value(w) / max) * 58);
+        const pale = w.watched === false;
+        return <rect key={m} x={i * 12 + 1} y={60 - h} width={10} height={h} className={pale ? "fill-cyan-500/25" : "fill-cyan-500/70"}><title>{`${w.week}: ${w.detections} ${label === "detections" ? "detections" : "records"}, ${w.species} species${pale ? ", below the coverage threshold" : ""}`}</title></rect>;
+      })}
+    </svg>
   );
 }
 

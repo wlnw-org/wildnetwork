@@ -281,8 +281,12 @@ export default function Methods() {
             species, kept for as long as the station stays registered. Detections at confidence 0.85 or more are counted as high confidence. Only these rows can be
             downloaded as CSV.</li>
           <li><b>Area.</b> With no such station nearby, the report uses the weekly counts for the whole 5 degree cell around the point (BirdWeather detections and
-            GBIF records, as on the map), and the radius plays no part. These are shown, not downloadable, because BirdWeather-derived counts may not be
-            redistributed.</li>
+            GBIF records, as on the map), and the radius plays no part. The BirdWeather-derived counts are shown, not downloadable, because they may not be
+            redistributed; the GBIF records and contributed datasets under CC0 or CC BY 4.0 for the same cell and weeks can be downloaded. Area reports also show
+            species and records per week, with weeks below the <a href="#coverage" className="text-cyan-400 hover:underline">coverage</a> threshold of the class drawn
+            pale (recordings or observers&apos; records, over the sources used; birds&apos; thresholds when all classes are shown). Species per week is a raw count and
+            rises with records, so it is only comparable between weeks with similar records. A report can carry a place name, such as a protected area, as its title;
+            the data are still those of the 5 degree cell.</li>
         </ul>
         <p className="mt-2">
           Shares are per 1,000 detections or records of the chosen class in the same weeks and place, so they are the fair comparison when the number of stations,

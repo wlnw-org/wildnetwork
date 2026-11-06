@@ -2,6 +2,7 @@ import { sql } from "@/lib/db";
 import { HIDDEN_DEPLOYMENT_SOURCES, PENDING_SOURCES, SOURCES } from "@/lib/sources";
 import { isSensitiveTaxon } from "@/lib/sensitiveTaxa";
 import { SITE } from "@/lib/site";
+import { minAcousticWeek, minObservedWeek } from "@/lib/methods";
 
 /**
  * Site reports: what stations around a point recorded between two dates, optionally against a second period
@@ -13,6 +14,9 @@ import { SITE } from "@/lib/site";
  * Pulled sources are listed (so the report says who else listens nearby) but their history is not stored here:
  * BirdWeather until BirdWeather agrees, GBIF, iNaturalist and OBIS because they keep their own history at source.
  */
+
+/** Sources whose records are people's observations, counted against the observed coverage threshold. */
+const OBSERVER_SOURCES = ["gbif", "inaturalist", "upload"];
 
 /** Sources pulled from elsewhere. Everything else is a device pushing WDX to us, whose history we keep. */
 export const PULLED_SOURCES = ["birdweather", "inaturalist", "gbif", ...Object.keys(SOURCES).filter((k) => !k.startsWith("_"))];
@@ -41,12 +45,14 @@ export async function refreshStationWeekly(): Promise<void> {
 }
 
 export interface Period { from: string; to: string }
-export interface ReportQuery { lat: number; lon: number; km: number; group: string; a: Period; b?: Period }
+/** name: optional title for a named place, such as a protected area (plain text, shown escaped). */
+export interface ReportQuery { lat: number; lon: number; km: number; group: string; a: Period; b?: Period; name?: string }
 
 export interface SpeciesRow { scientific_name: string; vernacular_name: string | null; n: number; high: number; stations: number; per1000: number }
 export interface PeriodSummary {
   period: Period; detections: number; species: number; stationWeeks: number;
-  weeks: { week: string; detections: number; species: number; stations: number }[];
+  /** watched (area mode only): the cell-week reached the coverage threshold of the class, by recordings or by observers. */
+  weeks: { week: string; detections: number; species: number; stations: number; watched?: boolean }[];
   top: SpeciesRow[];
 }
 export interface SiteReport {
@@ -85,7 +91,9 @@ export function parseReportQuery(p: Record<string, string | undefined>): ReportQ
   };
   const a = period(p.from, p.to);
   const b = p.from2 || p.to2 ? period(p.from2, p.to2, shift(a.from, -364), shift(a.to, -364)) : undefined;
-  return { lat: Math.round(lat * 1e5) / 1e5, lon: Math.round(lon * 1e5) / 1e5, km, group, a, b };
+  // Control characters out, whitespace collapsed; React escapes the rest when it is shown.
+  const name = (p.name ?? "").replace(/[\u0000-\u001f\u007f<>]/g, "").replace(/\s+/g, " ").trim().slice(0, 80) || undefined;
+  return { lat: Math.round(lat * 1e5) / 1e5, lon: Math.round(lon * 1e5) / 1e5, km, group, a, b, name };
 }
 
 async function summarise(ids: string[], group: string, p: Period): Promise<PeriodSummary> {
@@ -136,8 +144,20 @@ async function summariseCell(cell: { lat: number; lon: number }, group: string, 
              CASE WHEN t.d > 0 THEN 1000.0 * SUM(count) / t.d ELSE 0 END::float AS per1000
       FROM r, t GROUP BY scientific_name, t.d ORDER BY n DESC`,
   ]);
+  // Watched weeks, with the coverage rule (/methods#coverage): recordings at the acoustic minimum or observers' records at the
+  // observed minimum of the class, counted over the same sources. "All" uses the bird thresholds, as the coverage map does.
+  const g = group === "all" ? "avian" : group;
+  const effort = await sql<{ week: string; acoustic: number; observed: number }[]>`
+    SELECT week::text AS week,
+           COALESCE(SUM(detections) FILTER (WHERE source_system <> ALL(${OBSERVER_SOURCES})), 0)::float AS acoustic,
+           COALESCE(SUM(detections) FILTER (WHERE source_system = ANY(${OBSERVER_SOURCES})), 0)::float AS observed
+    FROM effort_weekly_source
+    WHERE cell_lat = ${cell.lat} AND cell_lon = ${cell.lon} AND grp = ${g} AND source_system = ANY(${sources})
+      AND week >= date_trunc('week', ${p.from}::date)::date AND week <= ${p.to}::date
+    GROUP BY week`;
+  const watched = new Set(effort.filter((e) => e.acoustic >= minAcousticWeek(g) || e.observed >= minObservedWeek(g)).map((e) => e.week));
   return {
-    period: p, weeks, top: top.filter((x) => nameable(x.scientific_name)),
+    period: p, weeks: weeks.map((w) => ({ ...w, watched: watched.has(w.week) })), top: top.filter((x) => nameable(x.scientific_name)),
     detections: weeks.reduce((s, w) => s + Number(w.detections), 0),
     species: top.length,
     stationWeeks: weeks.length,
@@ -190,6 +210,7 @@ export function reportHref(q: ReportQuery, extra = ""): string {
   const u = new URLSearchParams({ lat: String(q.lat), lon: String(q.lon), km: String(q.km), from: q.a.from, to: q.a.to });
   if (q.group !== "all") u.set("group", q.group);
   if (q.b) { u.set("from2", q.b.from); u.set("to2", q.b.to); }
+  if (q.name) u.set("name", q.name);
   return `?${u}${extra}`;
 }
 

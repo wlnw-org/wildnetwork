@@ -638,6 +638,12 @@ const TOUR2: Record<string, Dict> = {
 // Server-rendered species and place pages (src/components/T.tsx).
 const PAGES: Record<string, Dict> = {
  "es": {
+  "Name of the place (optional, for example a park)": "Nombre del lugar (opcional, por ejemplo un parque)",
+  "Link to this report:": "Enlace a este informe:",
+  "Species richness and records per week": "Riqueza de especies y registros por semana",
+  "Species per week": "Especies por semana",
+  "Records per week": "Registros por semana",
+  "Pale bars are weeks below the coverage threshold, where too few records came in to judge. More records always find more species, so compare weeks with similar records, and remember this is a 5 degree square, not the park itself.": "Las barras pálidas son semanas por debajo del umbral de cobertura, con muy pocos registros para juzgar. Más registros siempre encuentran más especies, así que compara semanas con registros similares, y recuerda que esto es un cuadrado de 5 grados, no el parque en sí.",
   "Download the data": "Descargar los datos",
   "Weekly records, last 12 months (CSV)": "Registros semanales, últimos 12 meses (CSV)",
   "GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square.": "Registros de GBIF y conjuntos de datos aportados bajo CC0 o CC BY 4.0, por cuadrado de 5 grados.",
@@ -750,6 +756,12 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "¿No aparece? Escribe cualquier ciudad en el buscador del mapa en vivo."
  },
  "fr": {
+  "Name of the place (optional, for example a park)": "Nom du lieu (facultatif, par exemple un parc)",
+  "Link to this report:": "Lien vers ce rapport :",
+  "Species richness and records per week": "Richesse en espèces et données par semaine",
+  "Species per week": "Espèces par semaine",
+  "Records per week": "Données par semaine",
+  "Pale bars are weeks below the coverage threshold, where too few records came in to judge. More records always find more species, so compare weeks with similar records, and remember this is a 5 degree square, not the park itself.": "Les barres pâles sont des semaines sous le seuil de couverture, avec trop peu de données pour conclure. Plus de données trouvent toujours plus d'espèces : comparez des semaines aux données semblables, et rappelez-vous qu'il s'agit d'un carré de 5 degrés, pas du parc lui-même.",
   "Download the data": "Télécharger les données",
   "Weekly records, last 12 months (CSV)": "Données hebdomadaires, 12 derniers mois (CSV)",
   "GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square.": "Données GBIF et jeux de données contribués sous CC0 ou CC BY 4.0, par carré de 5 degrés.",
@@ -862,6 +874,12 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "Pas dans la liste ? Tapez n'importe quelle ville dans la recherche de la carte en direct."
  },
  "de": {
+  "Name of the place (optional, for example a park)": "Name des Ortes (optional, zum Beispiel ein Park)",
+  "Link to this report:": "Link zu diesem Bericht:",
+  "Species richness and records per week": "Artenreichtum und Nachweise pro Woche",
+  "Species per week": "Arten pro Woche",
+  "Records per week": "Nachweise pro Woche",
+  "Pale bars are weeks below the coverage threshold, where too few records came in to judge. More records always find more species, so compare weeks with similar records, and remember this is a 5 degree square, not the park itself.": "Blasse Balken sind Wochen unter der Abdeckungsschwelle, mit zu wenigen Nachweisen für ein Urteil. Mehr Nachweise finden immer mehr Arten: Vergleiche Wochen mit ähnlich vielen Nachweisen, und denk daran, dass dies ein 5-Grad-Quadrat ist, nicht der Park selbst.",
   "Download the data": "Daten herunterladen",
   "Weekly records, last 12 months (CSV)": "Wöchentliche Nachweise, letzte 12 Monate (CSV)",
   "GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square.": "GBIF-Nachweise und beigetragene Datensätze unter CC0 oder CC BY 4.0, je 5-Grad-Quadrat.",
@@ -974,6 +992,12 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "Nicht dabei? Geben Sie einen beliebigen Ort in die Suche der Live-Karte ein."
  },
  "pt": {
+  "Name of the place (optional, for example a park)": "Nome do lugar (opcional, por exemplo um parque)",
+  "Link to this report:": "Link para este relatório:",
+  "Species richness and records per week": "Riqueza de espécies e registros por semana",
+  "Species per week": "Espécies por semana",
+  "Records per week": "Registros por semana",
+  "Pale bars are weeks below the coverage threshold, where too few records came in to judge. More records always find more species, so compare weeks with similar records, and remember this is a 5 degree square, not the park itself.": "As barras claras são semanas abaixo do limite de cobertura, com poucos registros para julgar. Mais registros sempre encontram mais espécies, então compare semanas com registros parecidos, e lembre que isto é um quadrado de 5 graus, não o próprio parque.",
   "Download the data": "Baixar os dados",
   "Weekly records, last 12 months (CSV)": "Registros semanais, últimos 12 meses (CSV)",
   "GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square.": "Registros do GBIF e conjuntos de dados contribuídos sob CC0 ou CC BY 4.0, por quadrado de 5 graus.",
@@ -1086,6 +1110,12 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "Não está na lista? Escreva qualquer cidade na pesquisa do mapa ao vivo."
  },
  "hi": {
+  "Name of the place (optional, for example a park)": "स्थान का नाम (वैकल्पिक, जैसे कोई उद्यान)",
+  "Link to this report:": "इस रिपोर्ट का लिंक:",
+  "Species richness and records per week": "प्रति सप्ताह प्रजाति समृद्धि और रिकॉर्ड",
+  "Species per week": "प्रति सप्ताह प्रजातियाँ",
+  "Records per week": "प्रति सप्ताह रिकॉर्ड",
+  "Pale bars are weeks below the coverage threshold, where too few records came in to judge. More records always find more species, so compare weeks with similar records, and remember this is a 5 degree square, not the park itself.": "हल्के बार वे सप्ताह हैं जो कवरेज सीमा से नीचे हैं, जहाँ आँकने के लिए बहुत कम रिकॉर्ड आए। ज़्यादा रिकॉर्ड हमेशा ज़्यादा प्रजातियाँ पाते हैं, इसलिए मिलते-जुलते रिकॉर्ड वाले सप्ताहों की तुलना करें, और याद रखें कि यह 5 डिग्री का वर्ग है, ख़ुद उद्यान नहीं।",
   "Download the data": "डेटा डाउनलोड करें",
   "Weekly records, last 12 months (CSV)": "साप्ताहिक रिकॉर्ड, पिछले 12 महीने (CSV)",
   "GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square.": "CC0 या CC BY 4.0 के तहत GBIF रिकॉर्ड और योगदान किए गए डेटासेट, हर 5 डिग्री वर्ग के लिए।",
@@ -1198,6 +1228,12 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "सूची में नहीं? लाइव मानचित्र की खोज में कोई भी शहर लिखें।"
  },
  "ta": {
+  "Name of the place (optional, for example a park)": "இடத்தின் பெயர் (விருப்பத்தேர்வு, எடுத்துக்காட்டாக ஒரு பூங்கா)",
+  "Link to this report:": "இந்த அறிக்கைக்கான இணைப்பு:",
+  "Species richness and records per week": "வாரந்தோறும் இனச் செழுமையும் பதிவுகளும்",
+  "Species per week": "வாரத்துக்கு இனங்கள்",
+  "Records per week": "வாரத்துக்குப் பதிவுகள்",
+  "Pale bars are weeks below the coverage threshold, where too few records came in to judge. More records always find more species, so compare weeks with similar records, and remember this is a 5 degree square, not the park itself.": "வெளிர் பட்டைகள் கவரேஜ் வரம்புக்குக் கீழே உள்ள வாரங்கள், அங்கு மதிப்பிடப் போதுமான பதிவுகள் வரவில்லை. அதிகப் பதிவுகள் எப்போதும் அதிக இனங்களைக் கண்டறியும், எனவே ஒத்த பதிவுகள் உள்ள வாரங்களை ஒப்பிடுங்கள்; இது 5 டிகிரி சதுரம், பூங்கா அல்ல என்பதை நினைவில் கொள்ளுங்கள்.",
   "Download the data": "தரவைப் பதிவிறக்கவும்",
   "Weekly records, last 12 months (CSV)": "வாராந்திரப் பதிவுகள், கடந்த 12 மாதங்கள் (CSV)",
   "GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square.": "CC0 அல்லது CC BY 4.0 உரிமத்தில் உள்ள GBIF பதிவுகளும் பங்களிக்கப்பட்ட தரவுத்தொகுப்புகளும், ஒவ்வொரு 5 டிகிரி சதுரத்துக்கும்.",
