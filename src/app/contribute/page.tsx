@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import CopyBlock from "@/components/CopyBlock";
+import { sql } from "@/lib/db";
+import { MIN_EFFORT_WEEK, REGION } from "@/lib/methods";
 
 export const metadata: Metadata = {
   title: "Contribute data: connect a bird station, bat detector or camera trap",
@@ -9,9 +11,49 @@ export const metadata: Metadata = {
 };
 
 const SITE = "https://wlnw.org";
+/** Deployments that are people's observations rather than recorders. */
+const OBSERVER_SOURCES = ["inaturalist", "gbif", "obis", "acartia"];
 const AGENT = "https://github.com/arunrajiah/wdx-agent";
+const BIRDECHO = "https://play.google.com/store/apps/details?id=dev.arunrajiah.birdecho";
+export const revalidate = 86400;
 
-export default function Contribute() {
+interface Gap { region: string; stations: number; watched: number }
+
+/**
+ * Recording stations per continent (and India), and how many 5 degree areas they watch with the coverage map's rule
+ * (/api/v1/coverage, /methods#coverage): MIN_EFFORT_WEEK bird detections a week, averaged over four weeks ending two
+ * weeks ago. Stations are counted, never named (BirdWeather's conditions). Thinnest first.
+ */
+async function gaps(): Promise<Gap[]> {
+  const india = (lat: ReturnType<typeof sql>, lon: ReturnType<typeof sql>) => sql`(${lat} BETWEEN 5 AND 30 AND ${lon} BETWEEN 65 AND 90)`;
+  const [st, cov] = await Promise.all([
+    sql<{ region: string; india: boolean; n: number }[]>`
+      SELECT ${REGION} AS region, ${india(sql`cell_lat`, sql`cell_lon`)} AS india, COUNT(*)::int AS n
+      FROM (SELECT (FLOOR(ST_Y(geom::geometry) / 5) * 5)::int AS cell_lat, (FLOOR(ST_X(geom::geometry) / 5) * 5)::int AS cell_lon
+            FROM deployments WHERE last_seen > now() - interval '30 days' AND source_system <> ALL(${OBSERVER_SOURCES})) d
+      GROUP BY 1, 2`,
+    sql<{ region: string; india: boolean; n: number }[]>`
+      SELECT ${REGION} AS region, ${india(sql`cell_lat`, sql`cell_lon`)} AS india, COUNT(*)::int AS n FROM (
+        SELECT cell_lat, cell_lon FROM effort_weekly_source
+        WHERE grp = 'avian' AND source_system = 'birdweather' AND week > CURRENT_DATE - 42 AND week <= CURRENT_DATE - 14
+        GROUP BY 1, 2 HAVING SUM(detections)::float / 4 >= ${MIN_EFFORT_WEEK}) c
+      GROUP BY 1, 2`,
+  ]).catch(() => [[], []]);
+  const by = new Map<string, Gap>();
+  const add = (rows: { region: string; india: boolean; n: number }[], k: "stations" | "watched") => {
+    for (const r of rows) for (const name of r.india ? [r.region, "India"] : [r.region]) {
+      const g = by.get(name) ?? { region: name, stations: 0, watched: 0 };
+      g[k] += r.n;
+      by.set(name, g);
+    }
+  };
+  add(st, "stations"); add(cov, "watched");
+  return [...by.values()].sort((a, b) => a.stations - b.stations);
+}
+
+export default async function Contribute() {
+  const g = await gaps();
+  const n = (r: string) => g.find((x) => x.region === r)?.stations ?? 0;
   return (
     <main className="min-h-screen bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
@@ -31,6 +73,44 @@ export default function Contribute() {
           <Card href="#have" title="I have a device" text="BirdNET-Pi, BirdNET-Go, a camera trap, a bat detector, or other software." />
           <Card href="#new" title="I want to set one up" text="What to buy and how to build a bird, bat or camera station." />
         </div>
+
+        <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-3 text-sm">
+          <b>On Android?</b> <A href={BIRDECHO}>BirdEcho</A> is a free app for your BirdNET-Pi, BirdNET-Go or BirdWeather station: follow its detections from
+          your phone, get notified when a species you care about shows up, and see Wildlife Network arrivals near it.
+        </p>
+
+        {g.length > 0 && (
+          <>
+            <H2 id="needed">Where stations are needed most</H2>
+            <p>
+              Recording stations are spread very unevenly. Africa has {n("Africa").toLocaleString("en-GB")} active stations and India and its neighbours{" "}
+              {n("India").toLocaleString("en-GB")}, against {n("Europe").toLocaleString("en-GB")} in Europe and {n("North America").toLocaleString("en-GB")} in North
+              America. Where there are few, a single new station adds far more: it can put a whole area on the map for arrival dates and change.
+            </p>
+            <table className="mt-3 w-full text-sm">
+              <thead><tr className="text-left text-slate-400 border-b border-white/10">
+                <th className="py-1.5 font-medium">Region</th><th className="font-medium text-right">Active recording stations</th>
+                <th className="font-medium text-right">Areas watched by stations</th>
+              </tr></thead>
+              <tbody>{g.map((r) => (
+                <tr key={r.region} className={`border-b border-white/5 ${r.region === "Africa" || r.region === "India" ? "text-slate-100" : ""}`}>
+                  <td className="py-1.5">{r.region === "India" ? "India and neighbours" : r.region}</td>
+                  <td className="text-right tabular-nums">{r.stations.toLocaleString("en-GB")}</td>
+                  <td className="text-right tabular-nums">{r.watched}</td>
+                </tr>))}</tbody>
+            </table>
+            <p className="mt-2 text-xs text-slate-500">
+              Stations heard from in the last 30 days, from BirdWeather and devices sending here directly. An area is a 5 degree square (about 550 km across); it
+              counts as watched at {MIN_EFFORT_WEEK.toLocaleString("en-GB")} bird detections a week, averaged over four recent weeks. India and neighbours is the box
+              from 5 to 35° N and 65 to 95° E and is also counted in Asia. Turn on Coverage in the map legend to see each area.
+            </p>
+            <p className="mt-3">
+              In one of the thin regions? <a href="#new" className="text-cyan-400 hover:underline">Set up a station</a>, or{" "}
+              <Link href="/datasets/new" className="text-cyan-400 hover:underline">upload recordings you already have</Link> as a dataset. Institutions with a network
+              of recorders: <Link href="/institutions" className="text-cyan-400 hover:underline">connect it here</Link>.
+            </p>
+          </>
+        )}
 
         <H2 id="birdweather">Already on BirdWeather? You are done</H2>
         <p>
