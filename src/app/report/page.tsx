@@ -152,7 +152,7 @@ function Period({ title, p, area = false }: { title: string; p: PeriodSummary; a
           })}
         </svg>
       )}
-      <SpeciesTable rows={p.top.slice(0, 40)} />
+      <SpeciesTable rows={p.top.slice(0, 40)} area={area} />
     </>
   );
 }
@@ -165,26 +165,27 @@ function Change({ r }: { r: SiteReport }) {
         <T k="Species richness: {a} in period A, {b} in period B." v={{ a: r.a.species, b: r.b!.species }} />
       </p>
       <h3 className="mt-4 text-sm font-semibold text-slate-100"><T k="Only in period A" /></h3>
-      <SpeciesTable rows={r.onlyA.slice(0, 30)} empty="None" />
+      <SpeciesTable rows={r.onlyA.slice(0, 30)} empty="None" area={r.mode === "area"} />
       <h3 className="mt-4 text-sm font-semibold text-slate-100"><T k="Only in period B" /></h3>
-      <SpeciesTable rows={r.onlyB.slice(0, 30)} empty="None" />
+      <SpeciesTable rows={r.onlyB.slice(0, 30)} empty="None" area={r.mode === "area"} />
     </>
   );
 }
 
-function SpeciesTable({ rows, empty = "No detections in this period." }: { rows: SpeciesRow[]; empty?: string }) {
+/** Area mode mixes observers' records, which carry no confidence, so the high-confidence column is left out there. */
+function SpeciesTable({ rows, empty = "No detections in this period.", area = false }: { rows: SpeciesRow[]; empty?: string; area?: boolean }) {
   if (!rows.length) return <p className="mt-2 text-sm text-slate-500"><T k={empty} /></p>;
   return (
     <table className="mt-2 w-full text-sm">
       <thead><tr className="text-left text-slate-400 border-b border-white/10">
         <th className="py-1.5 font-medium"><T k="Species" /></th><th className="font-medium text-right"><T k="Detections" /></th>
-        <th className="font-medium text-right"><T k="High confidence" /></th><th className="font-medium text-right"><T k="Per 1,000" /></th>
+        {!area && <th className="font-medium text-right"><T k="High confidence" /></th>}<th className="font-medium text-right"><T k="Per 1,000" /></th>
       </tr></thead>
       <tbody>{rows.map((x) => (
         <tr key={x.scientific_name} className="border-b border-white/5">
           <td className="py-1.5"><Link href={`/species/${speciesSlug(x.scientific_name)}`} className="text-cyan-400 hover:underline">{x.vernacular_name ?? <i>{x.scientific_name}</i>}</Link>{x.vernacular_name && <> <span className="text-slate-500 italic">{x.scientific_name}</span></>}</td>
           <td className="text-right tabular-nums">{x.n.toLocaleString("en-GB")}</td>
-          <td className="text-right tabular-nums">{x.high.toLocaleString("en-GB")}</td>
+          {!area && <td className="text-right tabular-nums">{x.high.toLocaleString("en-GB")}</td>}
           <td className="text-right tabular-nums">{x.per1000.toFixed(1)}</td>
         </tr>))}</tbody>
     </table>
