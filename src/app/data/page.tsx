@@ -71,7 +71,7 @@ export default function Data() {
             <li><b>Contributed datasets</b>: each <Link href="/datasets" className="text-cyan-400 hover:underline">dataset</Link> has its own Darwin Core CSV, licence and citation.</li>
             <li><b>API</b>: JSON and CSV for scripts, R and Python (<Link href="/developers" className="text-cyan-400 hover:underline">developer guide</Link>). <code className="text-slate-200">/api/v1/records?species=…&amp;format=csv</code> gives the same open weekly records as the species pages.</li>
           </ul>
-          <p className="mt-2 text-xs text-slate-400">Downloads hold GBIF records under CC0 or CC BY 4.0 and contributed datasets under their own licence. BirdWeather detections are never in a download.</p>
+          <p className="mt-2 text-xs text-slate-400">Downloads hold GBIF records under CC0 or CC BY 4.0 and contributed datasets under their own licence. BirdWeather detections are never in a download. Sending data in, or connecting a national system: see <Link href="/institutions" className="text-cyan-400 hover:underline">for institutions</Link>.</p>
         </section>
 
         {latest ? (

@@ -91,6 +91,7 @@ export default function Developers() {
           Devices send WDX events (<a href="https://github.com/arunrajiah/wildlife-detection-exchange" className="text-cyan-400 hover:underline">schema</a>) to{" "}
           <code className="text-slate-200">POST /api/v1/events</code> with a bearer key from <code className="text-slate-200">POST /api/v1/register</code>: a single event, an array or NDJSON, up
           to 5,000 per request. The free <Link href="/contribute" className="text-cyan-400 hover:underline">wdx-agent</Link> does this for BirdNET-Pi, BirdNET-Go, bat detectors and camera traps.
+          Connecting a national system, a GBIF node or a park&apos;s network: <Link href="/institutions" className="text-cyan-400 hover:underline">for institutions</Link>.
         </p>
 
         <h2 className="mt-8 text-xl font-semibold text-slate-100">Bulk files</h2>

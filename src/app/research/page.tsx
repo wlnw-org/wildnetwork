@@ -53,7 +53,8 @@ export default async function Research() {
           Effort-corrected arrival dates, weekly records and range movement for birds, bats, amphibians and insects, from community acoustic stations and open
           records. Everything is open: the <Link href="/methods" className="text-cyan-400 hover:underline">methods</Link>, the{" "}
           <Link href="/developers" className="text-cyan-400 hover:underline">API</Link>, the <Link href="/data" className="text-cyan-400 hover:underline">data releases</Link> and the code.
-          Here is how to use it, check it and build on it with others.
+          Here is how to use it, check it and build on it with others. Connecting a national system or a GBIF node? See{" "}
+          <Link href="/institutions" className="text-cyan-400 hover:underline">for institutions</Link>.
         </p>
         <div className="mt-5"><ResearchSignIn next="/research" /></div>
         <p className="mt-2 text-xs text-slate-500">Sign-in uses your ORCID iD and public name only. Needed for projects, study areas and reviews; nothing else on the site needs an account.</p>

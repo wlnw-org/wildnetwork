@@ -21,6 +21,9 @@ export default function Contribute() {
           Wildlife Network is built from what people&apos;s devices hear and see. If you run a bird station, a bat detector or a camera trap, you can add it in a few
           minutes. If you don&apos;t have one yet, this page shows what to get and how to set it up. It is free, and you keep the rights to your data.
         </p>
+        <p className="mt-2 text-sm text-slate-400">
+          Connecting a whole network, a national system or a GBIF node? See <Link href="/institutions" className="text-cyan-400 hover:underline">for institutions</Link>.
+        </p>
 
         <h2 className="mt-8 mb-3 text-xl font-semibold text-slate-100">Where are you starting from?</h2>
         <div className="grid gap-3 sm:grid-cols-3">
