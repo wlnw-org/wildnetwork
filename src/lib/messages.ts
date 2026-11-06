@@ -638,6 +638,15 @@ const TOUR2: Record<string, Dict> = {
 // Server-rendered species and place pages (src/components/T.tsx).
 const PAGES: Record<string, Dict> = {
  "es": {
+  "Download the data": "Descargar los datos",
+  "Weekly records, last 12 months (CSV)": "Registros semanales, últimos 12 meses (CSV)",
+  "GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square.": "Registros de GBIF y conjuntos de datos aportados bajo CC0 o CC BY 4.0, por cuadrado de 5 grados.",
+  "Arrival dates per area (CSV)": "Fechas de llegada por zona (CSV)",
+  "Every species: open data releases and the API": "Todas las especies: publicaciones de datos abiertos y la API",
+  "Download open records (CSV)": "Descargar registros abiertos (CSV)",
+  "Download open records, period A (CSV)": "Descargar registros abiertos, periodo A (CSV)",
+  "Download open records, period B (CSV)": "Descargar registros abiertos, periodo B (CSV)",
+  "The download holds only GBIF records and contributed datasets under CC0 or CC BY 4.0. BirdWeather counts are shown here but are never downloadable.": "La descarga solo contiene registros de GBIF y conjuntos de datos aportados bajo CC0 o CC BY 4.0. Los recuentos de BirdWeather se muestran aquí, pero nunca se pueden descargar.",
   "Contributed datasets in this area:": "Conjuntos de datos aportados en esta zona:",
   "Includes records from contributed datasets:": "Incluye registros de conjuntos de datos aportados:",
   "Add a station to start a record for this exact place.": "Añade una estación para empezar un registro de este lugar exacto.",
@@ -741,6 +750,15 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "¿No aparece? Escribe cualquier ciudad en el buscador del mapa en vivo."
  },
  "fr": {
+  "Download the data": "Télécharger les données",
+  "Weekly records, last 12 months (CSV)": "Données hebdomadaires, 12 derniers mois (CSV)",
+  "GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square.": "Données GBIF et jeux de données contribués sous CC0 ou CC BY 4.0, par carré de 5 degrés.",
+  "Arrival dates per area (CSV)": "Dates d'arrivée par zone (CSV)",
+  "Every species: open data releases and the API": "Toutes les espèces : publications de données ouvertes et API",
+  "Download open records (CSV)": "Télécharger les données ouvertes (CSV)",
+  "Download open records, period A (CSV)": "Télécharger les données ouvertes, période A (CSV)",
+  "Download open records, period B (CSV)": "Télécharger les données ouvertes, période B (CSV)",
+  "The download holds only GBIF records and contributed datasets under CC0 or CC BY 4.0. BirdWeather counts are shown here but are never downloadable.": "Le téléchargement ne contient que des données GBIF et des jeux de données contribués sous CC0 ou CC BY 4.0. Les comptages BirdWeather sont affichés ici mais ne sont jamais téléchargeables.",
   "Contributed datasets in this area:": "Jeux de données contribués dans cette zone :",
   "Includes records from contributed datasets:": "Comprend des données issues de jeux de données contribués :",
   "Add a station to start a record for this exact place.": "Ajoutez une station pour commencer un relevé de ce lieu précis.",
@@ -844,6 +862,15 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "Pas dans la liste ? Tapez n'importe quelle ville dans la recherche de la carte en direct."
  },
  "de": {
+  "Download the data": "Daten herunterladen",
+  "Weekly records, last 12 months (CSV)": "Wöchentliche Nachweise, letzte 12 Monate (CSV)",
+  "GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square.": "GBIF-Nachweise und beigetragene Datensätze unter CC0 oder CC BY 4.0, je 5-Grad-Quadrat.",
+  "Arrival dates per area (CSV)": "Ankunftsdaten je Gebiet (CSV)",
+  "Every species: open data releases and the API": "Alle Arten: offene Datenveröffentlichungen und die API",
+  "Download open records (CSV)": "Offene Nachweise herunterladen (CSV)",
+  "Download open records, period A (CSV)": "Offene Nachweise herunterladen, Zeitraum A (CSV)",
+  "Download open records, period B (CSV)": "Offene Nachweise herunterladen, Zeitraum B (CSV)",
+  "The download holds only GBIF records and contributed datasets under CC0 or CC BY 4.0. BirdWeather counts are shown here but are never downloadable.": "Der Download enthält nur GBIF-Nachweise und beigetragene Datensätze unter CC0 oder CC BY 4.0. BirdWeather-Zahlen werden hier gezeigt, sind aber nie herunterladbar.",
   "Contributed datasets in this area:": "Beigetragene Datensätze in diesem Gebiet:",
   "Includes records from contributed datasets:": "Enthält Daten aus beigetragenen Datensätzen:",
   "Add a station to start a record for this exact place.": "Füge eine Station hinzu, um für genau diesen Ort Daten zu sammeln.",
@@ -947,6 +974,15 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "Nicht dabei? Geben Sie einen beliebigen Ort in die Suche der Live-Karte ein."
  },
  "pt": {
+  "Download the data": "Baixar os dados",
+  "Weekly records, last 12 months (CSV)": "Registros semanais, últimos 12 meses (CSV)",
+  "GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square.": "Registros do GBIF e conjuntos de dados contribuídos sob CC0 ou CC BY 4.0, por quadrado de 5 graus.",
+  "Arrival dates per area (CSV)": "Datas de chegada por área (CSV)",
+  "Every species: open data releases and the API": "Todas as espécies: publicações de dados abertos e a API",
+  "Download open records (CSV)": "Baixar registros abertos (CSV)",
+  "Download open records, period A (CSV)": "Baixar registros abertos, período A (CSV)",
+  "Download open records, period B (CSV)": "Baixar registros abertos, período B (CSV)",
+  "The download holds only GBIF records and contributed datasets under CC0 or CC BY 4.0. BirdWeather counts are shown here but are never downloadable.": "O download contém apenas registros do GBIF e conjuntos de dados contribuídos sob CC0 ou CC BY 4.0. As contagens do BirdWeather aparecem aqui, mas nunca podem ser baixadas.",
   "Contributed datasets in this area:": "Conjuntos de dados contribuídos nesta área:",
   "Includes records from contributed datasets:": "Inclui registros de conjuntos de dados contribuídos:",
   "Add a station to start a record for this exact place.": "Adicione uma estação para começar um registro deste lugar exato.",
@@ -1050,6 +1086,15 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "Não está na lista? Escreva qualquer cidade na pesquisa do mapa ao vivo."
  },
  "hi": {
+  "Download the data": "डेटा डाउनलोड करें",
+  "Weekly records, last 12 months (CSV)": "साप्ताहिक रिकॉर्ड, पिछले 12 महीने (CSV)",
+  "GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square.": "CC0 या CC BY 4.0 के तहत GBIF रिकॉर्ड और योगदान किए गए डेटासेट, हर 5 डिग्री वर्ग के लिए।",
+  "Arrival dates per area (CSV)": "हर क्षेत्र में आगमन की तिथियाँ (CSV)",
+  "Every species: open data releases and the API": "सभी प्रजातियाँ: खुले डेटा रिलीज़ और API",
+  "Download open records (CSV)": "खुले रिकॉर्ड डाउनलोड करें (CSV)",
+  "Download open records, period A (CSV)": "खुले रिकॉर्ड डाउनलोड करें, अवधि A (CSV)",
+  "Download open records, period B (CSV)": "खुले रिकॉर्ड डाउनलोड करें, अवधि B (CSV)",
+  "The download holds only GBIF records and contributed datasets under CC0 or CC BY 4.0. BirdWeather counts are shown here but are never downloadable.": "डाउनलोड में केवल CC0 या CC BY 4.0 के तहत GBIF रिकॉर्ड और योगदान किए गए डेटासेट हैं। BirdWeather की गिनती यहाँ दिखती है, पर कभी डाउनलोड नहीं की जा सकती।",
   "Contributed datasets in this area:": "इस क्षेत्र में योगदान किए गए डेटासेट:",
   "Includes records from contributed datasets:": "योगदान किए गए डेटासेट के रिकॉर्ड शामिल हैं:",
   "Add a station to start a record for this exact place.": "इस सटीक जगह का रिकॉर्ड शुरू करने के लिए एक स्टेशन जोड़ें।",
@@ -1153,6 +1198,15 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "सूची में नहीं? लाइव मानचित्र की खोज में कोई भी शहर लिखें।"
  },
  "ta": {
+  "Download the data": "தரவைப் பதிவிறக்கவும்",
+  "Weekly records, last 12 months (CSV)": "வாராந்திரப் பதிவுகள், கடந்த 12 மாதங்கள் (CSV)",
+  "GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square.": "CC0 அல்லது CC BY 4.0 உரிமத்தில் உள்ள GBIF பதிவுகளும் பங்களிக்கப்பட்ட தரவுத்தொகுப்புகளும், ஒவ்வொரு 5 டிகிரி சதுரத்துக்கும்.",
+  "Arrival dates per area (CSV)": "ஒவ்வொரு பகுதியிலும் வருகைத் தேதிகள் (CSV)",
+  "Every species: open data releases and the API": "எல்லா இனங்களும்: திறந்த தரவு வெளியீடுகளும் API-யும்",
+  "Download open records (CSV)": "திறந்த பதிவுகளைப் பதிவிறக்கவும் (CSV)",
+  "Download open records, period A (CSV)": "திறந்த பதிவுகளைப் பதிவிறக்கவும், காலம் A (CSV)",
+  "Download open records, period B (CSV)": "திறந்த பதிவுகளைப் பதிவிறக்கவும், காலம் B (CSV)",
+  "The download holds only GBIF records and contributed datasets under CC0 or CC BY 4.0. BirdWeather counts are shown here but are never downloadable.": "பதிவிறக்கத்தில் CC0 அல்லது CC BY 4.0 உரிமத்தில் உள்ள GBIF பதிவுகளும் பங்களிக்கப்பட்ட தரவுத்தொகுப்புகளும் மட்டுமே உள்ளன. BirdWeather எண்ணிக்கைகள் இங்கே காட்டப்படும், ஆனால் ஒருபோதும் பதிவிறக்க முடியாது.",
   "Contributed datasets in this area:": "இந்தப் பகுதியில் பங்களிக்கப்பட்ட தரவுத்தொகுப்புகள்:",
   "Includes records from contributed datasets:": "பங்களிக்கப்பட்ட தரவுத்தொகுப்புகளின் பதிவுகள் அடங்கும்:",
   "Add a station to start a record for this exact place.": "இந்தச் சரியான இடத்துக்கான பதிவைத் தொடங்க ஒரு நிலையத்தைச் சேர்க்கவும்.",

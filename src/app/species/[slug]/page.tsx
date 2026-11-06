@@ -7,6 +7,8 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { sql } from "@/lib/db";
 import AlertForm from "@/components/AlertForm";
+import DownloadLink from "@/components/DownloadLink";
+import { openRecordsHref } from "@/lib/openRecords";
 import { ALERTS_ENABLED } from "@/lib/alerts";
 import { getSpeciesMedia } from "@/lib/media";
 import { LocalDate, LocalName, PageLang, T } from "@/components/T";
@@ -171,6 +173,16 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
             <RelatedList items={d.genus} names={names} />
           </>
         )}
+
+        <section id="download" className="mt-8 rounded-lg border border-white/10 bg-white/5 p-4">
+          <h2 className="text-lg font-semibold text-slate-100"><T k="Download the data" /></h2>
+          <ul className="mt-2 space-y-1 text-sm">
+            <li><DownloadLink href={openRecordsHref({ species: d.name })} k="Weekly records, last 12 months (CSV)" what="species-records" />{" "}
+              <span className="text-slate-400"><T k="GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square." /></span></li>
+            {d.arrivals.length > 0 && <li><DownloadLink href={`/api/v1/arrivals?species=${encodeURIComponent(d.name)}&format=csv`} k="Arrival dates per area (CSV)" what="species-arrivals" /></li>}
+            <li><Link href="/data" className="text-cyan-400 hover:underline"><T k="Every species: open data releases and the API" /></Link></li>
+          </ul>
+        </section>
 
         {d.contributed.length > 0 && (
           <p className="mt-8 text-sm text-slate-400">

@@ -5,6 +5,8 @@ import { searchPlaces } from "@/lib/places";
 import { GROUP_LABEL } from "@/lib/studies";
 import { speciesSlug } from "@/lib/site";
 import { credits, type Credit } from "@/lib/datasets";
+import DownloadLink from "@/components/DownloadLink";
+import { openRecordsHref } from "@/lib/openRecords";
 import { parseReportQuery, REPORT_GROUPS, REPORT_LIMITS, reportHref, siteReport, type PeriodSummary, type SiteReport, type SpeciesRow } from "@/lib/siteReport";
 
 export const dynamic = "force-dynamic";
@@ -79,14 +81,19 @@ function Report({ r, placeName, contributed }: { r: SiteReport; placeName: strin
   const kept = r.stations.filter((s) => s.kept);
   const others = r.stations.filter((s) => !s.kept);
   const bySource = Object.entries(others.reduce<Record<string, number>>((a, s) => ({ ...a, [s.source_system]: (a[s.source_system] ?? 0) + 1 }), {}));
+  const btn = "rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5";
   const sourceName = (s: string) => (s === "birdweather" ? "BirdWeather" : s === "inaturalist" ? "iNaturalist" : s === "gbif" ? "GBIF" : s === "upload" ? "contributed datasets" : s);
   return (
     <>
       <H2><T k="Within {km} km of {place}" v={{ km: q.km, place: placeName ?? `${q.lat}, ${q.lon}` }} /></H2>
       <div className="flex flex-wrap gap-2 text-sm">
         <Link href={`/?lat=${q.lat.toFixed(2)}&lon=${q.lon.toFixed(2)}`} className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Open on the live map" /></Link>
-        {r.mode === "stations" && kept.length > 0 && <a href={`/api/v1/report${reportHref(q, "&format=csv")}`} className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Download CSV" /></a>}
+        {r.mode === "stations" && kept.length > 0 && <DownloadLink href={`/api/v1/report${reportHref(q, "&format=csv")}`} k="Download CSV" what="site-report" className={btn} />}
+        {r.mode === "area" && <DownloadLink href={openRecordsHref({ lat: q.lat, lon: q.lon, from: q.a.from, to: q.a.to, group: q.group })} k={r.b ? "Download open records, period A (CSV)" : "Download open records (CSV)"} what="area-records" className={btn} />}
+        {r.mode === "area" && r.b && <DownloadLink href={openRecordsHref({ lat: q.lat, lon: q.lon, from: r.b.period.from, to: r.b.period.to, group: q.group })} k="Download open records, period B (CSV)" what="area-records" className={btn} />}
       </div>
+
+      {r.mode === "area" && <p className="mt-2 text-xs text-slate-500"><T k="The download holds only GBIF records and contributed datasets under CC0 or CC BY 4.0. BirdWeather counts are shown here but are never downloadable." /></p>}
 
       <H2><T k="Stations listening here" /></H2>
       {kept.length === 0 ? (

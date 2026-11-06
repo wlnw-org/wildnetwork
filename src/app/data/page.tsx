@@ -62,6 +62,18 @@ export default function Data() {
           dates. Built only from records their publishers released under CC0 or CC BY 4.0 through GBIF, so you may reuse them under CC BY 4.0 with credit.
         </p>
 
+        <section id="get" className="mt-6 rounded-lg border border-cyan-500/30 bg-cyan-500/5 p-4">
+          <h2 className="text-lg font-semibold text-slate-100">Get the data</h2>
+          <ul className="mt-2 space-y-2 text-sm">
+            <li><b>Open data releases</b> (below): every species, cell and week in one zip, with a DOI on Zenodo (<a href={`https://doi.org/${DATA_CONCEPT_DOI}`} className="text-cyan-400 hover:underline">{DATA_CONCEPT_DOI}</a>, always the newest). Best for papers.</li>
+            <li><b>CSV per species</b>: every <Link href="/species" className="text-cyan-400 hover:underline">species page</Link> has a Download box with its weekly records for the last 12 months and its arrival dates per area.</li>
+            <li><b>CSV per place</b>: a <Link href="/report" className="text-cyan-400 hover:underline">site report</Link> downloads the weekly records of a station or a 5 degree area for your own dates. <Link href="/studies" className="text-cyan-400 hover:underline">Study areas</Link> export a whole box.</li>
+            <li><b>Contributed datasets</b>: each <Link href="/datasets" className="text-cyan-400 hover:underline">dataset</Link> has its own Darwin Core CSV, licence and citation.</li>
+            <li><b>API</b>: JSON and CSV for scripts, R and Python (<Link href="/developers" className="text-cyan-400 hover:underline">developer guide</Link>). <code className="text-slate-200">/api/v1/records?species=…&amp;format=csv</code> gives the same open weekly records as the species pages.</li>
+          </ul>
+          <p className="mt-2 text-xs text-slate-400">Downloads hold GBIF records under CC0 or CC BY 4.0 and contributed datasets under their own licence. BirdWeather detections are never in a download.</p>
+        </section>
+
         {latest ? (
           <section className="mt-6 rounded-lg border border-white/10 bg-white/5 p-4">
             <h2 className="text-lg font-semibold text-slate-100">Latest release: {fmt(latest.date)}</h2>
@@ -118,7 +130,7 @@ export default function Data() {
         <h2 className="mt-8 text-xl font-semibold text-slate-100">Live access</h2>
         <p className="mt-2">
           For current figures use the open API (<Link href="/developers" className="text-cyan-400 hover:underline">documentation and R and Python examples</Link>): <code className="text-slate-200">/api/v1/coverage</code> (who watches each cell), <code className="text-slate-200">/api/v1/arrivals?species=…&amp;format=csv</code>,{" "}
-          <code className="text-slate-200">/api/v1/species/…/movement</code>. API responses mix sources and are for viewing; for analysis, use the releases.
+          <code className="text-slate-200">/api/v1/species/…/movement</code>, <code className="text-slate-200">/api/v1/records?lat=…&amp;lon=…&amp;format=csv</code> (open weekly records only). API responses mix sources and are for viewing; for analysis, use the releases.
         </p>
       </div>
     </main>
