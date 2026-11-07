@@ -7,7 +7,7 @@ import { SITE, speciesSlug } from "@/lib/site";
 /**
  * Study areas: a box of 5 degree cells, a class and an optional species list, owned by an ORCID-signed-in researcher.
  * Everything shown is read from the same tables as the public map. Exports carry GBIF-derived rows only, because
- * BirdWeather-derived counts may be shown but not redistributed (see CLAUDE.md, BIRDWEATHER).
+ * BirdWeather-derived counts may be shown but not redistributed (BirdWeather's conditions, see src/lib/sources.ts and /privacy).
  */
 export const STUDY_LIMITS = { PER_OWNER: 20, MAX_CELLS: 400, MEMBERS: 25 };
 export const GROUP_LABEL: Record<string, string> = { avian: "Birds", bat: "Bats", amphibian: "Frogs and toads", insect: "Insects", mammal: "Mammals", marine: "Marine" };

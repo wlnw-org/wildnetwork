@@ -175,7 +175,7 @@ export async function siteReport(q: ReportQuery, opts: { openOnly?: boolean } = 
       AND d.source_system <> ALL(${HIDDEN_DEPLOYMENT_SOURCES})
     ORDER BY km LIMIT 500`;
   const ids = stations.filter((s) => s.kept).map((s) => s.id);
-  // Other sources' stations are only counted per source: no id, name, distance or date (BirdWeather's conditions, see CLAUDE.md).
+  // Other sources' stations are only counted per source: no id, name, distance or date (BirdWeather's conditions, see src/lib/sources.ts and /privacy).
   const listed = stations.map((s) => (s.kept ? s : { ...s, id: "", name: null, km: 0, last_seen: "" }));
   const cell = ids.length ? null : { lat: Math.floor(q.lat / 5) * 5, lon: Math.floor(q.lon / 5) * 5 };
   // Two periods are compared on the sources that have records in both. BirdWeather's weekly counts start in November 2025,
