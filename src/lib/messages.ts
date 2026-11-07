@@ -1346,6 +1346,34 @@ const PAGES: Record<string, Dict> = {
   "Not listed? Type any town into the search box on the live map.": "பட்டியலில் இல்லையா? நேரலை வரைபடத்தின் தேடலில் எந்த ஊரையும் தட்டச்சு செய்யுங்கள்."
  }
 };
-export const MESSAGES: Record<string, Dict> = Object.fromEntries(Object.entries({ es, fr, de, pt, hi, ta }).map(([k, d]) => [k, { ...d, ...PLACES[k], ...HISTORY[k], ...TOUR2[k], ...PAGES[k] }]));
+/** Wildlife Network Studio: rail link and tour step. "Studio" stays as the product name. */
+const STUDIO: Record<string, Dict> = {
+ "es": {
+  "Recordings on a drive?": "¿Grabaciones en un disco?",
+  "Wildlife Network Studio is a free app for Mac and Windows: it finds the species in a whole drive of recordings on your own computer, helps you check them, and publishes them here or exports them for GBIF.": "Wildlife Network Studio es una app gratuita para Mac y Windows: encuentra las especies en un disco entero de grabaciones en tu propio ordenador, te ayuda a revisarlas y las publica aquí o las exporta para GBIF.",
+ },
+ "fr": {
+  "Recordings on a drive?": "Des enregistrements sur un disque ?",
+  "Wildlife Network Studio is a free app for Mac and Windows: it finds the species in a whole drive of recordings on your own computer, helps you check them, and publishes them here or exports them for GBIF.": "Wildlife Network Studio est une application gratuite pour Mac et Windows : elle trouve les espèces dans tout un disque d'enregistrements sur votre propre ordinateur, vous aide à les vérifier, puis les publie ici ou les exporte pour le GBIF.",
+ },
+ "de": {
+  "Recordings on a drive?": "Aufnahmen auf einer Festplatte?",
+  "Wildlife Network Studio is a free app for Mac and Windows: it finds the species in a whole drive of recordings on your own computer, helps you check them, and publishes them here or exports them for GBIF.": "Wildlife Network Studio ist eine kostenlose App für Mac und Windows: Sie findet die Arten in einer ganzen Festplatte voller Aufnahmen auf Ihrem eigenen Computer, hilft beim Prüfen und veröffentlicht sie hier oder exportiert sie für GBIF.",
+ },
+ "pt": {
+  "Recordings on a drive?": "Gravações num disco?",
+  "Wildlife Network Studio is a free app for Mac and Windows: it finds the species in a whole drive of recordings on your own computer, helps you check them, and publishes them here or exports them for GBIF.": "O Wildlife Network Studio é uma app gratuita para Mac e Windows: encontra as espécies num disco inteiro de gravações no seu próprio computador, ajuda a verificá-las e publica-as aqui ou exporta-as para o GBIF.",
+ },
+ "hi": {
+  "Recordings on a drive?": "ड्राइव पर रिकॉर्डिंग हैं?",
+  "Wildlife Network Studio is a free app for Mac and Windows: it finds the species in a whole drive of recordings on your own computer, helps you check them, and publishes them here or exports them for GBIF.": "Wildlife Network Studio Mac और Windows के लिए एक मुफ़्त ऐप है: यह आपके अपने कंप्यूटर पर पूरी ड्राइव की रिकॉर्डिंग में प्रजातियाँ ढूँढता है, उन्हें जाँचने में मदद करता है, और उन्हें यहाँ प्रकाशित करता है या GBIF के लिए निर्यात करता है।",
+ },
+ "ta": {
+  "Recordings on a drive?": "டிரைவில் பதிவுகள் உள்ளனவா?",
+  "Wildlife Network Studio is a free app for Mac and Windows: it finds the species in a whole drive of recordings on your own computer, helps you check them, and publishes them here or exports them for GBIF.": "Wildlife Network Studio என்பது Mac மற்றும் Windows-க்கான இலவச செயலி: உங்கள் சொந்த கணினியிலேயே ஒரு முழு டிரைவ் பதிவுகளில் உள்ள இனங்களைக் கண்டறிந்து, அவற்றைச் சரிபார்க்க உதவி, இங்கே வெளியிடுகிறது அல்லது GBIF-க்காக ஏற்றுமதி செய்கிறது.",
+ },
+};
+
+export const MESSAGES: Record<string, Dict> = Object.fromEntries(Object.entries({ es, fr, de, pt, hi, ta }).map(([k, d]) => [k, { ...d, ...PLACES[k], ...HISTORY[k], ...TOUR2[k], ...PAGES[k], ...STUDIO[k] }]));
 export const TOUR_TEXT = { T1, T2, T3, T4, T4A, T4B, T5, T6 };
 export const ALERT_TEXT = { AL1, AL2 };

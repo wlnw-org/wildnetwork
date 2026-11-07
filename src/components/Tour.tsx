@@ -45,10 +45,14 @@ export function tourSteps(askEnabled: boolean, role: Role | null): Step[] {
     station: [
       { target: "contribute", place: "right", title: "Add your own station",
         text: ["A BirdNET-Pi, BirdNET-Go, camera trap, bat detector or a Wildlife Network Base can send its detections here. Everything is open: the methods, the data downloads and the API."] },
+      { target: "studio", place: "right", title: "Recordings on a drive?",
+        text: ["Wildlife Network Studio is a free app for Mac and Windows: it finds the species in a whole drive of recordings on your own computer, helps you check them, and publishes them here or exports them for GBIF."] },
     ],
     researcher: [
       { target: "research", place: "right", title: "For researchers",
         text: ["Sign in with ORCID to draw a study area with a live dashboard and weekly digest, review arrival estimates you know, and start from ready-made Python and R code. Open data releases have DOIs, and the API is free."] },
+      { target: "studio", place: "right", title: "Recordings on a drive?",
+        text: ["Wildlife Network Studio is a free app for Mac and Windows: it finds the species in a whole drive of recordings on your own computer, helps you check them, and publishes them here or exports them for GBIF."] },
     ],
     educator: [
       { target: "research", place: "right", title: "For classes and projects",
