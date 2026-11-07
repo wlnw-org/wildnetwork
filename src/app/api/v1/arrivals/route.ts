@@ -34,7 +34,7 @@ export async function GET(req: Request) {
     peakIndex: Math.round(r.peak_index * 100) / 100, detections: r.total_n, weeksObserved: r.weeks_observed, absentWeeksBefore: r.absent_weeks,
   }));
   if (p.get("format") === "csv") {
-    const cols = ["scientificName", "vernacularName", "cellLat", "cellLon", "region", "arrivalWeek", "arrivalLow", "arrivalHigh", "arrivalSupport", "peakWeek", "departureWeek", "peakIndex", "detections", "weeksObserved", "absentWeeksBefore"] as const;
+    const cols = ["scientificName", "vernacularName", "cellLat", "cellLon", "region", "arrivalWeek", "arrivalLow", "arrivalHigh", "arrivalSupport", "peakWeek", "departureWeek", "peakIndex", "weeksObserved", "absentWeeksBefore"] as const;
     const esc = (v: unknown) => (v == null ? "" : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v));
     const csv = [`# Wildlife Network arrival dates, methods ${METHODS_VERSION}, https://wlnw.org/methods. Cells are 5 degree squares named by their south-west corner. Weeks start on Monday.`,
       cols.join(","), ...out.map((r) => cols.map((c) => esc(r[c])).join(","))].join("\n");

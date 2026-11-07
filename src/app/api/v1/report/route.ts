@@ -14,5 +14,5 @@ export async function GET(req: Request) {
       headers: { ...cache, "content-type": "text/csv; charset=utf-8", "content-disposition": `attachment; filename="wildlife-network-site-report-${q.lat}-${q.lon}.csv"` },
     });
   }
-  return Response.json(await siteReport(q), { headers: cache });
+  return Response.json(await siteReport(q, { openOnly: true }), { headers: cache });
 }

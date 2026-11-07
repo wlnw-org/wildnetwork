@@ -164,7 +164,8 @@ async function summariseCell(cell: { lat: number; lon: number }, group: string, 
   };
 }
 
-export async function siteReport(q: ReportQuery): Promise<SiteReport> {
+/** openOnly (the public API): area mode leaves out BirdWeather-derived counts, which may be shown on the site but not handed out as data. */
+export async function siteReport(q: ReportQuery, opts: { openOnly?: boolean } = {}): Promise<SiteReport> {
   const stations = await sql<SiteReport["stations"]>`
     SELECT d.id, d.name, d.source_system, d.sensor_type, d.last_seen::text AS last_seen,
            round((ST_Distance(d.geom, ST_SetSRID(ST_MakePoint(${q.lon}, ${q.lat}), 4326)::geography) / 1000)::numeric, 1)::float AS km,
@@ -183,7 +184,7 @@ export async function siteReport(q: ReportQuery): Promise<SiteReport> {
     SELECT DISTINCT source_system AS s FROM species_weekly
     WHERE week >= date_trunc('week', ${p.from}::date)::date AND week <= ${p.to}::date AND cell_lat = ${cell.lat} AND cell_lon = ${cell.lon}`).map((r) => r.s) : [];
   const [srcA, srcB] = await Promise.all([inPeriod(q.a), q.b ? inPeriod(q.b) : Promise.resolve(null)]);
-  const sources = srcB ? srcA.filter((s) => srcB.includes(s)) : srcA;
+  const sources = (srcB ? srcA.filter((s) => srcB.includes(s)) : srcA).filter((s) => !opts.openOnly || s !== "birdweather");
   const sum = (p: Period) => (cell ? summariseCell(cell, q.group, p, sources) : summarise(ids, q.group, p));
   const [a, b, first] = await Promise.all([
     sum(q.a),
