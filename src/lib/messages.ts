@@ -59,7 +59,7 @@ const es: Dict = {
   "Detections, 30d": "Detecciones, 30 d", "Range centre drift": "Deriva del centro del área", "Frequency vs max temp": "Frecuencia frente a temp. máx.", "north": "norte", "south": "sur",
   "Range centre latitude": "Latitud del centro del área", "Max temperature at range centre (°C)": "Temperatura máxima en el centro del área (°C)", "Max wind at range centre (km/h)": "Viento máximo en el centro del área (km/h)",
   "How this is measured, and its limits": "Cómo se mide y sus límites", "Page for this species": "Página de esta especie", "Heard versus seen": "Oído frente a visto",
-  "Latitude": "Latitud", "Arrives": "Llega", "Peaks": "Pico", "Cells": "Celdas", "Validation": "Validación", "Close": "Cerrar", "Language": "Idioma",
+  "Latitude": "Latitud", "Arrives": "Llega", "Peaks": "Pico", "Cells": "Celdas", "Validation": "Validación", "Close": "Cerrar", "Choose on map": "Elegir en el mapa", "Click the map or drag the pin. Zoom in for precision.": "Haz clic en el mapa o arrastra el marcador. Acerca para más precisión.", "Use this place": "Usar este lugar", "Language": "Idioma",
 };
 
 const fr: Dict = {
@@ -105,7 +105,7 @@ const fr: Dict = {
   "Detections, 30d": "Détections, 30 j", "Range centre drift": "Dérive du centre de l'aire", "Frequency vs max temp": "Fréquence et temp. max.", "north": "nord", "south": "sud",
   "Range centre latitude": "Latitude du centre de l'aire", "Max temperature at range centre (°C)": "Température max. au centre de l'aire (°C)", "Max wind at range centre (km/h)": "Vent max. au centre de l'aire (km/h)",
   "How this is measured, and its limits": "Comment c'est mesuré, et les limites", "Page for this species": "Page de cette espèce", "Heard versus seen": "Entendu ou vu",
-  "Latitude": "Latitude", "Arrives": "Arrivée", "Peaks": "Pic", "Cells": "Mailles", "Validation": "Validation", "Close": "Fermer", "Language": "Langue",
+  "Latitude": "Latitude", "Arrives": "Arrivée", "Peaks": "Pic", "Cells": "Mailles", "Validation": "Validation", "Close": "Fermer", "Choose on map": "Choisir sur la carte", "Click the map or drag the pin. Zoom in for precision.": "Cliquez sur la carte ou déplacez le repère. Zoomez pour plus de précision.", "Use this place": "Utiliser ce lieu", "Language": "Langue",
 };
 
 const de: Dict = {
@@ -151,7 +151,7 @@ const de: Dict = {
   "Detections, 30d": "Nachweise, 30 T.", "Range centre drift": "Verschiebung des Zentrums", "Frequency vs max temp": "Häufigkeit vs. Höchsttemp.", "north": "Nord", "south": "Süd",
   "Range centre latitude": "Breitengrad des Verbreitungszentrums", "Max temperature at range centre (°C)": "Höchsttemperatur am Verbreitungszentrum (°C)", "Max wind at range centre (km/h)": "Höchster Wind am Verbreitungszentrum (km/h)",
   "How this is measured, and its limits": "Wie das gemessen wird, und die Grenzen", "Page for this species": "Seite dieser Art", "Heard versus seen": "Gehört oder gesehen",
-  "Latitude": "Breite", "Arrives": "Ankunft", "Peaks": "Höhepunkt", "Cells": "Zellen", "Validation": "Validierung", "Close": "Schließen", "Language": "Sprache",
+  "Latitude": "Breite", "Arrives": "Ankunft", "Peaks": "Höhepunkt", "Cells": "Zellen", "Validation": "Validierung", "Close": "Schließen", "Choose on map": "Auf der Karte wählen", "Click the map or drag the pin. Zoom in for precision.": "Auf die Karte klicken oder die Markierung ziehen. Für mehr Genauigkeit hineinzoomen.", "Use this place": "Diesen Ort verwenden", "Language": "Sprache",
 };
 
 const pt: Dict = {
@@ -197,7 +197,7 @@ const pt: Dict = {
   "Detections, 30d": "Detecções, 30 d", "Range centre drift": "Deriva do centro da área", "Frequency vs max temp": "Frequência vs temp. máx.", "north": "norte", "south": "sul",
   "Range centre latitude": "Latitude do centro da área", "Max temperature at range centre (°C)": "Temperatura máx. no centro da área (°C)", "Max wind at range centre (km/h)": "Vento máx. no centro da área (km/h)",
   "How this is measured, and its limits": "Como é medido, e os seus limites", "Page for this species": "Página desta espécie", "Heard versus seen": "Ouvido versus visto",
-  "Latitude": "Latitude", "Arrives": "Chega", "Peaks": "Pico", "Cells": "Células", "Validation": "Validação", "Close": "Fechar", "Language": "Idioma",
+  "Latitude": "Latitude", "Arrives": "Chega", "Peaks": "Pico", "Cells": "Células", "Validation": "Validação", "Close": "Fechar", "Choose on map": "Escolher no mapa", "Click the map or drag the pin. Zoom in for precision.": "Clique no mapa ou arraste o marcador. Aproxime para mais precisão.", "Use this place": "Usar este local", "Language": "Idioma",
 };
 
 const hi: Dict = {
@@ -243,7 +243,7 @@ const hi: Dict = {
   "Detections, 30d": "पहचान, 30 दिन", "Range centre drift": "क्षेत्र-केंद्र का खिसकना", "Frequency vs max temp": "आवृत्ति बनाम अधिकतम तापमान", "north": "उत्तर", "south": "दक्षिण",
   "Range centre latitude": "क्षेत्र-केंद्र का अक्षांश", "Max temperature at range centre (°C)": "क्षेत्र-केंद्र पर अधिकतम तापमान (°C)", "Max wind at range centre (km/h)": "क्षेत्र-केंद्र पर अधिकतम हवा (km/h)",
   "How this is measured, and its limits": "इसे कैसे मापा जाता है, और इसकी सीमाएँ", "Page for this species": "इस प्रजाति का पेज", "Heard versus seen": "सुनी बनाम देखी",
-  "Latitude": "अक्षांश", "Arrives": "आगमन", "Peaks": "चरम", "Cells": "खंड", "Validation": "सत्यापन", "Close": "बंद करें", "Language": "भाषा",
+  "Latitude": "अक्षांश", "Arrives": "आगमन", "Peaks": "चरम", "Cells": "खंड", "Validation": "सत्यापन", "Close": "बंद करें", "Choose on map": "मानचित्र पर चुनें", "Click the map or drag the pin. Zoom in for precision.": "मानचित्र पर क्लिक करें या पिन खींचें। सटीकता के लिए ज़ूम करें।", "Use this place": "यह स्थान चुनें", "Language": "भाषा",
 };
 
 const ta: Dict = {
@@ -289,7 +289,7 @@ const ta: Dict = {
   "Detections, 30d": "கண்டறிதல்கள், 30 நாள்", "Range centre drift": "பரவல் மைய நகர்வு", "Frequency vs max temp": "அதிர்வெண் எதிர் அதிகபட்ச வெப்பம்", "north": "வடக்கு", "south": "தெற்கு",
   "Range centre latitude": "பரவல் மைய அட்சரேகை", "Max temperature at range centre (°C)": "பரவல் மையத்தில் அதிகபட்ச வெப்பநிலை (°C)", "Max wind at range centre (km/h)": "பரவல் மையத்தில் அதிகபட்சக் காற்று (km/h)",
   "How this is measured, and its limits": "இது எப்படி அளக்கப்படுகிறது, அதன் வரம்புகள்", "Page for this species": "இந்த இனத்தின் பக்கம்", "Heard versus seen": "கேட்டது எதிர் கண்டது",
-  "Latitude": "அட்சரேகை", "Arrives": "வருகை", "Peaks": "உச்சம்", "Cells": "கட்டங்கள்", "Validation": "சரிபார்ப்பு", "Close": "மூடு", "Language": "மொழி",
+  "Latitude": "அட்சரேகை", "Arrives": "வருகை", "Peaks": "உச்சம்", "Cells": "கட்டங்கள்", "Validation": "சரிபார்ப்பு", "Close": "மூடு", "Choose on map": "வரைபடத்தில் தேர்வு செய்க", "Click the map or drag the pin. Zoom in for precision.": "வரைபடத்தில் சொடுக்கவும் அல்லது குறியை இழுக்கவும். துல்லியத்திற்கு பெரிதாக்கவும்.", "Use this place": "இந்த இடத்தைப் பயன்படுத்து", "Language": "மொழி",
 };
 
 

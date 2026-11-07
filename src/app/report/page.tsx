@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageLang, T } from "@/components/T";
+import MapPick from "@/components/MapPick";
 import { searchPlaces } from "@/lib/places";
 import { GROUP_LABEL } from "@/lib/studies";
 import { SITE, speciesSlug } from "@/lib/site";
@@ -64,6 +65,7 @@ function Form({ params, q }: { params: Record<string, string | undefined>; q: Re
       <label className={`${label} col-span-2`}><T k="Town or place" /><input name="place" defaultValue={q ? "" : params.place ?? ""} placeholder="Chennai" className={field} /></label>
       <label className={label}><T k="Latitude" /><input name="lat" inputMode="decimal" defaultValue={q?.lat ?? ""} className={field} /></label>
       <label className={label}><T k="Longitude" /><input name="lon" inputMode="decimal" defaultValue={q?.lon ?? ""} className={field} /></label>
+      <div className="col-span-2 sm:col-span-4 -mt-1"><MapPick /></div>
       <label className={`${label} col-span-2 sm:col-span-4`}><T k="Name of the place (optional, for example a park)" /><input name="name" maxLength={80} defaultValue={q?.name ?? params.name ?? ""} className={field} /></label>
       <label className={label}><T k="Radius (km)" /><input name="km" type="number" min={1} max={REPORT_LIMITS.MAX_KM} defaultValue={q?.km ?? REPORT_LIMITS.DEFAULT_KM} className={field} /></label>
       <label className={label}><T k="Animals" />
