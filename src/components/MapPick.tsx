@@ -43,7 +43,6 @@ export default function MapPick({ latName = "lat", lonName = "lon", onPick, lat,
     });
     return () => { cancelled = true; map?.remove(); };
     // Opened once per click on the button.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   function use() {

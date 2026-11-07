@@ -5,7 +5,7 @@ import ProposalForm from "@/components/ProposalForm";
 import ResearchSignIn from "@/components/ResearchSignIn";
 import { sql } from "@/lib/db";
 import { listProjects } from "@/lib/projects";
-import { DATA_CONCEPT_DOI, DATA_USES } from "@/lib/site";
+import { DATA_CONCEPT_DOI, DATA_USES, STUDIO_URL } from "@/lib/site";
 
 export const revalidate = 3600;
 
@@ -64,6 +64,7 @@ export default async function Research() {
           <Card href="/projects" title="Projects" text="Questions researchers want help with. Ask to join one, or post your own and say what help you need." stat={`${projects.filter((p) => p.open).length} open`} />
           <Card href="/studies" title="Study areas" text="Draw an area, pick a class or species. Get a live dashboard, a weekly digest and an export, and invite collaborators." stat={`${counts.studies} ${counts.studies === 1 ? "study" : "studies"}`} />
           <Card href="#review" title="Expert review" text="Mark arrival estimates you know as right, misidentified or resident. Two agreeing reviewers change the published dates." stat={`${counts.reviews} reviews by ${counts.reviewers}`} />
+          <Card href={STUDIO_URL} title="Process your recordings" text="Wildlife Network Studio, a free desktop app for Mac and Windows: BirdNET or Perch on your own computer, fast review, export for GBIF or publish here." stat="Free download" />
           <Card href="/datasets" title="Contribute a dataset" text="Upload detections from your own recorders (BirdNET, Kaleidoscope, any CSV). Checked, credited by name, citable." stat="ORCID sign-in" />
           <Card href="#start" title="Start in 5 minutes" text="Copy a Python or R snippet, or open the starter notebook with the API and the open data release." stat="Python · R · notebook" />
         </div>

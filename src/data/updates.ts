@@ -10,6 +10,7 @@ export const UPDATES: Update[] = [
     date: "2026-11-07",
     title: "Upload your datasets, download more easily, and reports for parks",
     items: [
+      { text: "Wildlife Network Studio 0.1.0, a free desktop app for Mac and Windows: point it at a drive of recordings, it finds the species on your own computer with BirdNET or Perch, helps you check them in minutes, and publishes them here or exports them for GBIF. Its own classifier learns local species from your answers.", href: "https://github.com/wlnw-org/wlnw-studio/releases/latest" },
       { text: "Contributed datasets: upload detection tables from BirdNET, Kaleidoscope or any CSV. Records are checked automatically, and each dataset gets its own page, citation and credit wherever it is used.", href: "/datasets" },
       { text: "Upload keys let desktop tools and scripts add records to a dataset without a browser.", href: "/institutions#in" },
       { text: "Download buttons on every species page and on area reports: weekly records you may reuse (GBIF and openly licensed datasets), plus arrival dates. The open data page now lists every way to get the data.", href: "/data#get" },

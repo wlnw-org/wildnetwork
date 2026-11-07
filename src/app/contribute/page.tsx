@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { STUDIO_URL } from "@/lib/site";
 import CopyBlock from "@/components/CopyBlock";
 import { sql } from "@/lib/db";
 import { MIN_EFFORT_WEEK, REGION } from "@/lib/methods";
@@ -181,6 +182,11 @@ export default async function Contribute() {
         <p className="mt-2">
           Already have results sitting on a drive, from Song Meters, AudioMoths or past field seasons? <Link href="/datasets/new" className="text-cyan-400 hover:underline">Upload them as a dataset</Link>:
           BirdNET and Kaleidoscope tables are recognised, the records are checked, and the dataset gets its own page, citation and credit wherever it is used.
+        </p>
+        <p className="mt-2">
+          Recordings that were never processed? <a href={STUDIO_URL} className="text-cyan-400 hover:underline" rel="noopener">Wildlife Network Studio</a> is a free
+          desktop app for Mac and Windows: point it at a drive, it finds the species on your own computer (BirdNET or Perch), helps you check them in
+          minutes, and publishes them here as a dataset or exports them for GBIF.
         </p>
 
         <H3 id="api">Your own detector or code</H3>
