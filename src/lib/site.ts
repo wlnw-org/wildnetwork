@@ -1,7 +1,15 @@
 export const SITE = "https://wlnw.org";
 export const SITE_NAME = "Wildlife Network";
-/** Wildlife Network Studio, the free desktop app: always the newest release. */
-export const STUDIO_URL = "https://github.com/wlnw-org/wlnw-studio/releases/latest";
+/** Wildlife Network Studio, the free desktop app: its page here, with one-click downloads. */
+export const STUDIO_URL = "/studio";
+export const STUDIO_RELEASES = "https://github.com/wlnw-org/wlnw-studio/releases";
+/** Fixed-name copies attached to every release (see the wlnw-studio build workflow), so these always get the newest version. */
+const STUDIO_LATEST = `${STUDIO_RELEASES}/latest/download`;
+export const STUDIO_DOWNLOADS = {
+  mac: `${STUDIO_LATEST}/Wildlife-Network-Studio-mac-arm64.dmg`,
+  windows: `${STUDIO_LATEST}/Wildlife-Network-Studio-windows-x64-setup.exe`,
+  windowsMsi: `${STUDIO_LATEST}/Wildlife-Network-Studio-windows-x64.msi`,
+};
 export const SITE_DESCRIPTION =
   "A live, open map of bird, bat and other animal movement, built from thousands of community sensors. See where a species is now, when it arrives, and how it moves through the year.";
 
