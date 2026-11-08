@@ -59,15 +59,15 @@ export default async function RegionArrivals({ params }: { params: Promise<{ reg
   const SpeciesLink = ({ x }: { x: Row }) => (
     <>
       <Link href={`/species/${speciesSlug(x.scientific_name)}`} className="text-cyan-400 hover:underline" prefetch={false}>{x.vernacular_name ?? x.scientific_name}</Link>
-      {x.vernacular_name && <span className="text-slate-500 italic"> {x.scientific_name}</span>}
+      {x.vernacular_name && <span className="text-slate-400 italic"> {x.scientific_name}</span>}
     </>
   );
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <nav className="text-sm text-slate-500">
-          <Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / <Link href="/arrivals" className="text-cyan-400 hover:underline">Arrivals</Link> / {r.name}
+        <nav className="text-sm text-slate-400">
+          <Link href="/arrivals" className="text-cyan-400 hover:underline">Arrivals</Link> / {r.name}
         </nav>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">When do birds arrive in {r.name}?</h1>
         <p className="mt-3">
@@ -94,20 +94,20 @@ export default async function RegionArrivals({ params }: { params: Promise<{ reg
 
         {byMonth.map(({ label, items }) => (
           <section key={label}>
-            <h2 className="mt-8 text-xl font-semibold text-slate-100">Arriving in {label} <span className="text-sm font-normal text-slate-500">{items.length}</span></h2>
+            <h2 className="mt-8 text-xl font-semibold text-slate-100">Arriving in {label} <span className="text-sm font-normal text-slate-400">{items.length}</span></h2>
             <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
               {items.map((x) => <li key={x.scientific_name}><SpeciesLink x={x} /></li>)}
             </ul>
           </section>
         ))}
 
-        <p className="mt-8 text-sm text-slate-500">
+        <p className="mt-8 text-sm text-slate-400">
           Other regions:{" "}
           {REGIONS.filter((o) => o.slug !== r.slug).map((o, i) => (
             <span key={o.slug}>{i > 0 && " · "}<Link href={`/arrivals/${o.slug}`} className="text-cyan-400 hover:underline">{o.name}</Link></span>
           ))}
         </p>
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-2 text-sm text-slate-400">
           Arrival dates come from automatic sound identification and open records, corrected for how much each area is watched.{" "}
           <Link href="/methods" className="text-cyan-400 hover:underline">How this is measured</Link>.
         </p>

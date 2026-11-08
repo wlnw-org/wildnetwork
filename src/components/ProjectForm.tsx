@@ -43,7 +43,7 @@ export default function ProjectForm({ needs, studies, hasEmail }: { needs: Recor
         </select>
       )}
       {!hasEmail && <input name="email" type="email" required placeholder="Your email, for requests to join" aria-label="Your email" className={input} />}
-      <p className="text-xs text-slate-500">The project is public, with your name and ORCID iD. Your email stays private until you accept someone. <a href="/privacy#research" className="text-cyan-400 hover:underline">Privacy</a></p>
+      <p className="text-xs text-slate-400">The project is public, with your name and ORCID iD. Your email stays private until you accept someone. <a href="/privacy#research" className="text-cyan-400 hover:underline">Privacy</a></p>
       <button disabled={state.busy} className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400 disabled:opacity-60">{state.busy ? "Posting..." : "Post project"}</button>
       {state.msg && <p className="text-sm text-rose-300">{state.msg}</p>}
     </form>

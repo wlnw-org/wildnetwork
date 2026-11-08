@@ -41,10 +41,10 @@ export default async function Review({ params }: { params: Promise<{ slug: strin
   const me = await getSession();
   const title = d.common ?? d.name;
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-4xl px-5 py-10 text-[15px] leading-relaxed">
-        <nav className="text-sm text-slate-500">
-          <Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / <Link href={`/species/${speciesSlug(d.name)}`} className="text-cyan-400 hover:underline">{title}</Link> / Review
+        <nav className="text-sm text-slate-400">
+          <Link href={`/species/${speciesSlug(d.name)}`} className="text-cyan-400 hover:underline">{title}</Link> / Review
         </nav>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Review arrival dates: {title}</h1>
         <p className="mt-3">
@@ -56,7 +56,7 @@ export default async function Review({ params }: { params: Promise<{ slug: strin
         {d.reviewers.length > 0 && (
           <p className="mt-3 text-sm text-slate-400">Reviewed by {d.reviewers.map((r, i) => <span key={r.orcid}>{i > 0 && ", "}<a href={orcidUrl(r.orcid)} className="text-cyan-400 hover:underline">{r.name}</a></span>)}.</p>
         )}
-        {d.rows.length === 0 ? <p className="mt-6 text-slate-500">No arrival estimates for this species.</p> : (
+        {d.rows.length === 0 ? <p className="mt-6 text-slate-400">No arrival estimates for this species.</p> : (
           <div className="mt-6 overflow-x-auto">
             <table className="w-full text-sm">
               <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium">Region</th><th className="font-medium">Cell</th><th className="font-medium">Arrival (90%)</th><th className="font-medium text-right">Support</th><th className="font-medium pl-3">Review</th></tr></thead>
@@ -64,7 +64,7 @@ export default async function Review({ params }: { params: Promise<{ slug: strin
                 <tr key={`${a.cell_lat},${a.cell_lon}`} className="border-b border-white/5 align-top">
                   <td className="py-1.5 pr-2">{a.region}</td>
                   <td className="tabular-nums whitespace-nowrap pr-2">{a.cell_lat}°, {a.cell_lon}°</td>
-                  <td className="whitespace-nowrap pr-2">{fmt(a.arrival)}{a.low && a.high ? <span className="text-slate-500"> ({fmt(a.low)} to {fmt(a.high)})</span> : null}</td>
+                  <td className="whitespace-nowrap pr-2">{fmt(a.arrival)}{a.low && a.high ? <span className="text-slate-400"> ({fmt(a.low)} to {fmt(a.high)})</span> : null}</td>
                   <td className={`text-right tabular-nums ${a.support != null && a.support < 0.5 ? "text-amber-300" : ""}`}>{a.support?.toFixed(2) ?? ""}</td>
                   <td className="pl-3 py-1"><ReviewButtons species={d.name} cellLat={a.cell_lat} cellLon={a.cell_lon} counts={d.counts.get(`${a.cell_lat},${a.cell_lon}`) ?? {}} signedIn={!!me} /></td>
                 </tr>))}</tbody>

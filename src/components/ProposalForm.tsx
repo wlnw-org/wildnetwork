@@ -23,7 +23,7 @@ export default function ProposalForm() {
       <textarea name="question" required rows={4} placeholder="The question you want to answer, and what data you would need" aria-label="Question" className={`${input} sm:col-span-2`} />
       <button disabled={state.busy} className="sm:col-span-2 rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400 disabled:opacity-60">{state.busy ? "Sending..." : "Send proposal"}</button>
       {state.msg && <p className="sm:col-span-2 text-sm text-rose-300">{state.msg}</p>}
-      <p className="sm:col-span-2 text-xs text-slate-500">Read by the maintainer only. Your email is stored encrypted and used only to reply. <a href="/privacy#research" className="text-cyan-400 hover:underline">Privacy</a></p>
+      <p className="sm:col-span-2 text-xs text-slate-400">Read by the maintainer only. Your email is stored encrypted and used only to reply. <a href="/privacy#research" className="text-cyan-400 hover:underline">Privacy</a></p>
     </form>
   );
 }

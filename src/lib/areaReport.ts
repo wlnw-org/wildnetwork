@@ -5,6 +5,7 @@ import { isSensitiveTaxon } from "@/lib/sensitiveTaxa";
 import { HIDDEN_DEPLOYMENT_SOURCES, PENDING_SOURCES } from "@/lib/sources";
 import { PULLED_SOURCES } from "@/lib/siteReport";
 import { SITE } from "@/lib/site";
+import { areaLabel } from "@/lib/areaLabel";
 
 /**
  * Area reports for officials and planners: a district, protected area or any boundary, with what was recorded inside it.
@@ -33,10 +34,10 @@ async function nominatim(q: string, limit: number) {
   const u = new URLSearchParams({ q, format: "jsonv2", limit: String(limit), polygon_geojson: "0", addressdetails: "0" });
   const res = await fetch(`${NOMINATIM}/search?${u}`, { headers: { "user-agent": UA, "accept-language": "en" }, signal: AbortSignal.timeout(15_000) });
   if (!res.ok) throw new Error(`nominatim ${res.status}`);
-  const rows = (await res.json()) as { osm_type: string; osm_id: number; display_name: string; type: string; category?: string; class?: string; lat: string; lon: string }[];
+  const rows = (await res.json()) as { osm_type: string; osm_id: number; display_name: string; type: string; category?: string; class?: string; addresstype?: string; lat: string; lon: string }[];
   // Only relations and closed ways have an area; nodes are points.
   return rows.filter((r) => r.osm_type === "relation" || r.osm_type === "way").map((r) => ({
-    name: r.display_name, type: [r.category ?? r.class, r.type].filter(Boolean).join(" "), osm: `${r.osm_type === "relation" ? "R" : "W"}${r.osm_id}`,
+    name: r.display_name, type: [r.category ?? r.class, r.type].filter(Boolean).join(" "), addresstype: r.addresstype, osm: `${r.osm_type === "relation" ? "R" : "W"}${r.osm_id}`,
     lat: Number(r.lat), lon: Number(r.lon),
   }));
 }
@@ -55,7 +56,8 @@ export async function searchAreas(q: string): Promise<AreaHit[]> {
   const seen = new Set<string>();
   return hits.filter((h) => !seen.has(h.osm) && seen.add(h.osm))
     .sort((a, b) => Number(isProtected(b.type)) - Number(isProtected(a.type)))
-    .slice(0, 12);
+    .slice(0, 12)
+    .map(({ addresstype, ...h }) => ({ ...h, type: areaLabel(h.type, addresstype) }));
 }
 
 /**

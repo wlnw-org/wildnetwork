@@ -80,7 +80,7 @@ export default function StudyForm() {
           {me?.user ? (state.busy ? "Creating..." : "Create study area") : "Sign in with ORCID to create a study area"}
         </button>
         {state.msg && <p className="text-sm text-rose-300">{state.msg}</p>}
-        <p className="text-xs text-slate-500">Study areas are public: anyone with the link sees the dashboard. Your email is stored encrypted and used only for the digest.</p>
+        <p className="text-xs text-slate-400">Study areas are public: anyone with the link sees the dashboard. Your email is stored encrypted and used only for the digest.</p>
       </form>
     </div>
   );

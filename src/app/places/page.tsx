@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageLang, T } from "@/components/T";
+import { T } from "@/components/T";
 import PLACES from "@/data/places.json";
 
 export const metadata: Metadata = {
@@ -14,12 +14,8 @@ export default function Places() {
   const byCountry = Object.entries(PLACES.reduce<Record<string, typeof PLACES>>((a, p) => ({ ...a, [p.country ?? "Other"]: [...(a[p.country ?? "Other"] ?? []), p] }), {}))
     .sort((a, b) => a[0].localeCompare(b[0]));
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <nav className="text-sm text-slate-500 flex items-center gap-2">
-          <span><Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / <T k="Places" /></span>
-          <span className="ml-auto"><PageLang /></span>
-        </nav>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><T k="Birds and wildlife near you" /></h1>
         <p className="mt-3">
           <T k="Each report shows what arrived around a city in the last four weeks, what is expected in the next six, and what is recorded most, for birds, bats, frogs and insects." />{" "}

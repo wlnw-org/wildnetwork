@@ -33,9 +33,8 @@ export default async function Stations() {
       WHERE last_status_at > now() - interval '30 days' ORDER BY last_status_at DESC LIMIT 200`.catch(() => []),
   ]);
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <Link href="/" className="text-sm text-cyan-400 hover:underline">← Back to the map</Link>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Stations</h1>
         <p className="mt-3">Everything on the map comes from people: station owners, camera trappers and observers. Active means seen in the last seven days.</p>
 
@@ -44,7 +43,7 @@ export default async function Stations() {
             <div key={s.source_system} className="rounded-lg border border-white/10 bg-white/5 p-3">
               <dt className="text-xs text-slate-400">{LABEL[s.source_system]}</dt>
               <dd className="text-2xl font-semibold text-slate-100">{s.active.toLocaleString("en-GB")}</dd>
-              <dd className="text-xs text-slate-500">{s.total.toLocaleString("en-GB")} known</dd>
+              <dd className="text-xs text-slate-400">{s.total.toLocaleString("en-GB")} known</dd>
             </div>
           ))}
           <div className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 p-3">

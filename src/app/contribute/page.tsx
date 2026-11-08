@@ -56,9 +56,8 @@ export default async function Contribute() {
   const g = await gaps();
   const n = (r: string) => g.find((x) => x.region === r)?.stations ?? 0;
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <Link href="/" className="text-sm text-cyan-400 hover:underline">← Back to the map</Link>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Contribute data</h1>
         <p className="mt-3">
           Wildlife Network is built from what people&apos;s devices hear and see. If you run a bird station, a bat detector or a camera trap, you can add it in a few
@@ -100,7 +99,7 @@ export default async function Contribute() {
                   <td className="text-right tabular-nums">{r.watched}</td>
                 </tr>))}</tbody>
             </table>
-            <p className="mt-2 text-xs text-slate-500">
+            <p className="mt-2 text-xs text-slate-400">
               Stations heard from in the last 30 days, from BirdWeather and devices sending here directly. An area is a 5 degree square (about 550 km across); it
               counts as watched at {MIN_EFFORT_WEEK.toLocaleString("en-GB")} bird detections a week, averaged over four recent weeks. India and neighbours is the box
               from 5 to 35° N and 65 to 95° E and is also counted in Asia. Turn on Coverage in the map legend to see each area.
@@ -274,7 +273,7 @@ curl -X POST ${SITE}/api/v1/events \\
           <A href={`${AGENT}/issues`}>open an issue</A>.
         </p>
 
-        <p className="mt-10 text-sm text-slate-500">
+        <p className="mt-10 text-sm text-slate-400">
           How your data is used in the measures: <Link href="/methods" className="text-cyan-400 hover:underline">Methods</Link>. Made by{" "}
           <A href="https://www.arunrajiah.com">Arun Rajiah</A>.
         </p>

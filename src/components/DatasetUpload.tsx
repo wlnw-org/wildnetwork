@@ -121,7 +121,7 @@ export default function DatasetUpload({ id, method, minConf }: { id: string; met
             {needPlace && <label className="text-slate-400">Longitude<input value={opts.lon} onChange={(e) => setOpts({ ...opts, lon: e.target.value })} inputMode="decimal" placeholder="26.75" className={input} /></label>}
           </div>
           {needPlace && <MapPick lat={opts.lat ? Number(opts.lat) : null} lon={opts.lon ? Number(opts.lon) : null} onPick={(la, lo) => setOpts({ ...opts, lat: String(la), lon: String(lo) })} />}
-          {needPlace && <p className="text-xs text-slate-500">No coordinate columns: every row gets this site and position. Upload one recorder at a time.</p>}
+          {needPlace && <p className="text-xs text-slate-400">No coordinate columns: every row gets this site and position. Upload one recorder at a time.</p>}
           <button onClick={check} className="rounded-md bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400">Check rows</button>
         </div>
       )}

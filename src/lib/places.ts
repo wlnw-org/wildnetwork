@@ -1,5 +1,6 @@
 import { sql } from "@/lib/db";
 import { snap, studyDashboard, type Study } from "@/lib/studies";
+import CURATED from "@/data/places.json";
 
 /**
  * Place search and place reports. Places come from Open-Meteo's free geocoder (GeoNames data, no key), looked up on the
@@ -32,7 +33,10 @@ export async function searchPlaces(q: string, count = 8): Promise<Place[]> {
 export async function placeBySlug(slug: string): Promise<Place | null> {
   const m = /^([a-z0-9-]+)-([a-z]{2})$/.exec(slug);
   if (!m) return null;
-  const found = (await searchPlaces(m[1].replace(/-/g, " "), 20)).filter((p) => p.slug === slug);
+  // The slug drops punctuation ("washington-d-c-us"), and the geocoder cannot find "washington d c": search listed
+  // cities by their real name, others by the slug words.
+  const listed = CURATED.find((c) => c.slug === slug);
+  const found = (await searchPlaces(listed?.name ?? m[1].replace(/-/g, " "), 20)).filter((p) => p.slug === slug);
   return found.sort((a, b) => b.population - a.population)[0] ?? null;
 }
 

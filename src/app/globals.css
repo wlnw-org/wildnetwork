@@ -34,3 +34,6 @@ body {
 .maplibregl-popup.maplibregl-popup-anchor-top .maplibregl-popup-tip, .maplibregl-popup.maplibregl-popup-anchor-top-left .maplibregl-popup-tip, .maplibregl-popup.maplibregl-popup-anchor-top-right .maplibregl-popup-tip { border-bottom-color: #0f172a; }
 .maplibregl-popup.maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color: #0f172a; }
 .maplibregl-popup.maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color: #0f172a; }
+
+/* Keyboard focus: a visible cyan ring on every interactive element (mouse clicks do not show it). Unlayered, so it wins over outline-none utilities. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline: 2px solid #22d3ee; outline-offset: 2px; border-radius: 2px; }

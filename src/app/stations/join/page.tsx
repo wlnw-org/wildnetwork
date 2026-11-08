@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function Join() {
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-2xl px-5 py-10 text-[15px] leading-relaxed">
         <Link href="/stations" className="text-sm text-cyan-400 hover:underline">← Stations</Link>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Add your BirdWeather station</h1>
@@ -39,7 +39,7 @@ export default function Join() {
 
         <OptinForm />
 
-        <p className="mt-6 text-sm text-slate-500">
+        <p className="mt-6 text-sm text-slate-400">
           Wildlife Network is independent of BirdWeather and non-commercial; data from BirdWeather stations is never used commercially. Questions or problems:
           arunrajiah@gmail.com. See also the <Link href="/privacy" className="text-cyan-400 hover:underline">privacy page</Link>.
         </p>

@@ -33,7 +33,7 @@ export function AskToJoin({ target, request, hasEmail }: { target: Target; reque
     <form onSubmit={submit} className="mt-4 space-y-2 rounded-lg border border-white/10 bg-white/5 p-3">
       <textarea name="message" required minLength={10} maxLength={1000} rows={3} placeholder="What would you bring? Only the owner sees this." aria-label="Message to the owner" className={input} />
       {!hasEmail && <input name="email" type="email" required placeholder="Your email" aria-label="Your email" className={input} />}
-      <p className="text-xs text-slate-500">If the owner accepts, you each receive the other&apos;s email address. It is not shown to anyone else. <a href="/privacy#research" className="text-cyan-400 hover:underline">Privacy</a></p>
+      <p className="text-xs text-slate-400">If the owner accepts, you each receive the other&apos;s email address. It is not shown to anyone else. <a href="/privacy#research" className="text-cyan-400 hover:underline">Privacy</a></p>
       <button disabled={state.busy} className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400 disabled:opacity-60">{state.busy ? "Sending..." : "Send request"}</button>
       {state.msg && <p className="text-sm text-rose-300">{state.msg}</p>}
     </form>
@@ -57,7 +57,7 @@ export function JoinRequests({ requests, hasEmail }: { requests: { id: string; o
       {!hasEmail && <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Your email, sent to anyone you accept" aria-label="Your email" className={input} />}
       {requests.map((q) => (
         <div key={q.id} className="border-t border-white/10 pt-2">
-          <a href={`https://orcid.org/${q.orcid}`} className="text-cyan-400 hover:underline">{q.name}</a> <span className="text-slate-500">{q.created}</span>
+          <a href={`https://orcid.org/${q.orcid}`} className="text-cyan-400 hover:underline">{q.name}</a> <span className="text-slate-400">{q.created}</span>
           {q.message && <p className="mt-1 whitespace-pre-line">{q.message}</p>}
           <div className="mt-2 flex gap-2">
             <button onClick={() => decide(q.id, "accept")} className="rounded-md bg-cyan-500 px-3 py-1 font-medium text-slate-950 hover:bg-cyan-400">Accept and share emails</button>

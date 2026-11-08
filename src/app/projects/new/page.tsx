@@ -16,9 +16,9 @@ export default async function NewProject() {
     sql<{ has_email: boolean }[]>`SELECT email_enc IS NOT NULL AS has_email FROM researchers WHERE orcid = ${me.orcid}`,
   ]) : [[], []];
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <nav className="text-sm text-slate-500"><Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / <Link href="/projects" className="text-cyan-400 hover:underline">Projects</Link> / New</nav>
+        <nav className="text-sm text-slate-400"><Link href="/projects" className="text-cyan-400 hover:underline">Projects</Link> / New</nav>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Post a project</h1>
         <ProjectForm needs={NEEDS} studies={[...studies]} hasEmail={!!row?.has_email} />
       </div>

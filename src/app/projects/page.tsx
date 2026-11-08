@@ -16,9 +16,9 @@ export default async function Projects({ searchParams }: { searchParams: Promise
   const rows = await listProjects(active);
   const chip = (on: boolean) => `rounded-full border px-3 py-1 text-sm ${on ? "border-cyan-400 text-cyan-300" : "border-white/15 text-slate-400 hover:border-white/30"}`;
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <nav className="text-sm text-slate-500"><Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / <Link href="/research" className="text-cyan-400 hover:underline">Research</Link> / Projects</nav>
+        <nav className="text-sm text-slate-400"><Link href="/research" className="text-cyan-400 hover:underline">Research</Link> / Projects</nav>
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-3xl font-semibold tracking-tight text-slate-100">Projects</h1>
           <Link href="/projects/new" className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400">Post a project</Link>
@@ -35,9 +35,9 @@ export default async function Projects({ searchParams }: { searchParams: Promise
             {rows.map((p) => (
               <li key={p.id}>
                 <Link href={`/projects/${p.id}`} className="block rounded-lg border border-white/10 bg-white/5 px-4 py-3 hover:border-cyan-400/50">
-                  <span className="block font-medium text-slate-100">{p.title}{!p.open && <span className="ml-2 text-sm font-normal text-slate-500">closed</span>}</span>
+                  <span className="block font-medium text-slate-100">{p.title}{!p.open && <span className="ml-2 text-sm font-normal text-slate-400">closed</span>}</span>
                   <span className="block text-sm text-slate-400">Looking for: {p.needs.map((n) => NEEDS[n] ?? n).join(", ")}</span>
-                  <span className="block text-sm text-slate-500">{[p.species, p.region, p.owner_name, p.created].filter(Boolean).join(" · ")}</span>
+                  <span className="block text-sm text-slate-400">{[p.species, p.region, p.owner_name, p.created].filter(Boolean).join(" · ")}</span>
                 </Link>
               </li>
             ))}

@@ -47,24 +47,24 @@ export default async function DatasetPage({ params }: Props) {
     live: "",
   };
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <nav className="text-sm text-slate-500"><Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / <Link href="/datasets" className="text-cyan-400 hover:underline">Datasets</Link></nav>
+        <nav className="text-sm text-slate-400"><Link href="/datasets" className="text-cyan-400 hover:underline">Datasets</Link></nav>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">{d.title}</h1>
         {statusText[d.status] && <p className="mt-3 rounded-lg border border-amber-400/30 bg-amber-400/5 p-3 text-amber-200">{statusText[d.status]}</p>}
         {d.review_note && manage && <p className="mt-3 rounded-lg border border-amber-400/30 bg-amber-400/5 p-3 text-amber-200">Reviewer&apos;s note: {d.review_note}</p>}
 
         <dl className="mt-5 grid grid-cols-[9rem_1fr] gap-x-4 gap-y-1 text-sm">
-          {d.institution && <><dt className="text-slate-500">Institution</dt><dd>{d.institution}</dd></>}
-          <dt className="text-slate-500">People</dt>
+          {d.institution && <><dt className="text-slate-400">Institution</dt><dd>{d.institution}</dd></>}
+          <dt className="text-slate-400">People</dt>
           <dd>{d.people.map((p, i) => <span key={i}>{i > 0 && ", "}{p.orcid ? <a href={orcidUrl(p.orcid)} className="text-cyan-400 hover:underline" rel="noopener">{p.name}</a> : p.name}</span>)}</dd>
-          <dt className="text-slate-500">Licence</dt><dd><a href={LICENSE_URL[d.license]} className="text-cyan-400 hover:underline" rel="license noopener">{LICENSES[d.license]}</a></dd>
-          <dt className="text-slate-500">Animals</dt><dd>{GROUP_LABELS[d.grp] ?? d.grp}</dd>
-          <dt className="text-slate-500">Identified by</dt><dd>{d.method === "human" ? "People" : `${d.classifier ?? "A classifier"}, confidence ${d.min_conf} or more`}</dd>
-          {d.device && <><dt className="text-slate-500">Recorder</dt><dd>{d.device}</dd></>}
-          <dt className="text-slate-500">Records</dt><dd>{d.records.toLocaleString("en")} detections, {d.species} species, {d.sites} {d.sites === 1 ? "site" : "sites"} in {cells[0]?.n ?? 0} grid {cells[0]?.n === 1 ? "cell" : "cells"}</dd>
-          {d.first_day && <><dt className="text-slate-500">Dates</dt><dd>{d.first_day} to {d.last_day}</dd></>}
-          {d.doi && <><dt className="text-slate-500">DOI</dt><dd><a href={`https://doi.org/${d.doi}`} className="text-cyan-400 hover:underline">{d.doi}</a></dd></>}
+          <dt className="text-slate-400">Licence</dt><dd><a href={LICENSE_URL[d.license]} className="text-cyan-400 hover:underline" rel="license noopener">{LICENSES[d.license]}</a></dd>
+          <dt className="text-slate-400">Animals</dt><dd>{GROUP_LABELS[d.grp] ?? d.grp}</dd>
+          <dt className="text-slate-400">Identified by</dt><dd>{d.method === "human" ? "People" : `${d.classifier ?? "A classifier"}, confidence ${d.min_conf} or more`}</dd>
+          {d.device && <><dt className="text-slate-400">Recorder</dt><dd>{d.device}</dd></>}
+          <dt className="text-slate-400">Records</dt><dd>{d.records.toLocaleString("en")} detections, {d.species} species, {d.sites} {d.sites === 1 ? "site" : "sites"} in {cells[0]?.n ?? 0} grid {cells[0]?.n === 1 ? "cell" : "cells"}</dd>
+          {d.first_day && <><dt className="text-slate-400">Dates</dt><dd>{d.first_day} to {d.last_day}</dd></>}
+          {d.doi && <><dt className="text-slate-400">DOI</dt><dd><a href={`https://doi.org/${d.doi}`} className="text-cyan-400 hover:underline">{d.doi}</a></dd></>}
         </dl>
         {d.description && <p className="mt-4 whitespace-pre-line">{d.description}</p>}
 
@@ -73,7 +73,7 @@ export default async function DatasetPage({ params }: Props) {
         {d.status === "live" && (
           <p className="mt-2 text-sm">
             <a href={`/api/v1/datasets/${d.id}/csv`} className="text-cyan-400 hover:underline">Download the records (CSV, Darwin Core terms)</a>
-            <span className="text-slate-500"> · {d.downloads} {d.downloads === 1 ? "download" : "downloads"} · positions rounded to about {d.precision_km} km{d.license === "CC-BY-NC-4.0" ? " · non-commercial use only" : ""}</span>
+            <span className="text-slate-400"> · {d.downloads} {d.downloads === 1 ? "download" : "downloads"} · positions rounded to about {d.precision_km} km{d.license === "CC-BY-NC-4.0" ? " · non-commercial use only" : ""}</span>
           </p>
         )}
 
@@ -86,7 +86,7 @@ export default async function DatasetPage({ params }: Props) {
             </p>
             {Object.keys(c.reasons).length > 0 && <p className="mt-1 text-sm text-slate-400">Flagged: {Object.entries(c.reasons).map(([k, n]) => `${n.toLocaleString("en")} ${k}`).join("; ")}.</p>}
             {c.warnings.map((w, i) => <p key={i} className="mt-1 text-sm text-amber-300">{w}</p>)}
-            <p className="mt-1 text-xs text-slate-500">Flagged and rejected records never count. <Link href="/methods#datasets" className="text-cyan-400 hover:underline">How the checks work</Link>.</p>
+            <p className="mt-1 text-xs text-slate-400">Flagged and rejected records never count. <Link href="/methods#datasets" className="text-cyan-400 hover:underline">How the checks work</Link>.</p>
           </>
         )}
 
@@ -97,11 +97,11 @@ export default async function DatasetPage({ params }: Props) {
               {shown.map((s) => (
                 <li key={s.scientific_name} className="break-inside-avoid py-0.5">
                   <Link href={`/species/${speciesSlug(s.scientific_name)}`} className="hover:text-cyan-300">{s.vernacular ?? <i>{s.scientific_name}</i>}</Link>
-                  <span className="text-slate-500"> · {s.n.toLocaleString("en")}</span>
+                  <span className="text-slate-400"> · {s.n.toLocaleString("en")}</span>
                 </li>
               ))}
             </ul>
-            {hidden > 0 && <p className="mt-1 text-xs text-slate-500">Plus {hidden} sensitive {hidden === 1 ? "species" : "species"}, not named to protect them.</p>}
+            {hidden > 0 && <p className="mt-1 text-xs text-slate-400">Plus {hidden} sensitive {hidden === 1 ? "species" : "species"}, not named to protect them.</p>}
           </>
         )}
 

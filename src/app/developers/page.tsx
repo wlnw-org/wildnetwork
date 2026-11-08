@@ -43,9 +43,8 @@ curl -LO ${DATA_RELEASES[0]?.zip ?? SITE + "/data"}`;
 
 export default function Developers() {
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <Link href="/" className="text-sm text-cyan-400 hover:underline">← Back to the map</Link>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Developers and researchers</h1>
         <p className="mt-3">
           Everything on the map comes from an open API. No key is needed to read it. The full description is an OpenAPI file:{" "}

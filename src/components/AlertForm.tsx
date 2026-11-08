@@ -41,7 +41,7 @@ export default function AlertForm({ species, title, compact = false }: { species
         {state.busy ? t("Sending...") : compact ? t("Email me when it arrives") : t("Email me when the {name} arrives", { name: title })}
       </button>
       {state.msg && <p className="sm:col-span-2 text-sm text-rose-300">{state.msg}</p>}
-      <p className="sm:col-span-2 text-xs text-slate-500">
+      <p className="sm:col-span-2 text-xs text-slate-400">
         {t("One email when it arrives in your area after weeks away, never more than once every two months. Confirm by email first; unsubscribe in one click.")}{" "}
         {t("Your address is stored encrypted and used for nothing else.")} <a href="/privacy#alerts" className="text-cyan-400 hover:underline">{t("Privacy")}</a>
       </p>

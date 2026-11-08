@@ -22,7 +22,7 @@ export default function Validation() {
   // The comparison was built on BirdWeather detections, which are off public display for now.
   if (BIRDWEATHER_PAUSED) {
     return (
-      <main className="min-h-screen bg-slate-950 text-slate-300">
+      <main className="flex-1 bg-slate-950 text-slate-300">
         <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
           <Link href="/methods" className="text-sm text-cyan-400 hover:underline">← Methods</Link>
           <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Validation: arrival dates</h1>
@@ -45,11 +45,11 @@ export default function Validation() {
   const outliers = pairs.filter((p) => Math.abs(p.diffWeeks) > 4).length;
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <Link href="/methods" className="text-sm text-cyan-400 hover:underline">← Methods</Link>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Validation: arrival dates</h1>
-        <p className="mt-1 text-sm text-slate-500">Run on {fmt(S.generatedAt)} 2026 · methods {S.methods} · weeks {fmt(S.weeks[0])} 2025 to {fmt(S.weeks[1])} 2026</p>
+        <p className="mt-1 text-sm text-slate-400">Run on {fmt(S.generatedAt)} 2026 · methods {S.methods} · weeks {fmt(S.weeks[0])} 2025 to {fmt(S.weeks[1])} 2026</p>
 
         <p className="mt-6">
           Wildlife Network estimates when a species arrives in a region from acoustic detections. This page compares those estimates with an independent source:
@@ -92,7 +92,7 @@ export default function Validation() {
             <text x={(W + PAD.l) / 2} y={H - 4} textAnchor="middle" fontSize={12} fill="#cbd5e1">Arrival week, iNaturalist observers</text>
             <text x={14} y={H / 2} textAnchor="middle" fontSize={12} fill="#cbd5e1" transform={`rotate(-90 14 ${H / 2})`}>Arrival week, Wildlife Network</text>
           </svg>
-          <figcaption className="mt-1 text-sm text-slate-500">Each dot is one species in one cell. Dots on the dashed line agree exactly; above it, Wildlife Network is later. Hover a dot for the species.</figcaption>
+          <figcaption className="mt-1 text-sm text-slate-400">Each dot is one species in one cell. Dots on the dashed line agree exactly; above it, Wildlife Network is later. Hover a dot for the species.</figcaption>
         </figure>
 
         <figure className="mt-8">
@@ -110,7 +110,7 @@ export default function Validation() {
             <line x1={36} x2={628} y1={160} y2={160} stroke="#334155" />
             <text x={332} y={196} textAnchor="middle" fontSize={12} fill="#cbd5e1">Wildlife Network minus iNaturalist, weeks</text>
           </svg>
-          <figcaption className="mt-1 text-sm text-slate-500">Most arrivals agree to the week or are one week later in Wildlife Network.</figcaption>
+          <figcaption className="mt-1 text-sm text-slate-400">Most arrivals agree to the week or are one week later in Wildlife Network.</figcaption>
         </figure>
 
         <H2>Reading it honestly</H2>
@@ -148,7 +148,7 @@ export default function Validation() {
               ))}
             </tbody>
           </table>
-          <p className="mt-1 text-sm text-slate-500">The twelve largest disagreements.</p>
+          <p className="mt-1 text-sm text-slate-400">The twelve largest disagreements.</p>
         </div>
 
         <H2>What this does not show</H2>
@@ -177,7 +177,7 @@ function Tile({ label, value, note }: { label: string; value: string; note: stri
     <div className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2">
       <div className="text-xs text-slate-400">{label}</div>
       <div className="text-xl font-semibold text-slate-100 tabular-nums">{value}</div>
-      <div className="text-xs text-slate-500">{note}</div>
+      <div className="text-xs text-slate-400">{note}</div>
     </div>
   );
 }

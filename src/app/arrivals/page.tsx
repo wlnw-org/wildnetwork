@@ -17,11 +17,8 @@ export default async function ArrivalsIndex() {
     SELECT ${REGION} AS region, COUNT(DISTINCT scientific_name)::int AS n FROM phenology GROUP BY 1`;
   const n = (name: string) => counts.find((c) => c.region === name)?.n ?? 0;
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <nav className="text-sm text-slate-500">
-          <Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / Arrivals
-        </nav>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">When do birds arrive?</h1>
         <p className="mt-3">
           The week each species was first heard or seen regularly after at least six weeks away, region by region, over the past year.
@@ -32,12 +29,12 @@ export default async function ArrivalsIndex() {
             <li key={r.slug}>
               <Link href={`/arrivals/${r.slug}`} className="block rounded-lg border border-white/10 px-4 py-3 hover:border-cyan-400/60">
                 <span className="text-slate-100 font-medium">Arrivals in {r.name}</span>
-                <span className="block text-sm text-slate-500">{n(r.name).toLocaleString("en-GB")} species</span>
+                <span className="block text-sm text-slate-400">{n(r.name).toLocaleString("en-GB")} species</span>
               </Link>
             </li>
           ))}
         </ul>
-        <p className="mt-8 text-sm text-slate-500">
+        <p className="mt-8 text-sm text-slate-400">
           <Link href="/species" className="text-cyan-400 hover:underline">All species</Link> ·{" "}
           <Link href="/methods" className="text-cyan-400 hover:underline">How arrival dates are measured</Link>
         </p>

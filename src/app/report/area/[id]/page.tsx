@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PageLang, T } from "@/components/T";
+import { T } from "@/components/T";
 import PrintButton from "@/components/PrintButton";
 import { AREA_GROUPS, areaReport, areaReportHref, getArea, parsePeriod, type AreaReport } from "@/lib/areaReport";
 import { GROUP_LABEL } from "@/lib/studies";
@@ -32,16 +32,11 @@ export default async function AreaReportPage({ params, searchParams }: Props) {
   const href = areaReportHref(id, period, group);
   const api = `/api/v1/report/area/${id}?from=${period.from}&to=${period.to}${group !== "all" ? `&group=${group}` : ""}`;
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300 print:bg-white print:text-slate-900">
+    <main className="flex-1 bg-slate-950 text-slate-300 print:bg-white print:text-slate-900">
       <div className="mx-auto max-w-4xl px-5 py-10 text-[15px] leading-relaxed print:max-w-none print:px-0 print:py-0 print:text-[11pt]">
-        <nav className="text-sm text-slate-500 flex items-center gap-2 print:hidden">
-          <span><Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / <Link href="/report/area" className="text-cyan-400 hover:underline"><T k="Area report" /></Link></span>
-          <span className="ml-auto"><PageLang /></span>
-        </nav>
-
-        <header className="mt-4 flex flex-wrap items-start justify-between gap-4">
+        <header className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-wider text-cyan-400 print:text-slate-600"><T k="Area report" /> · Wildlife Network</p>
+            <p className="text-xs uppercase tracking-wider text-cyan-400 print:text-slate-600"><Link href="/report/area" className="hover:underline"><T k="Area report" /></Link> · Wildlife Network</p>
             <h1 className="mt-1 text-3xl font-semibold tracking-tight text-slate-100 print:text-black">{area.name}</h1>
             <p className="mt-1 text-sm text-slate-400 print:text-slate-700">
               {Math.round(area.km2).toLocaleString("en")} km² · {fmtDate(period.from)} – {fmtDate(period.to)} · {group === "all" ? <T k="All classes" /> : GROUP_LABEL[group] ?? group}
@@ -74,11 +69,11 @@ export default async function AreaReportPage({ params, searchParams }: Props) {
               <h2 className="font-semibold text-slate-100 print:text-black"><T k="Stations inside the area" /></h2>
               {r.stations.length === 0 && r.otherStations.length === 0 && <p className="text-slate-400 print:text-slate-700"><T k="No listening station yet. The checklist comes from GBIF records only. A station here would add continuous, comparable data." /> <Link href="/contribute" className="text-cyan-400 hover:underline print:hidden"><T k="Add one" /></Link></p>}
               <ul className="mt-1 space-y-0.5">
-                {r.stations.map((s) => <li key={s.id}>{s.name ?? s.id} <span className="text-slate-500">· {s.sensor}</span></li>)}
-                {r.otherStations.map((o) => <li key={o.source}>{o.n} {o.source === "birdweather" ? "BirdWeather" : o.source} <span className="text-slate-500"><T k="(counted, not named)" /></span></li>)}
+                {r.stations.map((s) => <li key={s.id}>{s.name ?? s.id} <span className="text-slate-400">· {s.sensor}</span></li>)}
+                {r.otherStations.map((o) => <li key={o.source}>{o.n} {o.source === "birdweather" ? "BirdWeather" : o.source} <span className="text-slate-400"><T k="(counted, not named)" /></span></li>)}
               </ul>
             </div>
-            <div className="text-xs text-slate-500 print:text-slate-600">
+            <div className="text-xs text-slate-400 print:text-slate-600">
               <T k="Boundary" />: {area.source === "osm" ? <>OpenStreetMap contributors (ODbL){area.osm_ref ? ` · ${area.osm_ref}` : ""}</> : <T k="supplied by the person who made the report" />}. <T k="Not an official boundary unless your department supplied it." />
             </div>
           </div>
@@ -95,21 +90,21 @@ export default async function AreaReportPage({ params, searchParams }: Props) {
               <a href={`${api}&format=geojson`} className="text-cyan-400 hover:underline">GeoJSON</a>
             </div>
           </div>
-          <p className="mt-1 text-xs text-slate-500 print:text-slate-600">
+          <p className="mt-1 text-xs text-slate-400 print:text-slate-600">
             <T k="Usual arrival is the regional estimate for the 5 degree area around this place (90% interval), shown only when it is well supported. It is a guide to the season, not a record from inside the boundary." />
             {r.sensitiveHidden > 0 && <> {r.sensitiveHidden} <T k="sensitive species are counted but not named." /></>}
             {r.gbif.truncated && <> <T k="GBIF lists at most 1,000 species per query, so the rarest may be missing." /></>}
             {r.unnamed > 0 && <> {r.unnamed} <T k="more species are still being named and will appear when the report is opened again." /></>}
           </p>
           <table className="mt-3 w-full text-sm">
-            <thead className="text-left text-xs uppercase tracking-wider text-slate-500 print:text-slate-700">
+            <thead className="text-left text-xs uppercase tracking-wider text-slate-400 print:text-slate-700">
               <tr><th className="py-1 pr-2">#</th><th className="py-1 pr-2"><T k="Species" /></th><th className="py-1 pr-2"><T k="Class" /></th><th className="py-1 pr-2 text-right"><T k="GBIF records" /></th><th className="py-1 pr-2 text-right"><T k="Station detections" /></th><th className="py-1 text-right"><T k="Usual arrival" /></th></tr>
             </thead>
             <tbody className="divide-y divide-white/5 print:divide-slate-200">
               {r.checklist.map((s, i) => (
                 <tr key={s.scientificName} className="break-inside-avoid">
-                  <td className="py-1 pr-2 text-slate-500">{i + 1}</td>
-                  <td className="py-1 pr-2"><Link href={`/species/${speciesSlug(s.scientificName)}`} className="text-slate-100 hover:underline print:text-black">{s.vernacularName ?? s.scientificName}</Link> <i className="text-slate-500">{s.scientificName}</i></td>
+                  <td className="py-1 pr-2 text-slate-400">{i + 1}</td>
+                  <td className="py-1 pr-2"><Link href={`/species/${speciesSlug(s.scientificName)}`} className="text-slate-100 hover:underline print:text-black">{s.vernacularName ?? s.scientificName}</Link> <i className="text-slate-400">{s.scientificName}</i></td>
                   <td className="py-1 pr-2 text-slate-400 print:text-slate-700">{GROUP_LABEL[s.group] ?? s.group}</td>
                   <td className="py-1 pr-2 text-right tabular-nums">{s.gbif ? s.gbif.toLocaleString("en") : ""}</td>
                   <td className="py-1 pr-2 text-right tabular-nums">{s.acoustic ? s.acoustic.toLocaleString("en") : ""}</td>
@@ -157,13 +152,33 @@ function AreaMap({ r }: { r: AreaReport }) {
   const x = (lon: number) => pad + (lon - w) * k * scale;
   const y = (lat: number) => pad + (n - lat) * scale;
   const d = r.area.geojson.coordinates.map((poly) => poly.map((ring) => ring.map((p, i) => `${i ? "L" : "M"}${x(p[0]).toFixed(1)},${y(p[1]).toFixed(1)}`).join("") + "Z").join("")).join("");
+  // Faint graticule over the visible extent (at most ~6 lines a side) and a scale bar about a quarter of the width.
+  const lonMax = w + (W - pad) / (k * scale), latMin = n - (H - pad) / scale;
+  const step = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10].find((v) => Math.max(lonMax - w, n - latMin) / v <= 6) ?? 20;
+  const ticks = (a: number, b: number) => { const out: number[] = []; for (let v = Math.ceil(a / step) * step; v <= b; v += step) out.push(Number(v.toFixed(4))); return out; };
+  const kmPerPx = 111.32 / scale;
+  const raw = (W / 4) * kmPerPx, mag = 10 ** Math.floor(Math.log10(raw));
+  const barKm = [5, 2, 1].map((m) => m * mag).find((v) => v <= raw) ?? mag;
+  const barPx = barKm / kmPerPx;
   return (
     <figure>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full rounded-lg border border-white/10 bg-slate-900 print:border-slate-300 print:bg-white" role="img" aria-label={r.area.name}>
+        <g className="stroke-white/10 print:stroke-slate-200" strokeWidth={0.75}>
+          {ticks(w, lonMax).map((v) => <line key={`x${v}`} x1={x(v)} x2={x(v)} y1={0} y2={H} />)}
+          {ticks(latMin, n).map((v) => <line key={`y${v}`} y1={y(v)} y2={y(v)} x1={0} x2={W} />)}
+        </g>
+        <g className="fill-slate-500 print:fill-slate-500" fontSize={9}>
+          {ticks(w, lonMax).map((v) => <text key={`tx${v}`} x={x(v) + 2} y={H - 3}>{v}°</text>)}
+          {ticks(latMin, n).map((v) => <text key={`ty${v}`} x={W - 3} y={y(v) - 2} textAnchor="end">{v}°</text>)}
+        </g>
         <path d={d} fill="rgba(34,211,238,0.15)" stroke="#22d3ee" strokeWidth={1.5} fillRule="evenodd" />
         {r.stations.map((st) => <circle key={st.id} cx={x(st.lon)} cy={y(st.lat)} r={4} fill="#f472b6" stroke="#0f172a" strokeWidth={1} />)}
+        <g transform={`translate(${pad},${pad})`} className="fill-slate-300 stroke-slate-300 print:fill-slate-700 print:stroke-slate-700">
+          <path d={`M0,4V8H${barPx.toFixed(1)}V4`} fill="none" strokeWidth={1.25} />
+          <text x={barPx + 4} y={9} fontSize={10} stroke="none">{barKm >= 1 ? barKm : barKm.toFixed(1)} km</text>
+        </g>
       </svg>
-      <figcaption className="mt-1 text-xs text-slate-500 print:text-slate-600">{r.area.bbox.map((v) => v.toFixed(2)).join(", ")} (W, S, E, N)</figcaption>
+      <figcaption className="mt-1 text-xs text-slate-400 print:text-slate-600"><T k="Bounding box" />: <T k="longitude" /> {r.area.bbox[0].toFixed(2)}° … {r.area.bbox[2].toFixed(2)}°, <T k="latitude" /> {r.area.bbox[1].toFixed(2)}° … {r.area.bbox[3].toFixed(2)}°</figcaption>
     </figure>
   );
 }

@@ -43,7 +43,7 @@ export default function DatasetActions({ id, status, records, reviewer, flagged 
           <h3 className="font-semibold text-slate-100">Flagged records</h3>
           <p className="text-sm text-slate-400">These stay out of every measure. {reviewer ? "Confirm them after listening to a clip, or reject them." : "Remove any you agree are wrong. To have the others counted, email a short clip of one or two of them; a reviewer can confirm them."}</p>
           <table className="mt-2 w-full text-sm">
-            <thead className="text-left text-slate-500"><tr><th className="py-1">Species</th><th>Site</th><th>Why</th><th className="text-right">Records</th><th /></tr></thead>
+            <thead className="text-left text-slate-400"><tr><th className="py-1">Species</th><th>Site</th><th>Why</th><th className="text-right">Records</th><th /></tr></thead>
             <tbody>
               {flagged.map((f) => (
                 <tr key={`${f.scientific_name}|${f.site}|${f.flag}`} className="border-t border-white/5">

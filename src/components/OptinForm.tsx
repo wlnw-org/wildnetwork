@@ -34,7 +34,7 @@ export default function OptinForm() {
       <label className="block">
         <span className="text-sm text-slate-200">Station token</span>
         <input type="password" autoComplete="off" required value={token} onChange={(e) => setToken(e.target.value)} className={field} placeholder="The token from your BirdWeather station settings" />
-        <span className="text-xs text-slate-500">Checked with BirdWeather, stored encrypted, used only to read your station&apos;s daily counts. Never shown again.</span>
+        <span className="text-xs text-slate-400">Checked with BirdWeather, stored encrypted, used only to read your station&apos;s daily counts. Never shown again.</span>
       </label>
       <label className="block">
         <span className="text-sm text-slate-200">Name to show (optional)</span>

@@ -14,9 +14,8 @@ const fmt = (d: string) => new Date(d + "T00:00:00Z").toLocaleDateString("en-GB"
 
 export default function Updates() {
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <nav className="text-sm text-slate-500"><Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / Updates</nav>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">What is new</h1>
         <p className="mt-3">A short note every week or two on what changed: new features, new data and changes to the methods.</p>
 
@@ -33,7 +32,7 @@ export default function Updates() {
 
         {UPDATES.map((u) => (
           <article key={u.date} id={u.date} className="mt-10 scroll-mt-6">
-            <p className="text-sm text-slate-500">{fmt(u.date)}</p>
+            <p className="text-sm text-slate-400">{fmt(u.date)}</p>
             <h2 className="mt-1 text-xl font-semibold text-slate-100">{u.title}</h2>
             <ul className="mt-2 list-disc pl-5 space-y-1.5">
               {u.items.map((i) => (

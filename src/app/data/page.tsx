@@ -52,10 +52,9 @@ export default function Data() {
   const latest = DATA_RELEASES[0];
   const ld = datasetJsonLd();
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       {ld && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, "\\u003c") }} />}
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <Link href="/" className="text-sm text-cyan-400 hover:underline">← Back to the map</Link>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Open data</h1>
         <p className="mt-3">
           Versioned files for research and teaching: weekly records per species on a 5 degree grid, the observation effort behind them, and seasonal arrival

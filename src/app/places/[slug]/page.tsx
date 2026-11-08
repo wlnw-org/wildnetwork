@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LocalName, PageLang, T, TDate } from "@/components/T";
+import { LocalName, T, TDate } from "@/components/T";
 import { getNames } from "@/lib/names";
 import { notFound } from "next/navigation";
 import { cache } from "react";
@@ -51,12 +51,11 @@ export default async function PlacePage({ params, searchParams }: Props) {
     <Link href={`/species/${speciesSlug(name)}`} className="text-cyan-400 hover:underline"><LocalName en={vern ?? name} names={names[name]} /></Link>
   );
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <nav className="text-sm text-slate-500 flex items-center gap-2">
-          <span><Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / <Link href="/places" className="text-cyan-400 hover:underline"><T k="Places" /></Link></span>
-          <span className="ml-auto"><PageLang /></span>
+        <nav className="text-sm text-slate-400 flex items-center gap-2">
+          <span><Link href="/places" className="text-cyan-400 hover:underline"><T k="Places" /></Link></span>
         </nav>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><T k={`${label} around {place}`} v={{ place: p.name }} /></h1>
         <p className="mt-1 text-sm text-slate-400">{placeLabel(p)}</p>
@@ -78,19 +77,19 @@ export default async function PlacePage({ params, searchParams }: Props) {
         </div>
 
         <H2><T k="Arrived in the last four weeks" /></H2>
-        <List items={r.recent} empty={<T k="None arrived here in these weeks last year, as far as the records show." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-500"><TDate k="around {d}" iso={a.arrival} /></span></>} />
+        <List items={r.recent} empty={<T k="None arrived here in these weeks last year, as far as the records show." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-400"><TDate k="around {d}" iso={a.arrival} /></span></>} />
 
         <H2><T k="Expected in the next six weeks" /></H2>
-        <List items={r.coming} empty={<T k="No arrivals expected here in the next six weeks, going by last year." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-500"><TDate k="around {d}" iso={a.arrival} />{a.support != null && a.support < 0.5 ? <> <T k="(weak evidence)" /></> : null}</span></>} />
-        <p className="mt-2 text-xs text-slate-500"><T k="Dates are last year's first regular records after at least six weeks away, with each species' own uncertainty on its page. Each species page can email you when it turns up." /></p>
+        <List items={r.coming} empty={<T k="No arrivals expected here in the next six weeks, going by last year." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-400"><TDate k="around {d}" iso={a.arrival} />{a.support != null && a.support < 0.5 ? <> <T k="(weak evidence)" /></> : null}</span></>} />
+        <p className="mt-2 text-xs text-slate-400"><T k="Dates are last year's first regular records after at least six weeks away, with each species' own uncertainty on its page. Each species page can email you when it turns up." /></p>
 
         <H2><T k="Most recorded, last eight weeks" /></H2>
-        {r.top.length === 0 ? <p className="text-slate-500"><T k="No records here in the last eight weeks." /></p> : (
+        {r.top.length === 0 ? <p className="text-slate-400"><T k="No records here in the last eight weeks." /></p> : (
           <table className="mt-2 w-full text-sm">
             <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><T k="Species" /></th><th className="font-medium text-right"><T k="Records" /></th><th className="font-medium text-right"><T k="Per 1,000" /></th></tr></thead>
             <tbody>{r.top.map((x) => (
               <tr key={x.scientific_name} className="border-b border-white/5">
-                <td className="py-1.5"><Species name={x.scientific_name} vern={x.vernacular_name} /> <span className="text-slate-500 italic">{x.scientific_name}</span></td>
+                <td className="py-1.5"><Species name={x.scientific_name} vern={x.vernacular_name} /> <span className="text-slate-400 italic">{x.scientific_name}</span></td>
                 <td className="text-right tabular-nums">{x.n.toLocaleString("en-GB")}</td><td className="text-right tabular-nums">{x.share.toFixed(1)}</td>
               </tr>))}</tbody>
           </table>
@@ -114,6 +113,6 @@ function H2({ children }: { children: React.ReactNode }) {
 }
 
 function List<I>({ items, empty, render }: { items: I[]; empty: React.ReactNode; render: (x: I) => React.ReactNode }) {
-  if (!items.length) return <p className="text-slate-500">{empty}</p>;
+  if (!items.length) return <p className="text-slate-400">{empty}</p>;
   return <ul className="mt-2 space-y-1">{items.slice(0, 30).map((x, i) => <li key={i}>{render(x)}</li>)}</ul>;
 }

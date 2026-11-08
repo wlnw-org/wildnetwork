@@ -13,7 +13,7 @@ export default async function Confirm({ searchParams }: { searchParams: Promise<
         UPDATE alert_subs SET confirmed_at = COALESCE(confirmed_at, now()) WHERE token = ${token} RETURNING scientific_name, place`
     : [];
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-xl px-5 py-16 text-[15px] leading-relaxed">
         {row ? (
           <>

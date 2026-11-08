@@ -4,9 +4,12 @@ import { useRouter } from "next/navigation";
 import type { Map as MLMap, GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useT } from "@/lib/i18n";
+import { areaLabel } from "@/lib/areaLabel";
 
 type Hit = { name: string; type: string; osm: string; lat: number; lon: number; km?: number };
-const PROTECTED = /national_park|protected_area|nature_reserve|wildlife|sanctuary|conservation|National park|Nature reserve|Wildlife sanctuary/;
+const PROTECTED = /national_park|protected_area|nature_reserve|wildlife|sanctuary|conservation|National park|Nature reserve|Wildlife sanctuary|Protected area/;
+// Results cached before labels were mapped on the server still carry raw OSM tags such as "boundary national_park".
+const label = (type: string) => (/[a-z]_[a-z]|^[a-z]+ [a-z]/.test(type) ? areaLabel(type) : type);
 type Mode = "search" | "upload" | "draw";
 
 /** KML in the browser: every Polygon's outer and inner rings, as one MultiPolygon. */
@@ -135,7 +138,7 @@ export default function AreaPicker() {
               {hits.map((h) => (
                 <li key={h.osm} className="flex items-center">
                   <button type="button" disabled={busy} onClick={() => create({ osm: h.osm })} className="flex-1 px-3 py-2 text-left hover:bg-white/5 disabled:opacity-50">
-                    <span className="block text-slate-100">{h.name}</span><span className="text-xs text-slate-400">{h.type}</span>
+                    <span className="block text-slate-100">{h.name}</span><span className="text-xs text-slate-400">{t(label(h.type))}</span>
                   </button>
                   {!PROTECTED.test(h.type) && <button type="button" onClick={() => loadNear(h.lat, h.lon, h.name.split(",")[0])} className="shrink-0 px-3 text-xs text-cyan-400 hover:underline">{t("Protected areas around here")}</button>}
                 </li>
@@ -158,7 +161,7 @@ export default function AreaPicker() {
               )}
             </div>
           )}
-          <p className="mt-3 text-xs text-slate-500">{t("Boundaries from OpenStreetMap. Check them against the official map before you rely on a report.")}</p>
+          <p className="mt-3 text-xs text-slate-400">{t("Boundaries from OpenStreetMap. Check them against the official map before you rely on a report.")}</p>
         </form>
       )}
 
@@ -166,7 +169,7 @@ export default function AreaPicker() {
         <div className="mt-4 space-y-3">
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("Name of the area (optional)")} className="w-full rounded-md border border-white/15 bg-slate-950 px-3 py-2 text-slate-100" />
           <input type="file" accept=".kml,.geojson,.json,application/vnd.google-earth.kml+xml,application/geo+json" disabled={busy} onChange={(e) => upload(e.target.files?.[0])} className="block text-sm text-slate-300" />
-          <p className="text-xs text-slate-500">{t("KML or GeoJSON with a polygon, such as a protected area or forest division boundary. A shapefile can be saved as KML in QGIS or Google Earth. The boundary is simplified and kept so the report link keeps working.")}</p>
+          <p className="text-xs text-slate-400">{t("KML or GeoJSON with a polygon, such as a protected area or forest division boundary. A shapefile can be saved as KML in QGIS or Google Earth. The boundary is simplified and kept so the report link keeps working.")}</p>
         </div>
       )}
 

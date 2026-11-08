@@ -11,7 +11,7 @@ import DownloadLink from "@/components/DownloadLink";
 import { openRecordsHref } from "@/lib/openRecords";
 import { ALERTS_ENABLED } from "@/lib/alerts";
 import { getSpeciesMedia } from "@/lib/media";
-import { LocalDate, LocalName, PageLang, T } from "@/components/T";
+import { LocalDate, LocalName, T } from "@/components/T";
 import { getNames } from "@/lib/names";
 import { REGION } from "@/lib/methods";
 import { regionSlug } from "@/lib/regions";
@@ -93,12 +93,11 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
     ],
   };
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <nav className="text-sm text-slate-500 flex items-center gap-2">
-          <span><Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / <Link href="/species" className="text-cyan-400 hover:underline"><T k="Species" /></Link></span>
-          <span className="ml-auto"><PageLang /></span>
+        <nav className="text-sm text-slate-400 flex items-center gap-2">
+          <span><Link href="/species" className="text-cyan-400 hover:underline"><T k="Species" /></Link></span>
         </nav>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><LocalName en={title} names={nm} /></h1>
         {d.common && <p className="mt-1 text-slate-400 italic">{d.name}</p>}
@@ -108,7 +107,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
           <figure className="mt-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={d.media.imageUrl} alt={`${title} (${d.name})`} className="w-full max-h-96 object-contain rounded-lg bg-slate-900" />
-            {(d.media.attribution || d.media.license) && <figcaption className="mt-1 text-xs text-slate-500">Image: {[d.media.attribution, d.media.license, d.media.source].filter(Boolean).join(", ")}</figcaption>}
+            {(d.media.attribution || d.media.license) && <figcaption className="mt-1 text-xs text-slate-400">Image: {[d.media.attribution, d.media.license, d.media.source].filter(Boolean).join(", ")}</figcaption>}
           </figure>
         )}
         {d.media?.extract && (
@@ -190,7 +189,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
             {d.contributed.map((c, i) => <span key={c.id}>{i > 0 && ", "}<Link href={`/datasets/${c.id}`} className="text-cyan-400 hover:underline">{c.title}</Link>{c.institution ? ` (${c.institution})` : ""}</span>)}
           </p>
         )}
-        <p className="mt-8 text-sm text-slate-500">
+        <p className="mt-8 text-sm text-slate-400">
           <T k="Figures are effort corrected and come from automatic sound identification, which makes mistakes." />{" "}
           <Link href="/methods" className="text-cyan-400 hover:underline"><T k="How this is measured" /></Link>{" · "}
           <Link href="/validation" className="text-cyan-400 hover:underline"><T k="How it compares with human observers" /></Link>
@@ -206,7 +205,7 @@ function RelatedList({ items, names }: { items: Related[]; names: Record<string,
       {items.map((r) => (
         <li key={r.scientific_name}>
           <Link href={`/species/${speciesSlug(r.scientific_name)}`} className="text-cyan-400 hover:underline" prefetch={false}><LocalName en={r.vernacular_name ?? r.scientific_name} names={names[r.scientific_name]} /></Link>
-          {r.vernacular_name && <span className="text-slate-500 italic"> {r.scientific_name}</span>}
+          {r.vernacular_name && <span className="text-slate-400 italic"> {r.scientific_name}</span>}
         </li>
       ))}
     </ul>

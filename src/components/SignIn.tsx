@@ -13,11 +13,11 @@ export function useMe(): Me | undefined {
 /** ORCID sign-in button, or the signed-in name with a sign-out link. */
 export default function SignIn({ me, next }: { me: Me | undefined; next?: string }) {
   if (!me) return null;
-  if (!me.enabled) return <p className="text-sm text-slate-500">Sign-in with ORCID is coming soon.</p>;
+  if (!me.enabled) return <p className="text-sm text-slate-400">Sign-in with ORCID is coming soon.</p>;
   if (me.user) return (
     <p className="text-sm text-slate-400">
       Signed in as <a href={`https://orcid.org/${me.user.orcid}`} className="text-cyan-400 hover:underline">{me.user.name}</a>{" "}
-      <button onClick={() => fetch("/api/auth/logout", { method: "POST" }).then(() => location.reload())} className="ml-2 text-slate-500 hover:text-slate-300 underline">Sign out</button>
+      <button onClick={() => fetch("/api/auth/logout", { method: "POST" }).then(() => location.reload())} className="ml-2 text-slate-400 hover:text-slate-300 underline">Sign out</button>
     </p>
   );
   const href = `/api/auth/orcid?next=${encodeURIComponent(next ?? (typeof window !== "undefined" ? location.pathname : "/research"))}`;

@@ -45,9 +45,8 @@ export default async function Research() {
              (SELECT COUNT(DISTINCT orcid)::int FROM arrival_reviews) AS reviewers`.catch(() => [{ studies: 0, reviews: 0, reviewers: 0 }]),
   ]);
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <nav className="text-sm text-slate-500"><Link href="/" className="text-cyan-400 hover:underline">Wildlife Network</Link> / Research</nav>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Research with Wildlife Network</h1>
         <p className="mt-3">
           Effort-corrected arrival dates, weekly records and range movement for birds, bats, amphibians and insects, from community acoustic stations and open
@@ -58,7 +57,7 @@ export default async function Research() {
           <Link href="/updates" className="text-cyan-400 hover:underline">updates</Link>.
         </p>
         <div className="mt-5"><ResearchSignIn next="/research" /></div>
-        <p className="mt-2 text-xs text-slate-500">Sign-in uses your ORCID iD and public name only. Needed for projects, study areas and reviews; nothing else on the site needs an account.</p>
+        <p className="mt-2 text-xs text-slate-400">Sign-in uses your ORCID iD and public name only. Needed for projects, study areas and reviews; nothing else on the site needs an account.</p>
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
           <Card href="/projects" title="Projects" text="Questions researchers want help with. Ask to join one, or post your own and say what help you need." stat={`${projects.filter((p) => p.open).length} open`} />
@@ -108,7 +107,7 @@ export default async function Research() {
         ) : (
           <p>No published uses yet: yours could be the first. Tell us when you use the data and it will be listed here.</p>
         )}
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-2 text-sm text-slate-400">
           Cite the data as DOI <a href={`https://doi.org/${DATA_CONCEPT_DOI}`} className="text-cyan-400 hover:underline">{DATA_CONCEPT_DOI}</a>
           {cites != null && ` (${cites} recorded ${cites === 1 ? "citation" : "citations"} so far, from DataCite)`}, plus the GBIF datasets it lists.
         </p>

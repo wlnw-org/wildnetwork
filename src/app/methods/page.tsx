@@ -16,11 +16,10 @@ const GH = "https://github.com/wlnw-org/wildnetwork/blob/main";
 
 export default function Methods() {
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-300">
+    <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <Link href="/" className="text-sm text-cyan-400 hover:underline">← Back to the map</Link>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Methods</h1>
-        <p className="mt-1 text-sm text-slate-500">Version {METHODS_VERSION} · updated 7 October 2026</p>
+        <p className="mt-1 text-sm text-slate-400">Version {METHODS_VERSION} · updated 7 October 2026</p>
 
         {BIRDWEATHER_PAUSED && <PausedNotice className="mt-6" />}
 
@@ -412,7 +411,7 @@ export default function Methods() {
           <li><b>0.1</b> (1 October 2026): first release, raw counts. Superseded because raw counts track station numbers.</li>
         </ul>
 
-        <p className="mt-10 text-sm text-slate-500">
+        <p className="mt-10 text-sm text-slate-400">
           Made by <a href="https://www.arunrajiah.com" className="text-cyan-400 hover:underline">Arun Rajiah</a>. Code and this page are open:{" "}
           <a href="https://github.com/wlnw-org/wildnetwork" className="text-cyan-400 hover:underline">github.com/wlnw-org/wildnetwork</a>.
           Free, no ads; you can <a href="https://github.com/sponsors/arunrajiah" className="text-cyan-400 hover:underline">support it on GitHub Sponsors</a>.
@@ -433,7 +432,7 @@ function Formula({ children }: { children: React.ReactNode }) {
 }
 function Src({ files }: { files: [string, string][] }) {
   return (
-    <p className="mt-3 text-sm text-slate-500">
+    <p className="mt-3 text-sm text-slate-400">
       Code: {files.map(([path, label], i) => (
         <span key={path}>{i > 0 && ", "}<a href={`${GH}/${path}`} className="text-cyan-400 hover:underline">{label}</a></span>
       ))}
