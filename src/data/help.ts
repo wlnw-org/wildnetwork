@@ -3,7 +3,7 @@
 
 /** Studio version the Studio guides were last checked against. .github/workflows/help-check.yml opens an issue when a newer
  * Studio release is out; update the guides, then raise this. */
-export const HELP_CHECKED_STUDIO = "0.1.5";
+export const HELP_CHECKED_STUDIO = "0.1.8";
 
 export type Block =
   | { p: string }
@@ -34,6 +34,8 @@ const studio: Guide[] = [
       { h: "Updates" },
       { p: "Each time Studio starts it checks for a new version. When one is out, a box in the corner says so: choose Install and restart, or Later. Your projects are kept." },
       { tip: "The update check sends only the app version and your system. See [what Studio sends](/help/studio/privacy)." },
+      { h: "Language" },
+      { p: "Studio is in English, French and Portuguese. It follows your computer's language; to change it, open Settings and pick a language." },
     ],
   },
   {
@@ -373,7 +375,7 @@ const site: Guide[] = [
     summary: "Change the language, what we collect, and how to reach us.",
     body: [
       { list: [
-        "Language: the map and most pages are in English, Spanish, French, German, Portuguese, Hindi and Tamil. Use the language menu.",
+        "Language: the map and most pages are in English, Spanish, French, German, Portuguese, Hindi and Tamil. Use the language menu. Studio is in English, French and Portuguese.",
         "Privacy: everything we collect and keep is listed on the [privacy page](/privacy).",
         "Problems or ideas: use the [feedback form](/feedback). Every message is read.",
       ] },
