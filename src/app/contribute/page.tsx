@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HelpLink from "@/components/HelpLink";
 import Link from "next/link";
 import { STUDIO_URL } from "@/lib/site";
 import CopyBlock from "@/components/CopyBlock";
@@ -59,6 +60,7 @@ export default async function Contribute() {
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Contribute data</h1>
+        <p className="mt-2"><HelpLink to="/help/site/contribute" /></p>
         <p className="mt-3">
           Wildlife Network is built from what people&apos;s devices hear and see. If you run a bird station, a bat detector or a camera trap, you can add it in a few
           minutes. If you don&apos;t have one yet, this page shows what to get and how to set it up. It is free, and you keep the rights to your data.

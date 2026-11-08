@@ -787,6 +787,7 @@ export default function WorldMap() {
           <RailLink tour="report" href="/report" label={t("Report")} icon={<path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />}
             onClick={(e) => { const m = mapRef.current; if (m && m.getZoom() >= 3) { e.preventDefault(); const c = m.getCenter(); router.push(`/report?lat=${c.lat.toFixed(2)}&lon=${c.lng.toFixed(2)}`); } }} />
           <RailLink tour="studio" href="/studio" label="Studio" title={t("Wildlife Network Studio: free desktop app")} icon={<><rect x="3" y="4" width="18" height="12" rx="1.5" /><path d="M8 20h8M12 16v4M12 7v5M9.5 9.5 12 12l2.5-2.5" /></>} />
+          <RailLink tour="help" href="/help/site/map" label={t("Help")} title={t("Help and how-to guides")} icon={<><circle cx="12" cy="12" r="9" /><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01" /></>} />
           <RailLink href="/methods" label={t("Methods")} icon={<><path d="M6 3h9l4 4v14H6z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></>} />
         </div>
         <div className="flex-1 max-md:hidden" />

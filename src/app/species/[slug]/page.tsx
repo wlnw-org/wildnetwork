@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HelpLink from "@/components/HelpLink";
 import { credits } from "@/lib/datasets";
 import Link from "next/link";
 import PausedNotice from "@/components/PausedNotice";
@@ -100,6 +101,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
           <span><Link href="/species" className="text-cyan-400 hover:underline"><T k="Species" /></Link></span>
         </nav>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><LocalName en={title} names={nm} /></h1>
+        <p className="mt-2"><HelpLink to="/help/site/species" /></p>
         {d.common && <p className="mt-1 text-slate-400 italic">{d.name}</p>}
         {BIRDWEATHER_PAUSED && <PausedNotice className="mt-4" />}
 

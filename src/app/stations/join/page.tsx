@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HelpLink from "@/components/HelpLink";
 import Link from "next/link";
 import OptinForm from "@/components/OptinForm";
 
@@ -14,6 +15,7 @@ export default function Join() {
       <div className="mx-auto max-w-2xl px-5 py-10 text-[15px] leading-relaxed">
         <Link href="/stations" className="text-sm text-cyan-400 hover:underline">← Stations</Link>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Add your BirdWeather station</h1>
+        <p className="mt-2"><HelpLink to="/help/site/contribute" /></p>
         <p className="mt-3">
           If your station reports to BirdWeather, a sample of its detections is already on the map, at an approximate position and without its name. Opting in
           puts you in control of more: your station appears on the <Link href="/stations" className="text-cyan-400 hover:underline">stations page</Link> under a name you

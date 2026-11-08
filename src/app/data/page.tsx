@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HelpLink from "@/components/HelpLink";
 import Link from "next/link";
 import { METHODS_VERSION, OBSERVED } from "@/lib/methods";
 import { DATA_CONCEPT_DOI, DATA_RELEASES, SITE, SITE_NAME } from "@/lib/site";
@@ -56,6 +57,7 @@ export default function Data() {
       {ld && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, "\\u003c") }} />}
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Open data</h1>
+        <p className="mt-2"><HelpLink to="/help/site/data" /></p>
         <p className="mt-3">
           Versioned files for research and teaching: weekly records per species on a 5 degree grid, the observation effort behind them, and seasonal arrival
           dates. Built only from records their publishers released under CC0 or CC BY 4.0 through GBIF, so you may reuse them under CC BY 4.0 with credit.

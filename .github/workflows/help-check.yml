@@ -1,0 +1,27 @@
+name: Help guides check
+# When a Studio release is newer than the version the guides were last checked against (HELP_CHECKED_STUDIO in
+# src/data/help.ts), open one issue with that release's notes so the guides are updated. /help/whats-new updates by itself.
+on:
+  schedule: [{ cron: "17 6 * * *" }]
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          checked=$(grep -oE 'HELP_CHECKED_STUDIO = "[0-9.]+"' src/data/help.ts | grep -oE '[0-9.]+')
+          latest=$(gh api repos/wlnw-org/wlnw-studio/releases/latest --jq .tag_name | sed 's/^v//')
+          echo "guides checked for $checked, latest Studio $latest"
+          newest=$(printf '%s\n%s\n' "$checked" "$latest" | sort -V | tail -1)
+          [ "$newest" = "$checked" ] && exit 0
+          title="Update the Studio help guides for v$latest"
+          if gh issue list --state open --search "$title in:title" --json title --jq '.[].title' | grep -qxF "$title"; then exit 0; fi
+          notes=$(gh api repos/wlnw-org/wlnw-studio/releases/latest --jq .body)
+          printf 'Studio v%s is out. Check the guides in src/data/help.ts against these changes, then set HELP_CHECKED_STUDIO to "%s".\n\n%s\n' "$latest" "$latest" "$notes" > body.md
+          gh issue create --title "$title" --body-file body.md

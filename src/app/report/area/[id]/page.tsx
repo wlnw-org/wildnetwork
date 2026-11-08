@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HelpLink from "@/components/HelpLink";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { T } from "@/components/T";
@@ -38,6 +39,7 @@ export default async function AreaReportPage({ params, searchParams }: Props) {
           <div>
             <p className="text-xs uppercase tracking-wider text-cyan-400 print:text-slate-600"><Link href="/report/area" className="hover:underline"><T k="Area report" /></Link> · Wildlife Network</p>
             <h1 className="mt-1 text-3xl font-semibold tracking-tight text-slate-100 print:text-black">{area.name}</h1>
+        <p className="mt-2"><HelpLink to="/help/site/reports" /></p>
             <p className="mt-1 text-sm text-slate-400 print:text-slate-700">
               {Math.round(area.km2).toLocaleString("en")} km² · {fmtDate(period.from)} – {fmtDate(period.to)} · {group === "all" ? <T k="All classes" /> : GROUP_LABEL[group] ?? group}
             </p>

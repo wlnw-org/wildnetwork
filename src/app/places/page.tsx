@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HelpLink from "@/components/HelpLink";
 import Link from "next/link";
 import { T } from "@/components/T";
 import PLACES from "@/data/places.json";
@@ -17,6 +18,7 @@ export default function Places() {
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><T k="Birds and wildlife near you" /></h1>
+        <p className="mt-2"><HelpLink to="/help/site/places" /></p>
         <p className="mt-3">
           <T k="Each report shows what arrived around a city in the last four weeks, what is expected in the next six, and what is recorded most, for birds, bats, frogs and insects." />{" "}
           <Link href="/" className="text-cyan-400 hover:underline"><T k="Not listed? Type any town into the search box on the live map." /></Link>{" "}

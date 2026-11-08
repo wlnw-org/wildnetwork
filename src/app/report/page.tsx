@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HelpLink from "@/components/HelpLink";
 import Link from "next/link";
 import { T } from "@/components/T";
 import MapPick from "@/components/MapPick";
@@ -44,6 +45,7 @@ export default async function ReportPage({ searchParams }: Props) {
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><T k="What changed at a place" /></h1>
+        <p className="mt-2"><HelpLink to="/help/site/reports" /></p>
         <p className="mt-3">
           <T k="Pick a place, a radius and dates. The report shows what the listening stations around it recorded, week by week, and can compare two periods, such as before and after a restoration, or this year and last." />{" "}
           <Link href="/methods#reports" className="text-cyan-400 hover:underline"><T k="Methods" /></Link>

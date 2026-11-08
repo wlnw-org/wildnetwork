@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HelpLink from "@/components/HelpLink";
 import Link from "next/link";
 import CopyBlock from "@/components/CopyBlock";
 import ProposalForm from "@/components/ProposalForm";
@@ -48,6 +49,7 @@ export default async function Research() {
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Research with Wildlife Network</h1>
+        <p className="mt-2"><HelpLink to="/help/site/research" /></p>
         <p className="mt-3">
           Effort-corrected arrival dates, weekly records and range movement for birds, bats, amphibians and insects, from community acoustic stations and open
           records. Everything is open: the <Link href="/methods" className="text-cyan-400 hover:underline">methods</Link>, the{" "}

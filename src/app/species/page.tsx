@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HelpLink from "@/components/HelpLink";
 import Link from "next/link";
 import PausedNotice from "@/components/PausedNotice";
 import { BIRDWEATHER_PAUSED } from "@/lib/sources";
@@ -53,6 +54,7 @@ export default async function SpeciesIndex({ searchParams }: Props) {
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <h1 className="text-3xl font-semibold tracking-tight text-slate-100">Species</h1>
+        <p className="mt-2"><HelpLink to="/help/site/species" /></p>
         {BIRDWEATHER_PAUSED && <PausedNotice className="mt-4" />}
         <p className="mt-3">
           {all.length.toLocaleString("en-GB")} species have a full seasonal record so far. Each page shows where the species is being detected now, when it arrives in each region, and how its range moves with the weather.

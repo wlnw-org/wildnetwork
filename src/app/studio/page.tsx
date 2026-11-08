@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HelpLink from "@/components/HelpLink";
 import Link from "next/link";
 import StudioDownload from "@/components/StudioDownload";
 import { STUDIO_RELEASES, studioDownload } from "@/lib/site";
@@ -17,6 +18,7 @@ export default function Studio() {
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Wildlife Network Studio</h1>
+        <p className="mt-2"><HelpLink to="/help/studio" label="Studio guides: how to use it" /></p>
         <p className="mt-3">
           A free desktop app for the recordings sitting on your drives. Point it at a folder or an SD card copy: it finds the species on your own computer,
           helps you check them in minutes, and exports them for GBIF or publishes them here. Nothing is uploaded unless you choose to publish.

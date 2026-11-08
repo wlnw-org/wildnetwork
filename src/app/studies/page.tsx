@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HelpLink from "@/components/HelpLink";
 import Link from "next/link";
 import { sql } from "@/lib/db";
 import { GROUP_LABEL } from "@/lib/studies";
@@ -22,6 +23,7 @@ export default async function Studies() {
         <nav className="text-sm text-slate-400"><Link href="/research" className="text-cyan-400 hover:underline">Research</Link> / Study areas</nav>
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-3xl font-semibold tracking-tight text-slate-100">Study areas</h1>
+        <p className="mt-2"><HelpLink to="/help/site/research" /></p>
           <Link href="/studies/new" className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400">New study area</Link>
         </div>
         <p className="mt-3">Each study area is a live dashboard of one region and class, kept by a researcher and their collaborators. All are public.</p>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HelpLink from "@/components/HelpLink";
 import Link from "next/link";
 import { getSession } from "@/lib/orcid";
 import DatasetForm from "@/components/DatasetForm";
@@ -14,6 +15,7 @@ export default async function NewDataset() {
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <nav className="text-sm text-slate-400"><Link href="/datasets" className="text-cyan-400 hover:underline">Datasets</Link> / New</nav>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Upload a dataset</h1>
+        <p className="mt-2"><HelpLink to="/help/site/contribute" /></p>
         <p className="mt-3 text-sm text-slate-400">
           Have raw recordings rather than detection tables? Process them first with{" "}
           <a href={STUDIO_URL} className="text-cyan-400 hover:underline" rel="noopener">Wildlife Network Studio</a>, a free desktop app that can publish straight to a dataset here.

@@ -60,6 +60,11 @@ export function SiteHeader() {
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <PageLang />
+          <Link href="/help" aria-current={path.startsWith("/help") ? "page" : undefined} title={t("Help and how-to guides")}
+            className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-slate-200 hover:bg-white/10 hover:text-white">
+            <svg aria-hidden width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9" /><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01" /></svg>
+            <span className="max-sm:sr-only">{t("Help")}</span>
+          </Link>
           <Link href="/" className="hidden rounded-md bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400 whitespace-nowrap sm:inline-block">{t("Live map")}</Link>
           <button type="button" onClick={() => setMobile(!mobile)} aria-expanded={mobile} aria-controls="site-menu"
             className="rounded-md px-2.5 py-1.5 text-slate-200 hover:bg-white/10 lg:hidden">
@@ -73,6 +78,7 @@ export function SiteHeader() {
       {mobile && (
         <nav id="site-menu" aria-label={t("Site sections")} className="max-h-[calc(100vh-3rem)] overflow-y-auto border-t border-white/10 px-4 pb-4 lg:hidden">
           {link("/", "Live map", "mt-2 block rounded-md px-2 py-2 font-medium")}
+          {link("/help", "Help and how-to guides", "block rounded-md px-2 py-2 font-medium")}
           {NAV.map((g) => (
             <div key={g.label} className="mt-3">
               <p className="px-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{t(g.label)}</p>
