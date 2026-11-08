@@ -49,6 +49,10 @@ export default async function ReportPage({ searchParams }: Props) {
           <T k="Pick a place, a radius and dates. The report shows what the listening stations around it recorded, week by week, and can compare two periods, such as before and after a restoration, or this year and last." />{" "}
           <Link href="/methods#reports" className="text-cyan-400 hover:underline"><T k="Methods" /></Link>
         </p>
+        <p className="mt-4 rounded-lg border border-cyan-500/30 bg-cyan-500/5 p-3 text-sm">
+          <T k="Need a species checklist for a district, protected area or your own boundary, to print or file?" />{" "}
+          <Link href="/report/area" className="text-cyan-400 hover:underline"><T k="Make an area report" /></Link>
+        </p>
         <Form params={params} q={q} />
         {params.place && !q && <p className="mt-4 text-amber-300"><T k="Could not find that place. Try a nearby town, or enter coordinates." /></p>}
         {r && <Report r={r} placeName={placeName} contributed={contributed} />}

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "What Wildlife Network collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
 };
 
-const UPDATED = "7 November 2026";
+const UPDATED = "8 November 2026";
 
 export default function Privacy() {
   return (
@@ -61,6 +61,14 @@ export default function Privacy() {
           once with the Open-Meteo geocoder; no coordinates are kept. Emails are sent through Resend (United States), which processes your address to deliver them.
           Nothing is sent until you confirm; unconfirmed requests are deleted after 7 days. Every email has a link that deletes the alert at once. Your address is
           used for nothing else and never shared. The anonymous counts of alerts per species and per &quot;I am a...&quot; answer may be reported to funders.
+        </p>
+
+        <h2 id="areas" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Area reports</h2>
+        <p>
+          When you make an <Link href="/report/area" className="text-cyan-400 hover:underline">area report</Link>, the boundary (simplified), its name, how it was
+          made (OpenStreetMap, drawn or uploaded), the time, and a keyed hash of your IP address are stored, so the report link keeps working and one network cannot
+          create unlimited areas. Searching for a district or protected area sends your search words, from our server, to OpenStreetMap&apos;s Nominatim service.
+          The species counts come from GBIF at the time you open the report.
         </p>
 
         <h2 id="updates" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Update emails</h2>
