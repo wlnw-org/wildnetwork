@@ -9,6 +9,7 @@ const eslintConfig = defineConfig([
   globalIgnores([
     "public/**",
     "data/private/**",
+    ".claude/**",
     // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
