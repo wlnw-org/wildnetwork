@@ -15,11 +15,12 @@ export async function databaseMb(): Promise<number> {
   return row.mb;
 }
 
-/** Weekly online index rebuild (REINDEX CONCURRENTLY: reads and writes carry on). Takes seconds per table. */
+/** Daily online index rebuild (REINDEX CONCURRENTLY: reads and writes carry on). Takes about 10 s in all. Weekly was too slow:
+ * upsert bloat added about 160 MB a week by November 2026 (754 MB -> 592 MB after a rebuild on 8 Nov). */
 export async function weeklyReindex(): Promise<{ beforeMb: number; afterMb: number } | null> {
   const claimed = await sql`
     INSERT INTO pull_state (connector, last_run_at) VALUES ('_reindex_lock', now())
-    ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '7 days'
+    ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '1 day'
     RETURNING connector`;
   if (!claimed.length) return null;
   const beforeMb = await databaseMb();

@@ -58,7 +58,7 @@ export async function GET() {
       ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '1 hour'
       RETURNING connector`;
     if (gb.length) await refreshGbifWeekly(200_000);
-    // Index bloat from all-day upserts is most of the database's growth: rebuilt online once a week (src/lib/storage.ts).
+    // Index bloat from all-day upserts is most of the database's growth: rebuilt online once a day (src/lib/storage.ts).
     const rx = await weeklyReindex().catch(() => null);
     if (rx) console.log(`weekly reindex: ${rx.beforeMb} MB -> ${rx.afterMb} MB`);
   });
