@@ -37,15 +37,15 @@ export function SiteHeader() {
         <Link href="/" className="flex shrink-0 items-center gap-2 font-semibold text-slate-100 hover:text-white" title={t("Open the live map")}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.svg" alt="" width={22} height={22} />
-          <span>Wildlife Network</span>
+          <span className="whitespace-nowrap">Wildlife Network</span>
         </Link>
-        <nav aria-label={t("Site sections")} className="ml-4 hidden items-center gap-0.5 md:flex">
+        <nav aria-label={t("Site sections")} className="ml-4 hidden items-center gap-0.5 lg:flex">
           {NAV.map((g) => {
             const here = g.links.some((l) => isActive(path, l.href));
             return (
               <div key={g.label} className="relative">
                 <button type="button" aria-expanded={open === g.label} onClick={() => setOpen(open === g.label ? null : g.label)}
-                  className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 hover:bg-white/10 ${here ? "text-cyan-300" : "text-slate-300"}`}>
+                  className={`flex items-center gap-1 whitespace-nowrap rounded-md px-2.5 py-1.5 hover:bg-white/10 ${here ? "text-cyan-300" : "text-slate-300"}`}>
                   {t(g.label)}
                   <svg aria-hidden width="10" height="10" viewBox="0 0 10 10" className={open === g.label ? "rotate-180" : ""}><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
                 </button>
@@ -60,9 +60,9 @@ export function SiteHeader() {
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <PageLang />
-          <Link href="/" className="hidden rounded-md bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400 sm:inline-block">{t("Live map")}</Link>
+          <Link href="/" className="hidden rounded-md bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400 whitespace-nowrap sm:inline-block">{t("Live map")}</Link>
           <button type="button" onClick={() => setMobile(!mobile)} aria-expanded={mobile} aria-controls="site-menu"
-            className="rounded-md px-2.5 py-1.5 text-slate-200 hover:bg-white/10 md:hidden">
+            className="rounded-md px-2.5 py-1.5 text-slate-200 hover:bg-white/10 lg:hidden">
             <span className="sr-only">{t("Menu")}</span>
             <svg aria-hidden width="20" height="20" viewBox="0 0 20 20">
               {mobile ? <path d="M5 5l10 10M15 5 5 15" stroke="currentColor" strokeWidth="1.8" /> : <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" strokeWidth="1.8" />}
@@ -71,7 +71,7 @@ export function SiteHeader() {
         </div>
       </div>
       {mobile && (
-        <nav id="site-menu" aria-label={t("Site sections")} className="max-h-[calc(100vh-3rem)] overflow-y-auto border-t border-white/10 px-4 pb-4 md:hidden">
+        <nav id="site-menu" aria-label={t("Site sections")} className="max-h-[calc(100vh-3rem)] overflow-y-auto border-t border-white/10 px-4 pb-4 lg:hidden">
           {link("/", "Live map", "mt-2 block rounded-md px-2 py-2 font-medium")}
           {NAV.map((g) => (
             <div key={g.label} className="mt-3">
