@@ -5,7 +5,7 @@ import { isSensitiveTaxon } from "@/lib/sensitiveTaxa";
 /** Opt-in answers shared from Studio for training open regional classifiers. See drizzle/0037_shared_answers.sql and /privacy#shared-answers. */
 export const SHARE = {
   /** Total rows kept (about 3.2 KB each with the embedding), so storage stays well inside the database budget. */
-  MAX_ROWS: Number(process.env.SHARE_MAX_ROWS ?? 50_000),
+  MAX_ROWS: Number(process.env.SHARE_MAX_ROWS ?? 20_000),
   PER_CONTRIBUTOR_DAY: 5_000,
   BATCH: 200,
   EMBED_MODEL: "perch-2.0",
