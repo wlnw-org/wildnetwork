@@ -53,6 +53,15 @@ export function translate(lang: Lang, text: string, vars?: Record<string, string
   return out;
 }
 
+/**
+ * Numbers for people: exact below 10,000, compact above it in the visitor's language ("3.7 billion" with long, "3.7B" short).
+ */
+export function fmtNum(n: number, lang: Lang, long = false): string {
+  if (!Number.isFinite(n)) return "";
+  if (Math.abs(n) < 10_000) return Math.round(n).toLocaleString(lang);
+  return new Intl.NumberFormat(lang, { notation: "compact", compactDisplay: long ? "long" : "short", maximumFractionDigits: 1 }).format(n);
+}
+
 export function useLang(): Lang {
   return useSyncExternalStore(subscribe, getLang, () => "en");
 }

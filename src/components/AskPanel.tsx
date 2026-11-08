@@ -3,13 +3,22 @@
 import Link from "next/link";
 import { useState } from "react";
 import { track } from "./Analytics";
+import { useT } from "@/lib/i18n";
 
 interface Answer { answer: string; species: { scientificName: string; commonName: string | null }[]; tools: string[]; cached?: boolean }
 
 const EXAMPLES = ["Where are barn swallows now?", "What is moving south in North America this week?", "Which bats are being heard most around London?", "When do swifts arrive in northern Europe?"];
 const TOOL_LABEL: Record<string, string> = { findSpecies: "species search", speciesFacts: "species summary", whatIsChanging: "this week's changes", speciesNear: "detections near a place" };
 
-export default function AskPanel({ onPick }: { onPick: (scientificName: string) => void }) {
+export default function AskPanel({ onPick, city = null, region = null }: { onPick: (scientificName: string) => void; city?: string | null; region?: string | null }) {
+  const t = useT();
+  // Examples follow the visitor's area (IP town and continent from /api/v1/near) when known.
+  const examples = city || region ? [
+    EXAMPLES[0],
+    region ? t("What is moving in {region} this week?", { region: t(region) }) : EXAMPLES[1],
+    city ? t("Which birds are being heard most around {place}?", { place: city }) : EXAMPLES[2],
+    region ? t("Which species are arriving in {region} now?", { region: t(region) }) : EXAMPLES[3],
+  ] : EXAMPLES;
   const [q, setQ] = useState("");
   const [asked, setAsked] = useState("");
   const [busy, setBusy] = useState(false);
@@ -40,8 +49,8 @@ export default function AskPanel({ onPick }: { onPick: (scientificName: string) 
 
       {!asked && (
         <div className="flex flex-col gap-1">
-          <span className="text-[11px] text-slate-500">Try</span>
-          {EXAMPLES.map((e) => <button key={e} onClick={() => { setQ(e); ask(e); }} className="text-left text-sm text-slate-300 rounded px-2 py-1 -mx-2 hover:bg-white/5">{e}</button>)}
+          <span className="text-xs text-slate-400">Try</span>
+          {examples.map((e) => <button key={e} onClick={() => { setQ(e); ask(e); }} className="text-left text-sm text-slate-300 rounded px-2 py-1 -mx-2 hover:bg-white/5">{e}</button>)}
         </div>
       )}
 

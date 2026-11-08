@@ -27,6 +27,11 @@ body {
 
 /* Map controls sit below the 44px top bar. */
 .maplibregl-map .maplibregl-ctrl-top-right { top: 3.25rem !important; }
+/* Phones: below the search row, and the attribution sits above the bottom tab bar (the time slider sits above it). */
+@media (max-width: 767px) {
+  .maplibregl-map .maplibregl-ctrl-top-right { top: 6.25rem !important; }
+  .maplibregl-map .maplibregl-ctrl-bottom-right { bottom: 3.5rem; }
+}
 
 /* Marker popups: MapLibre's own stylesheet loads after this one, so these selectors carry extra specificity to win. */
 .maplibregl-popup .maplibregl-popup-content { background: #0f172a; color: #e2e8f0; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 10px 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); }

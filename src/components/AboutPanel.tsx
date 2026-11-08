@@ -1,8 +1,20 @@
 import GbifCredits from "@/components/GbifCredits";
+import { track } from "@/components/Analytics";
+import { LANGS, setLang, useLang, useT, type Lang } from "@/lib/i18n";
 
 export default function AboutPanel() {
+  const t = useT();
+  const lang = useLang();
   return (
     <div className="p-5 text-sm text-slate-300 flex flex-col gap-5 overflow-y-auto h-full">
+      {/* Phones: the language menu lives here, so the top bar keeps room for search. */}
+      <label className="md:hidden flex items-center gap-2 text-sm">
+        <span className="text-slate-200">{t("Language")}</span>
+        <select value={lang} onChange={(e) => { setLang(e.target.value as Lang); track("select_language", { lang: e.target.value }); }}
+          className="rounded-md bg-white/10 px-2 py-1.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          {LANGS.map((l) => <option key={l.code} value={l.code} className="text-slate-900">{l.label}</option>)}
+        </select>
+      </label>
       <section>
         <h2 className="text-base font-semibold text-slate-100">Wildlife Network</h2>
         <p className="mt-1 leading-relaxed">

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { track } from "./Analytics";
 import AlertForm from "./AlertForm";
-import { useLang, useT } from "@/lib/i18n";
+import { fmtNum, useLang, useT } from "@/lib/i18n";
 import ListenBlock from "./ListenBlock";
 import type { XcArea } from "@/lib/xenocanto";
 
@@ -25,7 +25,7 @@ const W = 560, H = 96, PAD = { l: 36, r: 8, t: 10, b: 18 };
 function Line({ values, labels, format, color, title, low, high }: { values: (number | null)[]; labels: string[]; format: (v: number) => string; color: string; title: string; low?: (number | null)[]; high?: (number | null)[] }) {
   const [hover, setHover] = useState<number | null>(null);
   const nums = values.filter((v): v is number => v != null);
-  if (nums.length < 2) return <div className="text-xs text-slate-500 py-4">{title}: not enough data yet</div>;
+  if (nums.length < 2) return <div className="text-xs text-slate-400 py-4">{title}: not enough data yet</div>;
   const bandNums = [...(low ?? []), ...(high ?? [])].filter((v): v is number => v != null);
   const min = Math.min(...nums, ...bandNums), max = Math.max(...nums, ...bandNums);
   const x = (i: number) => PAD.l + (i / (values.length - 1)) * (W - PAD.l - PAD.r);
@@ -52,8 +52,8 @@ function Line({ values, labels, format, color, title, low, high }: { values: (nu
         <line x1={PAD.l} x2={W - PAD.r} y1={y(min)} y2={y(min)} stroke="#334155" strokeWidth={1} />
         <text x={PAD.l - 4} y={y(max) + 4} textAnchor="end" fontSize={10} fill="#94a3b8">{format(max)}</text>
         <text x={PAD.l - 4} y={y(min) + 4} textAnchor="end" fontSize={10} fill="#94a3b8">{format(min)}</text>
-        <text x={PAD.l} y={H - 4} fontSize={10} fill="#64748b">{labels[0].slice(5)}</text>
-        <text x={W - PAD.r} y={H - 4} textAnchor="end" fontSize={10} fill="#64748b">{labels[labels.length - 1].slice(5)}</text>
+        <text x={PAD.l} y={H - 4} fontSize={10} fill="#94a3b8">{labels[0].slice(5)}</text>
+        <text x={W - PAD.r} y={H - 4} textAnchor="end" fontSize={10} fill="#94a3b8">{labels[labels.length - 1].slice(5)}</text>
         {band && <path d={band} fill={color} fillOpacity={0.18} stroke="none" />}
         <path d={d} fill="none" stroke={color} strokeWidth={2} strokeLinejoin="round" />
         {hi != null && <>
@@ -93,43 +93,73 @@ export default function SpeciesPanel({ name, area = null, near = null, alerts = 
     return () => { cancelled = true; };
   }, [name]);
 
-  if (!data || data.scientificName !== name) return <div className="text-sm text-slate-400 p-4">Loading {name}…</div>;
+  if (!data || data.scientificName !== name) return <div className="text-sm text-slate-300 p-4">{t("Loading")} {name}…</div>;
   const days = data.daily;
   const labels = days.map((d) => d.day);
   const total = days.reduce((a, d) => a + d.n, 0);
   const located = days.filter((d) => d.lat != null);
   const drift = located.length > 3 ? located[located.length - 1].lat! - located[0].lat! : null;
   const corr = pearson(days.map((d) => d.index), days.map((d) => d.weather?.tmax ?? null));
+  // One plain sentence first: how often it was recorded, and when it usually arrives in its best-covered region.
+  const arr = arrivals?.name === name ? arrivals.rows : null;
+  const usual = (() => {
+    if (!arr?.length) return null;
+    const byRegion = new Map<string, Arrival[]>();
+    arr.forEach((r) => byRegion.set(r.region, [...(byRegion.get(r.region) ?? []), r]));
+    const [region, list] = [...byRegion.entries()].sort((a, b) => b[1].length - a[1].length)[0];
+    const weeks = list.map((r) => r.arrivalWeek).sort();
+    const w = weeks[Math.floor((weeks.length - 1) / 2)];
+    return { region, when: new Date(w).toLocaleDateString(lang === "en" ? "en-GB" : lang, { day: "numeric", month: "long" }) };
+  })();
+  const lead = [
+    total > 0 ? t("Recorded {n} times in the last 30 days, in {c} areas.", { n: fmtNum(total, lang), c: data.cells.length.toLocaleString(lang) }) : t("No records in the last 30 days."),
+    usual ? t("It usually arrives in {region} around {date}.", { region: t(usual.region), date: usual.when }) : "",
+  ].filter(Boolean).join(" ");
+  const pageHref = `/species/${name.toLowerCase().replace(/\s+/g, "-")}`;
 
   return (
     <div className="flex flex-col gap-3 h-full overflow-y-auto">
       <div className="relative">
         {media?.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={media.thumbUrl ?? media.imageUrl} alt={media.title ?? name} className="w-full h-40 object-contain bg-slate-900" />
+          <img src={media.thumbUrl ?? media.imageUrl} alt={media.title ?? name} className="w-full h-40 max-md:h-32 object-contain bg-slate-900" />
         ) : <div className="w-full h-16 bg-slate-800" />}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900 to-transparent h-20" />
-        <button onClick={onClose} aria-label={t("Close")} className="absolute top-2 right-2 rounded-full bg-slate-900/70 text-slate-200 hover:text-white w-7 h-7 text-sm">✕</button>
+        <button onClick={onClose} aria-label={t("Close")} className="absolute top-2 right-2 rounded-full bg-slate-900/70 text-slate-200 hover:text-white w-7 h-7 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">✕</button>
         <div className="absolute left-4 bottom-2">
           <h2 className="text-base font-semibold leading-tight drop-shadow">{media?.names?.[lang] ?? data.vernacularName ?? data.scientificName}</h2>
           <p className="text-xs text-slate-300 italic">{data.scientificName}</p>
         </div>
       </div>
       <div className="px-4 flex flex-col gap-3">
-      {media?.extract && <p className="text-xs text-slate-300 leading-relaxed">{media.extract.split(". ").slice(0, 2).join(". ").replace(/\.$/, "")}.{media.pageUrl && <> <a href={media.pageUrl} target="_blank" rel="noreferrer" className="text-cyan-500 hover:underline">Wikipedia</a></>}</p>}
+      <div className="flex flex-col gap-2">
+        <Link href={pageHref} className="flex items-center justify-center gap-2 rounded-md border border-cyan-400/40 bg-cyan-400/10 px-3 py-2 text-sm font-medium text-cyan-200 hover:bg-cyan-400/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          {t("Page for this species")}
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+        </Link>
+        {alerts && <AlertBlock key={name} name={name} title={data.vernacularName ?? data.scientificName} />}
+      </div>
+      <p className="text-sm leading-relaxed text-slate-100">{lead}</p>
+      {media?.extract && <p className="text-sm text-slate-300 leading-relaxed">{media.extract.split(". ").slice(0, 2).join(". ").replace(/\.$/, "")}.{media.pageUrl && <> <a href={media.pageUrl} target="_blank" rel="noreferrer" className="text-cyan-400 hover:underline">Wikipedia</a></>}</p>}
+      <ListenBlock name={name} area={area} near={near} />
+      {/* Statistical detail (intervals, range-centre numbers, charts) is folded away until asked for. */}
+      <details className="group rounded-md border border-white/10" onToggle={(e) => { if ((e.currentTarget as HTMLDetailsElement).open) track("species_details", { species: name }); }}>
+        <summary className="cursor-pointer list-none flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-100 hover:bg-white/5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          <span>{t("Details")} <span className="font-normal text-slate-400">{t("numbers, charts and arrival timing")}</span></span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform group-open:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </summary>
+        <div className="px-3 pb-3 pt-1 flex flex-col gap-3">
       {data.story && data.story.length > 0 && (
         <section aria-label={t("In words")} className="rounded-md border border-white/10 bg-white/5 px-3 py-2.5">
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">{t("In words")}</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">{t("In words")}</h3>
           <ul className="space-y-1.5 text-[13px] leading-relaxed text-slate-200">
             {data.story.map((line) => <li key={line}>{line}</li>)}
           </ul>
-          <p className="mt-1.5 text-[11px] text-slate-500">{t("Written from the numbers below by fixed rules.")} <Link href="/methods#words" className="text-cyan-500 hover:underline">{t("How")}</Link>.</p>
+          <p className="mt-1.5 text-xs text-slate-400">{t("Written from the numbers below by fixed rules.")} <Link href="/methods#words" className="text-cyan-400 hover:underline">{t("How")}</Link>.</p>
         </section>
       )}
-      {alerts && <AlertBlock key={name} name={name} title={data.vernacularName ?? data.scientificName} />}
-      <ListenBlock name={name} area={area} near={near} />
       <dl className="grid grid-cols-3 gap-2 text-xs">
-        <Stat label={t("Detections, 30d")} value={total.toLocaleString()} />
+        <Stat label={t("Detections, 30d")} value={total.toLocaleString(lang)} />
         <Stat label={t("Range centre drift")} value={drift == null ? "n/a" : `${Math.abs(drift).toFixed(1)}° ${drift > 0 ? t("north") : t("south")}`} />
         <Stat label={t("Frequency vs max temp")} value={corr == null ? "n/a" : `r = ${corr.toFixed(2)}`} />
       </dl>
@@ -137,25 +167,26 @@ export default function SpeciesPanel({ name, area = null, near = null, alerts = 
       <Line title={t("Range centre latitude")} values={days.map((d) => d.lat)} low={days.map((d) => d.latLow ?? null)} high={days.map((d) => d.latHigh ?? null)} labels={labels} format={(v) => `${v.toFixed(1)}°`} color="#a78bfa" />
       <Line title={t("Max temperature at range centre (°C)")} values={days.map((d) => d.weather?.tmax ?? null)} labels={labels} format={(v) => `${v.toFixed(0)}°`} color="#fb923c" />
       <Line title={t("Max wind at range centre (km/h)")} values={days.map((d) => d.weather?.wind ?? null)} labels={labels} format={(v) => `${v.toFixed(0)}`} color="#94a3b8" />
-      <ArrivalTable rows={arrivals?.name === name ? arrivals.rows : null} name={name} />
+      <ArrivalTable rows={arr} name={name} />
       <HeardVsSeen name={name} />
-      <p className="text-[11px] text-slate-500 pb-4">
+      <p className="text-xs text-slate-400">
         Effort corrected: figures are the species&apos; share of all {CLASS_NOUN[data.group ?? "avian"] || "bird"} detections, so more stations do not look like more animals.{" "}
-        <Link href="/methods" className="text-cyan-500 hover:underline">{t("How this is measured, and its limits")}</Link>.{" "}
-        <Link href={`/species/${name.toLowerCase().replace(/\s+/g, "-")}`} className="text-cyan-500 hover:underline">{t("Page for this species")}</Link>.
+        <Link href="/methods" className="text-cyan-400 hover:underline">{t("How this is measured, and its limits")}</Link>.{" "}
         Sources: {data.sources.map((s) => SOURCE_LABEL[s] ?? s).join(", ")}. Weather: Open-Meteo ERA5 at the range centre. Map squares show the change in share, last 3 days against the week before.
-        {media?.attribution && <> Photo: {media.attribution} ({media.license}).</>}
       </p>
+        </div>
+      </details>
+      {media?.attribution && <p className="text-xs text-slate-400 pb-4">{t("Photo")}: {media.attribution} ({media.license}).</p>}
+      {!media?.attribution && <div className="pb-2" />}
       </div>
     </div>
   );
 }
-
 /** Arrival week by latitude band for the continent with the most cells: the classic "arrival front". */
 function ArrivalTable({ rows, name }: { rows: Arrival[] | null; name: string }) {
   const t = useT();
   if (!rows) return null;
-  if (rows.length === 0) return <div className="text-xs text-slate-500">Seasonal timing: no clear arrival in the past year (a resident here, or too few detections).</div>;
+  if (rows.length === 0) return <div className="text-xs text-slate-400">Seasonal timing: no clear arrival in the past year (a resident here, or too few detections).</div>;
   const byRegion = new Map<string, Arrival[]>();
   rows.forEach((r) => byRegion.set(r.region, [...(byRegion.get(r.region) ?? []), r]));
   const [region, list] = [...byRegion.entries()].sort((a, b) => b[1].length - a[1].length)[0];
@@ -172,22 +203,22 @@ function ArrivalTable({ rows, name }: { rows: Arrival[] | null; name: string }) 
     <div>
       <div className="flex items-baseline justify-between text-xs">
         <span className="text-slate-400">Arrival by latitude · {region}</span>
-        <a href={`/api/v1/arrivals?species=${encodeURIComponent(name)}&format=csv`} onClick={() => track("download_csv", { species: name })} className="text-cyan-500 hover:underline">CSV</a>
+        <a href={`/api/v1/arrivals?species=${encodeURIComponent(name)}&format=csv`} onClick={() => track("download_csv", { species: name })} className="text-cyan-400 hover:underline">CSV</a>
       </div>
       <table className="mt-1 w-full text-xs tabular-nums">
-        <thead><tr className="text-left text-slate-500"><th className="font-normal py-0.5">{t("Latitude")}</th><th className="font-normal">{t("Arrives")}</th><th className="font-normal">{t("Peaks")}</th><th className="font-normal text-right">{t("Cells")}</th></tr></thead>
+        <thead><tr className="text-left text-slate-400"><th className="font-normal py-0.5">{t("Latitude")}</th><th className="font-normal">{t("Arrives")}</th><th className="font-normal">{t("Peaks")}</th><th className="font-normal text-right">{t("Cells")}</th></tr></thead>
         <tbody>
           {[...bands.entries()].sort((a, b) => b[0] - a[0]).map(([lat, rs]) => (
             <tr key={lat} className="border-t border-white/5 text-slate-200">
               <td className="py-0.5">{Math.abs(lat)}° to {Math.abs(lat + 5)}° {lat >= 0 ? "N" : "S"}</td>
-              <td>{fmt(median(rs.map((r) => r.arrivalWeek)))}{(() => { const s = spread(rs); return s ? <span className="text-slate-500"> ±{s} wk</span> : null; })()}</td>
+              <td>{fmt(median(rs.map((r) => r.arrivalWeek)))}{(() => { const s = spread(rs); return s ? <span className="text-slate-400"> ±{s} wk</span> : null; })()}</td>
               <td>{fmt(median(rs.map((r) => r.peakWeek)))}</td>
               <td className="text-right text-slate-400">{rs.length}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <p className="mt-1 text-[11px] text-slate-500">First week the species reaches a tenth of its seasonal peak after at least six weeks away (median across cells; ± is the typical 90% uncertainty). Typically within a week of human sightings, about a week late; for residents it marks the start of singing. <Link href="/validation" className="text-cyan-500 hover:underline">{t("Validation")}</Link>.</p>
+      <p className="mt-1 text-xs text-slate-400">First week the species reaches a tenth of its seasonal peak after at least six weeks away (median across cells; ± is the typical 90% uncertainty). Typically within a week of human sightings, about a week late; for residents it marks the start of singing. <Link href="/validation" className="text-cyan-400 hover:underline">{t("Validation")}</Link>.</p>
     </div>
   );
 }
@@ -255,21 +286,21 @@ function HeardVsSeen({ name }: { name: string }) {
   const path = (v: number[]) => v.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p).toFixed(1)}`).join("");
   return (
     <section aria-label={t("Heard versus seen")} className="rounded-md border border-white/10 bg-white/5 px-3 py-2.5">
-      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">{t("Heard versus seen")}</h3>
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">{t("Heard versus seen")}</h3>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Weekly share in recordings and in human sightings, each scaled to its own peak">
         <path d={path(a)} fill="none" stroke="#22d3ee" strokeWidth={2} />
         <path d={path(o)} fill="none" stroke="#f59e0b" strokeWidth={2} />
-        <text x={PAD.l} y={H - 4} fontSize={10} fill="#64748b">{fmtWeek(d.weeks[0].week)}</text>
-        <text x={W - PAD.r} y={H - 4} fontSize={10} fill="#64748b" textAnchor="end">{fmtWeek(d.weeks[d.weeks.length - 1].week)}</text>
+        <text x={PAD.l} y={H - 4} fontSize={10} fill="#94a3b8">{fmtWeek(d.weeks[0].week)}</text>
+        <text x={W - PAD.r} y={H - 4} fontSize={10} fill="#94a3b8" textAnchor="end">{fmtWeek(d.weeks[d.weeks.length - 1].week)}</text>
       </svg>
-      <div className="flex gap-3 text-[11px] text-slate-400 mb-1">
+      <div className="flex gap-3 text-xs text-slate-300 mb-1">
         <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-[#22d3ee]" />Recordings (BirdWeather)</span>
         <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-[#f59e0b]" />Sightings (GBIF)</span>
       </div>
       <ul className="space-y-1.5 text-[13px] leading-relaxed text-slate-200">
         {twoSourceWords(d).map((line) => <li key={line}>{line}</li>)}
       </ul>
-      <p className="mt-1.5 text-[11px] text-slate-500">Same cells and weeks only; each line is the species&apos; share of its own source, scaled to its peak. <Link href="/methods#two-sources" className="text-cyan-500 hover:underline">How</Link>.</p>
+      <p className="mt-1.5 text-xs text-slate-400">Same cells and weeks only; each line is the species&apos; share of its own source, scaled to its peak. <Link href="/methods#two-sources" className="text-cyan-400 hover:underline">How</Link>.</p>
     </section>
   );
 }
@@ -286,7 +317,7 @@ function AlertBlock({ name, title }: { name: string; title: string }) {
   );
   return (
     <section aria-label={t("Arrival alert")} className="rounded-md border border-amber-400/30 bg-amber-400/5 px-3 py-2.5">
-      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-200">{t("Arrival alert")}</h3>
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-200">{t("Arrival alert")}</h3>
       <AlertForm species={name} title={title} compact />
     </section>
   );

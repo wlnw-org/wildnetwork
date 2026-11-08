@@ -69,7 +69,34 @@ export async function computeHistory(period: Period, g: string) {
       points: leaders.map((l) => [l.lat, l.lon, l.sci, l.common, l.grp, l.src, Math.round(l.n)]), top, arrivals: recentArrivals, arrivalCount: arrivals.length };
 }
 
-export const HISTORY_GROUPS = ["all", "avian", "bat", "amphibian", "insect", "mammal", "marine"];
+/** Near (10 degrees) and region (25 degrees) radii and the minimum list length, as in /api/v1/insights. */
+const AREA = { NEAR: 10, REGION: 25, MIN_ITEMS: 4 } as const;
+type Arrival = { scientific_name: string; vernacular_name: string | null; arrival: string; lat: number; lon: number; cells: number };
+
+/**
+ * Arrivals in the period near a 5 degree cell (lower-left corner): the nearest cell per species within 10 degrees when at
+ * least four species qualify, else within 25 degrees, else null (the caller keeps the worldwide list).
+ */
+export async function localArrivals(period: Period, g: string, cellLat: number, cellLon: number): Promise<{ scope: "near" | "region"; arrivals: Arrival[]; arrivalCount: number } | null> {
+  const days = PERIODS[period];
+  const grpSpecies = g === "all" ? sql`` : sql`AND g.grp = ${g}`;
+  const d = sql`GREATEST(ABS(p.cell_lat - ${cellLat}), ABS(MOD((p.cell_lon - ${cellLon} + 540)::numeric, 360) - 180))`;
+  const rows = await sql<(Arrival & { d: number })[]>`
+    SELECT DISTINCT ON (p.scientific_name) p.scientific_name, p.vernacular_name, p.arrival_week::text AS arrival, p.cell_lat AS lat, p.cell_lon AS lon,
+           COUNT(*) OVER (PARTITION BY p.scientific_name)::int AS cells, ${d}::float AS d
+    FROM phenology p JOIN species_group g USING (scientific_name)
+    WHERE p.arrival_week >= CURRENT_DATE - ${days}::int AND (p.arrival_support IS NULL OR p.arrival_support >= 0.5) ${grpSpecies}
+      AND ${d} <= ${AREA.REGION}
+    ORDER BY p.scientific_name, ${d}, p.arrival_week`;
+  const near = rows.filter((r) => r.d <= AREA.NEAR);
+  const use = near.length >= AREA.MIN_ITEMS ? { scope: "near" as const, list: near } : rows.length >= AREA.MIN_ITEMS ? { scope: "region" as const, list: [...rows] } : null;
+  if (!use) return null;
+  const arrivals = use.list.sort((a, b) => a.d - b.d || b.cells - a.cells || b.arrival.localeCompare(a.arrival)).slice(0, 25)
+    .map(({ d: _d, ...r }) => r); // eslint-disable-line @typescript-eslint/no-unused-vars
+  return { scope: use.scope, arrivals, arrivalCount: use.list.length };
+}
+
+export const HISTORY_GROUPS =["all", "avian", "bat", "amphibian", "insect", "mammal", "marine"];
 const FRESH_HOURS = 6;
 // Refreshed when older than this, so entries are renewed before visitors would find them stale.
 const REFRESH_HOURS = 3.5;

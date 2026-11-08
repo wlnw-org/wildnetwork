@@ -10,3 +10,11 @@ export const REGIONS = [
 
 export const regionSlug = (name: string) => REGIONS.find((r) => r.name === name)?.slug ?? null;
 export const regionBySlug = (slug: string) => REGIONS.find((r) => r.slug === slug) ?? null;
+
+/** Continent of a 5 degree cell from its lower-left corner (same split as REGION in methods.ts). */
+export function regionOf(cellLat: number, cellLon: number): (typeof REGIONS)[number]["name"] {
+  if (cellLon < -30) return cellLat >= 10 ? "North America" : "South America";
+  if (cellLon < 60) return cellLat >= 35 ? "Europe" : "Africa";
+  if (cellLon >= 110 && cellLat < -10) return "Oceania";
+  return "Asia";
+}

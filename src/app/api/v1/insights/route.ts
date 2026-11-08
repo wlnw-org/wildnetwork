@@ -1,6 +1,7 @@
 import { sql } from "@/lib/db";
 import { driftIntervals, moverIntervals } from "@/lib/insightsCi";
 import { overview } from "@/lib/story";
+import { regionOf } from "@/lib/regions";
 import { GROUPS, METHODS_VERSION, MIN_CELL_DETECTIONS, REGION, minEffortDay, scaled, type Group } from "@/lib/methods";
 
 /**
@@ -12,14 +13,6 @@ import { GROUPS, METHODS_VERSION, MIN_CELL_DETECTIONS, REGION, minEffortDay, sca
 /** Lists within this many degrees of the visitor's cell count as "near"; within AREA.REGION as "your region". */
 const AREA = { NEAR: 10, REGION: 25, MIN_ITEMS: 4 } as const;
 type Scope = "near" | "region" | "world";
-
-/** Same continents as REGION in methods.ts, for a 5 degree cell's lower-left corner. */
-function regionOf(cellLat: number, cellLon: number) {
-  if (cellLon < -30) return cellLat >= 10 ? "North America" : "South America";
-  if (cellLon < 60) return cellLat >= 35 ? "Europe" : "Africa";
-  if (cellLon >= 110 && cellLat < -10) return "Oceania";
-  return "Asia";
-}
 
 export async function GET(req: Request) {
   const params = new URL(req.url).searchParams;
