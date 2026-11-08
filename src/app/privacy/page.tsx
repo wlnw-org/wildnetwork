@@ -95,6 +95,17 @@ export default function Privacy() {
           counted the same way. If wlnw.org cannot be reached, Studio checks GitHub instead, which has its own privacy policy.
         </p>
 
+        <h2 id="shared-answers" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Checked answers shared from Studio</h2>
+        <p>
+          Studio has a setting, off unless you turn it on, to share your checked answers so we can build free regional classifiers. For each clip you
+          answered yes or no, or a sound you named, it sends the species, your answer, the clip&apos;s Perch embedding (1,536 numbers that describe the sound;
+          it is not audio and cannot be played back), the model and its score, the recorder&apos;s place rounded to 1 degree (5 degrees for sensitive species),
+          and the year and week. It never sends audio, file or project names, exact times or anything about you. A random key kept only by your copy of
+          Studio is stored as a hash with each answer; it is the only way to tell which answers came from the same computer, and Studio&apos;s
+          &quot;Delete everything I shared&quot; button uses it to delete them all at once. The site keeps a keyed hash of your IP address for a day to limit
+          requests. Shared answers are released as open data (CC0) for anyone to train classifiers with.
+        </p>
+
         <h2 id="research" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Researchers</h2>
         <p>
           Signing in with ORCID (for study areas and reviews) stores your ORCID iD and the public name ORCID returns, and when you last signed in. A signed

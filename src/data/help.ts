@@ -217,6 +217,29 @@ const studio: Guide[] = [
     ],
   },
   {
+    slug: "share-answers",
+    title: "Share your checked answers to improve species ID",
+    summary: "An opt-in setting that helps build free classifiers for your region.",
+    body: [
+      { p: "BirdNET and Perch know some regions far better than others. Your yes and no answers in Review are exactly what is needed to build classifiers that work better where you record. If you choose to share them, we combine answers from many people into free regional classifiers that anyone can use in Studio." },
+      { steps: [
+        "Open Settings (bottom of the sidebar, or on the start screen).",
+        "Turn on Share my checked answers to improve species ID.",
+        "Keep reviewing as usual. Studio sends new answers in the background when a project is open, and the Settings box shows how many were shared.",
+      ] },
+      { h: "What is sent" },
+      { list: [
+        "The species, and your answer (yes or no). Not sure answers are not sent.",
+        "The clip's Perch embedding: 1,536 numbers that describe the sound. It is not audio and cannot be played back. Answers are only shared where Perch has run on the recording.",
+        "The model that made the detection and its score.",
+        "The recorder's place rounded to about 100 km (about 500 km for sensitive species), and the year and week of the recording.",
+      ] },
+      { p: "Never audio, file or project names, exact times, or anything about you. Shared answers are open data (CC0)." },
+      { h: "Stop or delete" },
+      { p: "Turn the setting off at any time. Delete everything I shared removes every answer your computer has sent from wlnw.org at once and turns sharing off. Full details are on the [privacy page](/privacy#shared-answers)." },
+    ],
+  },
+  {
     slug: "privacy",
     title: "What Studio sends over the internet",
     summary: "Your recordings and results stay on your computer. Here is everything that goes online.",
@@ -226,6 +249,7 @@ const studio: Guide[] = [
         "Model downloads, when you choose them.",
         "With Wildlife Network online (Settings, on by default): the recorder's place, rounded, to show species known nearby and protected areas. Turn it off in Settings.",
         "Publishing, only when you choose it: the accepted detections of that dataset.",
+        "Sharing checked answers, only if you turn it on in Settings: for each clip you answered, the species, your answer, the clip's Perch embedding (numbers, not audio), the place rounded to about 100 km, and the year and week. See [sharing answers](/help/studio/share-answers).",
       ] },
       { p: "Recordings, photos, answers and projects are never uploaded. Full details are on the [privacy page](/privacy#apps)." },
     ],
