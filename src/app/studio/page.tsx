@@ -32,7 +32,7 @@ export default function Studio() {
 
         <h2 className="mt-10 mb-2 text-xl font-semibold text-slate-100">What it does</h2>
         <ul className="list-disc pl-5 space-y-1">
-          <li><b>Finds species fast</b>: BirdNET and Google&apos;s Perch run on your own computer, hundreds of times faster than real time with BirdNET (<A href="/studio/benchmark">3 to 4 times faster than BirdNET-Analyzer</A> in our test). Perch is used first in Africa and South Asia, where it knows more species.</li>
+          <li><b>Finds species fast</b>: BirdNET and Google&apos;s Perch run on your own computer, hundreds of times faster than real time with BirdNET (<A href="/studio/benchmark">about an hour of audio in 15 seconds</A> on a laptop). Perch is used first in Africa and South Asia, where it knows more species.</li>
           <li><b>Handles whole field seasons</b>: thousands of recordings and terabytes of audio. Pause any time; it carries on where it stopped.</li>
           <li><b>Quick review</b>: listen to clips with their spectrogram and answer yes or no. Studio sets a threshold per species from your answers.</li>
           <li><b>Learns your local species</b>: the Wildlife Network Classifier trains on your answers and examples, and can find more sounds like one you pick.</li>
