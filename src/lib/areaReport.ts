@@ -306,3 +306,27 @@ ${r.stations.map((s) => `<Placemark><name>${xml(s.name ?? s.id)}</name><descript
 </Document></kml>`;
 }
 
+
+/**
+ * Species recorded within km of a point (GBIF, CC0 or CC BY 4.0, all years since 2000 unless given), for tools that ask
+ * "is this species known near here?" such as Wildlife Network Studio's review. The circle is sent to GBIF as a 24-sided
+ * polygon; the point is rounded to 0.1 degree by the route so answers can be cached and shared.
+ */
+export async function nearbyChecklist(lat: number, lon: number, km: number, group: string, since: string): Promise<{ species: { scientificName: string; vernacularName: string | null; group: string; records: number }[]; records: number; truncated: boolean }> {
+  const ring: string[] = [];
+  for (let i = 0; i <= 24; i++) {
+    const a = (i % 24) * (2 * Math.PI / 24);
+    const dLat = (km / 111.32) * Math.sin(a), dLon = (km / (111.32 * Math.max(0.05, Math.cos(lat * Math.PI / 180)))) * Math.cos(a);
+    ring.push(`${(lon + dLon).toFixed(4)} ${(lat + dLat).toFixed(4)}`);
+  }
+  const p = baseParams();
+  p.set("geometry", `POLYGON((${ring.join(",")}))`);
+  p.set("eventDate", `${since},${new Date().toISOString().slice(0, 10)}`);
+  for (const k of AREA_GROUPS[group] ?? AREA_GROUPS.all) p.append("taxonKey", String(k));
+  p.set("limit", "0"); p.set("facet", "speciesKey"); p.set("speciesKey.facetLimit", String(AREA_LIMITS.GBIF_SPECIES));
+  const j = await gbifJson<{ count: number; facets: { field: string; counts: { name: string; count: number }[] }[] }>("/occurrence/search", p, 2);
+  const counts = (j.facets[0]?.counts ?? []).map((c) => ({ key: Number(c.name), n: c.count }));
+  for (let i = 0; i < counts.length; i += 25) await resolveTaxa(counts.slice(i, i + 25).map((c) => c.key));
+  const species = counts.flatMap((c) => { const t = taxon(c.key); return t && nameable(t.scientific_name) ? [{ scientificName: t.scientific_name, vernacularName: t.vernacular_name, group: t.grp, records: c.n }] : []; });
+  return { species, records: j.count, truncated: counts.length >= AREA_LIMITS.GBIF_SPECIES };
+}
