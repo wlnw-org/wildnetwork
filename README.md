@@ -26,7 +26,6 @@ It is free, open source, and built so that anyone with a Raspberry Pi can contri
 - [Marine data](#marine-data)
 - [Part of an open wildlife toolkit](#part-of-an-open-wildlife-toolkit)
 - [Contributing and governance](#contributing-and-governance)
-- [Roadmap](#roadmap)
 - [Credits](#credits)
 
 ## What you can do with it
@@ -254,7 +253,7 @@ Eight open source projects for listening to, identifying and mapping wildlife. T
 
 **How this one fits.** Wildlife Network is where detections come together. It takes WDX from Wildlife Network Bases, wdx-agent, SpeciesNet Studio and WildEcho, alongside BirdWeather, GBIF and iNaturalist, and turns them into the map, arrival dates and open data releases.
 
-**How they connect:** stations (a Wildlife Network Base, BirdNET-Pi, BirdNET-Go, camera traps) produce detections; wdx-agent sends them in the WDX format, SpeciesNet Studio adds a human check for camera traps, and Wildlife Network maps them. Connected today: wdx-agent, the Wildlife Network Base, SpeciesNet Studio and WildEcho (if you switch sharing on) send to Wildlife Network, BirdEcho shows Wildlife Network arrivals near your station, and WildEcho uses wildecho-api. Planned: Base setup in BirdEcho.
+**How they connect:** stations (a Wildlife Network Base, BirdNET-Pi, BirdNET-Go, camera traps) produce detections; wdx-agent sends them in the WDX format, SpeciesNet Studio adds a human check for camera traps, and Wildlife Network maps them. Connected today: wdx-agent, the Wildlife Network Base, SpeciesNet Studio and WildEcho (if you switch sharing on) send to Wildlife Network, BirdEcho shows Wildlife Network arrivals near your station, and WildEcho uses wildecho-api.
 
 ## Name and logo
 
@@ -268,15 +267,6 @@ Contributions are welcome: new connectors, better movement analysis, design, doc
 - [GOVERNANCE.md](GOVERNANCE.md): who decides what, and the commitments that do not change
 - [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 - [SECURITY.md](SECURITY.md): reporting vulnerabilities and sensitive species concerns
-
-## Roadmap
-
-- More sources: Movebank GPS tracks, GBIF camera trap datasets (Camtrap DP), weather radar migration (NEXRAD, OPERA)
-- Species level alerts: first arrival of the season, unusual movement nights
-- Context layers for long term analysis: land use, agriculture and climate indicators
-- Per station pages for contributors
-- wdx-agent sources: Frigate, MegaDetector, Animl, BirdNET-Go v2
-- More bat data: NABat and national bat monitoring schemes, by agreement
 
 ## Credits
 
