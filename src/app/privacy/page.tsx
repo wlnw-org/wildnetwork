@@ -79,6 +79,22 @@ export default function Privacy() {
           else and never shared.
         </p>
 
+        <h2 id="feedback" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Feedback</h2>
+        <p>
+          A message sent through <Link href="/feedback" className="text-cyan-400 hover:underline">/feedback</Link> is stored with its topic, the part of
+          Wildlife Network it is about, the app version and system when it comes from Studio, an email address if you give one (encrypted), and a keyed hash of
+          your IP address to limit messages to five a day. It is emailed to the maintainer through Resend and read by no one else. Messages are deleted after a
+          year, or sooner if you ask.
+        </p>
+
+        <h2 id="apps" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Studio and app downloads</h2>
+        <p>
+          Wildlife Network Studio checks wlnw.org for a new version each time it starts. That check sends the app version and the system (for example
+          macOS on Apple Silicon), nothing about your recordings, projects or results. We count it per day and version, and keep a keyed hash of the IP address
+          for 35 days to count distinct installs; the address itself is not stored. Download links on <Link href="/studio" className="text-cyan-400 hover:underline">/studio</Link> are
+          counted the same way. If wlnw.org cannot be reached, Studio checks GitHub instead, which has its own privacy policy.
+        </p>
+
         <h2 id="research" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Researchers</h2>
         <p>
           Signing in with ORCID (for study areas and reviews) stores your ORCID iD and the public name ORCID returns, and when you last signed in. A signed

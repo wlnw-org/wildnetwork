@@ -10,7 +10,11 @@ export const STUDIO_DOWNLOADS = {
   macIntel: `${STUDIO_LATEST}/Wildlife-Network-Studio-mac-intel.dmg`,
   windows: `${STUDIO_LATEST}/Wildlife-Network-Studio-windows-x64-setup.exe`,
   windowsMsi: `${STUDIO_LATEST}/Wildlife-Network-Studio-windows-x64.msi`,
+  linux: `${STUDIO_LATEST}/Wildlife-Network-Studio-linux-x64.AppImage`,
+  linuxDeb: `${STUDIO_LATEST}/Wildlife-Network-Studio-linux-x64.deb`,
 };
+/** Counted download links (src/app/api/v1/studio/download); each redirects to the matching STUDIO_DOWNLOADS file. */
+export const studioDownload = (os: keyof typeof STUDIO_DOWNLOADS) => `/api/v1/studio/download?os=${os}`;
 export const SITE_DESCRIPTION =
   "A live, open map of bird, bat and other animal movement, built from thousands of community sensors. See where a species is now, when it arrives, and how it moves through the year.";
 

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import StudioDownload from "@/components/StudioDownload";
-import { STUDIO_DOWNLOADS, STUDIO_RELEASES } from "@/lib/site";
+import { STUDIO_RELEASES, studioDownload } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Wildlife Network Studio: free desktop app for wildlife recordings",
   alternates: { canonical: "/studio" },
-  description: "Wildlife Network Studio is a free desktop app for Mac and Windows. Point it at a drive of recordings: it finds the species on your own computer with BirdNET or Perch, helps you check them in minutes, and exports them for GBIF or publishes them to Wildlife Network.",
+  description: "Wildlife Network Studio is a free desktop app for Mac, Windows and Linux. Point it at a drive of recordings: it finds the species on your own computer with BirdNET or Perch, helps you check them in minutes, and exports them for GBIF or publishes them to Wildlife Network.",
 };
 
 const A = ({ href, children }: { href: string; children: React.ReactNode }) =>
@@ -35,17 +35,21 @@ export default function Studio() {
           <li><b>Quick review</b>: listen to clips with their spectrogram and answer yes or no. Studio sets a threshold per species from your answers.</li>
           <li><b>Learns your local species</b>: the Wildlife Network Classifier trains on your answers and examples, and can find more sounds like one you pick.</li>
           <li><b>Keeps a record</b>: a Files list shows every recording and its status, and History lists every run, export and publish.</li>
-          <li><b>Exports</b>: Darwin Core Archive for GBIF, CSV, WDX, or Raven and Audacity tables, or publish straight to a <A href="/datasets/new">dataset here</A>.</li>
+          <li><b>Bats and camera traps</b>: BatDetect2 for UK bats (clips played 10 times slower so calls can be heard), and SpeciesNet with MegaDetector for camera-trap photos, checked against each camera&apos;s country.</li>
+          <li><b>Brings in other tools&apos; results</b>: BirdNET-Analyzer, BirdNET-Pi, BirdNET-Go, Raven and Kaleidoscope tables, reviewed and published without processing the audio again. Two people can review the same recordings and compare.</li>
+          <li><b>Exports</b>: Darwin Core Archive for GBIF, CSV, WDX, Raven and Audacity tables, Kaleidoscope id.csv or Camtrap DP, or publish straight to a <A href="/datasets/new">dataset here</A>.</li>
         </ul>
 
         <h2 className="mt-10 mb-2 text-xl font-semibold text-slate-100">Installing</h2>
         <ul className="list-disc pl-5 space-y-1">
           <li><b>Mac</b>: open the downloaded file and drag Studio to Applications. The app is signed and notarized by Apple. Macs with an Intel processor have their own download, just below the buttons.</li>
-          <li><b>Windows</b>: run the installer. The installer is not code signed yet, so Windows may show a blue SmartScreen message: choose <i>More info</i>, then <i>Run anyway</i>. Prefer an MSI for managed computers? <A href={STUDIO_DOWNLOADS.windowsMsi}>Download the MSI</A>.</li>
+          <li><b>Windows</b>: run the installer. The installer is not code signed yet, so Windows may show a blue SmartScreen message: choose <i>More info</i>, then <i>Run anyway</i>. Prefer an MSI for managed computers? <A href={studioDownload("windowsMsi")}>Download the MSI</A>.</li>
+          <li><b>Linux</b> (64-bit, Ubuntu 22.04 or newer and similar): <A href={studioDownload("linux")}>AppImage</A> (make it executable, then run it) or <A href={studioDownload("linuxDeb")}>.deb package</A> for Debian and Ubuntu.</li>
+          <li><b>Updates</b>: Studio checks for a new version when it starts and offers to install it. The check sends only the app version and system, counted on wlnw.org without identifying you (<A href="/privacy#apps">privacy</A>).</li>
         </ul>
 
         <p className="mt-10 text-sm text-slate-400">
-          Source code: <A href="https://github.com/wlnw-org/wlnw-studio">github.com/wlnw-org/wlnw-studio</A>. Problems or ideas? <A href="https://github.com/wlnw-org/wlnw-studio/issues">Open an issue</A> or email arunrajiah@gmail.com.
+          Source code: <A href="https://github.com/wlnw-org/wlnw-studio">github.com/wlnw-org/wlnw-studio</A>. Problems or ideas? <A href="/feedback?from=studio">Send feedback</A> or <A href="https://github.com/wlnw-org/wlnw-studio/issues">open an issue</A>.
         </p>
       </div>
     </main>

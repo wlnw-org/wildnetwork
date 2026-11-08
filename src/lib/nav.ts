@@ -31,6 +31,7 @@ export const NAV: { label: string; links: { label: string; href: string }[] }[] 
     { label: "Validation", href: "/validation" },
     { label: "Updates", href: "/updates" },
     { label: "Privacy", href: "/privacy" },
+    { label: "Feedback", href: "/feedback" },
   ] },
 ];
 
