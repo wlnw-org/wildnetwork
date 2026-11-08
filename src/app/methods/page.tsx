@@ -297,7 +297,7 @@ export default function Methods() {
 
         <p className="mt-2">
           <b>Area reports.</b> An <Link href="/report/area" className="text-cyan-400 hover:underline">area report</Link> takes a boundary instead of a point: a district
-          or protected area from OpenStreetMap, or one drawn or uploaded (KML or GeoJSON), simplified to at most 400 corners. Because the 5 degree cells are far
+          or protected area from OpenStreetMap anywhere in the world (found by name, or listed around a place: national parks, nature reserves including tiger reserves and conservancies, and wildlife sanctuaries), or one drawn or uploaded (KML or GeoJSON), simplified to at most 400 corners. Because the 5 degree cells are far
           coarser than a district, it uses only data that is precise enough: GBIF records inside the boundary under CC0 or CC BY 4.0, counted by GBIF when the report
           is opened (at most 1,000 species per query; for the GBIF query the boundary is simplified further, to fit GBIF&apos;s address length), and the weekly counts of stations that publish to Wildlife Network and stand inside the boundary. Other
           sources&apos; stations are counted, not named. The usual arrival column is the regional arrival estimate for the 5 degree cell around the area, shown only

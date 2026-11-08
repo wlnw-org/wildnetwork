@@ -5,7 +5,8 @@ import type { Map as MLMap, GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useT } from "@/lib/i18n";
 
-type Hit = { name: string; type: string; osm: string; lat: number; lon: number };
+type Hit = { name: string; type: string; osm: string; lat: number; lon: number; km?: number };
+const PROTECTED = /national_park|protected_area|nature_reserve|wildlife|sanctuary|conservation|National park|Nature reserve|Wildlife sanctuary/;
 type Mode = "search" | "upload" | "draw";
 
 /** KML in the browser: every Polygon's outer and inner rings, as one MultiPolygon. */
@@ -31,6 +32,19 @@ export default function AreaPicker() {
   const [err, setErr] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [pts, setPts] = useState<[number, number][]>([]);
+  // Protected areas around the visitor (IP area) or around a place they found.
+  const [near, setNear] = useState<{ label: string; hits: Hit[] | null } | null>(null);
+  async function loadNear(lat: number, lon: number, label: string) {
+    setNear({ label, hits: null });
+    try {
+      const r = await fetch(`/api/v1/areas/nearby?lat=${lat}&lon=${lon}&km=100`);
+      const j = await r.json();
+      setNear({ label, hits: r.ok && Array.isArray(j) ? j : [] });
+    } catch { setNear({ label, hits: [] }); }
+  }
+  useEffect(() => {
+    fetch("/api/v1/near").then((r) => r.json()).then((n: { lat?: number; lon?: number }) => { if (n.lat != null && n.lon != null) loadNear(n.lat, n.lon, ""); }).catch(() => {});
+  }, []);
   const box = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MLMap | null>(null);
 
@@ -112,18 +126,37 @@ export default function AreaPicker() {
       {mode === "search" && (
         <form onSubmit={search} className="mt-4">
           <div className="flex gap-2">
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("For example: Nilgiris district, Mudumalai Tiger Reserve")} className="flex-1 rounded-md border border-white/15 bg-slate-950 px-3 py-2 text-slate-100" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("A park, reserve, district or town anywhere, for example Kruger, Mudumalai, Nilgiris")} className="flex-1 rounded-md border border-white/15 bg-slate-950 px-3 py-2 text-slate-100" />
             <button disabled={busy} className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400 disabled:opacity-50">{t("Search")}</button>
           </div>
           {hits && hits.length === 0 && <p className="mt-3 text-sm text-amber-300">{t("No area with a boundary found. Try another spelling, upload a KML, or draw it.")}</p>}
           {hits && hits.length > 0 && (
             <ul className="mt-3 divide-y divide-white/10 rounded-md border border-white/10">
               {hits.map((h) => (
-                <li key={h.osm}><button type="button" disabled={busy} onClick={() => create({ osm: h.osm })} className="w-full px-3 py-2 text-left hover:bg-white/5 disabled:opacity-50">
-                  <span className="block text-slate-100">{h.name}</span><span className="text-xs text-slate-400">{h.type}</span>
-                </button></li>
+                <li key={h.osm} className="flex items-center">
+                  <button type="button" disabled={busy} onClick={() => create({ osm: h.osm })} className="flex-1 px-3 py-2 text-left hover:bg-white/5 disabled:opacity-50">
+                    <span className="block text-slate-100">{h.name}</span><span className="text-xs text-slate-400">{h.type}</span>
+                  </button>
+                  {!PROTECTED.test(h.type) && <button type="button" onClick={() => loadNear(h.lat, h.lon, h.name.split(",")[0])} className="shrink-0 px-3 text-xs text-cyan-400 hover:underline">{t("Protected areas around here")}</button>}
+                </li>
               ))}
             </ul>
+          )}
+          {near && (
+            <div className="mt-4">
+              <h3 className="text-sm font-semibold text-slate-200">{near.label ? `${t("Protected areas around here")}: ${near.label}` : t("Protected areas near you")}</h3>
+              {near.hits === null && <p className="mt-1 text-sm text-slate-400">{t("Loading protected areas…")}</p>}
+              {near.hits && near.hits.length === 0 && <p className="mt-1 text-sm text-slate-400">{t("No protected areas with a boundary found within 100 km.")}</p>}
+              {near.hits && near.hits.length > 0 && (
+                <ul className="mt-2 grid gap-1 sm:grid-cols-2">
+                  {near.hits.map((h) => (
+                    <li key={h.osm}><button type="button" disabled={busy} onClick={() => create({ osm: h.osm })} className="w-full rounded-md border border-white/10 px-3 py-1.5 text-left hover:bg-white/5 disabled:opacity-50">
+                      <span className="block text-sm text-slate-100">{h.name}</span><span className="text-xs text-slate-400">{t(h.type)} · {h.km} km</span>
+                    </button></li>
+                  ))}
+                </ul>
+              )}
+            </div>
           )}
           <p className="mt-3 text-xs text-slate-500">{t("Boundaries from OpenStreetMap. Check them against the official map before you rely on a report.")}</p>
         </form>

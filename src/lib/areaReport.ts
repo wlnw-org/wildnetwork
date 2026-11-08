@@ -25,9 +25,12 @@ export interface AreaHit { name: string; type: string; osm: string; lat: number;
 
 const newId = () => randomBytes(6).toString("base64url");
 
-/** Search OpenStreetMap (Nominatim) for named areas with a boundary: districts, protected areas, parks, towns. */
-export async function searchAreas(q: string): Promise<AreaHit[]> {
-  const u = new URLSearchParams({ q, format: "jsonv2", limit: "8", polygon_geojson: "0", addressdetails: "0" });
+/** Protected-area tags in OpenStreetMap (national parks, nature reserves, wildlife sanctuaries, protected areas of any kind). */
+const PROTECTED = /national_park|protected_area|nature_reserve|wildlife|sanctuary|conservation/;
+const isProtected = (type: string) => PROTECTED.test(type);
+
+async function nominatim(q: string, limit: number) {
+  const u = new URLSearchParams({ q, format: "jsonv2", limit: String(limit), polygon_geojson: "0", addressdetails: "0" });
   const res = await fetch(`${NOMINATIM}/search?${u}`, { headers: { "user-agent": UA, "accept-language": "en" }, signal: AbortSignal.timeout(15_000) });
   if (!res.ok) throw new Error(`nominatim ${res.status}`);
   const rows = (await res.json()) as { osm_type: string; osm_id: number; display_name: string; type: string; category?: string; class?: string; lat: string; lon: string }[];
@@ -36,6 +39,51 @@ export async function searchAreas(q: string): Promise<AreaHit[]> {
     name: r.display_name, type: [r.category ?? r.class, r.type].filter(Boolean).join(" "), osm: `${r.osm_type === "relation" ? "R" : "W"}${r.osm_id}`,
     lat: Number(r.lat), lon: Number(r.lon),
   }));
+}
+
+/**
+ * Search OpenStreetMap (Nominatim) for named areas with a boundary, anywhere in the world: protected areas first, then
+ * districts and towns. When the plain search finds no protected area, it is repeated as "<name> national park"
+ * (Nominatim allows one request a second, so the second search waits).
+ */
+export async function searchAreas(q: string): Promise<AreaHit[]> {
+  let hits = await nominatim(q, 15);
+  if (!hits.some((h) => isProtected(h.type)) && !/park|reserve|sanctuary|forest|protected/i.test(q)) {
+    await new Promise((r) => setTimeout(r, 1100));
+    hits = [...(await nominatim(`${q} national park`, 8).catch(() => [])), ...hits];
+  }
+  const seen = new Set<string>();
+  return hits.filter((h) => !seen.has(h.osm) && seen.add(h.osm))
+    .sort((a, b) => Number(isProtected(b.type)) - Number(isProtected(a.type)))
+    .slice(0, 12);
+}
+
+/**
+ * Named protected areas around a point, in any country: national parks, nature reserves (which in OpenStreetMap include
+ * tiger reserves and conservancies) and wildlife sanctuaries, from Nominatim's category search inside a box of about
+ * km around the point. Three searches, one a second (Nominatim's limit). Nearest first.
+ */
+export async function nearbyAreas(lat: number, lon: number, km = 100): Promise<(AreaHit & { km: number })[]> {
+  const dLat = Math.min(2, Math.max(0.1, km / 111)), dLon = Math.min(3, dLat / Math.max(0.2, Math.cos(lat * Math.PI / 180)));
+  const viewbox = [lon - dLon, lat + dLat, lon + dLon, lat - dLat].map((v) => v.toFixed(3)).join(",");
+  const out: AreaHit[] = [];
+  for (const [i, phrase] of ["national park", "nature reserve", "wildlife sanctuary"].entries()) {
+    if (i) await new Promise((r) => setTimeout(r, 1100));
+    const u = new URLSearchParams({ q: phrase, format: "jsonv2", limit: "40", viewbox, bounded: "1" });
+    const res = await fetch(`${NOMINATIM}/search?${u}`, { headers: { "user-agent": UA, "accept-language": "en" }, signal: AbortSignal.timeout(15_000) });
+    if (!res.ok) { if (i === 0) throw new Error(`nominatim ${res.status}`); continue; }
+    const rows = (await res.json()) as { osm_type: string; osm_id: number; name?: string; display_name: string; type: string; lat: string; lon: string }[];
+    for (const r of rows) if ((r.osm_type === "relation" || r.osm_type === "way") && r.name)
+      out.push({ name: r.name, type: phrase === "national park" ? "National park" : phrase === "wildlife sanctuary" ? "Wildlife sanctuary" : "Nature reserve", osm: `${r.osm_type === "relation" ? "R" : "W"}${r.osm_id}`, lat: Number(r.lat), lon: Number(r.lon) });
+  }
+  const toRad = Math.PI / 180;
+  const dist = (a: number, b: number) => 6371 * Math.acos(Math.min(1, Math.sin(lat * toRad) * Math.sin(a * toRad) + Math.cos(lat * toRad) * Math.cos(a * toRad) * Math.cos((b - lon) * toRad)));
+  const seen = new Set<string>();
+  return out.filter((h) => !seen.has(h.osm) && seen.add(h.osm))
+    .map((h) => ({ ...h, km: Math.round(dist(h.lat, h.lon)) }))
+    .sort((x, y) => x.km - y.km)
+    .filter((h, i, all) => all.findIndex((x) => x.name === h.name) === i)
+    .slice(0, 40);
 }
 
 /** Simplify, validate and store an area. Returns its id. */

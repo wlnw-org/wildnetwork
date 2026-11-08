@@ -1502,7 +1502,15 @@ const AREA: Record<string, Dict> = {
   "Also cite the GBIF datasets listed above.": "Cite también los conjuntos de datos de GBIF indicados arriba.",
   "Need a species checklist for a district, protected area or your own boundary, to print or file?": "¿Necesita una lista de especies para un distrito, un área protegida o su propio límite, para imprimir o archivar?",
   "Make an area report": "Crear un informe de área",
-  "more species are still being named and will appear when the report is opened again.": "especies más se están nombrando y aparecerán al abrir el informe de nuevo."
+  "more species are still being named and will appear when the report is opened again.": "especies más se están nombrando y aparecerán al abrir el informe de nuevo.",
+  "Protected areas around here": "Áreas protegidas cercanas",
+  "Protected areas near you": "Áreas protegidas cerca de ti",
+  "Loading protected areas…": "Cargando áreas protegidas…",
+  "No protected areas with a boundary found within 100 km.": "No se encontraron áreas protegidas con límite a menos de 100 km.",
+  "A park, reserve, district or town anywhere, for example Kruger, Mudumalai, Nilgiris": "Un parque, reserva, distrito o ciudad en cualquier lugar, por ejemplo Kruger, Mudumalai, Nilgiris",
+  "National park": "Parque nacional",
+  "Nature reserve": "Reserva natural",
+  "Wildlife sanctuary": "Santuario de vida silvestre"
  },
  "fr": {
   "Area report": "Rapport de zone",
@@ -1560,7 +1568,15 @@ const AREA: Record<string, Dict> = {
   "Also cite the GBIF datasets listed above.": "Citez aussi les jeux de données GBIF indiqués ci-dessus.",
   "Need a species checklist for a district, protected area or your own boundary, to print or file?": "Besoin d'une liste d'espèces pour un district, une aire protégée ou votre propre périmètre, à imprimer ou à archiver ?",
   "Make an area report": "Créer un rapport de zone",
-  "more species are still being named and will appear when the report is opened again.": "autres espèces sont en cours d'identification et apparaîtront à la prochaine ouverture du rapport."
+  "more species are still being named and will appear when the report is opened again.": "autres espèces sont en cours d'identification et apparaîtront à la prochaine ouverture du rapport.",
+  "Protected areas around here": "Aires protégées autour",
+  "Protected areas near you": "Aires protégées près de chez vous",
+  "Loading protected areas…": "Chargement des aires protégées…",
+  "No protected areas with a boundary found within 100 km.": "Aucune aire protégée avec une limite trouvée à moins de 100 km.",
+  "A park, reserve, district or town anywhere, for example Kruger, Mudumalai, Nilgiris": "Un parc, une réserve, un district ou une ville n'importe où, par exemple Kruger, Mudumalai, Nilgiris",
+  "National park": "Parc national",
+  "Nature reserve": "Réserve naturelle",
+  "Wildlife sanctuary": "Sanctuaire de faune"
  },
  "de": {
   "Area report": "Gebietsbericht",
@@ -1618,7 +1634,15 @@ const AREA: Record<string, Dict> = {
   "Also cite the GBIF datasets listed above.": "Zitieren Sie auch die oben aufgeführten GBIF-Datensätze.",
   "Need a species checklist for a district, protected area or your own boundary, to print or file?": "Brauchen Sie eine Artenliste für einen Bezirk, ein Schutzgebiet oder Ihre eigene Grenze, zum Drucken oder Ablegen?",
   "Make an area report": "Gebietsbericht erstellen",
-  "more species are still being named and will appear when the report is opened again.": "weitere Arten werden noch benannt und erscheinen beim nächsten Öffnen des Berichts."
+  "more species are still being named and will appear when the report is opened again.": "weitere Arten werden noch benannt und erscheinen beim nächsten Öffnen des Berichts.",
+  "Protected areas around here": "Schutzgebiete in der Umgebung",
+  "Protected areas near you": "Schutzgebiete in Ihrer Nähe",
+  "Loading protected areas…": "Schutzgebiete werden geladen…",
+  "No protected areas with a boundary found within 100 km.": "Kein Schutzgebiet mit Grenze im Umkreis von 100 km gefunden.",
+  "A park, reserve, district or town anywhere, for example Kruger, Mudumalai, Nilgiris": "Ein Park, Reservat, Bezirk oder Ort weltweit, zum Beispiel Kruger, Mudumalai, Nilgiris",
+  "National park": "Nationalpark",
+  "Nature reserve": "Naturschutzgebiet",
+  "Wildlife sanctuary": "Wildschutzgebiet"
  },
  "pt": {
   "Area report": "Relatório de área",
@@ -1676,7 +1700,15 @@ const AREA: Record<string, Dict> = {
   "Also cite the GBIF datasets listed above.": "Cite também os conjuntos de dados do GBIF indicados acima.",
   "Need a species checklist for a district, protected area or your own boundary, to print or file?": "Precisa de uma lista de espécies para um distrito, uma área protegida ou o seu próprio limite, para imprimir ou arquivar?",
   "Make an area report": "Criar um relatório de área",
-  "more species are still being named and will appear when the report is opened again.": "espécies ainda estão a ser identificadas e aparecerão quando o relatório for aberto de novo."
+  "more species are still being named and will appear when the report is opened again.": "espécies ainda estão a ser identificadas e aparecerão quando o relatório for aberto de novo.",
+  "Protected areas around here": "Áreas protegidas por perto",
+  "Protected areas near you": "Áreas protegidas perto de si",
+  "Loading protected areas…": "A carregar áreas protegidas…",
+  "No protected areas with a boundary found within 100 km.": "Nenhuma área protegida com limite encontrada a menos de 100 km.",
+  "A park, reserve, district or town anywhere, for example Kruger, Mudumalai, Nilgiris": "Um parque, reserva, distrito ou cidade em qualquer lugar, por exemplo Kruger, Mudumalai, Nilgiris",
+  "National park": "Parque nacional",
+  "Nature reserve": "Reserva natural",
+  "Wildlife sanctuary": "Santuário de vida selvagem"
  },
  "hi": {
   "Area report": "क्षेत्र रिपोर्ट",
@@ -1734,7 +1766,15 @@ const AREA: Record<string, Dict> = {
   "Also cite the GBIF datasets listed above.": "ऊपर सूचीबद्ध GBIF डेटासेट का भी उद्धरण दें।",
   "Need a species checklist for a district, protected area or your own boundary, to print or file?": "किसी जिले, संरक्षित क्षेत्र या अपनी सीमा के लिए प्रजाति सूची चाहिए, प्रिंट करने या फ़ाइल में रखने के लिए?",
   "Make an area report": "क्षेत्र रिपोर्ट बनाएं",
-  "more species are still being named and will appear when the report is opened again.": "और प्रजातियों के नाम अभी जोड़े जा रहे हैं और रिपोर्ट दोबारा खोलने पर दिखेंगी।"
+  "more species are still being named and will appear when the report is opened again.": "और प्रजातियों के नाम अभी जोड़े जा रहे हैं और रिपोर्ट दोबारा खोलने पर दिखेंगी।",
+  "Protected areas around here": "आसपास के संरक्षित क्षेत्र",
+  "Protected areas near you": "आपके पास के संरक्षित क्षेत्र",
+  "Loading protected areas…": "संरक्षित क्षेत्र लोड हो रहे हैं…",
+  "No protected areas with a boundary found within 100 km.": "100 किमी के भीतर सीमा वाला कोई संरक्षित क्षेत्र नहीं मिला।",
+  "A park, reserve, district or town anywhere, for example Kruger, Mudumalai, Nilgiris": "दुनिया में कहीं भी कोई पार्क, अभयारण्य, ज़िला या शहर, जैसे Kruger, Mudumalai, Nilgiris",
+  "National park": "राष्ट्रीय उद्यान",
+  "Nature reserve": "प्रकृति आरक्षित क्षेत्र",
+  "Wildlife sanctuary": "वन्यजीव अभयारण्य"
  },
  "ta": {
   "Area report": "பகுதி அறிக்கை",
@@ -1792,7 +1832,15 @@ const AREA: Record<string, Dict> = {
   "Also cite the GBIF datasets listed above.": "மேலே பட்டியலிடப்பட்ட GBIF தரவுத்தொகுப்புகளையும் மேற்கோள் காட்டுங்கள்.",
   "Need a species checklist for a district, protected area or your own boundary, to print or file?": "அச்சிட அல்லது கோப்பில் வைக்க, ஒரு மாவட்டம், பாதுகாக்கப்பட்ட பகுதி அல்லது உங்கள் சொந்த எல்லைக்கான இனப் பட்டியல் வேண்டுமா?",
   "Make an area report": "பகுதி அறிக்கையை உருவாக்குங்கள்",
-  "more species are still being named and will appear when the report is opened again.": "மேலும் இனங்களுக்குப் பெயர்கள் சேர்க்கப்படுகின்றன; அறிக்கையை மீண்டும் திறக்கும்போது தோன்றும்."
+  "more species are still being named and will appear when the report is opened again.": "மேலும் இனங்களுக்குப் பெயர்கள் சேர்க்கப்படுகின்றன; அறிக்கையை மீண்டும் திறக்கும்போது தோன்றும்.",
+  "Protected areas around here": "அருகிலுள்ள பாதுகாக்கப்பட்ட பகுதிகள்",
+  "Protected areas near you": "உங்கள் அருகிலுள்ள பாதுகாக்கப்பட்ட பகுதிகள்",
+  "Loading protected areas…": "பாதுகாக்கப்பட்ட பகுதிகள் ஏற்றப்படுகின்றன…",
+  "No protected areas with a boundary found within 100 km.": "100 கிமீ தொலைவுக்குள் எல்லையுடன் கூடிய பாதுகாக்கப்பட்ட பகுதி எதுவும் இல்லை.",
+  "A park, reserve, district or town anywhere, for example Kruger, Mudumalai, Nilgiris": "உலகில் எங்கும் உள்ள பூங்கா, காப்பகம், மாவட்டம் அல்லது நகரம், எடுத்துக்காட்டாக Kruger, Mudumalai, Nilgiris",
+  "National park": "தேசியப் பூங்கா",
+  "Nature reserve": "இயற்கை காப்பகம்",
+  "Wildlife sanctuary": "வனவிலங்கு சரணாலயம்"
  }
 };
 
