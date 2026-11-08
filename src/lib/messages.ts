@@ -1374,6 +1374,76 @@ const STUDIO: Record<string, Dict> = {
  },
 };
 
-export const MESSAGES: Record<string, Dict> = Object.fromEntries(Object.entries({ es, fr, de, pt, hi, ta }).map(([k, d]) => [k, { ...d, ...PLACES[k], ...HISTORY[k], ...TOUR2[k], ...PAGES[k], ...STUDIO[k] }]));
+/** Local-first panel lists (near the visitor, their region, or worldwide). */
+const LOCAL: Record<string, Dict> = {
+ "es": {
+  "Lists show the whole world.": "Las listas muestran todo el mundo.",
+  "Lists show what is near {place}.": "Las listas muestran lo que hay cerca de {place}.",
+  "Lists show what is near you.": "Las listas muestran lo que hay cerca de ti.",
+  "Show near me": "Ver cerca de mí",
+  "Show worldwide": "Ver todo el mundo",
+  "Near {place}": "Cerca de {place}",
+  "Near you": "Cerca de ti",
+  "Your region": "Tu región",
+  "Worldwide": "Todo el mundo",
+ },
+ "fr": {
+  "Lists show the whole world.": "Les listes montrent le monde entier.",
+  "Lists show what is near {place}.": "Les listes montrent ce qui se passe près de {place}.",
+  "Lists show what is near you.": "Les listes montrent ce qui se passe près de chez vous.",
+  "Show near me": "Voir près de moi",
+  "Show worldwide": "Voir le monde entier",
+  "Near {place}": "Près de {place}",
+  "Near you": "Près de chez vous",
+  "Your region": "Votre région",
+  "Worldwide": "Monde entier",
+ },
+ "de": {
+  "Lists show the whole world.": "Die Listen zeigen die ganze Welt.",
+  "Lists show what is near {place}.": "Die Listen zeigen, was in der Nähe von {place} los ist.",
+  "Lists show what is near you.": "Die Listen zeigen, was in Ihrer Nähe los ist.",
+  "Show near me": "In meiner Nähe zeigen",
+  "Show worldwide": "Weltweit zeigen",
+  "Near {place}": "In der Nähe von {place}",
+  "Near you": "In Ihrer Nähe",
+  "Your region": "Ihre Region",
+  "Worldwide": "Weltweit",
+ },
+ "pt": {
+  "Lists show the whole world.": "As listas mostram o mundo inteiro.",
+  "Lists show what is near {place}.": "As listas mostram o que há perto de {place}.",
+  "Lists show what is near you.": "As listas mostram o que há perto de si.",
+  "Show near me": "Ver perto de mim",
+  "Show worldwide": "Ver o mundo inteiro",
+  "Near {place}": "Perto de {place}",
+  "Near you": "Perto de si",
+  "Your region": "A sua região",
+  "Worldwide": "Mundo inteiro",
+ },
+ "hi": {
+  "Lists show the whole world.": "सूचियाँ पूरी दुनिया दिखाती हैं।",
+  "Lists show what is near {place}.": "सूचियाँ दिखाती हैं कि {place} के पास क्या है।",
+  "Lists show what is near you.": "सूचियाँ दिखाती हैं कि आपके पास क्या है।",
+  "Show near me": "मेरे पास दिखाएँ",
+  "Show worldwide": "पूरी दुनिया दिखाएँ",
+  "Near {place}": "{place} के पास",
+  "Near you": "आपके पास",
+  "Your region": "आपका क्षेत्र",
+  "Worldwide": "पूरी दुनिया",
+ },
+ "ta": {
+  "Lists show the whole world.": "பட்டியல்கள் உலகம் முழுவதையும் காட்டுகின்றன.",
+  "Lists show what is near {place}.": "{place} அருகில் உள்ளவற்றைப் பட்டியல்கள் காட்டுகின்றன.",
+  "Lists show what is near you.": "உங்கள் அருகில் உள்ளவற்றைப் பட்டியல்கள் காட்டுகின்றன.",
+  "Show near me": "என் அருகில் காட்டு",
+  "Show worldwide": "உலகம் முழுவதும் காட்டு",
+  "Near {place}": "{place} அருகில்",
+  "Near you": "உங்கள் அருகில்",
+  "Your region": "உங்கள் பகுதி",
+  "Worldwide": "உலகம் முழுவதும்",
+ },
+};
+
+export const MESSAGES: Record<string, Dict> = Object.fromEntries(Object.entries({ es, fr, de, pt, hi, ta }).map(([k, d]) => [k, { ...d, ...PLACES[k], ...HISTORY[k], ...TOUR2[k], ...PAGES[k], ...STUDIO[k], ...LOCAL[k] }]));
 export const TOUR_TEXT = { T1, T2, T3, T4, T4A, T4B, T5, T6 };
 export const ALERT_TEXT = { AL1, AL2 };

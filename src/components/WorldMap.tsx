@@ -29,6 +29,7 @@ interface Insights {
   seasonal?: { scientificName: string; vernacularName: string | null; cellLat: number; cellLon: number; week: string; n: number }[];
   possible?: { scientificName: string; vernacularName: string | null; cellLat: number; cellLon: number; week: string; n: number }[];
   common?: { scientificName: string; vernacularName: string | null; n: number; cells: number }[];
+  area?: { region: string | null; scope: Record<"seasonal" | "possible" | "common" | "arrivals", "near" | "region" | "world"> } | null;
 }
 
 interface Movement { scientificName: string; frames: { week: string; total: number; index: number; cells: [number, number, number, number][]; centroids: { region: string; n: number; lat: number; lon: number }[] }[] }
@@ -56,6 +57,7 @@ const esc = (v: unknown) => String(v ?? "").replace(/[&<>"']/g, (c) => `&#${c.ch
 
 export default function WorldMap() {
   const t = useT();
+  const scopeLabel = (sc?: "near" | "region" | "world") => !sc ? null : sc === "near" ? (home?.city ? t("Near {place}", { place: home.city }) : t("Near you")) : sc === "region" ? t("Your region") : t("Worldwide");
   const lang = useLang();
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -109,6 +111,10 @@ export default function WorldMap() {
   const [mvPlaying, setMvPlaying] = useState(false);
 
   const thumbsRef = useRef<Record<string, string | null>>({});
+  // Local first: the panel lists follow the visitor's area (IP area or a ?lat&lon link) unless they choose the whole world.
+  const [home, setHome] = useState<{ lat: number; lon: number; city?: string | null } | null>(null);
+  const [homeReady, setHomeReady] = useState(false);
+  const [areaWorld, setAreaWorld] = useState(() => { try { return typeof window !== "undefined" && localStorage.getItem("wn_area_world") === "1"; } catch { return false; } });
   // Merged BirdWeather points carry a count n, so totals add those up rather than counting points.
   const detections = useMemo(() => events.features.reduce((t, f) => t + (Number(f.properties?.n) || 1), 0), [events]);
   const liveHours = group === "bat" && !species ? 24 : hours; // the bat layer covers a day
@@ -129,11 +135,13 @@ export default function WorldMap() {
     const dl = { lat: Number(qs.get("lat")), lon: Number(qs.get("lon")) };
     if (qs.has("lat") && Number.isFinite(dl.lat) && Number.isFinite(dl.lon)) {
       map.jumpTo({ center: [dl.lon, dl.lat], zoom: 6 });
-    } else if (!qs.has("species")) {
-      fetch("/api/v1/near").then((r) => r.json() as Promise<{ lat?: number; lon?: number }>).then((n) => {
+      setHome({ lat: dl.lat, lon: dl.lon }); setHomeReady(true);
+    } else {
+      fetch("/api/v1/near").then((r) => r.json() as Promise<{ lat?: number; lon?: number; city?: string | null }>).then((n) => {
         if (cancelled || n.lat == null || n.lon == null) return;
-        map.easeTo({ center: [n.lon, n.lat], zoom: 4, duration: 1800, padding: { top: 0, bottom: 0, right: 0, left: window.innerWidth >= 768 ? 420 : 0 } });
-      }).catch(() => {});
+        setHome({ lat: n.lat, lon: n.lon, city: n.city });
+        if (!qs.has("species")) map.easeTo({ center: [n.lon, n.lat], zoom: 4, duration: 1800, padding: { top: 0, bottom: 0, right: 0, left: window.innerWidth >= 768 ? 420 : 0 } });
+      }).catch(() => {}).finally(() => { if (!cancelled) setHomeReady(true); });
     }
     map.on("load", () => {
       map.addSource("cells", { type: "geojson", data: EMPTY });
@@ -276,6 +284,30 @@ export default function WorldMap() {
   // Each request paints as soon as it arrives; the map never waits for the slowest one.
   // Each load gets a number; a response from an older load (e.g. "All" finishing after a switch to "Marine") is dropped.
   const loadSeq = useRef(0);
+  const wantThumbs = useCallback((names: string[]) => {
+    const missing = [...new Set(names)].filter((n) => n && n !== "null" && !(n in thumbsRef.current)).slice(0, 40);
+    if (!missing.length) return;
+    for (const n of missing) thumbsRef.current[n] = null; // claimed, so parallel calls do not refetch
+    fetch(`/api/v1/media?names=${encodeURIComponent(missing.join(","))}`).then((r) => r.json()).then((m: Record<string, { thumbUrl: string | null }>) => {
+      setThumbs((t) => { const next = { ...t }; for (const n of missing) next[n] = m[n]?.thumbUrl ?? null; thumbsRef.current = { ...thumbsRef.current, ...next }; return next; });
+    }).catch(() => {});
+  }, []);
+
+  // Panel lists: near the visitor first (the server widens to their region, then the world, when an area has too little data).
+  useEffect(() => {
+    if (!homeReady) return;
+    let live = true;
+    const q = new URLSearchParams();
+    if (group !== "all") q.set("group", group);
+    if (home && !areaWorld) { q.set("lat", String(Math.round(home.lat))); q.set("lon", String(Math.round(home.lon))); }
+    fetch(`/api/v1/insights${q.size ? "?" + q : ""}`).then((r) => r.json() as Promise<Insights>).then((ins) => {
+      if (!live) return;
+      setInsights(ins);
+      wantThumbs([...(ins.possible ?? []), ...(ins.seasonal ?? []), ...(ins.common ?? []), ...ins.drift, ...ins.movers, ...ins.arrivals].map((x) => x.scientificName));
+    }).catch(() => {});
+    return () => { live = false; };
+  }, [group, home, homeReady, areaWorld, wantThumbs]);
+
   const load = useCallback(async () => {
     const seq = ++loadSeq.current;
     const current = () => seq === loadSeq.current;
@@ -285,14 +317,6 @@ export default function WorldMap() {
     if (species) u.set("species", species);
     else if (group !== "all") u.set("group", group);
     const gq = group !== "all" ? `group=${group}` : "";
-    const wantThumbs = (names: string[]) => {
-      const missing = [...new Set(names)].filter((n) => n && n !== "null" && !(n in thumbsRef.current)).slice(0, 40);
-      if (!missing.length) return;
-      for (const n of missing) thumbsRef.current[n] = null; // claimed, so parallel calls do not refetch
-      fetch(`/api/v1/media?names=${encodeURIComponent(missing.join(","))}`).then((r) => r.json()).then((m: Record<string, { thumbUrl: string | null }>) => {
-        setThumbs((t) => { const next = { ...t }; for (const n of missing) next[n] = m[n]?.thumbUrl ?? null; thumbsRef.current = { ...thumbsRef.current, ...next }; return next; });
-      }).catch(() => {});
-    };
     const events = fetch(`/api/v1/events?${u}`).then((r) => r.json() as Promise<FC>).then((ev) => {
       if (!current()) return;
       setEvents(ev); setFetchedAt(Date.now()); setLoading(false);
@@ -300,11 +324,10 @@ export default function WorldMap() {
     });
     const rest = [
       fetch(`/api/v1/species?hours=${group === "marine" ? MARINE_DAYS * 24 : group === "bat" ? 24 : hours}${gq ? "&" + gq : ""}`).then((r) => r.json() as Promise<Species[]>).then((sp) => { if (!current()) return; setSpeciesList(sp); wantThumbs(sp.slice(0, 15).map((x) => x.scientificName)); }),
-      fetch(`/api/v1/insights${gq ? "?" + gq : ""}`).then((r) => r.json() as Promise<Insights>).then((ins) => { if (!current()) return; setInsights(ins); wantThumbs([...(ins.possible ?? []), ...(ins.seasonal ?? []), ...(ins.common ?? []), ...ins.drift, ...ins.movers, ...ins.arrivals].map((x) => x.scientificName)); }),
       fetch(`/api/v1/status`).then((r) => r.json() as Promise<Status>).then(setStatus),
     ];
     await Promise.allSettled([events, ...rest]);
-  }, [hours, species, group]);
+  }, [hours, species, group, wantThumbs]);
 
   // Marine layer: its own window and its own fetch, following the view when zoomed in so dense coasts (India) fill in.
   const [marineView, setMarineView] = useState<string | null>(null);
@@ -714,6 +737,14 @@ export default function WorldMap() {
             </div>
           ) : (
             <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-4">
+              {home && (
+                <p className="text-[11px] text-slate-400 -mb-1">
+                  {areaWorld ? t("Lists show the whole world.") : home.city ? t("Lists show what is near {place}.", { place: home.city }) : t("Lists show what is near you.")}{" "}
+                  <button className="text-cyan-500 hover:underline" onClick={() => { const v = !areaWorld; setAreaWorld(v); try { localStorage.setItem("wn_area_world", v ? "1" : "0"); } catch { /* storage unavailable */ } }}>
+                    {areaWorld ? t("Show near me") : t("Show worldwide")}
+                  </button>
+                </p>
+              )}
               {group !== "all" && group !== "avian" && (
                 <p className="text-xs text-slate-400 leading-relaxed">
                   {group === "marine"
@@ -731,20 +762,20 @@ export default function WorldMap() {
                 </section>
               )}
               {!!insights?.possible?.length && (
-                <Section title={t("Possibly arriving")} hint={t("One strong recent week, not confirmed yet")}>
+                <Section title={t("Possibly arriving")} hint={t("One strong recent week, not confirmed yet")} badge={scopeLabel(insights?.area?.scope.possible)}>
                   {insights.possible.map((a) => (
                     <Row key={a.scientificName} thumb={thumbs[a.scientificName]} onClick={() => pick(a.scientificName)} name={a.vernacularName ?? a.scientificName} sci={`${a.scientificName} · ${a.cellLat}°, ${a.cellLon}°`}
                       value={new Date(a.week + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" })} tone="neutral" />
                   ))}
                 </Section>
               )}
-              <Section title={t("Latest arrivals")} hint={t("Most recent arrival week, from the weekly history")}>
+              <Section title={t("Latest arrivals")} hint={t("Most recent arrival week, from the weekly history")} badge={scopeLabel(insights?.area?.scope.seasonal)}>
                 {insights?.seasonal?.map((a) => (
                   <Row key={a.scientificName} thumb={thumbs[a.scientificName]} onClick={() => pick(a.scientificName)} name={a.vernacularName ?? a.scientificName} sci={`${a.scientificName} · ${a.cellLat}°, ${a.cellLon}°`}
                     value={new Date(a.week + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" })} tone="neutral" />
                 ))}
               </Section>
-              <Section title={t("Most recorded")} hint={t("Latest four weeks with data")}>
+              <Section title={t("Most recorded")} hint={t("Latest four weeks with data")} badge={scopeLabel(insights?.area?.scope.common)}>
                 {insights?.common?.map((s) => (
                   <Row key={s.scientificName} thumb={thumbs[s.scientificName]} onClick={() => pick(s.scientificName)} name={s.vernacularName ?? s.scientificName} sci={s.scientificName} value={s.n.toLocaleString()} tone="neutral" />
                 ))}
@@ -755,18 +786,20 @@ export default function WorldMap() {
                     value={`${Math.abs(d.driftDeg).toFixed(1)}° ${d.driftDeg > 0 ? "N" : "S"}`} tone={d.driftDeg > 0 ? "warm" : "cool"} />
                 ))}
               </Section>
-              <Section title={t("Surging and fading")} hint={t("Yesterday vs 7 days, 95% interval")}>
+              <Section title={t("Surging and fading")} hint={t("Yesterday vs 7 days, 95% interval")} badge={insights?.area ? t("Worldwide") : null}>
                 {insights?.movers.map((m) => (
                   <Row key={m.scientificName} thumb={thumbs[m.scientificName]} onClick={() => pick(m.scientificName)} name={m.vernacularName ?? m.scientificName} sci={`${m.scientificName}${m.ratioLow != null && m.ratioHigh != null ? ` · ${m.ratio >= 1 ? "×" + m.ratioLow.toFixed(1) + " to ×" + m.ratioHigh.toFixed(1) : "÷" + (1 / m.ratioHigh).toFixed(1) + " to ÷" + (1 / m.ratioLow).toFixed(1)}` : ""}`}
                     value={`${m.ratio >= 1 ? "×" + m.ratio.toFixed(1) : "÷" + (1 / m.ratio).toFixed(1)}`} tone={m.ratio >= 1 ? "warm" : "cool"} />
                 ))}
               </Section>
-              <Section title={t("New arrivals")} hint={t("First in 12 days, in a watched 5° cell")}>
+{!!insights?.arrivals.length && (
+                            <Section title={t("New arrivals")} hint={t("First in 12 days, in a watched 5° cell")} badge={scopeLabel(insights?.area?.scope.arrivals)}>
                 {insights?.arrivals.map((a) => (
                   <Row key={`${a.scientificName}${a.cellLat}${a.cellLon}`} thumb={thumbs[a.scientificName]} onClick={() => pick(a.scientificName)} name={a.vernacularName ?? a.scientificName} sci={a.scientificName}
                     value={`${a.cellLat}°, ${a.cellLon}°`} tone="neutral" />
                 ))}
               </Section>
+              )}
               <Section title={t("Most detected")} hint={group === "bat" ? t("Last 24h") : t("Last {h}h", { h: hours })}>
                 {speciesList.slice(0, 15).map((s) => (
                   <Row key={s.scientificName} thumb={thumbs[s.scientificName]} onClick={() => pick(s.scientificName)} name={s.vernacularName ?? s.scientificName} sci={s.scientificName} value={s.count.toLocaleString()} tone="neutral" />
@@ -902,11 +935,11 @@ function Thumb({ src, size }: { src?: string | null; size: 6 | 8 | 10 }) {
   return src ? <img src={src} alt="" className={`${cls} rounded-full object-cover shrink-0 bg-slate-800`} loading="lazy" /> : <span className={`${cls} rounded-full bg-slate-800 shrink-0 inline-block`} />;
 }
 
-function Section({ title, hint, children }: { title: string; hint: string; children: React.ReactNode }) {
+function Section({ title, hint, badge, children }: { title: string; hint: string; badge?: string | null; children: React.ReactNode }) {
   return (
     <section>
-      <div className="flex items-baseline justify-between mb-1">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-300">{title}</h3>
+      <div className="flex items-baseline justify-between mb-1 gap-2">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-300">{title}{badge && <span className="ml-1.5 normal-case tracking-normal font-normal text-[10px] text-cyan-400">{badge}</span>}</h3>
         <span className="text-[10px] text-slate-500">{hint}</span>
       </div>
       <div className="flex flex-col">{children}</div>
