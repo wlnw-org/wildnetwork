@@ -18,6 +18,7 @@ export default function StudioDownload() {
   const win = { os: "windows" as const, label: "Download for Windows", sub: "64-bit, Windows 10 or 11", href: STUDIO_DOWNLOADS.windows };
   const order = os === "windows" ? [win, mac] : [mac, win];
   return (
+    <>
     <div className="mt-6 flex flex-col gap-3 sm:flex-row">
       {order.map((b, i) => (
         <a key={b.os} href={b.href} onClick={() => track("download_studio", { os: b.os })}
@@ -27,5 +28,10 @@ export default function StudioDownload() {
         </a>
       ))}
     </div>
+    <p className="mt-2 text-sm text-slate-400">
+      Mac with an Intel processor? <a href={STUDIO_DOWNLOADS.macIntel} onClick={() => track("download_studio", { os: "mac-intel" })} className="text-cyan-400 hover:underline">Download for Intel Mac</a>.
+      Not sure? Apple menu, About This Mac: &quot;Chip: Apple&quot; means Apple Silicon, &quot;Processor: Intel&quot; means Intel.
+    </p>
+    </>
   );
 }

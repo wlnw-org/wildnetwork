@@ -7,6 +7,7 @@ export const STUDIO_RELEASES = "https://github.com/wlnw-org/wlnw-studio/releases
 const STUDIO_LATEST = `${STUDIO_RELEASES}/latest/download`;
 export const STUDIO_DOWNLOADS = {
   mac: `${STUDIO_LATEST}/Wildlife-Network-Studio-mac-arm64.dmg`,
+  macIntel: `${STUDIO_LATEST}/Wildlife-Network-Studio-mac-intel.dmg`,
   windows: `${STUDIO_LATEST}/Wildlife-Network-Studio-windows-x64-setup.exe`,
   windowsMsi: `${STUDIO_LATEST}/Wildlife-Network-Studio-windows-x64.msi`,
 };

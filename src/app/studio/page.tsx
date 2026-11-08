@@ -41,7 +41,7 @@ export default function Studio() {
 
         <h2 className="mt-10 mb-2 text-xl font-semibold text-slate-100">Installing</h2>
         <ul className="list-disc pl-5 space-y-1">
-          <li><b>Mac</b>: open the downloaded file and drag Studio to Applications. The app is signed and notarized by Apple. Macs with an Intel processor are not supported yet.</li>
+          <li><b>Mac</b>: open the downloaded file and drag Studio to Applications. The app is signed and notarized by Apple. Macs with an Intel processor have their own download, just below the buttons.</li>
           <li><b>Windows</b>: run the installer. The installer is not code signed yet, so Windows may show a blue SmartScreen message: choose <i>More info</i>, then <i>Run anyway</i>. Prefer an MSI for managed computers? <A href={STUDIO_DOWNLOADS.windowsMsi}>Download the MSI</A>.</li>
         </ul>
 
