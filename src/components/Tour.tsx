@@ -12,16 +12,18 @@ import { useT } from "@/lib/i18n";
  */
 export const TOUR_KEY = "wn_tour_v2";
 export const ROLE_KEY = "wn_role";
-export type Role = "nature" | "station" | "researcher" | "educator";
+export type Role = "nature" | "station" | "researcher" | "educator" | "official";
 export const ROLES: { key: Role; label: string; hint: string }[] = [
   { key: "nature", label: "Nature lover or birder", hint: "See what is around and get alerts" },
   { key: "station", label: "I run a recorder", hint: "Or want to: BirdNET, bat or camera" },
   { key: "researcher", label: "Researcher", hint: "Data, methods, study areas" },
   { key: "educator", label: "Teacher or student", hint: "Learn and use it in class" },
+  { key: "official", label: "Forest or wildlife official", hint: "Species lists for a district or protected area" },
 ];
 
 /** text is a list of pieces, each translated on its own (the rail step adds a sentence only when Ask is on). */
-interface Step { target: string | null; title: string; text: string[]; place: "center" | "bottom" | "right" | "top"; roles?: true }
+interface Step { target: string | null; title: string; text: string[]; place: "center" | "bottom" | "right" | "top"; roles?: true; keep?: true }
+// keep: shown centred when its element is hidden (phones put page links under More), instead of being skipped.
 
 export function tourSteps(askEnabled: boolean, role: Role | null): Step[] {
   const common: Step[] = [
@@ -57,6 +59,10 @@ export function tourSteps(askEnabled: boolean, role: Role | null): Step[] {
     educator: [
       { target: "research", place: "right", title: "For classes and projects",
         text: ["Every number has a plain explanation under Methods, the data downloads are free, and a cheap recorder lets a school add its own station. Try a place report for your town."] },
+    ],
+    official: [
+      { target: "report", place: "right", keep: true, title: "Reports for your area",
+        text: ["Report makes an area report for a district or protected area: every species recorded inside the boundary, from open GBIF records and listening stations, with usual arrival dates. It prints as a PDF and downloads as CSV, KML or GeoJSON. Start at /report/area."] },
     ],
     none: [
       { target: "contribute", place: "right", title: "Add your own station",
@@ -103,7 +109,7 @@ export default function Tour({ open, auto, askEnabled, onClose }: { open: boolea
   // Steps whose element is hidden on this screen size are skipped in the direction of travel.
   const go = useCallback((dir: 1 | -1) => {
     let n = i + dir;
-    while (n >= 0 && n < steps.length && steps[n].target && !visibleRect(steps[n].target)) n += dir;
+    while (n >= 0 && n < steps.length && steps[n].target && !steps[n].keep && !visibleRect(steps[n].target)) n += dir;
     if (n >= steps.length) return finish("done");
     if (n < 0) return;
     setI(n);
