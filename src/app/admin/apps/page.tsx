@@ -42,6 +42,7 @@ export default async function AppUsage() {
   return (
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-4xl px-5 py-10 text-[15px]">
+        <p className="text-sm"><a href="/admin" className="text-cyan-400 hover:underline">Admin</a></p>
         <h1 className="text-3xl font-semibold tracking-tight text-slate-100">Studio usage</h1>
         <p className="mt-2 text-sm text-slate-400">Last 30 days. An app start is one update check. Installs are distinct (hashed) addresses, so a lab sharing one connection counts once and a laptop that travels may count twice. Counting started with Studio 0.1.5; older versions check GitHub directly.</p>
         <div className="mt-6 grid gap-3 sm:grid-cols-4">
