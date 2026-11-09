@@ -1,5 +1,5 @@
 import { getAdminSession, sameOrigin } from "@/lib/orcid";
-import { isLostReviewer, setVerdict, VERDICTS, type Verdict } from "@/lib/lostReview";
+import { isLostReviewer, sendToRewild, setVerdict, VERDICTS, type Verdict } from "@/lib/lostReview";
 
 /** Private: a reviewer's verdict on one held lost species record. Needs a fresh ORCID sign-in (same rule as admin pages). */
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -8,7 +8,13 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   if (!a || !isLostReviewer(a.session.orcid)) return Response.json({ error: "Not allowed" }, { status: 403 });
   if (!a.fresh) return Response.json({ error: "Please sign in again" }, { status: 401 });
   const id = Number((await ctx.params).id);
-  const b = (await req.json().catch(() => ({}))) as { verdict?: unknown; note?: unknown; hideArea?: unknown };
+  const b = (await req.json().catch(() => ({}))) as { action?: unknown; verdict?: unknown; note?: unknown; hideArea?: unknown };
+  if (b.action === "rewild") {
+    if (!Number.isInteger(id)) return Response.json({ error: "Bad request" }, { status: 400 });
+    const r = await sendToRewild(id, a.session.orcid);
+    return r === "sent" ? Response.json({ ok: true })
+      : Response.json({ error: r === "failed" ? "The email could not be sent. Try again later." : "Only records marked worth investigating, not sent before, can go to Re:wild." }, { status: r === "failed" ? 502 : 409 });
+  }
   const verdict = b.verdict === null ? null : VERDICTS.includes(b.verdict as Verdict) ? (b.verdict as Verdict) : undefined;
   if (!Number.isInteger(id) || verdict === undefined) return Response.json({ error: "Bad request" }, { status: 400 });
   const note = typeof b.note === "string" && b.note.trim() ? b.note.trim().slice(0, 2000) : null;

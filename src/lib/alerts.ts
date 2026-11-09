@@ -39,13 +39,14 @@ async function sentToday(): Promise<number> {
   return n;
 }
 
-export async function sendMail(kind: string, to: string, subject: string, text: string, unsubscribeUrl?: string, html?: string): Promise<boolean> {
+export async function sendMail(kind: string, to: string, subject: string, text: string, unsubscribeUrl?: string, html?: string, extra: { replyTo?: string; cc?: string } = {}): Promise<boolean> {
   if (!ALERTS_ENABLED || (await sentToday()) >= DAILY_CAP) return false;
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: `Bearer ${process.env.RESEND_API_KEY}`, "content-type": "application/json" },
     body: JSON.stringify({
       from: process.env.ALERTS_FROM, to: [to], subject, text, ...(html ? { html } : {}),
+      ...(extra.replyTo ? { reply_to: extra.replyTo } : {}), ...(extra.cc ? { cc: [extra.cc] } : {}),
       ...(unsubscribeUrl ? { headers: { "List-Unsubscribe": `<${unsubscribeUrl}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } } : {}),
     }),
     signal: AbortSignal.timeout(10_000),

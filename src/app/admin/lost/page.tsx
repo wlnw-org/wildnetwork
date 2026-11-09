@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import LostVerdict from "@/components/LostVerdict";
 import SignInAgain from "@/components/SignInAgain";
 import { getAdminSession, ORCID_ENABLED } from "@/lib/orcid";
-import { isLostReviewer, listFlags, VERDICT_LABEL, type LostFlag } from "@/lib/lostReview";
+import { isLostReviewer, listFlags, REWILD_CONTACT, rewildEmail, VERDICT_LABEL, type LostFlag } from "@/lib/lostReview";
 
 export const metadata: Metadata = { title: "Lost species to review", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -55,7 +55,8 @@ function Flag({ f }: { f: LostFlag }) {
           <p className="text-sm text-slate-500">{f.kind === "count" ? "A count from an aggregate, with no photo or recording here. Only the source can check it." : "No photo or recording was sent with this record."}</p>
         )}
       </div>
-      <LostVerdict id={f.id} verdict={f.verdict} note={f.note} hideArea={f.hide_area} />
+      <LostVerdict id={f.id} verdict={f.verdict} note={f.note} hideArea={f.hide_area}
+        rewild={{ ...rewildEmail(f), to: REWILD_CONTACT, sentAt: f.rewild_sent_at ? new Date(f.rewild_sent_at).toISOString() : null }} />
     </li>
   );
 }
