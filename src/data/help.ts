@@ -3,7 +3,7 @@
 
 /** Studio version the Studio guides were last checked against. .github/workflows/help-check.yml opens an issue when a newer
  * Studio release is out; update the guides, then raise this. */
-export const HELP_CHECKED_STUDIO = "0.1.8";
+export const HELP_CHECKED_STUDIO = "0.1.10";
 
 export type Block =
   | { p: string }
