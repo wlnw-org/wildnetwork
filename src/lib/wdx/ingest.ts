@@ -1,5 +1,6 @@
 import { sql } from "@/lib/db";
 import { dedupeKey, splitDuplicates } from "@/lib/dedupe";
+import { holdEvents } from "@/lib/lost";
 import { creditFor } from "@/lib/sources";
 import type { WdxEvent } from "./types";
 
@@ -9,6 +10,8 @@ export interface IngestResult {
   updated: number;
   /** Records already held from another aggregator (same occurrence): not added again, their credit added to the kept row. */
   merged?: number;
+  /** Records of lost species: held back for private review (src/lib/lost.ts), not stored here. */
+  held?: number;
 }
 
 const SOURCE_NAME: Record<string, string> = { gbif: "GBIF", inaturalist: "iNaturalist" };
@@ -36,6 +39,11 @@ export async function ingestEvents(events: WdxEvent[], opts: { keepRaw?: boolean
   // Pulled sources can be re-fetched, so their raw JSON is not stored (it is most of the row size).
   const keepRaw = opts.keepRaw ?? true;
   if (events.length === 0) return { received: 0, inserted: 0, updated: 0 };
+  // Lost species never reach the public tables: they go to the private review queue instead.
+  const received = events.length;
+  events = await holdEvents(events);
+  const held = received - events.length;
+  if (events.length === 0) return { received, inserted: 0, updated: 0, held };
 
   // Deployments first (dedupe within batch).
   const depMap = new Map<string, WdxEvent["deployment"] & { source: string }>();
@@ -126,5 +134,5 @@ export async function ingestEvents(events: WdxEvent[], opts: { keepRaw?: boolean
     }
   });
 
-  return { received: events.length, inserted, updated, merged: merged.length };
+  return { received, inserted, updated, merged: merged.length, ...(held ? { held } : {}) };
 }

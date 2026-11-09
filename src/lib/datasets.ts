@@ -1,6 +1,7 @@
 import { randomBytes, timingSafeEqual } from "node:crypto";
 import { hashKey } from "@/lib/auth";
 import { sql } from "@/lib/db";
+import { holdDatasetRows } from "@/lib/lost";
 import { gbifJson } from "@/lib/gbif";
 import { GROUPS, GRP, UPLOAD_CHECK, minAcousticWeek } from "@/lib/methods";
 import { MAINTAINER } from "@/lib/projects";
@@ -126,8 +127,11 @@ export async function addRecords(d: Dataset, rows: UploadRow[], rename: Record<s
     });
   }
   let added = 0;
-  for (let i = 0; i < clean.length; i += 1000) {
-    const res = await sql`INSERT INTO dataset_records ${sql(clean.slice(i, i + 1000))} ON CONFLICT DO NOTHING`;
+  // Lost species go to the private review queue, not into the dataset (src/lib/lost.ts). They count as added for the uploader.
+  const kept = await holdDatasetRows(clean);
+  added += clean.length - kept.length;
+  for (let i = 0; i < kept.length; i += 1000) {
+    const res = await sql`INSERT INTO dataset_records ${sql(kept.slice(i, i + 1000))} ON CONFLICT DO NOTHING`;
     added += res.count;
   }
   // Species first met here get their class, so effort is counted in the right group.

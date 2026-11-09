@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "What Wildlife Network collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
 };
 
-const UPDATED = "8 November 2026";
+const UPDATED = "10 November 2026";
 
 export default function Privacy() {
   return (
@@ -104,6 +104,14 @@ export default function Privacy() {
           Studio is stored as a hash with each answer; it is the only way to tell which answers came from the same computer, and Studio&apos;s
           &quot;Delete everything I shared&quot; button uses it to delete them all at once. The site keeps a keyed hash of your IP address for a day to limit
           requests. Shared answers are released as open data (CC0) for anyone to train classifiers with.
+        </p>
+
+        <h2 id="lost-species" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Records of lost species</h2>
+        <p>
+          Some species have not been confirmed in the wild for 10 years or more. When any source sends us a record of one, we do not publish it.
+          We keep it in a private review list instead, with the details the source sent: the species, the source, the time, the place, and a link to
+          the photo or recording if there is one. Only the site maintainer and named expert reviewers, signed in with ORCID, can see this list, and we
+          keep these records until they have been reviewed and the matter is closed. We never publish the exact place of such a record.
         </p>
 
         <h2 id="research" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Researchers</h2>

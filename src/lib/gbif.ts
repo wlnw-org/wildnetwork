@@ -1,4 +1,5 @@
 import { sql } from "@/lib/db";
+import { holdCounts } from "@/lib/lost";
 import { refreshWeeklyEffort, upsertGroups } from "@/lib/rollups";
 
 /**
@@ -147,7 +148,10 @@ export async function rollupGbifCellWeek(cell: { lat: number; lon: number }, wee
   }
   rows.length = 0; rows.push(...merged.values());
   await upsertGroups(rows.map((r) => ({ name: r.scientific_name, grp: r.grp })));
-  const out = rows.map((r) => ({ week: r.week, source_system: r.source_system, scientific_name: r.scientific_name, vernacular_name: r.vernacular_name, cell_lat: r.cell_lat, cell_lon: r.cell_lon, count: r.count, high_conf_count: r.high_conf_count }));
+  // Lost species are held for private review, never written to the public rollups (src/lib/lost.ts).
+  const out = await holdCounts(rows.map((r) => ({ week: r.week, source_system: r.source_system, scientific_name: r.scientific_name, vernacular_name: r.vernacular_name, cell_lat: r.cell_lat, cell_lon: r.cell_lon, count: r.count, high_conf_count: r.high_conf_count })),
+    "gbif", (r) => `week ${r.week}`, (r) => ({ lat: r.cell_lat + CELL / 2, lon: r.cell_lon + CELL / 2 }));
+  if (!out.length) return 0;
   await sql`
     INSERT INTO species_weekly ${sql(out)}
     ON CONFLICT (week, source_system, scientific_name, cell_lat, cell_lon) DO UPDATE SET
