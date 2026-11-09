@@ -27,7 +27,8 @@ export default function Studio() {
         <StudioDownload />
         <p className="mt-3 text-sm text-slate-400">
           Free, open source (Apache 2.0), no account needed. On first use the app downloads the Perch model (about 410 MB).{" "}
-          <A href={STUDIO_RELEASES}>All versions and release notes</A>.
+          <A href={STUDIO_RELEASES}>All versions and release notes</A>. If Studio saves you time, you can{" "}
+          <A href="https://github.com/sponsors/arunrajiah">support it on GitHub Sponsors</A>.
         </p>
 
         <h2 className="mt-10 mb-2 text-xl font-semibold text-slate-100">What it does</h2>

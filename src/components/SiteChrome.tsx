@@ -26,7 +26,8 @@ export function SiteFooter() {
           <p>
             <Link href="/" className="font-medium text-slate-200 hover:underline">Wildlife Network</Link>{" · "}
             {t("Open source under AGPL-3.0. Records keep their sources' licences; credits are on each page and in Methods.")}{" "}
-            <a href="https://github.com/wlnw-org/wildnetwork" className="text-cyan-400 hover:underline">{t("Code")}</a>
+            <a href="https://github.com/wlnw-org/wildnetwork" className="text-cyan-400 hover:underline">{t("Code")}</a>{" · "}
+            <a href="https://github.com/sponsors/arunrajiah" className="text-cyan-400 hover:underline">{t("Support this project")}</a>
           </p>
           <p className="shrink-0">{t("Contact")}: <a href={`mailto:${CONTACT_EMAIL}`} className="text-cyan-400 hover:underline">{CONTACT_EMAIL}</a></p>
         </div>
