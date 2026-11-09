@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { GeoJSONSource, Map as MLMap, MapLayerMouseEvent } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { ICON_IMAGE, registerIcons } from "@/lib/mapIcons";
 import AboutPanel from "./AboutPanel";
 import AskPanel from "./AskPanel";
@@ -71,6 +71,14 @@ async function getJson<T>(url: string, ms = 20_000): Promise<{ data: T; headers:
 
 const esc = (v: unknown) => String(v ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
+// Legend open or folded, remembered per browser (server render and first paint: folded).
+const LEGEND_KEY = "wn_legend";
+const legendListeners = new Set<() => void>();
+function subscribeLegend(fn: () => void) { legendListeners.add(fn); return () => { legendListeners.delete(fn); }; }
+let legendMem = false; // used when storage is blocked
+function readLegend() { try { const v = localStorage.getItem(LEGEND_KEY); return v === null ? legendMem : v === "1"; } catch { return legendMem; } }
+function setLegendOpen(v: boolean) { legendMem = v; try { localStorage.setItem(LEGEND_KEY, v ? "1" : "0"); } catch {} legendListeners.forEach((fn) => fn()); }
+
 export default function WorldMap() {
   const t = useT();
   const scopeLabel = (sc?: Scope) => !sc ? null : sc === "near" ? (home?.city ? t("Near {place}", { place: home.city }) : t("Near you")) : sc === "region" ? t("Your region") : t("Worldwide");
@@ -124,6 +132,8 @@ export default function WorldMap() {
   const [status, setStatus] = useState<Status | null>(null);
   const [coverage, setCoverage] = useState<{ summary: Record<string, number>; cells: { lat: number; lon: number; status: string; acoustic: number; observed: number }[] } | null>(null);
   const [showCoverage, setShowCoverage] = useState(false);
+  // Map legend starts folded so the list of sources does not cover the map; the choice is remembered.
+  const legendOpen = useSyncExternalStore(subscribeLegend, readLegend, () => false);
   const [movement, setMovement] = useState<Movement | null>(null);
   const [frame, setFrame] = useState<number | null>(null); // index into movement.frames; null = live view
   const [mvPlaying, setMvPlaying] = useState(false);
@@ -922,7 +932,14 @@ export default function WorldMap() {
       )}
 
       {/* Map legend: says what the colours mean in the current mode */}
+      {!legendOpen ? (
+      <button onClick={() => setLegendOpen(true)} aria-expanded={false}
+        className={`absolute top-14 right-14 max-md:top-[6.5rem] z-10 rounded-md bg-black/70 backdrop-blur-xl border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:text-white ${FOCUS} ${panelOpen ? "max-md:hidden" : ""}`}>
+        {t("Legend")}
+      </button>
+      ) : (
       <div className={`absolute top-14 right-14 max-md:top-[6.5rem] max-md:max-w-[calc(100vw-4.5rem)] z-10 rounded-md bg-black/70 backdrop-blur-xl border border-white/10 px-3 py-2 text-xs text-slate-300 ${panelOpen ? "max-md:hidden" : ""}`}>
+        <button onClick={() => setLegendOpen(false)} aria-expanded={true} className={`float-right -mr-1 ml-2 text-slate-400 hover:text-white rounded ${FOCUS}`}>{t("Hide")}</button>
         {activeFrame ? (
           <>
             <div className="text-slate-400 mb-1">{t("Share of all detections that week")}</div>
@@ -962,6 +979,7 @@ export default function WorldMap() {
           </div>
         )}
       </div>
+      )}
 
       {/* Time slider */}
       {/* Phones: full width with side gutters, above the bottom bar and the map attribution. */}
