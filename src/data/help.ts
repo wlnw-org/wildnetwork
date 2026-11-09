@@ -311,6 +311,18 @@ const site: Guide[] = [
     ],
   },
   {
+    slug: "lost-species",
+    title: "Lost species, and how to help find them",
+    summary: "Animals not confirmed in the wild for 10 years or more, and what happens when a record of one reaches us.",
+    body: [
+      { p: "[Lost species](/lost-species) lists animals that nobody has confirmed in the wild for 10 years or more, with the countries and region where each was last known. Filter by country or animal group, or choose Use my area to see the ones last known in your country." },
+      { p: "Every record that reaches Wildlife Network is checked against this list. A record of a lost species never appears on the map or in our data. It goes to a private review by experts, because most turn out to be a similar species. We never publish the exact place of one." },
+      { h: "If you think you found one" },
+      { steps: ["Open [Send a possible sighting](/lost-species/report).", "Choose the species, give the date and the place, and add a link to your photo or recording if you have one.", "Send it. It goes to the private review only. If an expert thinks it is worth a closer look, we pass the details, without your email, to Re:wild."] },
+      { p: "To help without a sighting, put up a listening station or run your recordings through [Studio](/studio) in places where lost species were last known. We announce possible rediscoveries in our [update emails](/updates), only after an expert has checked them and Re:wild has been told." },
+    ],
+  },
+  {
     slug: "reports",
     title: "Reports for a site or a protected area",
     summary: "Printable species reports for a station, a 5 degree area or your own boundary.",

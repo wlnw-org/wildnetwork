@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import LostVerdict from "@/components/LostVerdict";
 import SignInAgain from "@/components/SignInAgain";
+import { decryptToken } from "@/lib/optin";
 import { getAdminSession, ORCID_ENABLED } from "@/lib/orcid";
 import { isLostReviewer, listFlags, REWILD_CONTACT, rewildEmail, VERDICT_LABEL, type LostFlag } from "@/lib/lostReview";
 
@@ -10,7 +11,7 @@ export const metadata: Metadata = { title: "Lost species to review", robots: { i
 export const dynamic = "force-dynamic";
 
 const fmt = (d: Date | string) => new Date(d).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "UTC" }) + " UTC";
-const SOURCE: Record<string, string> = { inaturalist: "iNaturalist", gbif: "GBIF", birdweather: "BirdWeather", "birdweather-optin": "BirdWeather (opted-in station)", obis: "OBIS", orcasound: "Orcasound", acartia: "Acartia" };
+const SOURCE: Record<string, string> = { community: "Visitor report", inaturalist: "iNaturalist", gbif: "GBIF", birdweather: "BirdWeather", "birdweather-optin": "BirdWeather (opted-in station)", obis: "OBIS", orcasound: "Orcasound", acartia: "Acartia" };
 const sourceName = (s: string) => (s.startsWith("dataset:") ? "Uploaded dataset" : SOURCE[s] ?? `Device or tool (${s})`);
 const safeUrl = (u: string | null) => (u && (/^https:\/\//.test(u) || u.startsWith("/")) ? u : null);
 
@@ -42,6 +43,9 @@ function Flag({ f }: { f: LostFlag }) {
         {f.count != null && <div><dt className="inline text-slate-400">{f.kind === "count" ? "Detections counted " : "Individuals "}</dt><dd className="inline">{f.count}</dd></div>}
         {f.confidence != null && <div><dt className="inline text-slate-400">Model confidence </dt><dd className="inline">{f.confidence.toFixed(2)}</dd></div>}
         <div><dt className="inline text-slate-400">First held </dt><dd className="inline">{fmt(f.first_seen)}</dd></div>
+        {typeof f.detail.place === "string" && <div className="sm:col-span-2"><dt className="inline text-slate-400">Place, in their words (private) </dt><dd className="inline">{f.detail.place}</dd></div>}
+        {typeof f.detail.note === "string" && <div className="sm:col-span-2"><dt className="inline text-slate-400">What they saw or heard </dt><dd className="inline whitespace-pre-wrap">{f.detail.note}</dd></div>}
+        {typeof f.detail.emailEnc === "string" && <div className="sm:col-span-2"><dt className="inline text-slate-400">Reporter&apos;s email (private) </dt><dd className="inline">{(() => { try { return decryptToken(f.detail.emailEnc as string); } catch { return "(cannot decrypt)"; } })()}</dd></div>}
       </dl>
       <div className="mt-3">
         {media && f.media_type?.startsWith("image") ? (

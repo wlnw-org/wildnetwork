@@ -4,6 +4,7 @@ export const NAV: { label: string; links: { label: string; href: string }[] }[] 
     { label: "All species", href: "/species" },
     { label: "Arrivals by region", href: "/arrivals" },
     { label: "Places", href: "/places" },
+    { label: "Lost species", href: "/lost-species" },
   ] },
   { label: "Reports", links: [
     { label: "Site report", href: "/report" },

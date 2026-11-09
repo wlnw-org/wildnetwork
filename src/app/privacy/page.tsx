@@ -113,6 +113,12 @@ export default function Privacy() {
           the photo or recording if there is one. Only the site maintainer and named expert reviewers, signed in with ORCID, can see this list, and we
           keep these records until they have been reviewed and the matter is closed. We never publish the exact place of such a record.
         </p>
+        <p className="mt-3">
+          You can also send us a possible sighting at <a href="/lost-species/report" className="text-cyan-400 hover:underline">/lost-species/report</a>.
+          We keep what you write: the species, date, place, link and description, and your email if you give one, stored encrypted. We keep a keyed hash
+          of your IP address to allow 5 reports a day. Reports go into the same private review list. If an expert thinks a report is worth a closer look,
+          we send its details, but not your email, to Re:wild, who lead the Search for Lost Species. We only share your email with them if you agree.
+        </p>
 
         <h2 id="research" className="mt-8 mb-2 text-xl font-semibold text-slate-100">Researchers</h2>
         <p>

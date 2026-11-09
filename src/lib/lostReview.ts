@@ -40,7 +40,7 @@ export async function setVerdict(id: number, by: string, v: { verdict: Verdict |
 /** Where "worth investigating" records go: env REWILD_CONTACT (one address at Re:wild). Unset = sending is off. */
 export const REWILD_CONTACT = process.env.REWILD_CONTACT?.trim() || null;
 
-const SOURCE_NAME: Record<string, string> = { inaturalist: "iNaturalist", gbif: "GBIF", obis: "OBIS", orcasound: "Orcasound", acartia: "Acartia" };
+const SOURCE_NAME: Record<string, string> = { community: "A report sent by a visitor to wlnw.org", inaturalist: "iNaturalist", gbif: "GBIF", obis: "OBIS", orcasound: "Orcasound", acartia: "Acartia" };
 const isBirdWeather = (s: string) => s.startsWith("birdweather");
 
 /** The email to Re:wild for one flag. BirdWeather records carry no place or data: we have no agreement to pass them on. */
@@ -67,6 +67,8 @@ export function rewildEmail(f: LostFlag): { subject: string; text: string } {
     `Where: ${where}`,
     ...(f.confidence != null && !isBirdWeather(f.source_system) ? [`Model confidence: ${f.confidence.toFixed(2)}`] : []),
     `Photo or recording: ${!isBirdWeather(f.source_system) && f.media_url ? f.media_url : "None that we can share"}`,
+    ...(typeof f.detail?.place === "string" ? [`Place, in the reporter's words: ${f.detail.place}`] : []),
+    ...(typeof f.detail?.note === "string" ? ["", `What the reporter saw or heard: ${f.detail.note}`] : []),
     ...(f.note ? ["", `Reviewer's note: ${f.note}`] : []),
     "",
     "We will not publish the place of this record. Replying to this email reaches Arun Rajiah directly.",

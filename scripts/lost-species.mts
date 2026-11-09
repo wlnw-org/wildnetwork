@@ -4,6 +4,7 @@
 //   pnpm exec tsx --env-file=<env> scripts/lost-species.mts check-names     asks GBIF about every listed name and writes
 //                                                                           lost-species-name-check.csv (renames, synonyms and
 //                                                                           doubtful matches for a person to look at; adds nothing)
+//   pnpm exec tsx --env-file=<env> scripts/lost-species.mts media [limit]       caches pictures for the public page
 //   pnpm exec tsx --env-file=<env> scripts/lost-species.mts hold-existing [--apply]
 //                                                                           finds records already in the public tables; with
 //                                                                           --apply moves them to the private review queue
@@ -112,7 +113,23 @@ if (cmd === "load") {
     console.log(`${t}: ${n} rows${n ? " (not moved automatically: look at these by hand)" : ""}`);
   }
   if (!apply) console.log("Dry run. Add --apply to move the rows above into the review queue.");
+} else if (cmd === "media") {
+  // Pictures for the public page: Wikipedia, then iNaturalist (CC), cached in species_media like every other species.
+  const { getSpeciesMedia } = await import("../src/lib/media");
+  const todo = (await sql<{ scientific_name: string }[]>`
+    SELECT s.scientific_name FROM lost_species s WHERE NOT s.subspecies
+    AND NOT EXISTS (SELECT 1 FROM species_media m WHERE m.scientific_name = s.scientific_name)`).map((r) => r.scientific_name);
+  const limit = Number(process.argv[3]) || todo.length;
+  let done = 0, found = 0;
+  for (let i = 0; i < Math.min(limit, todo.length); i += 3) {
+    await Promise.all(todo.slice(i, Math.min(i + 3, limit)).map(async (n) => {
+      const m = await getSpeciesMedia(n).catch(() => null);
+      done++; if (m?.thumbUrl) found++;
+    }));
+    if (done % 60 === 0) console.log(`${done} of ${Math.min(limit, todo.length)}, ${found} with a picture`);
+  }
+  console.log(`${done} looked up, ${found} with a picture`);
 } else {
-  console.log("Usage: lost-species.mts load | check-names | hold-existing [--apply]");
+  console.log("Usage: lost-species.mts load | check-names | hold-existing [--apply] | media [limit]");
 }
 await sql.end();

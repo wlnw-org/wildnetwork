@@ -174,12 +174,20 @@ interface DriftRow { vernacularName: string | null; scientificName: string; grou
 interface MoverRow { vernacularName: string | null; scientificName: string; group: string; ratio: number }
 const CLASS_PLURAL: Record<string, string> = { avian: "birds", bat: "bats", amphibian: "frogs and toads", insect: "insects", mammal: "mammals", marine: "marine mammals" };
 
-/** A few sentences on what the lists show this week. Counts refer to the species listed, not to all species. */
-export function overview(drift: DriftRow[], movers: MoverRow[]): string[] {
+/** A few sentences on what the lists show this week. Counts refer to the species listed, not to all species.
+ *  With the visitor's region (homeRegion), only that region's movement is described; when it has no clear movers this
+ *  week, that is said first and the busiest regions follow. Class sentences cover the whole world and say so. */
+export function overview(drift: DriftRow[], movers: MoverRow[], homeRegion: string | null = null): string[] {
   const out: string[] = [];
   const byRegion = new Map<string, DriftRow[]>();
   drift.forEach((d) => byRegion.set(d.region, [...(byRegion.get(d.region) ?? []), d]));
-  for (const [region, rows] of [...byRegion.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 2)) {
+  let regions = [...byRegion.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 2);
+  if (homeRegion) {
+    const home = byRegion.get(homeRegion);
+    if (home) regions = [[homeRegion, home]];
+    else out.push(`No species in ${homeRegion} moved clearly enough this week to describe${regions.length ? ". Elsewhere:" : "."}`);
+  }
+  for (const [region, rows] of regions) {
     if (rows.length < 3) {
       // One or two clear movers: name the fastest, with its interval, rather than a count.
       const lead = [...rows].sort((a, b) => Math.abs(b.driftDeg) - Math.abs(a.driftDeg))[0];
@@ -201,8 +209,10 @@ export function overview(drift: DriftRow[], movers: MoverRow[]): string[] {
     return top && top[1] >= 3 && top[1] >= rows.length / 2 ? top : null;
   };
   const f = dominant(fading);
-  if (f && f[0] !== "avian") out.push(`${f[1]} of the ${fading.length} sharpest drops are ${CLASS_PLURAL[f[0]] ?? f[0]}.`);
+  const world = homeRegion ? "Across the world, " : "";
+  const cap = (x: string) => (world ? x : x.charAt(0).toUpperCase() + x.slice(1));
+  if (f && f[0] !== "avian") out.push(cap(`${world}${f[1]} of the ${fading.length} sharpest drops are ${CLASS_PLURAL[f[0]] ?? f[0]}.`));
   const s = dominant(surging);
-  if (s && s[0] !== "avian") out.push(`${s[1]} of the ${surging.length} biggest surges are ${CLASS_PLURAL[s[0]] ?? s[0]}.`);
+  if (s && s[0] !== "avian") out.push(cap(`${world}${s[1]} of the ${surging.length} biggest surges are ${CLASS_PLURAL[s[0]] ?? s[0]}.`));
   return out;
 }
