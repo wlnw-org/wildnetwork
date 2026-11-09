@@ -13,3 +13,9 @@ export function matchLost(name: string | null | undefined, names: Map<string, nu
   for (const k of nameKeys(name)) { const id = names.get(k); if (id !== undefined) return id; }
   return null;
 }
+
+/** A list entry can carry an alternative name, as in "Cabalus lafresnayanus (Gallirallus lafresnayanus)" or
+ *  "Chamaeleon monoceras, Furcifer monoceras". Both are the list's own names for the species, so both are watched. */
+export function listedNames(entry: string): string[] {
+  return [...new Set(entry.split(/\s*[(),]\s*/).map((x) => x.trim()).filter((x) => x.split(/\s+/).length >= 2).map((x) => nameKeys(x)[0]))];
+}

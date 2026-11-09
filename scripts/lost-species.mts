@@ -11,7 +11,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { sql } from "../src/lib/db";
 import { gbifJson } from "../src/lib/gbif";
-import { nameKeys } from "../src/lib/lostNames";
+import { listedNames, nameKeys } from "../src/lib/lostNames";
 
 function parseCsv(text: string): Record<string, string>[] {
   const rows: string[][] = [];
@@ -45,7 +45,7 @@ if (cmd === "load") {
       common_name = EXCLUDED.common_name, class_name = EXCLUDED.class_name, order_name = EXCLUDED.order_name, family = EXCLUDED.family,
       subspecies = EXCLUDED.subspecies, continent = EXCLUDED.continent, countries = EXCLUDED.countries, region = EXCLUDED.region,
       red_list = EXCLUDED.red_list, on_rewild_list = EXCLUDED.on_rewild_list, source = EXCLUDED.source, updated_at = now() RETURNING id`;
-    await sql`INSERT INTO lost_names (name, lost_id, via) VALUES (${nameKeys(r.scientific_name)[0]}, ${id}, 'list') ON CONFLICT (name) DO NOTHING`;
+    for (const name of listedNames(r.scientific_name)) await sql`INSERT INTO lost_names (name, lost_id, via) VALUES (${name}, ${id}, 'list') ON CONFLICT (name) DO NOTHING`;
     n++;
   }
   // Extra names (renames, synonyms) a person checked: name,listed_name,reason
@@ -64,7 +64,7 @@ if (cmd === "load") {
   const out = ["listed_name,class,gbif_match,gbif_status,gbif_accepted_name,note"];
   let i = 0;
   for (const r of list) {
-    const m = await gbifJson<{ matchType?: string; status?: string; species?: string; canonicalName?: string; rank?: string }>("/species/match", new URLSearchParams({ name: r.scientific_name, verbose: "false" }), 3).catch(() => null);
+    const m = await gbifJson<{ matchType?: string; status?: string; species?: string; canonicalName?: string; rank?: string }>("/species/match", new URLSearchParams({ name: listedNames(r.scientific_name)[0] ?? r.scientific_name, verbose: "false" }), 3).catch(() => null);
     const accepted = m?.species ?? m?.canonicalName ?? "";
     let note = "";
     if (!m || m.matchType === "NONE") note = "GBIF does not know this name; records may arrive under another name";

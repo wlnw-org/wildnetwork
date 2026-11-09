@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { matchLost, nameKeys } from "./lostNames";
+import { listedNames, matchLost, nameKeys } from "./lostNames";
 
 const names = new Map<string, number>([
   ["rhinoptilus bitorquatus", 1],          // a lost species
@@ -33,4 +33,10 @@ test("name keys", () => {
   assert.deepEqual(nameKeys("Turdus merula"), ["turdus merula"]);
   assert.deepEqual(nameKeys("Turdus merula merula"), ["turdus merula merula", "turdus merula"]);
   assert.deepEqual(nameKeys(undefined), []);
+});
+
+test("list entries with an alternative name give both names", () => {
+  assert.deepEqual(listedNames("Cabalus lafresnayanus (Gallirallus lafresnayanus)"), ["cabalus lafresnayanus", "gallirallus lafresnayanus"]);
+  assert.deepEqual(listedNames("Chamaeleon monoceras, Furcifer monoceras"), ["chamaeleon monoceras", "furcifer monoceras"]);
+  assert.deepEqual(listedNames("Rhinoptilus bitorquatus"), ["rhinoptilus bitorquatus"]);
 });
