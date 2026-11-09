@@ -75,8 +75,10 @@ export async function getSpeciesMedia(name: string): Promise<SpeciesMedia> {
     await sql`UPDATE species_media SET names = ${sql.json(bn.names)} WHERE scientific_name = ${name}`;
     return rowToMedia({ ...cached, names: bn.names as unknown as string });
   }
-  // Only names that occur in the data are looked up and stored, so made-up names cannot fill the table or trigger outside fetches.
-  const [known] = await sql`SELECT 1 FROM species_group WHERE scientific_name = ${name} UNION ALL SELECT 1 FROM events WHERE scientific_name = ${name} LIMIT 1`;
+  // Only names that occur in the data (or on the fixed lost species list, whose records are held back from the data) are
+  // looked up and stored, so made-up names cannot fill the table or trigger outside fetches.
+  const [known] = await sql`SELECT 1 FROM species_group WHERE scientific_name = ${name} UNION ALL SELECT 1 FROM events WHERE scientific_name = ${name}
+    UNION ALL SELECT 1 FROM lost_species WHERE scientific_name = ${name} LIMIT 1`;
   if (!known) return rowToMedia({ scientific_name: name, source: "none" });
   const [wiki, inat, bn] = await Promise.all([
     fromWikipedia(name).catch(() => null), fromInat(name).catch(() => ({ iconic: null, media: null })), fromBirdnet(name).catch(() => null),
