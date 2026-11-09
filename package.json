@@ -21,16 +21,16 @@
     "backfill:obis": "tsx --env-file=.env.local scripts/backfill-obis.mts"
   },
   "dependencies": {
-    "@ai-sdk/google": "^4.0.87",
-    "ai": "^7.0.127",
+    "@ai-sdk/google": "^4.0.114",
+    "ai": "^7.0.166",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "maplibre-gl": "^6.11.2",
-    "next": "16.3.8",
+    "next": "16.4.5",
     "postgres": "^3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "zod": "^4.6.5"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -38,8 +38,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.8",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "16.4.5",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"
@@ -48,5 +48,11 @@
   "license": "AGPL-3.0-only",
   "author": "Arun Rajiah (https://www.arunrajiah.com)",
   "repository": "github:wlnw-org/wildnetwork",
-  "homepage": "https://wlnw.org"
+  "homepage": "https://wlnw.org",
+  "pnpm": {
+    "overrides": {
+      "undici@<7.30.1": "^7.30.2",
+      "fast-uri@<3.1.9": "^3.1.9"
+    }
+  }
 }
