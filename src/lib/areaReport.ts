@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 import { sql } from "@/lib/db";
 import { baseParams, gbifJson, resolveTaxa, taxon } from "@/lib/gbif";
 import { isSensitiveTaxon } from "@/lib/sensitiveTaxa";
+import { isLostName } from "@/lib/lost";
 import { HIDDEN_DEPLOYMENT_SOURCES, PENDING_SOURCES } from "@/lib/sources";
 import { PULLED_SOURCES } from "@/lib/siteReport";
 import { SITE } from "@/lib/site";
@@ -184,7 +185,9 @@ export function parsePeriod(from?: string, to?: string): AreaPeriod {
   return { from: f, to: t };
 }
 
-const nameable = (s: string) => !isSensitiveTaxon([s, s.split(" ")[0]]);
+// Sensitive taxa are counted but not named. Lost species (src/lib/lost.ts) are never named either: these lists come straight
+// from GBIF, so they skip the watch that keeps lost species out of our own tables.
+const nameable = (s: string, lost: (n: string) => boolean) => !isSensitiveTaxon([s, s.split(" ")[0]]) && !lost(s);
 
 export async function areaReport(area: AreaRow, period: AreaPeriod, group: string): Promise<AreaReport> {
   const keys = AREA_GROUPS[group] ?? AREA_GROUPS.all;
@@ -259,7 +262,8 @@ export async function areaReport(area: AreaRow, period: AreaPeriod, group: strin
   for (const a of arrivals) { const r = rows.get(a.scientific_name); if (r) r.arrival = { week: a.week, low: a.low, high: a.high }; }
 
   const all = [...rows.values()];
-  const listed = all.filter((r) => nameable(r.scientificName)).sort((a, b) => (b.gbif + b.acoustic) - (a.gbif + a.acoustic));
+  const lost = await isLostName();
+  const listed = all.filter((r) => nameable(r.scientificName, lost)).sort((a, b) => (b.gbif + b.acoustic) - (a.gbif + a.acoustic));
   return {
     area, period, group, generatedAt: new Date().toISOString(),
     stations: kept.map((s) => ({ id: s.id, name: s.name, source: s.source_system, sensor: s.sensor_type, lat: s.lat, lon: s.lon, lastSeen: s.last_seen })),
@@ -329,6 +333,7 @@ export async function nearbyChecklist(lat: number, lon: number, km: number, grou
   const j = await gbifJson<{ count: number; facets: { field: string; counts: { name: string; count: number }[] }[] }>("/occurrence/search", p, 2);
   const counts = (j.facets[0]?.counts ?? []).map((c) => ({ key: Number(c.name), n: c.count }));
   for (let i = 0; i < counts.length; i += 25) await resolveTaxa(counts.slice(i, i + 25).map((c) => c.key));
-  const species = counts.flatMap((c) => { const t = taxon(c.key); return t && nameable(t.scientific_name) ? [{ scientificName: t.scientific_name, vernacularName: t.vernacular_name, group: t.grp, records: c.n }] : []; });
+  const lost = await isLostName();
+  const species = counts.flatMap((c) => { const t = taxon(c.key); return t && nameable(t.scientific_name, lost) ? [{ scientificName: t.scientific_name, vernacularName: t.vernacular_name, group: t.grp, records: c.n }] : []; });
   return { species, records: j.count, truncated: counts.length >= AREA_LIMITS.GBIF_SPECIES };
 }

@@ -1,4 +1,5 @@
 import { sql } from "@/lib/db";
+import { holdCounts } from "@/lib/lost";
 import { refreshStationWeekly } from "@/lib/siteReport";
 import { GRP } from "@/lib/methods";
 
@@ -60,7 +61,7 @@ async function rollupBirdweatherCell(cell: { lat: number; lon: number }, day: st
   if (!res.ok) throw new Error(`birdweather ${res.status}`);
   const json = (await res.json()) as { data?: { topSpecies: TopSpecies[] }; errors?: { message: string }[] };
   if (json.errors?.length) throw new Error(json.errors[0].message);
-  const rows = (json.data?.topSpecies ?? []).filter((t) => t.count > 0).map((t) => ({
+  const all = (json.data?.topSpecies ?? []).filter((t) => t.count > 0).map((t) => ({
     day,
     source_system: "birdweather",
     scientific_name: t.species.scientificName,
@@ -71,6 +72,8 @@ async function rollupBirdweatherCell(cell: { lat: number; lon: number }, day: st
     high_conf_count: t.breakdown ? t.breakdown.almostCertain + t.breakdown.veryLikely : null,
     sites: null,
   }));
+  // Lost species are held for private review, never written to the public rollups (src/lib/lost.ts).
+  const rows = await holdCounts(all, "birdweather", (r) => `${spanDays === 7 ? "week" : "day"} ${r.day}`, () => ({ lat: cell.lat + CELL / 2, lon: cell.lon + CELL / 2 }));
   if (rows.length === 0) return 0;
   await upsertGroups((json.data?.topSpecies ?? []).map((t) => ({ name: t.species.scientificName, grp: t.species.classification ?? "avian" })));
   if (spanDays === 7) {

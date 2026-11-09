@@ -39,7 +39,7 @@ export default async function Admin() {
     notFound();
   }
   if (!a?.fresh) return <SignInAgain />;
-  const [mb, shared, feedback, fbCounts, datasets, usage, alerts, updates, optins] = await Promise.all([
+  const [mb, shared, feedback, fbCounts, datasets, usage, alerts, updates, optins, lost] = await Promise.all([
     databaseMb().catch(() => null),
     sharedTotals().catch(() => null),
     sql<{ id: number; kind: string; product: string; message: string; email_enc: string | null; context: string | null; emailed: boolean; created_at: Date }[]>`
@@ -51,6 +51,7 @@ export default async function Admin() {
     sql<{ n: number }[]>`SELECT COUNT(*)::int AS n FROM alert_subs WHERE confirmed_at IS NOT NULL`.catch(() => [{ n: 0 }]),
     sql<{ n: number }[]>`SELECT COUNT(*)::int AS n FROM update_subs WHERE confirmed_at IS NOT NULL`.catch(() => [{ n: 0 }]),
     sql<{ n: number }[]>`SELECT COUNT(*)::int AS n FROM bw_optin`.catch(() => [{ n: 0 }]),
+    sql<{ open: number; total: number }[]>`SELECT COUNT(*) FILTER (WHERE verdict IS NULL)::int AS open, COUNT(*)::int AS total FROM lost_flags`.catch(() => [{ open: 0, total: 0 }]),
   ]);
   const toReview = datasets.filter((d) => d.status === "review");
   return (
@@ -64,6 +65,7 @@ export default async function Admin() {
           <Card label="Studio installs, 7 days" value={usage[0]?.installs ?? 0} sub={`${(usage[0]?.starts ?? 0).toLocaleString()} app starts`} href="/admin/apps" />
           <Card label="Shared answers" value={shared?.answers ?? 0} sub={shared ? `${shared.species} species, ${shared.contributors} contributors, ${shared.cells} places` : undefined} />
           <Card label="Datasets to review" value={toReview.length} href="#datasets" />
+          <Card label="Lost species to review" value={lost[0]?.open ?? 0} sub={`${(lost[0]?.total ?? 0).toLocaleString()} held in all`} href="/admin/lost" />
           <Card label="Database" value={mb != null ? `${Math.round(mb)} MB` : "?"} sub={`warning at ${STORAGE.WARN_MB} MB`} href="/api/v1/health" />
           <Card label="Species alert subscribers" value={alerts[0]?.n ?? 0} />
           <Card label="Update email subscribers" value={updates[0]?.n ?? 0} />

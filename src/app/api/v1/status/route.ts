@@ -11,6 +11,7 @@ import { weeklyReindex } from "@/lib/storage";
 import { ALERTS_ENABLED, checkAlerts } from "@/lib/alerts";
 import { warmHistory } from "@/lib/history";
 import { sendDigests } from "@/lib/studies";
+import { notifyLostFlags } from "@/lib/lostNotify";
 
 export const maxDuration = 300;
 
@@ -81,6 +82,12 @@ export async function GET() {
       const dg = await sendDigests(60_000).catch((e) => { console.error("digests", e); return 0; });
       if (dg) console.log(`study digests: ${dg} sent`);
     }
+    // Held lost species records: one email to the maintainer at most every hour (src/lib/lostNotify.ts).
+    const ln = await sql`
+      INSERT INTO pull_state (connector, last_run_at) VALUES ('_lost_mail_lock', now())
+      ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '1 hour'
+      RETURNING connector`;
+    if (ln.length) await notifyLostFlags().catch((e) => console.error("lost notify", e));
   });
   // Past-period map summaries (7d / 30d / 12m per class): hourly check, each summary renewed after 3.5 hours (src/lib/history.ts).
   if (BACKGROUND_WRITES) after(async () => {

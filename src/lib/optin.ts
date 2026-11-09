@@ -1,5 +1,6 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
 import { sql } from "@/lib/db";
+import { holdCounts } from "@/lib/lost";
 
 /**
  * BirdWeather opt-in (see /stations/join): a station owner gives their station token; Wildlife Network keeps it encrypted and uses it
@@ -75,8 +76,8 @@ async function dayCounts(token: string, day: string): Promise<SpeciesRow[]> {
  */
 export async function refreshOptins(budgetMs = 120_000): Promise<{ stations: number; days: number; errors: number }> {
   const t0 = Date.now();
-  const stations = await sql<{ station_id: number; token_enc: string; history_from: string | null }[]>`
-    SELECT station_id, token_enc, history_from::text FROM bw_optin WHERE status = 'active' AND token_enc IS NOT NULL ORDER BY last_pull_at NULLS FIRST`;
+  const stations = await sql<{ station_id: number; token_enc: string; history_from: string | null; lat: number | null; lon: number | null }[]>`
+    SELECT station_id, token_enc, history_from::text, lat, lon FROM bw_optin WHERE status = 'active' AND token_enc IS NOT NULL ORDER BY last_pull_at NULLS FIRST`;
   let days = 0, errors = 0;
   const today = new Date().toISOString().slice(0, 10);
   const minus = (d: string, n: number) => new Date(Date.parse(d) - n * 86400_000).toISOString().slice(0, 10);
@@ -91,7 +92,9 @@ export async function refreshOptins(budgetMs = 120_000): Promise<{ stations: num
     try {
       for (const day of want) {
         if (Date.now() - t0 > budgetMs) break;
-        const rows = await dayCounts(token, day);
+        // Lost species are held for private review, not kept with the station's counts (src/lib/lost.ts).
+        const rows = (await holdCounts((await dayCounts(token, day)).map((r) => ({ ...r, scientific_name: r.scientificName, count: r.detections.total })),
+          "birdweather-optin", () => `day ${day} station ${s.station_id}`, () => ({ lat: s.lat ?? 0, lon: s.lon ?? 0 })));
         if (rows.length) {
           await sql`
             INSERT INTO bw_optin_daily ${sql(rows.map((r) => ({ station_id: s.station_id, day, scientific_name: r.scientificName, common_name: r.commonName, classification: r.classification, count: r.detections.total, almost_certain: r.detections.almostCertain })))}
