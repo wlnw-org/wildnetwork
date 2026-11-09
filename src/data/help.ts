@@ -137,6 +137,8 @@ const studio: Guide[] = [
         "Choose Compare to see where you agree and which clips you answered differently. Listen to those together.",
       ] },
       { tip: "Your own answers are never overwritten by loading someone else's." },
+      { h: "Figures for a paper" },
+      { p: "The table shows, per species and overall, how often you agreed and Cohen's kappa, each with a 95% interval in brackets. Save table for a paper (CSV) also adds precision per species: of the reviewed detections at or above the species' threshold, the share answered yes, with its interval. Open Methods sentence for a ready sentence describing how the review was done (from Studio 0.1.10)." },
     ],
   },
   {
