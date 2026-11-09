@@ -184,7 +184,7 @@ export async function GET(req: Request) {
     area: here ? { cellLat: here.cellLat, cellLon: here.cellLon, region: homeRegion, scope } : null,
     coverage: { from: meta[0].first_day, to: meta[0].last_day, species: Number(meta[0].species), detections: Number(meta[0].detections ?? 0) },
     // Within one class, "most of the drops are bats" would be trivially true, so that part is skipped.
-    summary: overview(driftOut, group ? [] : moversOut),
+    summary: overview(driftOut, group ? [] : moversOut, homeRegion),
     seasonal: [...seasonal].sort((a, b) => (a.week < b.week ? 1 : a.week > b.week ? -1 : b.n - a.n)).slice(0, 12).map((r) => ({ scientificName: r.scientific_name, vernacularName: r.vernacular_name, group: r.grp, cellLat: r.cell_lat, cellLon: r.cell_lon, week: r.week, n: r.n })),
     possible: [...possible].sort((a, b) => (a.week < b.week ? 1 : a.week > b.week ? -1 : b.n - a.n)).slice(0, 12).map((r) => ({ scientificName: r.scientific_name, vernacularName: r.vernacular_name, group: r.grp, cellLat: r.cell_lat, cellLon: r.cell_lon, week: r.week, n: r.n, support: r.support })),
     common: common.map((r) => ({ scientificName: r.scientific_name, vernacularName: r.vernacular_name, group: r.grp, n: r.n, cells: r.cells })),
