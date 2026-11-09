@@ -26,6 +26,11 @@ function encode(s: Session & { exp: number }): string {
 }
 
 function decode(raw: string | undefined): Session | null {
+  const s = decodeFull(raw);
+  return s ? { orcid: s.orcid, name: s.name } : null;
+}
+
+function decodeFull(raw: string | undefined): (Session & { exp: number }) | null {
   if (!raw) return null;
   const [data, mac] = raw.split(".");
   if (!data || !mac) return null;
@@ -33,8 +38,19 @@ function decode(raw: string | undefined): Session | null {
   if (want.length !== got.length || !timingSafeEqual(want, got)) return null;
   try {
     const s = JSON.parse(Buffer.from(data, "base64url").toString()) as Session & { exp: number };
-    return s.exp > Date.now() && /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/.test(s.orcid) ? { orcid: s.orcid, name: s.name } : null;
+    return s.exp > Date.now() && /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/.test(s.orcid) ? s : null;
   } catch { return null; }
+}
+
+/** Admin pages ask for a fresh sign-in after this long, although the session itself lasts DAYS. */
+export const ADMIN_HOURS = 12;
+
+/** For admin pages: the session, and whether it was started (signed in at ORCID) within the last ADMIN_HOURS. */
+export async function getAdminSession(): Promise<{ session: Session; fresh: boolean } | null> {
+  const s = decodeFull((await cookies()).get(COOKIE)?.value);
+  if (!s) return null;
+  const signedInAt = s.exp - DAYS * 86_400_000;
+  return { session: { orcid: s.orcid, name: s.name }, fresh: Date.now() - signedInAt < ADMIN_HOURS * 3_600_000 };
 }
 
 export async function getSession(): Promise<Session | null> {

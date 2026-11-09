@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { sql } from "@/lib/db";
 import { decryptToken } from "@/lib/optin";
-import { getSession, ORCID_ENABLED } from "@/lib/orcid";
+import SignInAgain from "@/components/SignInAgain";
+import { getAdminSession, ORCID_ENABLED } from "@/lib/orcid";
 import { MAINTAINER } from "@/lib/projects";
 import { sharedTotals } from "@/lib/sharedAnswers";
 import { databaseMb, STORAGE } from "@/lib/storage";
@@ -26,7 +27,8 @@ const Card = ({ label, value, sub, href }: { label: string; value: string | numb
 
 /** Maintainer only (signed in with the maintainer's ORCID iD): feedback, app usage, shared answers, datasets to review, storage. */
 export default async function Admin() {
-  const s = await getSession();
+  const a = await getAdminSession();
+  const s = a?.session;
   if (s?.orcid !== MAINTAINER.orcid) {
     if (!s && ORCID_ENABLED) return (
       <main className="flex-1 bg-slate-950 text-slate-300"><div className="mx-auto max-w-xl px-5 py-16">
@@ -36,6 +38,7 @@ export default async function Admin() {
     );
     notFound();
   }
+  if (!a?.fresh) return <SignInAgain />;
   const [mb, shared, feedback, fbCounts, datasets, usage, alerts, updates, optins] = await Promise.all([
     databaseMb().catch(() => null),
     sharedTotals().catch(() => null),

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { usageStats } from "@/lib/appUsage";
-import { getSession } from "@/lib/orcid";
+import { getAdminSession } from "@/lib/orcid";
+import SignInAgain from "@/components/SignInAgain";
 import { MAINTAINER } from "@/lib/projects";
 
 export const metadata: Metadata = { title: "App usage", robots: { index: false, follow: false } };
@@ -30,8 +31,9 @@ const Card = ({ label, value, sub }: { label: string; value: number | string; su
 
 /** Maintainer only: Studio starts (update checks), distinct installs and downloads. Everyone else gets a 404. */
 export default async function AppUsage() {
-  const s = await getSession();
-  if (s?.orcid !== MAINTAINER.orcid) notFound();
+  const a = await getAdminSession();
+  if (a?.session.orcid !== MAINTAINER.orcid) notFound();
+  if (!a.fresh) return <SignInAgain next="/admin/apps" />;
   const [st, gh] = await Promise.all([usageStats("studio", 30), githubDownloads()]);
   const days = [...new Set(st.daily.map((d) => d.day))];
   const at = (day: string, ev: string) => st.daily.find((d) => d.day === day && d.event === ev);
