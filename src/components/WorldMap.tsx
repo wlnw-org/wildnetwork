@@ -704,11 +704,14 @@ export default function WorldMap() {
     userMovedRef.current = true;
     const map = mapRef.current;
     if (map) {
-      map.flyTo({ center: [p.lon, p.lat], zoom: 7, duration: 1200 });
-      // Live dots are often sparse at city zoom: offer the last 7 days instead of an empty map.
-      map.once("moveend", () => setTimeout(() => {
-        try { if (map.getLayer("events") && map.queryRenderedFeatures({ layers: ["events"] }).length === 0) setQuietNear("here"); } catch { /* style not ready */ }
-      }, 2500));
+      // Opening the panel eases the map padding (300 ms), which would cancel a flight started now: fly once it has settled.
+      setTimeout(() => {
+        map.flyTo({ center: [p.lon, p.lat], zoom: 7, duration: 1200 });
+        // Live dots are often sparse at city zoom: offer the last 7 days instead of an empty map.
+        map.once("moveend", () => setTimeout(() => {
+          try { if (map.getLayer("events") && map.queryRenderedFeatures({ layers: ["events"] }).length === 0) setQuietNear("here"); } catch { /* style not ready */ }
+        }, 2500));
+      }, 350);
     }
     track("select_place", { place: p.slug ?? "" });
   };
