@@ -3,7 +3,7 @@ import { hashIp } from "@/lib/auth";
 import { answerQuestion } from "@/lib/ask";
 import { sql } from "@/lib/db";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 // With BirdWeather paused there is too little data to answer from, so the box stays off.
 const ENABLED = process.env.ASK_ENABLED === "true" && !BIRDWEATHER_PAUSED;
