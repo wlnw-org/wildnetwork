@@ -3,7 +3,7 @@
 
 /** Studio version the Studio guides were last checked against. .github/workflows/help-check.yml opens an issue when a newer
  * Studio release is out; update the guides, then raise this. */
-export const HELP_CHECKED_STUDIO = "0.1.11";
+export const HELP_CHECKED_STUDIO = "0.1.12";
 
 export type Block =
   | { p: string }
@@ -193,8 +193,8 @@ const studio: Guide[] = [
       { steps: ["Open Export and publish.", "Fill in About this dataset: title, institution, people to credit, how it was collected, and the licence.", "Choose a format and where to save it."] },
       { list: [
         "Darwin Core Archive: upload to your IPT or send to your GBIF node.",
-        "Camtrap DP: camera-trap deployments, photos and observations.",
-        "CSV: one row per detection, for R, Python or a spreadsheet.",
+        "Camtrap DP: camera-trap deployments, photos and observations, as CSV files (deployments.csv, media.csv, observations.csv) that open in R with read.csv or the camtraptor package.",
+        "CSV: one row per detection, for R, Python or a spreadsheet. From Studio 0.1.12 it also lists camera-trap photos, one row per animal box; the media column says audio or image and the bbox columns give the box position (0 to 1).",
         "Raven and Audacity: selection tables and labels next to each recording.",
         "Kaleidoscope id.csv, and WDX (one event per line, the format Wildlife Network uses).",
         "Occupancy by day or by week (from Studio 0.1.11): one row per species and site, one column per day or week. 1 = detected, 0 = recorded and analysed but not detected, NA = nothing recorded. A second file, ending in -effort.csv, gives the minutes recorded per site in the same columns.",
