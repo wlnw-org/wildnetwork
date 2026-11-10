@@ -1015,7 +1015,7 @@ export default function WorldMap() {
       {/* Time slider */}
       {/* Phones: full width with side gutters, above the bottom bar and the map attribution. */}
       {quietNear && !period && !species && (
-        <div role="status" className={`absolute left-2 right-2 max-md:top-[5.75rem] md:bottom-[6.25rem] ${panelOpen ? "md:left-[30rem]" : "md:left-24"} md:right-auto z-10 flex flex-wrap items-center gap-2 rounded-lg border border-white/10 bg-black/75 px-3 py-2 text-sm text-slate-200 backdrop-blur-xl`}>
+        <div role="status" className={`absolute left-2 right-14 max-md:top-[5.75rem] md:bottom-[6.25rem] ${panelOpen ? "md:left-[30rem]" : "md:left-24"} md:right-auto z-10 flex flex-wrap items-center gap-2 rounded-lg border border-white/10 bg-black/75 px-3 py-2 text-sm text-slate-200 backdrop-blur-xl`}>
           <span>{t(quietNear === "here" ? "Nothing recorded here in the last few hours." : "Nothing recorded near you in the last few hours.")}</span>
           <button onClick={() => { setPeriod("7d"); setQuietNear(null); setPlayhead(null); setPlaying(false); setTab("now"); track("select_period", { period: "7d" }); }} className={`rounded bg-cyan-500 px-2.5 py-1 text-xs font-medium text-slate-950 hover:bg-cyan-400 ${FOCUS}`}>{t("Show the last 7 days")}</button>
           <button onClick={() => setQuietNear(null)} aria-label={t("Close")} className={`ml-auto rounded px-1.5 text-slate-400 hover:text-slate-200 ${FOCUS}`}>×</button>
