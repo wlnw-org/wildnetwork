@@ -17,7 +17,7 @@ export default function Privacy() {
         <p className="mt-1 text-sm text-slate-400">Updated {UPDATED}</p>
 
         <p className="mt-6">
-          Wildlife Network is a free, non-commercial, open source project run by Arun Rajiah in Chennai, India. There are no accounts and no ads, and no data is sold.
+          Wildlife Network is a free, non-commercial, open source project run by Arun Rajiah in Chennai, India. Most of the site needs no account (researchers can sign in with ORCID, see below). There are no ads, and no data is sold.
           This page lists everything the site collects. Questions or requests: <a href="mailto:arunrajiah@gmail.com" className="text-cyan-400 hover:underline">arunrajiah@gmail.com</a>.
         </p>
 

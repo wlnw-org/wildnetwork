@@ -6,7 +6,7 @@ import OptinForm from "@/components/OptinForm";
 export const metadata: Metadata = {
   title: "Add your BirdWeather station",
   alternates: { canonical: "/stations/join" },
-  description: "Opt your BirdWeather station in to Wildlife Network: appear by name or anonymously, and share its daily species counts in open, citable data releases under your licence.",
+  description: "Add your BirdWeather station to Wildlife Network: appear by name or anonymously, and share its daily species counts in open, citable data releases under your licence.",
 };
 
 export default function Join() {

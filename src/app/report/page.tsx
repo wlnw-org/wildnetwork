@@ -94,7 +94,7 @@ function Form({ params, q, fromPlace, inner = false }: { params: Record<string, 
       <label className={label}><T k="Compare to" /><input name="to2" type="date" defaultValue={q?.b?.to} className={field} /></label>
       <div className="col-span-2 sm:col-span-4 flex flex-wrap items-center gap-3">
         <button className="rounded-md bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400"><T k="Show report" /></button>
-        <span className="text-xs text-slate-400"><T k="Coordinates win over the town name. Periods up to three years." /></span>
+        <span className="text-xs text-slate-400"><T k="If you fill in both, the latitude and longitude are used. Periods up to three years." /></span>
       </div>
     </form>
   );
@@ -115,8 +115,8 @@ function Report({ r, placeName, contributed }: { r: SiteReport; placeName: strin
         : <H2><T k="Within {km} km of {place}" v={{ km: q.km, place: placeName ?? `${q.lat}, ${q.lon}` }} /></H2>}
       {r.mode === "area" && r.cell && (
         <div role="note" className="mb-4 rounded-lg border border-amber-400/40 bg-amber-400/10 p-3 text-sm text-amber-100">
-          <p className="font-semibold"><T k="Regional counts, not the {km} km radius" v={{ km: q.km }} /></p>
-          <p className="mt-1"><T k="No station within {km} km keeps its history here, so these numbers are for the whole 5 degree grid square around the point ({lat}° to {lat2}°, {lon}° to {lon2}°), an area about 550 km across." v={{ km: q.km, lat: r.cell.lat, lat2: r.cell.lat + 5, lon: r.cell.lon, lon2: r.cell.lon + 5 }} />{" "}
+          <p className="font-semibold"><T k="No station within {km} km, so this shows the wider region" v={{ km: q.km }} /></p>
+          <p className="mt-1"><T k="These numbers cover the wider region around the point, an area about 550 km across." />{" "}
             <Link href="/report/area" className="font-medium text-cyan-300 underline"><T k="For a district or protected area, make an area report instead." /></Link></p>
         </div>
       )}
@@ -201,7 +201,7 @@ function Period({ title, p, area = false }: { title: string; p: PeriodSummary; a
           <p className="mt-2 text-xs text-slate-400"><T k="Records per week" /></p>
           <Bars mondays={mondays} byWeek={byWeek} value={(w) => w.detections} label="records" />
           <p className="mt-1 text-xs text-slate-400">
-            <T k="Pale bars are weeks below the coverage threshold, where too few records came in to judge. More records always find more species, so compare weeks with similar records, and remember this is a 5 degree square, not the park itself." />
+            <T k="Pale bars are weeks with too few records to compare. More records always find more species, so compare weeks with similar records, and remember this covers the wider region, not the park itself." />
           </p>
         </>
       )}

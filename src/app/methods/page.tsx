@@ -19,7 +19,7 @@ export default function Methods() {
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Methods</h1>
-        <p className="mt-1 text-sm text-slate-400">Version {METHODS_VERSION} · updated 7 October 2026</p>
+        <p className="mt-1 text-sm text-slate-400">Version {METHODS_VERSION} · updated 10 November 2026</p>
 
         {BIRDWEATHER_PAUSED && <PausedNotice className="mt-6" />}
 
@@ -28,10 +28,24 @@ export default function Methods() {
           read the <a href="#limits" className="text-cyan-400 hover:underline">known limits</a> first. The code that computes everything is public and linked
           from each section.
         </p>
+        <div className="mt-5 rounded-lg border border-white/10 bg-white/5 p-4 text-sm">
+          <p className="font-medium text-slate-100">In short</p>
+          <ul className="mt-1 list-disc pl-5 space-y-1">
+            <li>Every record says a species was identified at a place and time, mostly by software listening to sound, which makes mistakes.</li>
+            <li>Some areas have many recorders and some have few, so we compare each species with everything recorded in the same place and week, not with raw counts.</li>
+            <li>Numbers are weakest where few people record, for rare species, and for birds that stay all year.</li>
+          </ul>
+          <p className="mt-3 font-medium text-slate-100">On this page</p>
+          <ol className="mt-1 grid gap-x-6 sm:grid-cols-2 list-decimal pl-5">
+            {[["data", "Data"], ["effort", "Correcting for observation effort"], ["measures", "Measures"], ["check", "A worked check"], ["limits", "Known limits"], ["use", "Using and citing"], ["changes", "Changes"]].map(([id, label]) => (
+              <li key={id}><a href={`#${id}`} className="text-cyan-400 hover:underline">{label}</a></li>
+            ))}
+          </ol>
+        </div>
 
         <H2 id="data">1. Data</H2>
         <p>
-          A <b>detection</b> is one record that a species was identified at a place and time, by a classifier or a person. Wildlife Network currently holds three kinds:
+          A <b>detection</b> is one record that a species was identified at a place and time, by a classifier or a person. Wildlife Network currently holds five main kinds:
         </p>
         <ul className="mt-2 list-disc pl-5 space-y-1">
           <li><b>Acoustic detections</b> from BirdWeather community stations: birds, frogs, insects and some mammals identified by BirdNET, and bats identified by BirdWeather&apos;s ultrasonic classifier. This is the large majority of the data. Detections only: soundscapes and recording links are never taken, at BirdWeather&apos;s request. Paused from 2 to 6 October 2026 while terms were discussed.</li>
@@ -223,7 +237,7 @@ export default function Methods() {
           <li><b>First heard where highs are around X°C.</b> For up to 50 of the species&apos; best sampled cells with an arrival date, the mean daily maximum temperature at the cell centre during the arrival week (ERA5 via Open-Meteo). The sentence gives the median and the middle half across cells, from at least 5 cells. If that middle half is within 6°C across 15 degrees of latitude or more, it adds that timing follows temperature; if it is wider than 10°C, that temperature alone does not explain it.</li>
           <li><b>The yearly span.</b> The lowest and highest weekly range centre in the continent with most detections, using only weeks when the species reaches a tenth of its peak week, so stray detections out of season are ignored. Needs 8 such weeks and a span of 8 degrees or more.</li>
           <li><b>Rain and wind.</b> The mean relative frequency on days with 5 mm of rain or more against days with under 1 mm, and on days with gusts of 30 km/h or more against days under 20 km/h, at the range centre. Needs 3 days in each group and a difference of 15 percent or more.</li>
-          <li><b>This week in words.</b> Counts within the listed species only (at most 12 per list): how many of a continent&apos;s fastest movers head the same way (with three or more listed; with one or two, the clearest mover is named with its 95% interval), and whether one class makes up at least half of the biggest drops or surges. When we know the visitor&apos;s rough area, only their own continent&apos;s movers are described (or we say none moved clearly and name the busiest continents instead), and the class sentences, which always cover the whole world, start with &quot;Across the world&quot;. Only movers whose interval excludes no change are listed.</li>
+          <li><b>This week in words.</b> Counts within the listed species only (at most 12 per list): how many of a continent&apos;s fastest movers head the same way (with three or more listed; with one or two, the clearest mover is named with its 95% interval, written in km at 111 km per degree as &quot;likely between&quot;), and whether one class makes up at least half of the biggest drops or surges. When we know the visitor&apos;s rough area, only their own continent&apos;s movers are described (or we say none moved clearly and name the busiest continents instead), and the class sentences, which always cover the whole world, start with &quot;Across the world&quot;. Only movers whose interval excludes no change are listed.</li>
         </ul>
         <p className="mt-3">
           Cautions. Rain and wind reduce what a microphone picks up, so fewer detections in bad weather is partly the instrument and not the animal; the text says so

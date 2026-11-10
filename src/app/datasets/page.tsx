@@ -32,7 +32,7 @@ export default async function Datasets() {
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-3">
           {me ? <Link href="/datasets/new" className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400">Upload a dataset</Link> : <ResearchSignIn next="/datasets/new" />}
-          <span className="text-xs text-slate-400">Uploading needs an ORCID iD, so every dataset is credited to a real person.</span>
+          <span className="text-xs text-slate-400">Uploading needs an ORCID iD (a free researcher ID, made in a minute at orcid.org), so every dataset is credited to a real person.</span>
         </div>
         {mine.length > 0 && <>
           <h2 className="mt-10 mb-2 text-xl font-semibold text-slate-100">Your drafts and submissions</h2>
@@ -69,11 +69,11 @@ function EmptyState({ signedIn }: { signedIn: boolean }) {
       <div className="mt-2 rounded-lg border border-dashed border-white/15 p-3 text-sm" aria-label="Example dataset page">
         <p className="text-xs uppercase tracking-wider text-slate-400">Example</p>
         <p className="mt-1 font-medium text-slate-100">Dawn chorus, Western Ghats field stations, 2026</p>
-        <p className="text-xs text-slate-400">Example University · 18,240 records · 142 species · 6 sites · 2026-01-05 to 2026-06-28 · CC BY 4.0</p>
+        <p className="text-xs text-slate-400">Example University · 18,240 records · 142 species · 6 sites · 2026-01-05 to 2026-06-28 · CC BY 4.0 (others may reuse it with credit)</p>
         <ul className="mt-2 list-disc space-y-0.5 pl-5 text-slate-300">
           <li>A citation with your name and ORCID iD, and credit wherever its records are used</li>
           <li>The species list with counts, and the checks each record passed</li>
-          <li>A Darwin Core CSV download, with positions rounded and sensitive species protected</li>
+          <li>A spreadsheet download in the standard format GBIF uses (Darwin Core), with positions rounded and sensitive species protected</li>
         </ul>
       </div>
       <div className="mt-5 flex flex-wrap gap-3 text-sm">

@@ -109,20 +109,20 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
           <figure className="mt-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={d.media.imageUrl} alt={`${title} (${d.name})`} className="w-full max-h-96 object-contain rounded-lg bg-slate-900" />
-            {(d.media.attribution || d.media.license) && <figcaption className="mt-1 text-xs text-slate-400">Image: {[d.media.attribution, d.media.license, d.media.source].filter(Boolean).join(", ")}</figcaption>}
+            {(d.media.attribution || d.media.license) && <figcaption className="mt-1 text-xs text-slate-400">Image: {[d.media.attribution, d.media.license, d.media.source && !(d.media.attribution ?? "").toLowerCase().includes(d.media.source.toLowerCase()) ? d.media.source : null].filter(Boolean).join(", ")}</figcaption>}
           </figure>
         )}
         {d.media?.extract && (
           <p className="mt-5">
             {d.media.extract}{" "}
-            {d.media.pageUrl && <a href={d.media.pageUrl} className="text-cyan-400 hover:underline" rel="noopener"><T k="Source" /></a>}
+            {d.media.pageUrl && <a href={d.media.pageUrl} className="text-cyan-400 hover:underline" rel="noopener"><T k={d.media.pageUrl.includes("wikipedia.org") ? "Read more on Wikipedia" : "Source"} /></a>}
           </p>
         )}
 
         <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="Where is the {name} now?" v={{ name: title }} names={nm} /></h2>
         <p className="mt-2">
           {d.recent.n > 0
-            ? <T k={d.recent.cells === 1 ? "In the last 8 weeks it was recorded {n} times in one area (a 5 degree square)." : "In the last 8 weeks it was recorded {n} times across {c} areas (each area is a 5 degree square)."} v={{ n: d.recent.n.toLocaleString("en-GB"), c: d.recent.cells }} />
+            ? <T k={d.recent.cells === 1 ? "In the last 8 weeks it was recorded {n} times in one area (about 550 km across)." : "In the last 8 weeks it was recorded {n} times across {c} areas (each about 550 km across)."} v={{ n: d.recent.n.toLocaleString("en-GB"), c: d.recent.cells }} />
             : <T k="No records in the last 8 weeks. It may be out of season where the observers and sensors are." />}
         </p>
         <p className="mt-3">
@@ -145,7 +145,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
         {d.arrivals.length > 0 && (
           <>
             <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="When does the {name} arrive?" v={{ name: title }} names={nm} /></h2>
-            <p className="mt-2"><T k="The week it was first heard regularly in each region, after at least six weeks away. Dates differ from south to north, so a region has a range." /></p>
+            <p className="mt-2"><T k="The week it was first heard regularly in each region, after at least six weeks away. Dates differ from south to north, so a region has a range." />{" "}<T k="Some birds that stay all year show an arrival date when they become easier to hear again, for example when they start singing in spring." /></p>
             <table className="mt-3 w-full text-sm">
               <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><T k="Region" /></th><th className="font-medium"><T k="First arrival" /></th><th className="font-medium"><T k="Last arrival" /></th><th className="font-medium"><T k="Typical peak" /></th><th className="font-medium text-right"><T k="Areas" /></th></tr></thead>
               <tbody>
@@ -179,7 +179,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
           <h2 className="text-lg font-semibold text-slate-100"><T k="Download the data" /></h2>
           <ul className="mt-2 space-y-1 text-sm">
             <li><DownloadLink href={openRecordsHref({ species: d.name })} k="Weekly records, last 12 months (CSV)" what="species-records" />{" "}
-              <span className="text-slate-400"><T k="GBIF records and contributed datasets under CC0 or CC BY 4.0, per 5 degree square." /></span></li>
+              <span className="text-slate-400"><T k="Records you may reuse freely, with credit, for areas about 550 km across." /></span></li>
             {d.arrivals.length > 0 && <li><DownloadLink href={`/api/v1/arrivals?species=${encodeURIComponent(d.name)}&format=csv`} k="Arrival dates per area (CSV)" what="species-arrivals" /></li>}
             <li><Link href="/data" className="text-cyan-400 hover:underline"><T k="Every species: open data releases and the API" /></Link></li>
           </ul>
@@ -192,7 +192,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
           </p>
         )}
         <p className="mt-8 text-sm text-slate-400">
-          <T k="Figures are effort corrected and come from automatic sound identification, which makes mistakes." />{" "}
+          <T k="Figures allow for how many recorders are listening, and come from automatic sound identification, which makes mistakes." />{" "}
           <Link href="/methods" className="text-cyan-400 hover:underline"><T k="How this is measured" /></Link>{" · "}
           <Link href="/validation" className="text-cyan-400 hover:underline"><T k="How it compares with human observers" /></Link>
         </p>

@@ -50,6 +50,11 @@ export default async function Research() {
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Research with Wildlife Network</h1>
         <p className="mt-2"><HelpLink to="/help/site/research" /></p>
+        <p className="mt-3 rounded-lg border border-white/10 bg-white/5 p-3 text-sm">
+          Just curious about wildlife near you? The <Link href="/" className="text-cyan-400 hover:underline">live map</Link>,{" "}
+          <Link href="/species" className="text-cyan-400 hover:underline">species pages</Link> and{" "}
+          <Link href="/alerts" className="text-cyan-400 hover:underline">alerts</Link> need no account. This page is for people who analyse the data.
+        </p>
         <p className="mt-3">
           Effort-corrected arrival dates, weekly records and range movement for birds, bats, amphibians and insects, from community acoustic stations and open
           records. Everything is open: the <Link href="/methods" className="text-cyan-400 hover:underline">methods</Link>, the{" "}
@@ -65,9 +70,9 @@ export default async function Research() {
           <Card href="/projects" title="Projects" text="Questions researchers want help with. Ask to join one, or post your own and say what help you need." stat={`${projects.filter((p) => p.open).length} open`} />
           <Card href="/studies" title="Study areas" text="Draw an area, pick a class or species. Get a live dashboard, a weekly digest and an export, and invite collaborators." stat={`${counts.studies} ${counts.studies === 1 ? "study" : "studies"}`} />
           <Card href="#review" title="Expert review" text="Mark arrival estimates you know as right, misidentified or resident. Two agreeing reviewers change the published dates." stat={`${counts.reviews} reviews by ${counts.reviewers}`} />
-          <Card href={STUDIO_URL} title="Process your recordings" text="Wildlife Network Studio, a free desktop app for Mac and Windows: BirdNET or Perch on your own computer, fast review, export for GBIF or publish here." stat="Free download" />
+          <Card href={STUDIO_URL} title="Process your recordings" text="Wildlife Network Studio, a free desktop app for Mac, Windows and Linux: BirdNET or Perch on your own computer, fast review, export for GBIF or publish here." stat="Free download" />
           <Card href="/datasets" title="Contribute a dataset" text="Upload detections from your own recorders (BirdNET, Kaleidoscope, any CSV). Checked, credited by name, citable." stat="ORCID sign-in" />
-          <Card href="#start" title="Start in 5 minutes" text="Copy a Python or R snippet, or open the starter notebook with the API and the open data release." stat="Python · R · notebook" />
+          <Card href="#start" title="Start in five minutes" text="Copy a Python or R snippet, or open the starter notebook with the API and the open data release." stat="Python · R · notebook" />
         </div>
 
         <H2 id="start">Start in five minutes</H2>

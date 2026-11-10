@@ -25,7 +25,7 @@ export const speciesSlug = (scientificName: string) => scientificName.toLowerCas
 /** Concept DOI: always resolves to the newest release, so it is the one to cite for "the Wildlife Network open data". */
 export const DATA_CONCEPT_DOI = "10.5281/zenodo.23193453";
 
-export const DATA_RELEASES: { date: string; url: string; zip: string; weeks: string; rows: { weekly: number; effort: number; arrivals: number; datasets: number; taxa?: number }; doi?: string; notes?: string; period?: string }[] = [
+export const DATA_RELEASES: { date: string; url: string; zip: string; weeks: string; rows: { weekly: number; effort: number; arrivals: number; datasets: number; taxa?: number }; doi?: string; notes?: string; period?: string; methods?: string }[] = [
   {
     date: "2026-10-30",
     url: "https://github.com/wlnw-org/wildnetwork/releases/tag/data-2026-10-30",
@@ -34,6 +34,7 @@ export const DATA_RELEASES: { date: string; url: string; zip: string; weeks: str
     period: "2025-10-27/2026-10-18",
     rows: { weekly: 352350, effort: 15986, arrivals: 4399, datasets: 286, taxa: 16765 },
     doi: "10.5281/zenodo.23796380",
+    methods: "0.16",
     notes: "Release 5: methods 0.16. Arrival dates need a real absence, so residents that fall quiet no longer get one, and dates whose 90% interval is wider than 8 weeks are dropped. Weekly records and effort are built as before; use this release for arrival dates.",
   },
   {
@@ -44,6 +45,7 @@ export const DATA_RELEASES: { date: string; url: string; zip: string; weeks: str
     period: "2025-10-27/2026-10-18",
     rows: { weekly: 352350, effort: 15986, arrivals: 4724, datasets: 284, taxa: 16765 },
     doi: "10.5281/zenodo.23731681",
+    methods: "0.13",
     notes: "Release 4: methods 0.13 (arrival estimates on the site can be reviewed by researchers; this file's GBIF-only arrivals are unfiltered so the two can be compared), a year up to 12 October 2026.",
   },
   {
@@ -54,6 +56,7 @@ export const DATA_RELEASES: { date: string; url: string; zip: string; weeks: str
     period: "2025-10-20/2026-10-11",
     rows: { weekly: 364108, effort: 16345, arrivals: 4716, datasets: 287, taxa: 17069 },
     doi: "10.5281/zenodo.23649030",
+    methods: "0.12",
     notes: "Release 3: a year up to 5 October 2026, arrival weeks with 90% intervals and how often a season was found (arrival_low, arrival_high, arrival_support), methods 0.12, published as Wildlife Network at wlnw.org.",
   },
   {

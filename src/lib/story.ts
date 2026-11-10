@@ -17,6 +17,8 @@ const KM_PER_DEG = 111;
 const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
 const quantile = (sorted: number[], q: number) => sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))];
 const round = (x: number, d = 0) => Math.round(x * 10 ** d) / 10 ** d;
+/** Degrees of latitude as a plain distance, rounded to 10 km. */
+const km = (deg: number) => round(Math.abs(deg) * 111, -1).toLocaleString("en-GB");
 const monthName = (iso: string) => new Date(iso).toLocaleDateString("en-GB", { month: "long", timeZone: "UTC" });
 const pct = (x: number) => `${Math.round(Math.abs(x) * 100)}%`;
 
@@ -129,10 +131,10 @@ export function speciesStory(name: string, daily: DayPoint[], climate: Climate |
     const ci = shiftInterval(located.map((d) => d.lat!), `${name}|shift`);
     const clear = !ci || ci[0] > 0 || ci[1] < 0;
     if (Math.abs(dLat) >= 2 && !clear) {
-      out.push(`Its range centre shifted about ${round(Math.abs(dLat))}° ${dLat > 0 ? "north" : "south"} over the last ${located.length} days, but day-to-day variation is as large as that (95% interval ${round(ci![0], 1)} to ${round(ci![1], 1)}° of latitude), so this is not a clear move.`);
+      out.push(`The middle of its range shifted about ${km(dLat)} km ${dLat > 0 ? "north" : "south"} over the last ${located.length} days, but it moves about that much from day to day anyway, so this is not a clear move.`);
     } else if (Math.abs(dLat) >= 2) {
-      const ciText = ci ? ` (95% interval ${round(Math.min(Math.abs(ci[0]), Math.abs(ci[1])), 1)} to ${round(Math.max(Math.abs(ci[0]), Math.abs(ci[1])), 1)}°)` : "";
-      let s = `Over the last ${located.length} days its range centre moved about ${round(Math.abs(dLat))}° ${dLat > 0 ? "north" : "south"}${ciText}, roughly ${round(Math.abs(dLat) * KM_PER_DEG, -1).toLocaleString("en-GB")} km.`;
+      const ciText = ci ? ` (likely between ${km(Math.min(Math.abs(ci[0]), Math.abs(ci[1])))} and ${km(Math.max(Math.abs(ci[0]), Math.abs(ci[1])))} km)` : "";
+      let s = `Over the last ${located.length} days the middle of its range moved about ${round(Math.abs(dLat) * KM_PER_DEG, -1).toLocaleString("en-GB")} km ${dLat > 0 ? "north" : "south"}${ciText}.`;
       if (t0.length && t1.length && Math.abs(mean(t1) - mean(t0)) >= 2) s += ` Daytime highs where it is concentrated went from ${round(mean(t0))}°C to ${round(mean(t1))}°C.`;
       out.push(s);
     } else {
@@ -185,21 +187,21 @@ export function overview(drift: DriftRow[], movers: MoverRow[], homeRegion: stri
   if (homeRegion) {
     const home = byRegion.get(homeRegion);
     if (home) regions = [[homeRegion, home]];
-    else out.push(`No species in ${homeRegion} moved clearly enough this week to describe${regions.length ? ". Elsewhere:" : "."}`);
+    else out.push(`No species in ${homeRegion} moved far enough this week to stand out${regions.length ? ". Elsewhere:" : "."}`);
   }
   for (const [region, rows] of regions) {
     if (rows.length < 3) {
       // One or two clear movers: name the fastest, with its interval, rather than a count.
       const lead = [...rows].sort((a, b) => Math.abs(b.driftDeg) - Math.abs(a.driftDeg))[0];
-      const ci = lead.driftLow != null && lead.driftHigh != null ? ` (95% interval ${round(Math.min(Math.abs(lead.driftLow), Math.abs(lead.driftHigh)))} to ${round(Math.max(Math.abs(lead.driftLow), Math.abs(lead.driftHigh)))}°)` : "";
-      out.push(`In ${region}, ${lead.vernacularName ?? lead.scientificName} is the clearest mover this week: its range centre shifted about ${round(Math.abs(lead.driftDeg))}° ${lead.driftDeg < 0 ? "south" : "north"}${ci}.`);
+      const ci = lead.driftLow != null && lead.driftHigh != null ? ` (likely between ${km(Math.min(Math.abs(lead.driftLow), Math.abs(lead.driftHigh)))} and ${km(Math.max(Math.abs(lead.driftLow), Math.abs(lead.driftHigh)))} km)` : "";
+      out.push(`In ${region}, ${lead.vernacularName ?? lead.scientificName} moved furthest this week: the middle of its range shifted about ${km(lead.driftDeg)} km ${lead.driftDeg < 0 ? "south" : "north"}${ci}.`);
       continue;
     }
     const south = rows.filter((r) => r.driftDeg < 0).length;
     const dir = south >= rows.length / 2 ? "south" : "north";
     const k = dir === "south" ? south : rows.length - south;
     const lead = [...rows].filter((r) => (dir === "south" ? r.driftDeg < 0 : r.driftDeg > 0)).sort((a, b) => Math.abs(b.driftDeg) - Math.abs(a.driftDeg))[0];
-    out.push(`In ${region}, ${k} of the ${rows.length} fastest moving species are heading ${dir}, led by ${lead.vernacularName ?? lead.scientificName} (${round(Math.abs(lead.driftDeg))}° in a week).`);
+    out.push(`In ${region}, ${k} of the ${rows.length} fastest moving species are heading ${dir}, led by ${lead.vernacularName ?? lead.scientificName} (about ${km(lead.driftDeg)} km in a week).`);
   }
   const fading = movers.filter((m) => m.ratio < 1), surging = movers.filter((m) => m.ratio >= 1);
   const dominant = (rows: MoverRow[]) => {

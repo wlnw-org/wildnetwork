@@ -2,7 +2,8 @@
  * Public updates, newest first. Shown on /updates and sent by scripts/send-update.mts (which Arun runs himself).
  * Plain language, what changed for people using the site. No internal details, no em dashes.
  */
-export interface UpdateItem { text: string; href?: string }
+/** forResearchers: shown under a separate "For researchers" heading so other readers can skip it. */
+export interface UpdateItem { text: string; href?: string; forResearchers?: boolean }
 export interface Update { date: string; title: string; items: UpdateItem[] }
 
 export const UPDATES: Update[] = [
@@ -10,11 +11,11 @@ export const UPDATES: Update[] = [
     date: "2026-11-07",
     title: "Upload your datasets, download more easily, and reports for parks",
     items: [
-      { text: "Wildlife Network Studio 0.1.0, a free desktop app for Mac and Windows: point it at a drive of recordings, it finds the species on your own computer with BirdNET or Perch, helps you check them in minutes, and publishes them here or exports them for GBIF. Its own classifier learns local species from your answers.", href: "/studio" },
-      { text: "Contributed datasets: upload detection tables from BirdNET, Kaleidoscope or any CSV. Records are checked automatically, and each dataset gets its own page, citation and credit wherever it is used.", href: "/datasets" },
-      { text: "Upload keys let desktop tools and scripts add records to a dataset without a browser.", href: "/institutions#in" },
+      { text: "Wildlife Network Studio 0.1.0, a free desktop app for Mac, Windows and Linux: point it at a drive of recordings, it finds the species on your own computer with BirdNET or Perch, helps you check them in minutes, and publishes them here or exports them for GBIF. Its own classifier learns local species from your answers.", href: "/studio" },
+      { text: "Contributed datasets: upload detection tables from BirdNET, Kaleidoscope or any CSV. Records are checked automatically, and each dataset gets its own page, citation and credit wherever it is used.", href: "/datasets", forResearchers: true },
+      { text: "Upload keys let desktop tools and scripts add records to a dataset without a browser.", href: "/institutions#in", forResearchers: true },
       { text: "Download buttons on every species page and on area reports: weekly records you may reuse (GBIF and openly licensed datasets), plus arrival dates. The open data page now lists every way to get the data.", href: "/data#get" },
-      { text: "A new page for institutions and GBIF nodes: how to send data in, take it out, which licences are accepted, how sensitive species are protected and how credit works.", href: "/institutions" },
+      { text: "A new page for institutions and GBIF nodes: how to send data in, take it out, which licences are accepted, how sensitive species are protected and how credit works.", href: "/institutions", forResearchers: true },
       { text: "Site reports can carry a place name, such as a national park, and have a link to share. Area reports show species and records per week, with thinly covered weeks marked.", href: "/report" },
       { text: "Site reports can be opened from the map, for the area you are looking at or a place you searched." },
     ],
@@ -24,9 +25,9 @@ export const UPDATES: Update[] = [
     title: "Site reports and projects",
     items: [
       { text: "Site reports: pick a place and dates to see what was recorded around it, week by week, and compare two periods, such as before and after a restoration. Where no station keeps its history here, the report uses the surrounding 5 degree area.", href: "/report" },
-      { text: "A project board for research questions, where anyone signed in with ORCID can ask to join a project or a study area.", href: "/projects" },
+      { text: "A project board for research questions, where anyone signed in with ORCID can ask to join a project or a study area.", href: "/projects", forResearchers: true },
       { text: "Species photos are no longer cropped, on the site and in alert emails." },
-      { text: "GBIF records are refreshed back a full year, so late records are counted." },
+      { text: "GBIF records are refreshed back a full year, so late records are counted.", forResearchers: true },
     ],
   },
   {
@@ -35,7 +36,7 @@ export const UPDATES: Update[] = [
     items: [
       { text: "An arrival date now needs a real absence first, so resident birds that go quiet for a while no longer get one. Dates with very wide uncertainty are left out.", href: "/methods" },
       { text: "A new list of species possibly arriving: recent returns that are not yet confirmed. In tests, about two in three were confirmed the following week." },
-      { text: "Open data release 5 is on Zenodo with the new rules.", href: "/data" },
+      { text: "Open data release 5 is on Zenodo with the new rules.", href: "/data", forResearchers: true },
       { text: "Species pages, place pages and map panels show species names and dates in your language." },
     ],
   },
@@ -46,8 +47,8 @@ export const UPDATES: Update[] = [
       { text: "Look back over the last 7 days, 30 days or 12 months on the map, with the most recorded species in each area." },
       { text: "Search for a town to see what is recorded around it, with a page for 97 cities.", href: "/places" },
       { text: "The map and species pages are available in Spanish, French, German, Portuguese, Hindi and Tamil." },
-      { text: "A research hub with ORCID sign-in, study areas with weekly digests and shared access, and expert review of arrival dates.", href: "/research" },
-      { text: "Open data release 4 is on Zenodo.", href: "/data" },
+      { text: "A research hub with ORCID sign-in, study areas with weekly digests and shared access, and expert review of arrival dates.", href: "/research", forResearchers: true },
+      { text: "Open data release 4 is on Zenodo.", href: "/data", forResearchers: true },
       { text: "A new welcome tour for first-time visitors." },
     ],
   },
@@ -58,7 +59,7 @@ export const UPDATES: Update[] = [
       { text: "Get one email when a species arrives near you after weeks away. Confirm first, unsubscribe in one click." },
       { text: "The map starts near your area, and the Listen button prefers recordings from your country." },
       { text: "Pages for each region's arrivals, month by month.", href: "/arrivals" },
-      { text: "Open data release 3 is on Zenodo.", href: "/data" },
+      { text: "Open data release 3 is on Zenodo.", href: "/data", forResearchers: true },
     ],
   },
 ];

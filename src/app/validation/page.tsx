@@ -1,3 +1,4 @@
+import { METHODS_VERSION } from "@/lib/methods";
 import type { Metadata } from "next";
 import Link from "next/link";
 import PausedNotice from "@/components/PausedNotice";
@@ -24,7 +25,7 @@ export default function Validation() {
     return (
       <main className="flex-1 bg-slate-950 text-slate-300">
         <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-          <Link href="/methods" className="text-sm text-cyan-400 hover:underline">← Methods</Link>
+          <Link href="/methods" className="text-sm text-cyan-400 hover:underline">Methods</Link>
           <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Validation: arrival dates</h1>
           <PausedNotice className="mt-6" />
           <p className="mt-4">The validation compared arrival dates derived from BirdWeather detections with iNaturalist observations. It is withdrawn while that data is paused.</p>
@@ -47,9 +48,14 @@ export default function Validation() {
   return (
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <Link href="/methods" className="text-sm text-cyan-400 hover:underline">← Methods</Link>
+        <Link href="/methods" className="text-sm text-cyan-400 hover:underline">Methods</Link>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Validation: arrival dates</h1>
         <p className="mt-1 text-sm text-slate-400">Run on {fmt(S.generatedAt)} 2026 · methods {S.methods} · weeks {fmt(S.weeks[0])} 2025 to {fmt(S.weeks[1])} 2026</p>
+        {S.methods !== METHODS_VERSION && (
+          <p className="mt-3 rounded-lg border border-amber-400/30 bg-amber-400/10 p-3 text-sm text-amber-100">
+            This comparison was run with methods {S.methods}. The site now uses methods {METHODS_VERSION}, whose later rules remove more doubtful arrival dates, so it is due a rerun.
+          </p>
+        )}
 
         <p className="mt-6">
           Wildlife Network estimates when a species arrives in a region from acoustic detections. This page compares those estimates with an independent source:

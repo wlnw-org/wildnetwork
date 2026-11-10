@@ -36,6 +36,8 @@ function Card({ s }: { s: LostPublic }) {
 }
 
 /** Public list of lost species with the "Help find lost species" section. List facts only: records we receive are never shown. */
+const REALMS = new Set(["Afrotropic", "Antarctic", "Australasia", "Indomalaya", "Nearctic", "Neotropic", "Oceania", "Palearctic"]);
+
 export default async function LostSpecies({ searchParams }: Props) {
   const sp = await searchParams;
   const all = await lostSpeciesPublic().catch(() => [] as LostPublic[]);
@@ -97,7 +99,12 @@ export default async function LostSpecies({ searchParams }: Props) {
             <label className="flex flex-col gap-1">Country
               <select name="country" defaultValue={country} className="rounded-md border border-white/15 bg-slate-900 px-2 py-1.5 text-slate-200">
                 <option value="">All countries</option>
-                {[...countries].sort((a, b) => a[0].localeCompare(b[0])).map(([c, n]) => <option key={c} value={c}>{c} ({n})</option>)}
+                {[...countries].filter(([c]) => !REALMS.has(c)).sort((a, b) => a[0].localeCompare(b[0])).map(([c, n]) => <option key={c} value={c}>{c} ({n})</option>)}
+                {[...countries].some(([c]) => REALMS.has(c)) && (
+                  <optgroup label="Wider regions (country unknown)">
+                    {[...countries].filter(([c]) => REALMS.has(c)).sort((a, b) => a[0].localeCompare(b[0])).map(([c, n]) => <option key={c} value={c}>{c} ({n})</option>)}
+                  </optgroup>
+                )}
               </select>
             </label>
             <label className="flex flex-col gap-1">Animal group

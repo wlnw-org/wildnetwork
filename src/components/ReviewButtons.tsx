@@ -28,15 +28,19 @@ export default function ReviewButtons({ species, cellLat, cellLon, counts, signe
     });
     setMine(next);
   }
+  if (!signedIn) {
+    const tally = VERDICTS.filter(({ v }) => c[v]).map(({ v, label }) => `${label} ${c[v]}`).join(", ");
+    return <span className="text-xs text-slate-400">{tally ? `${tally}. ` : ""}Sign in to review</span>;
+  }
   return (
     <div className="flex flex-wrap items-center gap-1">
       {VERDICTS.map(({ v, label }) => (
         <button key={v} disabled={!signedIn} onClick={() => vote(v)} title={signedIn ? label : "Sign in with ORCID to review"}
-          className={`rounded border px-1.5 py-0.5 text-[11px] ${mine === v ? "border-cyan-400 bg-cyan-400/15 text-cyan-200" : "border-white/10 text-slate-400 hover:text-slate-200"} disabled:opacity-50`}>
+          className={`rounded border px-2 py-1 text-xs ${mine === v ? "border-cyan-400 bg-cyan-400/15 text-cyan-200" : "border-white/10 text-slate-400 hover:text-slate-200"} disabled:opacity-50`}>
           {label}{c[v] ? ` ${c[v]}` : ""}
         </button>
       ))}
-      {err && <span className="text-[11px] text-rose-300">{err}</span>}
+      {err && <span className="text-xs text-rose-300">{err}</span>}
     </div>
   );
 }

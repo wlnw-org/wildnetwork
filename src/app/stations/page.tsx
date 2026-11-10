@@ -13,6 +13,8 @@ export const metadata: Metadata = {
 
 const LABEL: Record<string, string> = { birdweather: "BirdWeather stations", inaturalist: "iNaturalist observers", gbif: "GBIF datasets (live)" };
 
+const KIND: Record<string, string> = { "acoustic-recorder": "Sound recorder", "bat-detector": "Bat detector", "camera-trap": "Camera trap", "ultrasonic-recorder": "Bat detector" };
+
 export default async function Stations() {
   const [bySource, direct, optins, devices] = await Promise.all([
     sql<{ source_system: string; active: number; total: number }[]>`
@@ -21,7 +23,7 @@ export default async function Stations() {
     sql<{ id: string; name: string | null; sensor_type: string | null; sensor_model: string | null; lat: number; lon: number; last_seen: string | null; n: number }[]>`
       SELECT d.id, d.name, d.sensor_type, d.sensor_model, ROUND(d.latitude::numeric, 1)::float AS lat, ROUND(d.longitude::numeric, 1)::float AS lon, d.last_seen::text,
              (SELECT COUNT(*) FROM events e WHERE e.deployment_id = d.id)::int AS n
-      FROM deployments d WHERE d.source_system NOT IN ('birdweather', 'inaturalist', 'gbif', 'acartia')
+      FROM deployments d WHERE d.source_system NOT IN ('birdweather', 'inaturalist', 'gbif', 'acartia', 'obis', 'orcasound')
       ORDER BY d.last_seen DESC NULLS LAST LIMIT 200`,
     sql<{ station_id: number; display_name: string | null; station_type: string | null; lat: number | null; lon: number | null; precision_km: number; license: string; species: number; days: number }[]>`
       SELECT o.station_id, o.display_name, o.station_type, o.lat, o.lon, o.precision_km, o.license,
@@ -56,7 +58,7 @@ export default async function Stations() {
         <h2 className="mt-10 text-xl font-semibold text-slate-100">BirdWeather stations that opted in</h2>
         <p className="mt-2">
           These owners chose to share their station&apos;s full daily counts, under their own licence, at the precision they picked.{" "}
-          <Link href="/stations/join" className="text-cyan-400 hover:underline">Opt your BirdWeather station in</Link>.
+          <Link href="/stations/join" className="text-cyan-400 hover:underline">Add your BirdWeather station</Link>.
         </p>
         {optins.length ? (
           <table className="mt-4 w-full text-sm">
@@ -79,17 +81,17 @@ export default async function Stations() {
 
         <h2 className="mt-10 text-xl font-semibold text-slate-100">Stations sending directly</h2>
         <p className="mt-2">
-          These owners run the free wdx-agent on a BirdNET-Pi, BirdNET-Go, bat detector or camera trap. Their detections are published under the licence they choose,
+          These owners run our free station program (wdx-agent) on a BirdNET-Pi, BirdNET-Go, bat detector or camera trap. Their detections are published under the licence they choose,
           so they can go into the <Link href="/data" className="text-cyan-400 hover:underline">open data releases</Link>. Coordinates are rounded to about 1 km on the device.
         </p>
         {direct.length ? (
           <table className="mt-4 w-full text-sm">
-            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium">Station</th><th className="font-medium">Sensor</th><th className="font-medium">Where</th><th className="font-medium text-right">Detections</th></tr></thead>
+            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium">Station</th><th className="font-medium">Kind of station</th><th className="font-medium">Where</th><th className="font-medium text-right">Detections</th></tr></thead>
             <tbody>
               {direct.map((d) => (
                 <tr key={d.id} className="border-b border-white/5">
                   <td className="py-1.5">{d.name ?? d.id.split(":").slice(1).join(":")}</td>
-                  <td>{[d.sensor_type, d.sensor_model].filter(Boolean).join(", ")}</td>
+                  <td>{KIND[d.sensor_type ?? ""] ?? "Station"}</td>
                   <td>{d.lat}°, {d.lon}°</td>
                   <td className="text-right">{d.n.toLocaleString("en-GB")}</td>
                 </tr>

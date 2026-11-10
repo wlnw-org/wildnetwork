@@ -29,7 +29,7 @@ export default function AboutPanel() {
         <p>
           <a href="https://www.arunrajiah.com" target="_blank" rel="noreferrer" className="text-cyan-400 hover:underline">Arun Rajiah</a>, as part of an open
           set of wildlife tools: <Link href="https://github.com/arunrajiah/wildlife-detection-exchange">WDX</Link> (the detection exchange format this site speaks),{" "}
-          <Link href="https://github.com/arunrajiah/birdecho">BirdEcho</Link> (Android app: <Link href="https://play.google.com/store/apps/details?id=dev.arunrajiah.birdecho">get it on Google Play</Link>), <Link href="https://github.com/arunrajiah/wildecho">WildEcho</Link>, <Link href="/studio">Wildlife Network Studio</Link> (desktop app for Mac and Windows) and{" "}
+          <Link href="https://github.com/arunrajiah/birdecho">BirdEcho</Link> (Android app: <Link href="https://play.google.com/store/apps/details?id=dev.arunrajiah.birdecho">get it on Google Play</Link>), <Link href="https://github.com/arunrajiah/wildecho">WildEcho</Link>, <Link href="/studio">Wildlife Network Studio</Link> (desktop app for Mac, Windows and Linux) and{" "}
           <Link href="https://github.com/arunrajiah/speciesnet-studio">SpeciesNet Studio</Link>. Source code:{" "}
           <Link href="https://github.com/wlnw-org/wildnetwork">github.com/wlnw-org/wildnetwork</Link>.
         </p>

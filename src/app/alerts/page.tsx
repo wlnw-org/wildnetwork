@@ -29,7 +29,7 @@ export default function Alerts() {
 
         <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="When an alert is sent" /></h2>
         <p className="mt-2">
-          <T k="When at least three records come in from the area around your town (a 5 degree grid square) this week or last, after at least four watched weeks without any. At most one email every eight weeks per species." />{" "}
+          <T k="When it is recorded at least three times in the wider area around your town (about 550 km across) this week or last, after a month or more without records. At most one email every eight weeks per species." />{" "}
           <Link href="/methods" className="text-cyan-400 hover:underline"><T k="Methods" /></Link>
         </p>
 

@@ -70,9 +70,10 @@ export default async function Contribute() {
         </p>
 
         <h2 className="mt-8 mb-3 text-xl font-semibold text-slate-100">Where are you starting from?</h2>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Card href="#computer" title="I have recordings or photos on my computer" text="Use the free Studio app for Mac, Windows and Linux. No typing commands." />
           <Card href="#birdweather" title="My station is on BirdWeather" text="You are already included. Nothing to install." />
-          <Card href="#have" title="I have a device" text="BirdNET-Pi, BirdNET-Go, a camera trap, a bat detector, or other software." />
+          <Card href="#have" title="I have a station running all the time" text="BirdNET-Pi, BirdNET-Go, a camera trap, a bat detector, or other software." />
           <Card href="#new" title="I want to set one up" text="What to buy and how to build a bird, bat or camera station." />
         </div>
 
@@ -102,7 +103,7 @@ export default async function Contribute() {
                 </tr>))}</tbody>
             </table>
             <p className="mt-2 text-xs text-slate-400">
-              Stations heard from in the last 30 days, from BirdWeather and devices sending here directly. An area is a 5 degree square (about 550 km across); it
+              Stations heard from in the last 30 days, from BirdWeather and devices sending here directly. An area is a square about 550 km across (5 degrees of latitude and longitude); it
               counts as watched at {MIN_EFFORT_WEEK.toLocaleString("en-GB")} bird detections a week, averaged over four recent weeks. India and neighbours is the box
               from 5 to 35° N and 65 to 95° E and is also counted in Asia. Turn on Coverage in the map legend to see each area.
             </p>
@@ -114,28 +115,44 @@ export default async function Contribute() {
           </>
         )}
 
+        <H2 id="computer">Recordings or photos on your computer</H2>
+        <p>
+          Have a memory card or a drive full of recordings from an AudioMoth, a Song Meter or a phone, or photos from a camera trap? Download{" "}
+          <Link href="/studio" className="text-cyan-400 hover:underline">Wildlife Network Studio</Link>, a free app for Mac, Windows and Linux. Point it at the folder:
+          it finds the species on your own computer, helps you check them in minutes, and adds them here as a dataset with your name on it. Nothing is uploaded until you
+          choose to share. <Link href="/help/studio" className="text-cyan-400 hover:underline">Step by step guides and videos</Link>.
+        </p>
+        <p className="mt-3">
+          Already have a results table from BirdNET or Kaleidoscope? <Link href="/datasets/new" className="text-cyan-400 hover:underline">Upload it as a dataset</Link>{" "}
+          straight from your browser.
+        </p>
+
         <H2 id="birdweather">Already on BirdWeather? You are done</H2>
         <p>
-          Wildlife Network reads BirdWeather&apos;s public detections (never the recordings). If you have a BirdWeather PUC, or your BirdNET-Pi or BirdNET-Go station uploads to BirdWeather,
+          Wildlife Network reads BirdWeather&apos;s public detections (never the recordings). If you have a BirdWeather PUC (a ready made listening device), or your BirdNET-Pi or BirdNET-Go station uploads to BirdWeather,
           your detections are on the map and in every measure. <b>Do not install the agent as well:</b> the same detections would arrive twice and be counted twice.
         </p>
         <p className="mt-3">
           Not sure? Look for your station on <A href="https://app.birdweather.com">app.birdweather.com</A>. If it is there, you are included.
         </p>
         <p className="mt-3">
-          Want more say in how your station appears? <Link href="/stations/join" className="text-cyan-400 hover:underline">Opt it in</Link>: choose a name or stay anonymous,
+          Want more say in how your station appears? <Link href="/stations/join" className="text-cyan-400 hover:underline">Add your BirdWeather station</Link>: choose a name or stay anonymous,
           pick how precisely it is located, and share its full daily counts in the open data releases under your licence.
         </p>
 
-        <H2 id="have">I have a device</H2>
+        <H2 id="have">I have a station running all the time</H2>
         <p>
+          This part needs a few typed commands on the computer that runs your station. If that is new to you, the{" "}
+          <Link href="/studio" className="text-cyan-400 hover:underline">Studio app</Link> above is the easier way to share recordings.
+        </p>
+        <p className="mt-3">
           You install one small program, <A href={AGENT}>wdx-agent</A>, on the computer that holds your detections. It is a single open source Python file with no
           dependencies. It reads what your detector has already found and sends it. It never changes your detector&apos;s files, and it catches up by itself after
           being offline.
         </p>
 
         <H3 id="birdnet-pi">BirdNET-Pi</H3>
-        <p>Open a terminal on the Pi (or connect with SSH) and run:</p>
+        <p>Open a terminal on the Pi (or connect to it from another computer with SSH), paste this line and press Enter:</p>
         <CopyBlock>{`curl -fsSL ${SITE}/agent/install.sh | bash`}</CopyBlock>
         <p>
           The installer finds BirdNET-Pi&apos;s database, registers your station, and starts a background service. It uses the location you set in BirdNET-Pi. That is all.
@@ -156,13 +173,9 @@ export default async function Contribute() {
         <CopyBlock>{`curl -fsSL ${SITE}/agent/install.sh | WDX_SOURCE=speciesnet WDX_PATH=/data/camtrap WDX_LAT=11.41 WDX_LON=76.69 bash`}</CopyBlock>
         <p className="text-sm text-slate-400">Blank images, people and vehicles are never sent. One agent serves one location, so use one setup per camera site.</p>
         <p>
-          <b>Want a person to check the results first?</b> Use <A href="https://github.com/arunrajiah/speciesnet-studio">SpeciesNet Studio</A> instead of the agent: it runs
-          SpeciesNet, lets you confirm, correct or flag each image, and sends the reviewed results here from its Export dialog, marked as confirmed by a reviewer. Get its key
-          with:
+          <b>Want to check the photos yourself first?</b> Use <Link href="/studio" className="text-cyan-400 hover:underline">Wildlife Network Studio</Link> instead of the
+          agent: it finds the animals in your photos, lets you confirm or correct each one, and adds the checked results here as a dataset. No commands needed.
         </p>
-        <CopyBlock>{`curl -X POST ${SITE}/api/v1/register \\
-  -H 'content-type: application/json' \\
-  -d '{"name":"my-camera-site","source":"speciesnet-studio"}'`}</CopyBlock>
         <p className="text-sm text-slate-400">Use one route per camera: the agent sends unchecked predictions automatically, Studio sends checked ones.</p>
 
         <H3 id="bat">Bat detector</H3>
@@ -186,20 +199,9 @@ export default async function Contribute() {
         </p>
         <p className="mt-2">
           Recordings that were never processed? <a href={STUDIO_URL} className="text-cyan-400 hover:underline" rel="noopener">Wildlife Network Studio</a> is a free
-          desktop app for Mac and Windows: point it at a drive, it finds the species on your own computer (BirdNET or Perch), helps you check them in
+          desktop app for Mac, Windows and Linux: point it at a drive, it finds the species on your own computer (BirdNET or Perch), helps you check them in
           minutes, and publishes them here as a dataset or exports them for GBIF.
         </p>
-
-        <H3 id="api">Your own detector or code</H3>
-        <p>Send detections straight to the API in the open <A href="https://github.com/arunrajiah/wildlife-detection-exchange">WDX</A> format. Get a key, then post events:</p>
-        <CopyBlock>{`curl -X POST ${SITE}/api/v1/register \\
-  -H 'content-type: application/json' \\
-  -d '{"name":"my-station","source":"other"}'
-
-curl -X POST ${SITE}/api/v1/events \\
-  -H "Authorization: Bearer wn_YOUR_KEY" \\
-  -H "content-type: application/x-ndjson" \\
-  --data-binary @events.wdx.ndjson`}</CopyBlock>
 
         <H2 id="new">I want to set one up</H2>
         <p>Three kinds of station, from easiest to most involved. Each links to the maker&apos;s own guide for the build, then you come back here to connect it.</p>
@@ -232,15 +234,14 @@ curl -X POST ${SITE}/api/v1/events \\
           <><b>Get a trail camera</b> and an SD card. Any model that saves ordinary photos works.</>,
           <><b>Mount it</b> at about knee height on a game trail or by water, facing north or south to avoid direct sun, with nothing moving in front.</>,
           <><b>Collect the card</b> every few weeks and copy the images to a computer. Keep the file dates when copying, since the agent uses them as the time of each sighting.</>,
-          <><b>Classify the images</b> with <A href="https://github.com/google/cameratrapai">SpeciesNet</A>.</>,
-          <><b>Connect it:</b> run the <a href="#camera" className="text-cyan-400 hover:underline">camera trap install</a> above with the camera&apos;s location.</>,
+          <><b>Find the animals:</b> open the folder in <Link href="/studio" className="text-cyan-400 hover:underline">Wildlife Network Studio</Link>, check the photos and share them. (Or classify them with <A href="https://github.com/google/cameratrapai">SpeciesNet</A> and run the <a href="#camera" className="text-cyan-400 hover:underline">camera trap install</a> above.)</>,
         ]} />
 
         <H2 id="check">Check that it is working</H2>
         <ul className="mt-2 list-disc pl-5 space-y-2">
           <li>Watch the agent: <code className="text-slate-200">journalctl -u wdx-agent -f</code>. A healthy line reads <code className="text-slate-200">sent 12 (new 12, updated 0, rejected 0)</code>.</li>
           <li>See what would be sent, without sending anything: <code className="text-slate-200">python3 /opt/wdx-agent/wdx_agent.py --config /etc/wdx-agent.ini --dry-run</code>.</li>
-          <li>On the <Link href="/" className="text-cyan-400 hover:underline">map</Link>, detections from the last three hours appear as pink &quot;Devices&quot; dots at your rounded location.</li>
+          <li>On the <Link href="/" className="text-cyan-400 hover:underline">map</Link>, detections from the last three hours appear as pink &quot;Stations sending directly&quot; dots at your rounded location.</li>
           <li>Your detections join the movement measures within about an hour.</li>
         </ul>
 
@@ -251,7 +252,7 @@ curl -X POST ${SITE}/api/v1/events \\
           <li><b>No account.</b> The installer registers a key for your device. A station name is optional.</li>
           <li><b>You choose the license.</b> The default is CC BY 4.0, which lets others use your detections with credit.</li>
           <li><b>Sensitive species.</b> If your station records a threatened species at a known site, use the coarser rounding or leave that station out.</li>
-          <li><b>Stopping and removal.</b> Uninstall at any time with the commands in the <A href={`${AGENT}#uninstall`}>agent guide</A>. To have your station&apos;s data removed, <A href="https://github.com/wlnw-org/wildnetwork/issues/new">open an issue</A> with your station id (it is in the first line of the agent&apos;s log).</li>
+          <li><b>Stopping and removal.</b> Uninstall at any time with the commands in the <A href={`${AGENT}#uninstall`}>agent guide</A>. To have your station&apos;s data removed, email <a href="mailto:arunrajiah@gmail.com" className="text-cyan-400 hover:underline">arunrajiah@gmail.com</a> or use the <Link href="/feedback" className="text-cyan-400 hover:underline">feedback form</Link>, with your station id (the agent&apos;s log shows it on its first line).</li>
         </ul>
 
         <H2 id="trouble">If something goes wrong</H2>
@@ -263,7 +264,7 @@ curl -X POST ${SITE}/api/v1/events \\
                 ["\"no coordinates\" in the log", "Add latitude and longitude to /etc/wdx-agent.ini."],
                 ["\"server rejected the whole batch\"", "The key was registered for a different source. Register a new one for the right source."],
                 ["Nothing is sent", "Run the dry run. If it shows 0 events, everything is below min_confidence or already sent."],
-                ["Something else", "The agent guide has a longer list, and you can open an issue."],
+                ["Something else", "The agent guide has a longer list, or write to us through the feedback form."],
               ].map(([a, b]) => (
                 <tr key={a} className="border-b border-slate-900 align-top"><td className="py-2 pr-4 text-slate-200 w-2/5">{a}</td><td className="py-2">{b}</td></tr>
               ))}
@@ -274,6 +275,17 @@ curl -X POST ${SITE}/api/v1/events \\
           Full reference, every setting, and manual install steps: the <A href={`${AGENT}#readme`}>wdx-agent guide</A>. Problems or questions:{" "}
           <A href={`${AGENT}/issues`}>open an issue</A>.
         </p>
+
+        <H2 id="api">For developers: your own detector or code</H2>
+        <p>Send detections straight to the API in our open data format (<A href="https://github.com/arunrajiah/wildlife-detection-exchange">WDX</A>). Get a key, then post events:</p>
+        <CopyBlock>{`curl -X POST ${SITE}/api/v1/register \\
+  -H 'content-type: application/json' \\
+  -d '{"name":"my-station","source":"other"}'
+
+curl -X POST ${SITE}/api/v1/events \\
+  -H "Authorization: Bearer wn_YOUR_KEY" \\
+  -H "content-type: application/x-ndjson" \\
+  --data-binary @events.wdx.ndjson`}</CopyBlock>
 
         <p className="mt-10 text-sm text-slate-400">
           How your data is used in the measures: <Link href="/methods" className="text-cyan-400 hover:underline">Methods</Link>. Made by{" "}

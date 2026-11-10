@@ -141,6 +141,8 @@ export default function WorldMap() {
   const thumbsRef = useRef<Record<string, string | null>>({});
   // Local first: the panel lists follow the visitor's area (IP area or a ?lat&lon link) unless they choose the whole world.
   const [home, setHome] = useState<{ lat: number; lon: number; city?: string | null } | null>(null);
+  // Set when the map has eased to the visitor's area and no live dot is in view: offers the last 7 days instead of an empty map.
+  const [quietNear, setQuietNear] = useState(false);
   const [homeReady, setHomeReady] = useState(false);
   const [areaWorld, setAreaWorld] = useState(() => { try { return typeof window !== "undefined" && localStorage.getItem("wn_area_world") === "1"; } catch { return false; } });
   const liveHours = group === "bat" && !species ? 24 : hours; // the bat layer covers a day
@@ -178,10 +180,18 @@ export default function WorldMap() {
       getJson<{ lat?: number; lon?: number; city?: string | null }>("/api/v1/near", 8000).then(({ data: n }) => {
         if (cancelled || n.lat == null || n.lon == null) return;
         setHome({ lat: n.lat, lon: n.lon, city: n.city });
-        if (!qs.has("species")) map.easeTo({ center: [n.lon, n.lat], zoom: 4, duration: 1800, padding: { top: 0, bottom: 0, right: 0, left: window.innerWidth >= 768 ? 420 : 0 } });
+        if (!qs.has("species")) {
+          map.easeTo({ center: [n.lon, n.lat], zoom: 4, duration: 1800, padding: { top: 0, bottom: 0, right: 0, left: window.innerWidth >= 768 ? 420 : 0 } });
+          map.once("moveend", () => setTimeout(() => {
+            if (cancelled) return;
+            try { if (map.getLayer("events") && map.queryRenderedFeatures({ layers: ["events"] }).length === 0) setQuietNear(true); } catch { /* style not ready */ }
+          }, 4000));
+        }
       }).catch(() => {}).finally(() => { if (!cancelled) setHomeReady(true); });
     }
     map.on("load", () => {
+      // On phones the attribution starts folded to its (i) button instead of covering the bottom of the map.
+      if (window.innerWidth < 768) containerRef.current?.querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");
       map.addSource("cells", { type: "geojson", data: EMPTY });
       map.addSource("deployments", { type: "geojson", data: EMPTY });
       map.addSource("events", { type: "geojson", data: EMPTY });
@@ -925,7 +935,7 @@ export default function WorldMap() {
             </div>
           )}
           <div className="px-4 py-2 border-t border-white/5 text-xs text-slate-300 flex flex-wrap gap-x-3 gap-y-1 max-md:hidden">
-            <Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label={t("WDX devices")} /><Legend color="#60a5fa" label="Acartia" /><Legend color="#2dd4bf" label="Orcasound" /><Legend color="#38bdf8" label="OBIS" />
+            <Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label={t("Stations sending directly")} /><Legend color="#60a5fa" label="Acartia" /><Legend color="#2dd4bf" label="Orcasound" /><Legend color="#38bdf8" label="OBIS" />
             <span className="text-slate-400">{t("{n} sensors", { n: deployments.features.length.toLocaleString() })}</span>
           </div>
         </aside>
@@ -983,6 +993,13 @@ export default function WorldMap() {
 
       {/* Time slider */}
       {/* Phones: full width with side gutters, above the bottom bar and the map attribution. */}
+      {quietNear && !period && !species && (
+        <div role="status" className={`absolute left-2 right-2 bottom-[11.5rem] md:bottom-[6.25rem] ${panelOpen ? "max-md:hidden md:left-[30rem]" : "md:left-24"} md:right-auto z-10 flex flex-wrap items-center gap-2 rounded-lg border border-white/10 bg-black/75 px-3 py-2 text-sm text-slate-200 backdrop-blur-xl`}>
+          <span>{t("Nothing recorded near you in the last few hours.")}</span>
+          <button onClick={() => { setPeriod("7d"); setQuietNear(false); setPlayhead(null); setPlaying(false); setTab("now"); track("select_period", { period: "7d" }); }} className={`rounded bg-cyan-500 px-2.5 py-1 text-xs font-medium text-slate-950 hover:bg-cyan-400 ${FOCUS}`}>{t("Show the last 7 days")}</button>
+          <button onClick={() => setQuietNear(false)} aria-label={t("Close")} className={`ml-auto rounded px-1.5 text-slate-400 hover:text-slate-200 ${FOCUS}`}>×</button>
+        </div>
+      )}
       <div data-tour="slider" className={`absolute right-2 md:right-6 bottom-[7rem] md:bottom-9 left-2 ${panelOpen ? "max-md:hidden md:left-[30rem]" : "md:left-24"} h-[3.75rem] rounded-lg bg-black/70 backdrop-blur-xl border border-white/10 px-3 md:px-4 flex items-center gap-2 md:gap-3 z-10 transition-[left]`}>
         {species ? (
           <>

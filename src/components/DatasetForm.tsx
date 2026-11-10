@@ -31,7 +31,7 @@ export default function DatasetForm({ id, initial, live }: { id?: string; initia
     if (!r.ok) return setMsg(d.error ?? "Could not save.");
     if (id) { setMsg("Saved."); router.refresh(); } else router.push(`/datasets/${d.id}`);
   }
-  const input = "w-full min-w-0 rounded-md border border-white/15 bg-slate-900 px-3 py-2 text-slate-100 placeholder:text-slate-500";
+  const input = "w-full min-w-0 rounded-md border border-white/15 bg-slate-900 px-3 py-2 text-slate-100 placeholder:text-slate-400";
   const label = "block text-sm text-slate-400";
   const v = initial;
   return (

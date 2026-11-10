@@ -4,7 +4,7 @@ import CopyBlock from "@/components/CopyBlock";
 import { DATA_RELEASES } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Developers and researchers: the open API",
+  title: "Developers and API: the open API for wildlife data",
   alternates: { canonical: "/developers" },
   description: "How to read Wildlife Network's measures from R or Python, push detections from a device, and when to use the citable data releases instead.",
 };
@@ -45,7 +45,7 @@ export default function Developers() {
   return (
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Developers and researchers</h1>
+        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Developers and API</h1>
         <p className="mt-3">
           Everything on the map comes from an open API. No key is needed to read it. The full description is an OpenAPI file:{" "}
           <a href="/openapi.json" className="text-cyan-400 hover:underline">openapi.json</a> (import it into Postman, Insomnia or a client generator).

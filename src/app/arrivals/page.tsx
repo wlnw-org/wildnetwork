@@ -8,7 +8,7 @@ import { REGIONS } from "@/lib/regions";
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "When do birds arrive? Arrival dates by region",
+  title: "When do birds and other wildlife arrive? Arrival dates by region",
   description: "Month by month arrival dates for birds, bats and other wildlife in Europe, North America, South America, Africa, Asia and Oceania, from acoustic sensors and open biodiversity records.",
   alternates: { canonical: "/arrivals" },
 };
@@ -20,7 +20,7 @@ export default async function ArrivalsIndex() {
   return (
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">When do birds arrive?</h1>
+        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">When do birds and other wildlife arrive?</h1>
         <p className="mt-2"><HelpLink to="/help/site/arrivals" /></p>
         <p className="mt-3">
           The week each species was first heard or seen regularly after at least six weeks away, region by region, over the past year.

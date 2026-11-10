@@ -77,8 +77,9 @@ export default function StudyForm() {
         <textarea name="species" rows={2} placeholder="Species to follow (optional): scientific names separated by commas. Empty = all species of the class." aria-label="Species" className={input} />
         <input name="email" type="email" placeholder="Email for the weekly digest (optional)" aria-label="Email for the weekly digest" className={input} />
         <button disabled={!me?.user || state.busy || cells > 400} className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400 disabled:opacity-50">
-          {me?.user ? (state.busy ? "Creating..." : "Create study area") : "Sign in with ORCID to create a study area"}
+          {me?.user ? (state.busy ? "Creating..." : "Create study area") : "Create study area"}
         </button>
+        {!me?.user && <p className="text-sm text-slate-400">Sign in at the top of this form first.</p>}
         {state.msg && <p className="text-sm text-rose-300">{state.msg}</p>}
         <p className="text-xs text-slate-400">Study areas are public: anyone with the link sees the dashboard. Your email is stored encrypted and used only for the digest.</p>
       </form>

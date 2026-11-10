@@ -23,7 +23,8 @@ export async function POST(req: Request) {
   const lat = Number(b.lat), lon = Number(b.lon);
   const hasPoint = b.lat !== "" && b.lon !== "" && b.lat != null && b.lon != null && Number.isFinite(lat) && Number.isFinite(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 180;
   if (!place && !hasPoint) return Response.json({ error: "Please say where it was, in words or as coordinates." }, { status: 400 });
-  const link = (b.link ?? "").trim().slice(0, 500);
+  let link = (b.link ?? "").trim().slice(0, 500);
+  if (link && !/^[a-z]+:\/\//i.test(link)) link = `https://${link}`;
   if (link && !/^https:\/\/\S+$/.test(link)) return Response.json({ error: "The link should start with https://" }, { status: 400 });
   const note = (b.note ?? "").trim().slice(0, 3000);
   if (!link && note.length < 20) return Response.json({ error: "Please add a link to your photo or recording, or describe what you saw or heard." }, { status: 400 });

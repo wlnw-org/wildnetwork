@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import UpdatesForm from "@/components/UpdatesForm";
-import { UPDATES } from "@/data/updates";
+import { UPDATES, type UpdateItem } from "@/data/updates";
 import { UPDATES_ENABLED } from "@/lib/updates";
 
 export const metadata: Metadata = {
@@ -34,11 +34,13 @@ export default function Updates() {
           <article key={u.date} id={u.date} className="mt-10 scroll-mt-6">
             <p className="text-sm text-slate-400">{fmt(u.date)}</p>
             <h2 className="mt-1 text-xl font-semibold text-slate-100">{u.title}</h2>
-            <ul className="mt-2 list-disc pl-5 space-y-1.5">
-              {u.items.map((i) => (
-                <li key={i.text}>{i.text}{i.href && <> <Link href={i.href} className="text-cyan-400 hover:underline">More</Link></>}</li>
-              ))}
-            </ul>
+            <Items items={u.items.filter((i) => !i.forResearchers)} />
+            {u.items.some((i) => i.forResearchers) && (
+              <>
+                <h3 className="mt-4 text-sm font-semibold uppercase tracking-wide text-slate-400">For researchers</h3>
+                <Items items={u.items.filter((i) => i.forResearchers)} />
+              </>
+            )}
           </article>
         ))}
 
@@ -47,5 +49,23 @@ export default function Updates() {
         </p>
       </div>
     </main>
+  );
+}
+
+/** A descriptive link label for each place an update points to, instead of a bare "More". */
+const LINK_LABEL: [string, string][] = [
+  ["/studio", "Get Studio"], ["/datasets", "About datasets"], ["/institutions", "For institutions"], ["/report", "Make a report"],
+  ["/projects", "See the projects"], ["/methods", "How it works"], ["/data", "Open data"], ["/places", "Find a place"],
+  ["/research", "Research hub"], ["/arrivals", "See arrivals"], ["/species", "Species pages"],
+];
+const labelFor = (href: string) => LINK_LABEL.find(([p]) => href === p || href.startsWith(p + "/") || href.startsWith(p + "#") || href.startsWith(p + "?"))?.[1] ?? "Read more";
+
+function Items({ items }: { items: UpdateItem[] }) {
+  return (
+    <ul className="mt-2 list-disc pl-5 space-y-1.5">
+      {items.map((i) => (
+        <li key={i.text}>{i.text}{i.href && <> <Link href={i.href} className="text-cyan-400 hover:underline">{labelFor(i.href)}</Link></>}</li>
+      ))}
+    </ul>
   );
 }

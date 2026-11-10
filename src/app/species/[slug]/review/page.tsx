@@ -69,6 +69,7 @@ export default async function Review({ params }: { params: Promise<{ slug: strin
                   <td className="pl-3 py-1"><ReviewButtons species={d.name} cellLat={a.cell_lat} cellLon={a.cell_lon} counts={d.counts.get(`${a.cell_lat},${a.cell_lon}`) ?? {}} signedIn={!!me} /></td>
                 </tr>))}</tbody>
             </table>
+            <p className="mt-2 text-xs text-slate-400">Support is the share of 40 re-runs that found the same season. <span className="text-amber-300">Amber</span> (below 0.5) means a weak estimate: treat it with caution. The map&apos;s 12 month view leaves these out.</p>
           </div>
         )}
       </div>

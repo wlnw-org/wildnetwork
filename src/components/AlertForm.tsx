@@ -29,19 +29,22 @@ export default function AlertForm({ species, title, compact = false }: { species
     setState({ ok: r.ok, msg: d.message ?? d.error ?? "Something went wrong." });
   }
   if (state.ok) return <p className="mt-3 rounded-lg border border-cyan-400/30 bg-cyan-400/5 p-4 text-slate-100">{state.msg}</p>;
-  const input = "w-full min-w-0 rounded-md border border-white/15 bg-slate-900 px-3 py-2 text-slate-100 placeholder:text-slate-500";
+  const input = "w-full min-w-0 rounded-md border border-white/15 bg-slate-900 px-3 py-2 text-slate-100 placeholder:text-slate-400";
   return (
     <form onSubmit={submit} className={`mt-3 gap-2 ${compact ? "flex flex-col text-sm" : "grid sm:grid-cols-2"}`}>
-      <input name="email" type="email" required placeholder={t("Your email")} aria-label={t("Your email")} className={input} />
-      <input name="place" required placeholder={t("Your town or city")} aria-label={t("Your town or city")} className={input} value={place} onChange={(e) => setPlace(e.target.value)} />
-      <select name="role" aria-label="Who you are (optional)" className={input} defaultValue="">
-        {ROLES.map(([v, l]) => <option key={v} value={v}>{t(l)}</option>)}
-      </select>
+      <label className="flex flex-col gap-1"><span className="text-xs text-slate-300">{t("Your email")}</span>
+        <input name="email" type="email" required className={input} /></label>
+      <label className="flex flex-col gap-1"><span className="text-xs text-slate-300">{t("Your town or city")}</span>
+        <input name="place" required className={input} value={place} onChange={(e) => setPlace(e.target.value)} /></label>
+      <label className="flex flex-col gap-1"><span className="text-xs text-slate-300">{t("Who you are (optional)")}</span>
+        <select name="role" className={input} defaultValue="">
+          {ROLES.map(([v, l]) => <option key={v} value={v}>{t(l)}</option>)}
+        </select></label>
       <button disabled={state.busy} className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400 disabled:opacity-60">
         {state.busy ? t("Sending...") : compact ? t("Email me when it arrives") : t("Email me when the {name} arrives", { name: title })}
       </button>
       {state.msg && <p className="sm:col-span-2 text-sm text-rose-300">{state.msg}</p>}
-      <p className="sm:col-span-2 text-xs text-slate-400">
+      <p className="sm:col-span-2 text-sm text-slate-400">
         {t("One email when it arrives in your area after weeks away, never more than once every two months. Confirm by email first; unsubscribe in one click.")}{" "}
         {t("Your address is stored encrypted and used for nothing else.")} <a href="/privacy#alerts" className="text-cyan-400 hover:underline">{t("Privacy")}</a>
       </p>

@@ -61,7 +61,7 @@ curl -X POST ${SITE}/api/v1/events \\
   -H "Authorization: Bearer wn_YOUR_KEY" \\
   -H "content-type: application/x-ndjson" \\
   --data-binary @events.wdx.ndjson`}</CopyBlock>
-        <p className="mt-2 text-sm text-slate-400">Field details are in the <A href="/developers">developer guide</A> and the <A href="https://github.com/arunrajiah/wildlife-detection-exchange">WDX schema</A>.</p>
+        <p className="mt-2 text-sm text-slate-400">Field details are in the <A href="/developers">Developers and API page</A> and the <A href="https://github.com/arunrajiah/wildlife-detection-exchange">WDX schema</A>.</p>
 
         <h3 className="mt-5 font-semibold text-slate-100">3. Recorders in the field: the wdx-agent</h3>
         <p>
@@ -77,7 +77,7 @@ curl -X POST ${SITE}/api/v1/events \\
         <H2 id="out">Taking data out</H2>
         <ul className="list-disc pl-5 space-y-2">
           <li><b>Open data releases</b>: weekly records, effort and arrival dates on a 5 degree grid, versioned on Zenodo with a DOI (<A href={`https://doi.org/${DATA_CONCEPT_DOI}`}>{DATA_CONCEPT_DOI}</A>, always the newest). See <A href="/data">Open data</A>.</li>
-          <li><b>API</b>: JSON and CSV for arrivals, coverage, movement and open weekly records (<code className="text-slate-200">/api/v1/records</code>). See the <A href="/developers">developer guide</A> and <A href="/openapi.json">OpenAPI file</A>.</li>
+          <li><b>API</b>: JSON and CSV for arrivals, coverage, movement and open weekly records (<code className="text-slate-200">/api/v1/records</code>). See the <A href="/developers">Developers and API page</A> and <A href="/openapi.json">OpenAPI file</A>.</li>
           <li><b>Contributed datasets</b>: each dataset page has a Darwin Core CSV under the owner&apos;s licence, with positions rounded to the precision the owner chose.</li>
           <li><b>Places and parks</b>: a <A href="/report">site report</A> shows what was recorded around a point for any dates, with a CSV of the open records.</li>
         </ul>

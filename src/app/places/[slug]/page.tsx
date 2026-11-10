@@ -37,7 +37,6 @@ export default async function PlacePage({ params, searchParams }: Props) {
   const grp = pick((await searchParams).group);
   const r = await placeReport(p.lat, p.lon, grp);
   const label = GROUP_LABEL[grp] ?? "Birds";
-  const box = `${r.cell.lat}° … ${r.cell.lat + 5}°, ${r.cell.lon}° … ${r.cell.lon + 5}°`;
   const url = `${SITE}/places/${p.slug}`;
   const jsonLd = {
     "@context": "https://schema.org",
@@ -60,10 +59,16 @@ export default async function PlacePage({ params, searchParams }: Props) {
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><T k={`${label} around {place}`} v={{ place: p.name }} /></h1>
         <p className="mt-1 text-sm text-slate-400">{placeLabel(p)}</p>
         <p className="mt-3 text-sm text-slate-400">
-          <T k="Every measure here is worked out per 5 degree square, so this covers the wider area around {place} ({box}, about 550 km across), not the city alone." v={{ place: p.name, box }} />{" "}
-          <T k="Counts are shares of all records of the class in the same weeks, so busier stations do not inflate them." />{" "}
+          <T k="This covers the wider area around {place}, about 550 km across, not the city alone." v={{ place: p.name }} />{" "}
+          <T k="We compare each species with everything recorded in the same weeks, so busy recorders do not skew the list." />{" "}
           <Link href="/methods" className="text-cyan-400 hover:underline"><T k="Methods" /></Link>
         </p>
+        {r.watched === 0 && (
+          <p className="mt-4 rounded-lg border border-amber-400/40 bg-amber-400/10 p-3 text-sm text-amber-100">
+            <T k="Few recordings reach us from this area yet, so there is little to show." />{" "}
+            <Link href="/contribute" className="font-medium text-cyan-300 underline"><T k="Add a station to fill the gap." /></Link>
+          </p>
+        )}
         <div className="mt-4 flex flex-wrap gap-1.5 text-sm" role="group" aria-label="Animal class">
           {PLACE_GROUPS.map((g) => (
             <Link key={g} href={`/places/${p.slug}${g === "avian" ? "" : `?group=${g}`}`}
@@ -72,7 +77,7 @@ export default async function PlacePage({ params, searchParams }: Props) {
         </div>
         <div className="mt-4 flex flex-wrap gap-2 text-sm">
           <Link href={`/?lat=${p.lat.toFixed(2)}&lon=${p.lon.toFixed(2)}`} className="rounded-md bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400"><T k="Open on the live map" /></Link>
-          <Link href="/studies/new" className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Make it a study area" /></Link>
+          <Link href="/studies/new" className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Track this area (for researchers)" /></Link>
           <Link href={`/report?lat=${p.lat.toFixed(4)}&lon=${p.lon.toFixed(4)}`} className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Site report: compare two periods" /></Link>
         </div>
 
@@ -86,7 +91,7 @@ export default async function PlacePage({ params, searchParams }: Props) {
         <H2><T k="Most recorded, last eight weeks" /></H2>
         {r.top.length === 0 ? <p className="text-slate-400"><T k="No records here in the last eight weeks." /></p> : (
           <table className="mt-2 w-full text-sm">
-            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><T k="Species" /></th><th className="font-medium text-right"><T k="Records" /></th><th className="font-medium text-right"><T k="Per 1,000" /></th></tr></thead>
+            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><T k="Species" /></th><th className="font-medium text-right"><T k="Records" /></th><th className="font-medium text-right"><T k="In every 1,000 records" /></th></tr></thead>
             <tbody>{r.top.map((x) => (
               <tr key={x.scientific_name} className="border-b border-white/5">
                 <td className="py-1.5"><Species name={x.scientific_name} vern={x.vernacular_name} /> <span className="text-slate-400 italic">{x.scientific_name}</span></td>

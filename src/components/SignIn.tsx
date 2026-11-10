@@ -22,9 +22,16 @@ export default function SignIn({ me, next }: { me: Me | undefined; next?: string
   );
   const href = `/api/auth/orcid?next=${encodeURIComponent(next ?? (typeof window !== "undefined" ? location.pathname : "/research"))}`;
   return (
-    <a href={href} className="inline-flex items-center gap-2 rounded-md bg-[#a6ce39] px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-[#b8dc4f]">
-      <span className="grid h-5 w-5 place-items-center rounded-full bg-white text-[10px] font-bold text-[#a6ce39]">iD</span>
-      Sign in with ORCID
-    </a>
+    <span className="inline-block">
+      <a href={href} className="inline-flex items-center gap-2 rounded-md bg-[#a6ce39] px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-[#b8dc4f]">
+        <span className="grid h-5 w-5 place-items-center rounded-full bg-white text-[10px] font-bold text-[#a6ce39]">iD</span>
+        Sign in with ORCID
+      </a>
+      <span className="mt-1.5 block max-w-md text-xs text-slate-400">
+        ORCID is a free ID that researchers use to get credit for their work. Making one takes about a minute at{" "}
+        <a href="https://orcid.org/register" className="text-cyan-400 hover:underline">orcid.org/register</a>. We never see your password.
+        The map, species pages and alerts need no sign-in.
+      </span>
+    </span>
   );
 }

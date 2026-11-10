@@ -70,7 +70,7 @@ export default function Data() {
             <li><b>CSV per species</b>: every <Link href="/species" className="text-cyan-400 hover:underline">species page</Link> has a Download box with its weekly records for the last 12 months and its arrival dates per area.</li>
             <li><b>CSV per place</b>: a <Link href="/report" className="text-cyan-400 hover:underline">site report</Link> downloads the weekly records of a station or a 5 degree area for your own dates. <Link href="/studies" className="text-cyan-400 hover:underline">Study areas</Link> export a whole box.</li>
             <li><b>Contributed datasets</b>: each <Link href="/datasets" className="text-cyan-400 hover:underline">dataset</Link> has its own Darwin Core CSV, licence and citation.</li>
-            <li><b>API</b>: JSON and CSV for scripts, R and Python (<Link href="/developers" className="text-cyan-400 hover:underline">developer guide</Link>). <code className="text-slate-200">/api/v1/records?species=…&amp;format=csv</code> gives the same open weekly records as the species pages.</li>
+            <li><b>API</b>: JSON and CSV for scripts, R and Python (<Link href="/developers" className="text-cyan-400 hover:underline">Developers and API page</Link>). <code className="text-slate-200">/api/v1/records?species=…&amp;format=csv</code> gives the same open weekly records as the species pages.</li>
           </ul>
           <p className="mt-2 text-xs text-slate-400">Downloads hold GBIF records under CC0 or CC BY 4.0 and contributed datasets under their own licence. BirdWeather detections are never in a download. Sending data in, or connecting a national system: see <Link href="/institutions" className="text-cyan-400 hover:underline">for institutions</Link>.</p>
         </section>
@@ -78,7 +78,7 @@ export default function Data() {
         {latest ? (
           <section className="mt-6 rounded-lg border border-white/10 bg-white/5 p-4">
             <h2 className="text-lg font-semibold text-slate-100">Latest release: {fmt(latest.date)}</h2>
-            <p className="mt-1 text-sm text-slate-400">Weeks {latest.weeks} · methods {METHODS_VERSION}{latest.doi ? <> · DOI <a href={`https://doi.org/${latest.doi}`} className="text-cyan-400 hover:underline">{latest.doi}</a></> : null}</p>
+            <p className="mt-1 text-sm text-slate-400">Weeks {latest.weeks} · methods {latest.methods ?? METHODS_VERSION}{latest.doi ? <> · DOI <a href={`https://doi.org/${latest.doi}`} className="text-cyan-400 hover:underline">{latest.doi}</a></> : null}</p>
             <ul className="mt-3 text-sm space-y-1">
               <li><b>weekly_records.csv</b>: {latest.rows.weekly.toLocaleString("en-GB")} rows (week, cell, class, species, records)</li>
               <li><b>effort.csv</b>: {latest.rows.effort.toLocaleString("en-GB")} rows (all records of a class per cell and week)</li>

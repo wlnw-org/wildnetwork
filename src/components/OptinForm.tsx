@@ -5,7 +5,7 @@ import { track } from "@/components/Analytics";
 
 type Result = { ok?: boolean; error?: string; message?: string; stationId?: number; birdweatherName?: string | null };
 
-const field = "w-full rounded-md bg-slate-900 border border-white/15 px-3 py-2 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-cyan-500";
+const field = "w-full rounded-md bg-slate-900 border border-white/15 px-3 py-2 text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-cyan-500";
 
 export default function OptinForm() {
   const [token, setToken] = useState("");
@@ -32,8 +32,8 @@ export default function OptinForm() {
   return (
     <form onSubmit={(e) => { e.preventDefault(); send("join"); }} className="mt-4 space-y-4 rounded-lg border border-white/10 bg-white/5 p-4">
       <label className="block">
-        <span className="text-sm text-slate-200">Station token</span>
-        <input type="password" autoComplete="off" required value={token} onChange={(e) => setToken(e.target.value)} className={field} placeholder="The token from your BirdWeather station settings" />
+        <span className="text-sm text-slate-200">Station token (required)</span>
+        <input type="text" autoComplete="off" spellCheck={false} required value={token} onChange={(e) => setToken(e.target.value)} className={field} placeholder="The token from your BirdWeather station settings" />
         <span className="text-xs text-slate-400">Checked with BirdWeather, stored encrypted, used only to read your station&apos;s daily counts. Never shown again.</span>
       </label>
       <label className="block">
@@ -67,7 +67,7 @@ export default function OptinForm() {
       </label>
       <label className="flex items-start gap-2 text-sm">
         <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 accent-cyan-500" />
-        <span>I own or run this station and agree to share its counts as described on this page. I can withdraw at any time.</span>
+        <span>I own or run this station and agree to share its counts as described on this page. I can withdraw at any time. (required)</span>
       </label>
       <div className="flex flex-wrap items-center gap-3">
         <button type="submit" disabled={busy} className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400 disabled:opacity-50">{busy ? "Checking…" : "Add my station"}</button>

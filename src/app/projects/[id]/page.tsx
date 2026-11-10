@@ -37,7 +37,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           {members.map((m) => <span key={m.orcid}>, <a href={orcidUrl(m.orcid)} className="text-cyan-400 hover:underline">{m.name}</a></span>)}.
         </p>
         <div className="mt-4"><ResearchSignIn next={`/projects/${p.id}`} /></div>
-        {!me && p.open && <p className="mt-2 text-sm text-slate-400">Sign in with ORCID to ask to join.</p>}
+        {!me && p.open && <p className="mt-2 text-sm text-slate-400"><a href={`/api/auth/orcid?next=/projects/${p.id}`} className="text-cyan-400 hover:underline">Sign in with ORCID</a> to ask to join (ORCID is a free ID for researchers).</p>}
         {me && !isOwner && !isMember && (p.open || state?.request) && <AskToJoin target={target} request={state?.request ?? null} hasEmail={!!state?.hasEmail} />}
         {isOwner && <JoinRequests requests={requests} hasEmail={!!state?.hasEmail} />}
         {me && (isOwner || isMember) && <ProjectAdmin id={p.id} owner={isOwner} open={p.open} myOrcid={me.orcid} />}

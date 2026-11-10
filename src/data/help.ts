@@ -299,6 +299,12 @@ const site: Guide[] = [
     body: [
       { p: "[Arrivals](/arrivals) lists, per region, the week each migrant usually arrives, worked out from a year of records. Weak estimates are left out." },
       { p: "On the map's Now panel, Possibly arriving lists species that have just started being recorded in an area after weeks without records." },
+      { h: "What the date range means" },
+      { p: "A species reaches the south of a region before the north, so a region shows a first and a last arrival. Each species page also gives the likely spread of its date in each area. Dates come from last year's records, so this year can differ by a week or two." },
+      { h: "Why a bird that stays all year may have an arrival date" },
+      { p: "The records only show when a bird is heard or seen. A resident bird that goes quiet in winter and starts singing in spring can look like a new arrival. We remove most of these, but some remain, so treat a date for a resident bird as the week it became easy to hear." },
+      { h: "Get told when one arrives" },
+      { p: "Open a species page and use Get an email when it arrives near you. You get one email when it turns up in your area after weeks away, at most once every two months. See [Species alerts](/alerts)." },
     ],
   },
   {

@@ -19,7 +19,7 @@ export default async function Confirm({ searchParams }: { searchParams: Promise<
           <>
             <h1 className="text-2xl font-semibold text-slate-100">Alert confirmed</h1>
             <p className="mt-3">
-              We will email you when <i>{row.scientific_name}</i> arrives in the 5 degree square around {row.place}: the first records after at least four watched weeks without it.
+              We will email you when <i>{row.scientific_name}</i> arrives in the wider area around {row.place} (about 550 km across): the first records after a month or more without it.
               Every email has a link to stop it.
             </p>
             <p className="mt-4"><Link href={`/species/${speciesSlug(row.scientific_name)}`} className="text-cyan-400 hover:underline">Back to the species</Link></p>

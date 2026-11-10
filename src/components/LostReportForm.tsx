@@ -35,11 +35,11 @@ export default function LostReportForm({ species }: { species: string[] }) {
         <input name="place" placeholder="For example, a village, park or trail" className={`mt-1 ${input}`} />
       </label>
       <div className="flex gap-3">
-        <label className="block flex-1">Latitude (optional)<input name="lat" inputMode="decimal" className={`mt-1 ${input}`} /></label>
-        <label className="block flex-1">Longitude (optional)<input name="lon" inputMode="decimal" className={`mt-1 ${input}`} /></label>
+        <label className="block flex-1">Latitude, if you know it (optional, e.g. from Google Maps)<input name="lat" inputMode="decimal" className={`mt-1 ${input}`} /></label>
+        <label className="block flex-1">Longitude, if you know it (optional)<input name="lon" inputMode="decimal" className={`mt-1 ${input}`} /></label>
       </div>
       <label className="block">Link to your photo or recording
-        <input name="link" type="url" placeholder="https://" className={`mt-1 ${input}`} />
+        <input name="link" type="text" inputMode="url" placeholder="https://" className={`mt-1 ${input}`} />
         <span className="mt-1 block text-slate-400">For example on iNaturalist, xeno-canto, eBird or a shared folder. Please keep the exact place hidden there if the site lets you.</span>
       </label>
       <label className="block">What did you see or hear?

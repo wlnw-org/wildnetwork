@@ -23,7 +23,7 @@ export default async function Projects({ searchParams }: { searchParams: Promise
           <h1 className="text-3xl font-semibold tracking-tight text-slate-100">Projects</h1>
           <Link href="/projects/new" className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400">Post a project</Link>
         </div>
-        <p className="mt-3">Questions that researchers want help with. Ask to join one, or post your own. Signing in uses ORCID.</p>
+        <p className="mt-3">Questions that researchers want help with. The first ones are starter questions from the Wildlife Network team. Ask to join one, or post your own (signing in uses ORCID, a free researcher ID).</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Link href="/projects" className={chip(!active)}>All</Link>
           {Object.entries(NEEDS).map(([k, v]) => <Link key={k} href={`/projects?need=${k}`} className={chip(active === k)}>{v}</Link>)}

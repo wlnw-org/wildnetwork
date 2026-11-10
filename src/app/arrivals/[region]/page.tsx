@@ -34,16 +34,19 @@ export async function generateMetadata({ params }: { params: Promise<{ region: s
   return { title, description, alternates: { canonical: `/arrivals/${r.slug}` }, openGraph: { title, description, url: `/arrivals/${r.slug}`, type: "article" } };
 }
 
-export default async function RegionArrivals({ params }: { params: Promise<{ region: string }> }) {
+export default async function RegionArrivals({ params, searchParams }: { params: Promise<{ region: string }>; searchParams: Promise<{ group?: string }> }) {
   const r = regionBySlug((await params).region);
   if (!r) notFound();
-  const rows = await load(r.name);
+  const all = await load(r.name);
+  const present = [...new Set(all.map((x) => x.grp))].sort((a, b) => (a === "avian" ? -1 : b === "avian" ? 1 : all.filter((x) => x.grp === b).length - all.filter((x) => x.grp === a).length));
+  const wanted = (await searchParams).group;
+  const grp = wanted && present.includes(wanted) ? wanted : present.includes("avian") ? "avian" : present[0];
+  const rows = all.filter((x) => x.grp === grp);
+  const what = CLASS_LABEL[grp] ?? grp;
   // Arrival weeks are from the past year: "now" is the same month a year on, plus the next one.
   const m = new Date().getUTCMonth() + 1;
   const now = rows.filter((x) => x.month === m || x.month === (m % 12) + 1).slice(0, 24);
   const byMonth = MONTHS.map((label, i) => ({ label, items: rows.filter((x) => x.month === i + 1) })).filter((x) => x.items.length);
-  const classes = Object.entries(rows.reduce<Record<string, number>>((a, x) => ({ ...a, [x.grp]: (a[x.grp] ?? 0) + 1 }), {}))
-    .sort((a, b) => b[1] - a[1]).map(([g, n]) => `${n.toLocaleString("en-GB")} ${CLASS_LABEL[g] ?? g}`);
   const url = `${SITE}/arrivals/${r.slug}`;
   const jsonLd = {
     "@context": "https://schema.org",
@@ -69,11 +72,22 @@ export default async function RegionArrivals({ params }: { params: Promise<{ reg
         <nav className="text-sm text-slate-400">
           <Link href="/arrivals" className="text-cyan-400 hover:underline">Arrivals</Link> / {r.name}
         </nav>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">When do birds arrive in {r.name}?</h1>
+        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">When do {what} arrive in {r.name}?</h1>
+        {present.length > 1 && (
+          <div className="mt-4 flex flex-wrap gap-1.5 text-sm" role="group" aria-label="Animal class">
+            {present.map((g) => (
+              <Link key={g} href={`/arrivals/${r.slug}${g === "avian" ? "" : `?group=${g}`}`} prefetch={false}
+                className={`rounded px-2.5 py-1 capitalize ${g === grp ? "bg-white/90 text-slate-900 font-medium" : "bg-white/5 hover:bg-white/10"}`}>
+                {CLASS_LABEL[g] ?? g} <span className="opacity-70">{all.filter((x) => x.grp === g).length.toLocaleString("en-GB")}</span>
+              </Link>
+            ))}
+          </div>
+        )}
         <p className="mt-3">
-          {rows.length.toLocaleString("en-GB")} species have a seasonal record in {r.name} ({classes.join(", ")}).
+          {rows.length.toLocaleString("en-GB")} species of {what} have a seasonal record in {r.name}.
           Each is listed under the month it typically arrived over the past year: the middle of its first-arrival weeks across the areas where it was recorded
-          (each area is a 5 degree square). Southern areas usually see a species earlier than northern ones, so open a species to see the range.
+          (each area about 550 km across). Southern areas usually see a species earlier than northern ones, so open a species to see the range.
+          {grp === "avian" && " Some birds that stay all year appear here when they become easier to hear again, for example when they start singing in spring."}
         </p>
 
         {now.length > 0 && (
