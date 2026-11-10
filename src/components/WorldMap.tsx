@@ -79,6 +79,13 @@ let legendMem = false; // used when storage is blocked
 function readLegend() { try { const v = localStorage.getItem(LEGEND_KEY); return v === null ? legendMem : v === "1"; } catch { return legendMem; } }
 function setLegendOpen(v: boolean) { legendMem = v; try { localStorage.setItem(LEGEND_KEY, v ? "1" : "0"); } catch {} legendListeners.forEach((fn) => fn()); }
 
+/** Live dots inside the part of the map not covered by panels (the map's padding), for the "nothing recorded" hint. */
+function visibleDots(map: MLMap): number {
+  const pad = map.getPadding(), c = map.getCanvas();
+  const box: [[number, number], [number, number]] = [[pad.left ?? 0, pad.top ?? 0], [c.clientWidth - (pad.right ?? 0), c.clientHeight - (pad.bottom ?? 0)]];
+  return map.queryRenderedFeatures(box, { layers: ["events"] }).length;
+}
+
 export default function WorldMap() {
   const t = useT();
   const scopeLabel = (sc?: Scope) => !sc ? null : sc === "near" ? (home?.city ? t("Near {place}", { place: home.city }) : t("Near you")) : sc === "region" ? t("Your region") : t("Worldwide");
@@ -186,7 +193,7 @@ export default function WorldMap() {
           map.easeTo({ center: [n.lon, n.lat], zoom: 4, duration: 1800, padding: { top: 0, bottom: 0, right: 0, left: window.innerWidth >= 768 ? 420 : 0 } });
           map.once("moveend", () => setTimeout(() => {
             if (cancelled) return;
-            try { if (map.getLayer("events") && map.queryRenderedFeatures({ layers: ["events"] }).length === 0) setQuietNear("near"); } catch { /* style not ready */ }
+            try { if (map.getLayer("events") && visibleDots(map) === 0) setQuietNear("near"); } catch { /* style not ready */ }
           }, 4000));
         }
       }).catch(() => {}).finally(() => { if (!cancelled) setHomeReady(true); });
@@ -709,7 +716,7 @@ export default function WorldMap() {
         map.flyTo({ center: [p.lon, p.lat], zoom: 7, duration: 1200 });
         // Live dots are often sparse at city zoom: offer the last 7 days instead of an empty map.
         map.once("moveend", () => setTimeout(() => {
-          try { if (map.getLayer("events") && map.queryRenderedFeatures({ layers: ["events"] }).length === 0) setQuietNear("here"); } catch { /* style not ready */ }
+          try { if (map.getLayer("events") && visibleDots(map) === 0) setQuietNear("here"); } catch { /* style not ready */ }
         }, 2500));
       }, 350);
     }
