@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { sql } from "@/lib/db";
 import { REGION } from "@/lib/methods";
+import { yearRound } from "@/lib/yearRound";
 import { REGIONS, regionBySlug } from "@/lib/regions";
 import { SITE, speciesSlug } from "@/lib/site";
 
@@ -47,7 +48,9 @@ export default async function RegionArrivals({ params, searchParams }: { params:
   const what = CLASS_LABEL[grp] ?? grp;
   // Arrival weeks are from the past year: "now" is the same month a year on, plus the next one.
   const m = new Date().getUTCMonth() + 1;
-  const now = rows.filter((x) => x.month === m || x.month === (m % 12) + 1).slice(0, 24);
+  const soon = rows.filter((x) => x.month === m || x.month === (m % 12) + 1);
+  const resident = await yearRound(r.name, soon.slice(0, 120).map((x) => x.scientific_name), grp).catch(() => new Set<string>());
+  const now = soon.filter((x) => !resident.has(x.scientific_name)).slice(0, 24);
   const byMonth = MONTHS.map((label, i) => ({ label, items: rows.filter((x) => x.month === i + 1) })).filter((x) => x.items.length);
   const url = `${SITE}/arrivals/${r.slug}`;
   const jsonLd = {
@@ -95,7 +98,7 @@ export default async function RegionArrivals({ params, searchParams }: { params:
         {now.length > 0 && (
           <>
             <h2 className="mt-8 text-xl font-semibold text-slate-100">Arriving around now</h2>
-            <p className="mt-2 text-sm text-slate-400">Species that arrived in {MONTHS[m - 1]} or {MONTHS[m % 12]} last year, most widespread first.</p>
+            <p className="mt-2 text-sm text-slate-400">Species that arrived in {MONTHS[m - 1]} or {MONTHS[m % 12]} last year, most widespread first.{resident.size > 0 && ` Species recorded all year round are left out (${resident.size}).`}</p>
             <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
               {now.map((x) => <li key={x.scientific_name}><SpeciesLink x={x} /></li>)}
             </ul>

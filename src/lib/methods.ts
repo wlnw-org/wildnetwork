@@ -1,7 +1,7 @@
 import { sql } from "@/lib/db";
 
 /** Version of the published methods. Bump when a measure changes, and add a line to the changelog on /methods. */
-export const METHODS_VERSION = "0.22";
+export const METHODS_VERSION = "0.23";
 
 /** A cell-day needs this many detections of all species before it counts as observed. */
 export const MIN_EFFORT_DAY = 200;
@@ -56,3 +56,11 @@ export const RANGE = { MIN_AREA_RECORDS: 1_000_000, MAX_SHARE: 1e-6, SINCE_YEAR:
  * A contributor's first TRUSTED_AFTER datasets are reviewed by a person; later ones go live by themselves when at most
  * AUTO_LIVE_MAX_FLAGGED of their records are flagged. */
 export const UPLOAD_CHECK = { WEEK_WINDOW: 4, MIN_EFFORT_FACTOR: 3, BURST_PER_MINUTE: 100, TRUSTED_AFTER: 2, AUTO_LIVE_MAX_FLAGGED: 0.2 };
+
+/**
+ * Year-round species (methods 0.23): left out of "Arriving around now" on the regional arrivals pages. Over the last 52 weeks, in the
+ * species' own cells of the region, its effort-corrected share per calendar month is compared with its busiest month. When the
+ * quieter months (the 25th percentile month) still reach this fraction of the busiest, it is recorded all year and is not a migrant
+ * arriving. Checked on 18 European species on 10 Nov 2026: migrants scored 0 to 0.007, residents 0.011 to 0.47.
+ */
+export const YEAR_ROUND_Q25 = 0.01;

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PausedNotice from "@/components/PausedNotice";
 import { BIRDWEATHER_PAUSED } from "@/lib/sources";
-import { METHODS_VERSION, MIN_CELL_DETECTIONS, MIN_EFFORT_DAY, MIN_EFFORT_WEEK, OBSERVED, RANGE, SMALL_CLASS, UPLOAD_CHECK } from "@/lib/methods";
+import { METHODS_VERSION, MIN_CELL_DETECTIONS, MIN_EFFORT_DAY, MIN_EFFORT_WEEK, OBSERVED, RANGE, SMALL_CLASS, UPLOAD_CHECK, YEAR_ROUND_Q25 } from "@/lib/methods";
 import { BOOT } from "@/lib/uncertainty";
 import { PHENOLOGY } from "@/lib/phenology";
 
@@ -181,6 +181,13 @@ export default function Methods() {
           reaches that far. A species and cell qualifies with at least 26 observed weeks, 200 detections and 30 detections in its peak week; the cell must have
           been observed in the week before the arrival, so an outage cannot look like one. Residents, which have no 6 week absence, get no arrival date. Nor does a species that was still recorded in at least 70 percent of its &quot;absent&quot; weeks, at a mean level of at least 2 percent of its peak: that is a resident gone quiet, not a bird that left. A few real migrants with winter or passage records are lost to this rule too. A date is also dropped when its 90% interval is wider than 8 weeks or does not contain the estimate, because the data cannot then say when the season starts. And at least 6 of the absent weeks must have had at least a tenth of the arrival week&apos;s observation effort, so a species does not seem to arrive just because recording began or grew sharply in that cell.
           The species panel shows the median arrival week per 5 degree latitude band. Download: <code className="text-slate-200">/api/v1/arrivals?species=…&amp;format=csv</code>.
+        </p>
+        <p className="mt-3" id="year-round">
+          <b>Year-round species.</b> Some species still get an arrival date because they become much easier to detect at one time of year, such as residents that
+          start singing in spring. The regional arrivals pages leave them out of &quot;Arriving around now&quot;: over the last 52 weeks, in the species&apos; own cells of the
+          region, its effort-corrected share is worked out per calendar month, and when the quieter months (the 25th percentile month) still reach{" "}
+          {YEAR_ROUND_Q25 * 100}% of its busiest month, it counts as recorded all year. Checked on 18 European species: true migrants scored 0 to 0.7%, residents 1.1% to 47%.
+          Their arrival dates stay on the species pages and in the monthly lists.
         </p>
         <p className="mt-3" id="possibly-arriving">
           <b>Possibly arriving.</b> Arrival dates need two weeks of presence, so the newest confirmed date is always about 2 to 3 weeks old. The Possibly arriving list is earlier and less sure.
@@ -401,6 +408,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.23</b> (10 November 2026): <a href="#year-round" className="text-cyan-400 hover:underline">year-round species</a> are left out of &quot;Arriving around now&quot; on the regional arrivals pages. Arrival dates themselves are unchanged.</li>
           <li><b>0.22</b> (10 November 2026): <a href="#words" className="text-cyan-400 hover:underline">This week in words</a> describes the visitor&apos;s own continent when their rough area is known, and marks worldwide sentences as such. Wording only; no measure changed.</li>
           <li><b>0.21</b> (7 November 2026): <a href="#datasets" className="text-cyan-400 hover:underline">contributed datasets</a>: uploaded detection tables, checked for season, place, range and bursts, count in the weekly measures once live, and are credited by name.</li>
           <li><b>0.20</b> (6 November 2026): <a href="#reports" className="text-cyan-400 hover:underline">site reports</a> for one place and two periods, from
