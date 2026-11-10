@@ -34,6 +34,8 @@ export async function generateMetadata({ params }: { params: Promise<{ region: s
   return { title, description, alternates: { canonical: `/arrivals/${r.slug}` }, openGraph: { title, description, url: `/arrivals/${r.slug}`, type: "article" } };
 }
 
+const cap = (x: string) => x.charAt(0).toUpperCase() + x.slice(1);
+
 export default async function RegionArrivals({ params, searchParams }: { params: Promise<{ region: string }>; searchParams: Promise<{ group?: string }> }) {
   const r = regionBySlug((await params).region);
   if (!r) notFound();
@@ -77,8 +79,8 @@ export default async function RegionArrivals({ params, searchParams }: { params:
           <div className="mt-4 flex flex-wrap gap-1.5 text-sm" role="group" aria-label="Animal class">
             {present.map((g) => (
               <Link key={g} href={`/arrivals/${r.slug}${g === "avian" ? "" : `?group=${g}`}`} prefetch={false}
-                className={`rounded px-2.5 py-1 capitalize ${g === grp ? "bg-white/90 text-slate-900 font-medium" : "bg-white/5 hover:bg-white/10"}`}>
-                {CLASS_LABEL[g] ?? g} <span className="opacity-70">{all.filter((x) => x.grp === g).length.toLocaleString("en-GB")}</span>
+                className={`rounded px-2.5 py-1 ${g === grp ? "bg-white/90 text-slate-900 font-medium" : "bg-white/5 hover:bg-white/10"}`}>
+                {cap(CLASS_LABEL[g] ?? g)} <span className="opacity-70">{all.filter((x) => x.grp === g).length.toLocaleString("en-GB")}</span>
               </Link>
             ))}
           </div>
