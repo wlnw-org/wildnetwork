@@ -142,7 +142,9 @@ export default function WorldMap() {
   // Local first: the panel lists follow the visitor's area (IP area or a ?lat&lon link) unless they choose the whole world.
   const [home, setHome] = useState<{ lat: number; lon: number; city?: string | null } | null>(null);
   // Set when the map has eased to the visitor's area and no live dot is in view: offers the last 7 days instead of an empty map.
-  const [quietNear, setQuietNear] = useState(false);
+  const [quietNear, setQuietNear] = useState<"near" | "here" | null>(null);
+  // True once the visitor has moved the map or picked a place: the late visitor-area ease must not pull the map away again.
+  const userMovedRef = useRef(false);
   const [homeReady, setHomeReady] = useState(false);
   const [areaWorld, setAreaWorld] = useState(() => { try { return typeof window !== "undefined" && localStorage.getItem("wn_area_world") === "1"; } catch { return false; } });
   const liveHours = group === "bat" && !species ? 24 : hours; // the bat layer covers a day
@@ -180,15 +182,16 @@ export default function WorldMap() {
       getJson<{ lat?: number; lon?: number; city?: string | null }>("/api/v1/near", 8000).then(({ data: n }) => {
         if (cancelled || n.lat == null || n.lon == null) return;
         setHome({ lat: n.lat, lon: n.lon, city: n.city });
-        if (!qs.has("species")) {
+        if (!qs.has("species") && !userMovedRef.current) {
           map.easeTo({ center: [n.lon, n.lat], zoom: 4, duration: 1800, padding: { top: 0, bottom: 0, right: 0, left: window.innerWidth >= 768 ? 420 : 0 } });
           map.once("moveend", () => setTimeout(() => {
             if (cancelled) return;
-            try { if (map.getLayer("events") && map.queryRenderedFeatures({ layers: ["events"] }).length === 0) setQuietNear(true); } catch { /* style not ready */ }
+            try { if (map.getLayer("events") && map.queryRenderedFeatures({ layers: ["events"] }).length === 0) setQuietNear("near"); } catch { /* style not ready */ }
           }, 4000));
         }
       }).catch(() => {}).finally(() => { if (!cancelled) setHomeReady(true); });
     }
+    map.on("movestart", (e) => { if ((e as { originalEvent?: unknown }).originalEvent) userMovedRef.current = true; });
     map.on("load", () => {
       // On phones the attribution starts folded to its (i) button instead of covering the bottom of the map.
       if (window.innerWidth < 768) containerRef.current?.querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");
@@ -697,8 +700,16 @@ export default function WorldMap() {
   const searchOpen = sq.length >= 2;
   const chooseOpt = (o: Opt) => { if (o.kind === "species") { pick(o.s.scientificName); setQuery(""); } else goPlace(o.p); setActiveOpt(-1); };
   const goPlace = (p: PickedPlace) => {
-    selectSpecies(null); setPlace(p); setTab("place"); setQuery("");
-    mapRef.current?.flyTo({ center: [p.lon, p.lat], zoom: 7, duration: 1200 });
+    selectSpecies(null); setPlace(p); setTab("place"); setQuery(""); setQuietNear(null);
+    userMovedRef.current = true;
+    const map = mapRef.current;
+    if (map) {
+      map.flyTo({ center: [p.lon, p.lat], zoom: 7, duration: 1200 });
+      // Live dots are often sparse at city zoom: offer the last 7 days instead of an empty map.
+      map.once("moveend", () => setTimeout(() => {
+        try { if (map.getLayer("events") && map.queryRenderedFeatures({ layers: ["events"] }).length === 0) setQuietNear("here"); } catch { /* style not ready */ }
+      }, 2500));
+    }
     track("select_place", { place: p.slug ?? "" });
   };
   const flyTo = (f: GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>) => {
@@ -994,10 +1005,10 @@ export default function WorldMap() {
       {/* Time slider */}
       {/* Phones: full width with side gutters, above the bottom bar and the map attribution. */}
       {quietNear && !period && !species && (
-        <div role="status" className={`absolute left-2 right-2 bottom-[11.5rem] md:bottom-[6.25rem] ${panelOpen ? "max-md:hidden md:left-[30rem]" : "md:left-24"} md:right-auto z-10 flex flex-wrap items-center gap-2 rounded-lg border border-white/10 bg-black/75 px-3 py-2 text-sm text-slate-200 backdrop-blur-xl`}>
-          <span>{t("Nothing recorded near you in the last few hours.")}</span>
-          <button onClick={() => { setPeriod("7d"); setQuietNear(false); setPlayhead(null); setPlaying(false); setTab("now"); track("select_period", { period: "7d" }); }} className={`rounded bg-cyan-500 px-2.5 py-1 text-xs font-medium text-slate-950 hover:bg-cyan-400 ${FOCUS}`}>{t("Show the last 7 days")}</button>
-          <button onClick={() => setQuietNear(false)} aria-label={t("Close")} className={`ml-auto rounded px-1.5 text-slate-400 hover:text-slate-200 ${FOCUS}`}>×</button>
+        <div role="status" className={`absolute left-2 right-2 max-md:top-[5.75rem] md:bottom-[6.25rem] ${panelOpen ? "md:left-[30rem]" : "md:left-24"} md:right-auto z-10 flex flex-wrap items-center gap-2 rounded-lg border border-white/10 bg-black/75 px-3 py-2 text-sm text-slate-200 backdrop-blur-xl`}>
+          <span>{t(quietNear === "here" ? "Nothing recorded here in the last few hours." : "Nothing recorded near you in the last few hours.")}</span>
+          <button onClick={() => { setPeriod("7d"); setQuietNear(null); setPlayhead(null); setPlaying(false); setTab("now"); track("select_period", { period: "7d" }); }} className={`rounded bg-cyan-500 px-2.5 py-1 text-xs font-medium text-slate-950 hover:bg-cyan-400 ${FOCUS}`}>{t("Show the last 7 days")}</button>
+          <button onClick={() => setQuietNear(null)} aria-label={t("Close")} className={`ml-auto rounded px-1.5 text-slate-400 hover:text-slate-200 ${FOCUS}`}>×</button>
         </div>
       )}
       <div data-tour="slider" className={`absolute right-2 md:right-6 bottom-[7rem] md:bottom-9 left-2 ${panelOpen ? "max-md:hidden md:left-[30rem]" : "md:left-24"} h-[3.75rem] rounded-lg bg-black/70 backdrop-blur-xl border border-white/10 px-3 md:px-4 flex items-center gap-2 md:gap-3 z-10 transition-[left]`}>
@@ -1018,7 +1029,7 @@ export default function WorldMap() {
           <>
         <div className="flex gap-1 max-md:gap-0.5 shrink-0">
           {HOURS.map((h) => (
-            <button key={h} onClick={() => { setHours(h); setPeriod(null); setPlayhead(null); setPlaying(false); }}
+            <button key={h} onClick={() => { setHours(h); setPeriod(null); setQuietNear(null); setPlayhead(null); setPlaying(false); }}
               className={`text-xs rounded px-2 py-1 ${FOCUS} ${h === hours && !period ? "bg-white/90 text-slate-900 font-medium" : "bg-white/10 hover:bg-white/20"}`}>
               {h < 24 ? `${h}h` : `${h / 24}d`}
             </button>

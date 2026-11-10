@@ -2190,6 +2190,7 @@ const MAPUX: Record<string, Dict> = {
 /** Plain-language copy from the November 2026 UX audit (map, places, reports, alerts, species pages, navigation). */
 const AUDIT: Record<string, Dict> = {
   es: {
+    "Nothing recorded here in the last few hours.": "No se ha registrado nada aquí en las últimas horas.",
     "Stations sending directly": "Estaciones que envían directamente",
     "Nothing recorded near you in the last few hours.": "No se ha registrado nada cerca de ti en las últimas horas.",
     "Show the last 7 days": "Ver los últimos 7 días",
@@ -2217,6 +2218,7 @@ const AUDIT: Record<string, Dict> = {
     "When it is recorded at least three times in the wider area around your town (about 550 km across) this week or last, after a month or more without records. At most one email every eight weeks per species.": "Cuando se registra al menos tres veces en la zona amplia alrededor de tu localidad (unos 550 km de ancho) esta semana o la anterior, tras un mes o más sin registros. Como máximo un correo cada ocho semanas por especie.",
   },
   fr: {
+    "Nothing recorded here in the last few hours.": "Rien n'a été enregistré ici ces dernières heures.",
     "Stations sending directly": "Stations en envoi direct",
     "Nothing recorded near you in the last few hours.": "Rien n'a été enregistré près de chez vous ces dernières heures.",
     "Show the last 7 days": "Voir les 7 derniers jours",
@@ -2244,6 +2246,7 @@ const AUDIT: Record<string, Dict> = {
     "When it is recorded at least three times in the wider area around your town (about 550 km across) this week or last, after a month or more without records. At most one email every eight weeks per species.": "Quand il est enregistré au moins trois fois dans la région autour de votre ville (environ 550 km) cette semaine ou la précédente, après un mois ou plus sans observation. Au plus un e-mail toutes les huit semaines par espèce.",
   },
   de: {
+    "Nothing recorded here in the last few hours.": "Hier wurde in den letzten Stunden nichts erfasst.",
     "Stations sending directly": "Direkt sendende Stationen",
     "Nothing recorded near you in the last few hours.": "In den letzten Stunden wurde in deiner Nähe nichts erfasst.",
     "Show the last 7 days": "Die letzten 7 Tage zeigen",
@@ -2271,6 +2274,7 @@ const AUDIT: Record<string, Dict> = {
     "When it is recorded at least three times in the wider area around your town (about 550 km across) this week or last, after a month or more without records. At most one email every eight weeks per species.": "Wenn die Art diese oder letzte Woche mindestens dreimal im weiteren Gebiet um deinen Ort (etwa 550 km) erfasst wird, nach einem Monat oder mehr ohne Nachweise. Höchstens eine E-Mail alle acht Wochen pro Art.",
   },
   pt: {
+    "Nothing recorded here in the last few hours.": "Nada foi registado aqui nas últimas horas.",
     "Stations sending directly": "Estações que enviam diretamente",
     "Nothing recorded near you in the last few hours.": "Nada foi registado perto de si nas últimas horas.",
     "Show the last 7 days": "Ver os últimos 7 dias",
@@ -2298,6 +2302,7 @@ const AUDIT: Record<string, Dict> = {
     "When it is recorded at least three times in the wider area around your town (about 550 km across) this week or last, after a month or more without records. At most one email every eight weeks per species.": "Quando é registada pelo menos três vezes na área mais ampla à volta da sua localidade (cerca de 550 km) esta semana ou na anterior, após um mês ou mais sem registos. No máximo um e-mail a cada oito semanas por espécie.",
   },
   hi: {
+    "Nothing recorded here in the last few hours.": "पिछले कुछ घंटों में यहाँ कुछ दर्ज नहीं हुआ।",
     "Stations sending directly": "सीधे भेजने वाले स्टेशन",
     "Nothing recorded near you in the last few hours.": "पिछले कुछ घंटों में आपके पास कुछ दर्ज नहीं हुआ।",
     "Show the last 7 days": "पिछले 7 दिन दिखाएँ",
@@ -2325,6 +2330,7 @@ const AUDIT: Record<string, Dict> = {
     "When it is recorded at least three times in the wider area around your town (about 550 km across) this week or last, after a month or more without records. At most one email every eight weeks per species.": "जब इस हफ़्ते या पिछले हफ़्ते आपके शहर के आसपास के बड़े क्षेत्र (लगभग 550 किमी) में यह कम से कम तीन बार दर्ज हो, एक महीने या उससे ज़्यादा समय तक कोई रिकॉर्ड न होने के बाद। हर प्रजाति के लिए आठ हफ़्तों में ज़्यादा से ज़्यादा एक ईमेल।",
   },
   ta: {
+    "Nothing recorded here in the last few hours.": "கடந்த சில மணி நேரத்தில் இங்கே எதுவும் பதிவாகவில்லை.",
     "Stations sending directly": "நேரடியாக அனுப்பும் நிலையங்கள்",
     "Nothing recorded near you in the last few hours.": "கடந்த சில மணி நேரத்தில் உங்கள் அருகில் எதுவும் பதிவாகவில்லை.",
     "Show the last 7 days": "கடந்த 7 நாட்களைக் காட்டு",
