@@ -2190,6 +2190,8 @@ const MAPUX: Record<string, Dict> = {
 /** Plain-language copy from the November 2026 UX audit (map, places, reports, alerts, species pages, navigation). */
 const AUDIT: Record<string, Dict> = {
   es: {
+    "So this report uses the weekly counts for the wider area around the point (about 550 km across), the same counts as the map and study areas. Shown here, not downloadable.": "Por eso este informe usa los recuentos semanales de la zona amplia alrededor del punto (unos 550 km de ancho), los mismos que el mapa y las áreas de estudio. Se muestran aquí, pero no se pueden descargar.",
+    "Prefer not to say": "Prefiero no decirlo",
     "Nothing recorded here in the last few hours.": "No se ha registrado nada aquí en las últimas horas.",
     "Stations sending directly": "Estaciones que envían directamente",
     "Nothing recorded near you in the last few hours.": "No se ha registrado nada cerca de ti en las últimas horas.",
@@ -2218,6 +2220,8 @@ const AUDIT: Record<string, Dict> = {
     "When it is recorded at least three times in the wider area around your town (about 550 km across) this week or last, after a month or more without records. At most one email every eight weeks per species.": "Cuando se registra al menos tres veces en la zona amplia alrededor de tu localidad (unos 550 km de ancho) esta semana o la anterior, tras un mes o más sin registros. Como máximo un correo cada ocho semanas por especie.",
   },
   fr: {
+    "So this report uses the weekly counts for the wider area around the point (about 550 km across), the same counts as the map and study areas. Shown here, not downloadable.": "Ce rapport utilise donc les comptages hebdomadaires de la région autour du point (environ 550 km), les mêmes que la carte et les zones d'étude. Affichés ici, non téléchargeables.",
+    "Prefer not to say": "Je préfère ne pas le dire",
     "Nothing recorded here in the last few hours.": "Rien n'a été enregistré ici ces dernières heures.",
     "Stations sending directly": "Stations en envoi direct",
     "Nothing recorded near you in the last few hours.": "Rien n'a été enregistré près de chez vous ces dernières heures.",
@@ -2246,6 +2250,8 @@ const AUDIT: Record<string, Dict> = {
     "When it is recorded at least three times in the wider area around your town (about 550 km across) this week or last, after a month or more without records. At most one email every eight weeks per species.": "Quand il est enregistré au moins trois fois dans la région autour de votre ville (environ 550 km) cette semaine ou la précédente, après un mois ou plus sans observation. Au plus un e-mail toutes les huit semaines par espèce.",
   },
   de: {
+    "So this report uses the weekly counts for the wider area around the point (about 550 km across), the same counts as the map and study areas. Shown here, not downloadable.": "Daher nutzt dieser Bericht die Wochenzahlen des weiteren Gebiets um den Punkt (etwa 550 km breit), dieselben wie Karte und Studiengebiete. Hier angezeigt, nicht herunterladbar.",
+    "Prefer not to say": "Keine Angabe",
     "Nothing recorded here in the last few hours.": "Hier wurde in den letzten Stunden nichts erfasst.",
     "Stations sending directly": "Direkt sendende Stationen",
     "Nothing recorded near you in the last few hours.": "In den letzten Stunden wurde in deiner Nähe nichts erfasst.",
@@ -2274,6 +2280,8 @@ const AUDIT: Record<string, Dict> = {
     "When it is recorded at least three times in the wider area around your town (about 550 km across) this week or last, after a month or more without records. At most one email every eight weeks per species.": "Wenn die Art diese oder letzte Woche mindestens dreimal im weiteren Gebiet um deinen Ort (etwa 550 km) erfasst wird, nach einem Monat oder mehr ohne Nachweise. Höchstens eine E-Mail alle acht Wochen pro Art.",
   },
   pt: {
+    "So this report uses the weekly counts for the wider area around the point (about 550 km across), the same counts as the map and study areas. Shown here, not downloadable.": "Por isso este relatório usa as contagens semanais da área mais ampla à volta do ponto (cerca de 550 km), as mesmas do mapa e das áreas de estudo. Mostradas aqui, não descarregáveis.",
+    "Prefer not to say": "Prefiro não dizer",
     "Nothing recorded here in the last few hours.": "Nada foi registado aqui nas últimas horas.",
     "Stations sending directly": "Estações que enviam diretamente",
     "Nothing recorded near you in the last few hours.": "Nada foi registado perto de si nas últimas horas.",
@@ -2302,6 +2310,8 @@ const AUDIT: Record<string, Dict> = {
     "When it is recorded at least three times in the wider area around your town (about 550 km across) this week or last, after a month or more without records. At most one email every eight weeks per species.": "Quando é registada pelo menos três vezes na área mais ampla à volta da sua localidade (cerca de 550 km) esta semana ou na anterior, após um mês ou mais sem registos. No máximo um e-mail a cada oito semanas por espécie.",
   },
   hi: {
+    "So this report uses the weekly counts for the wider area around the point (about 550 km across), the same counts as the map and study areas. Shown here, not downloadable.": "इसलिए यह रिपोर्ट उस जगह के आसपास के बड़े क्षेत्र (लगभग 550 किमी) की साप्ताहिक गिनती इस्तेमाल करती है, वही जो नक्शे और अध्ययन क्षेत्रों में है। यहाँ दिखाई गई है, डाउनलोड नहीं की जा सकती।",
+    "Prefer not to say": "बताना नहीं चाहते",
     "Nothing recorded here in the last few hours.": "पिछले कुछ घंटों में यहाँ कुछ दर्ज नहीं हुआ।",
     "Stations sending directly": "सीधे भेजने वाले स्टेशन",
     "Nothing recorded near you in the last few hours.": "पिछले कुछ घंटों में आपके पास कुछ दर्ज नहीं हुआ।",
@@ -2330,6 +2340,8 @@ const AUDIT: Record<string, Dict> = {
     "When it is recorded at least three times in the wider area around your town (about 550 km across) this week or last, after a month or more without records. At most one email every eight weeks per species.": "जब इस हफ़्ते या पिछले हफ़्ते आपके शहर के आसपास के बड़े क्षेत्र (लगभग 550 किमी) में यह कम से कम तीन बार दर्ज हो, एक महीने या उससे ज़्यादा समय तक कोई रिकॉर्ड न होने के बाद। हर प्रजाति के लिए आठ हफ़्तों में ज़्यादा से ज़्यादा एक ईमेल।",
   },
   ta: {
+    "So this report uses the weekly counts for the wider area around the point (about 550 km across), the same counts as the map and study areas. Shown here, not downloadable.": "எனவே இந்த அறிக்கை அந்த இடத்தைச் சுற்றியுள்ள பெரிய பகுதியின் (சுமார் 550 கிமீ) வாராந்திர எண்ணிக்கைகளைப் பயன்படுத்துகிறது, வரைபடமும் ஆய்வுப் பகுதிகளும் பயன்படுத்தும் அதே எண்ணிக்கைகள். இங்கே காட்டப்படும், பதிவிறக்க முடியாது.",
+    "Prefer not to say": "சொல்ல விரும்பவில்லை",
     "Nothing recorded here in the last few hours.": "கடந்த சில மணி நேரத்தில் இங்கே எதுவும் பதிவாகவில்லை.",
     "Stations sending directly": "நேரடியாக அனுப்பும் நிலையங்கள்",
     "Nothing recorded near you in the last few hours.": "கடந்த சில மணி நேரத்தில் உங்கள் அருகில் எதுவும் பதிவாகவில்லை.",

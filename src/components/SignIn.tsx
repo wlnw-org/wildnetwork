@@ -30,7 +30,6 @@ export default function SignIn({ me, next }: { me: Me | undefined; next?: string
       <span className="mt-1.5 block max-w-md text-xs text-slate-400">
         ORCID is a free ID that researchers use to get credit for their work. Making one takes about a minute at{" "}
         <a href="https://orcid.org/register" className="text-cyan-400 hover:underline">orcid.org/register</a>. We never see your password.
-        The map, species pages and alerts need no sign-in.
       </span>
     </span>
   );

@@ -1,12 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { track } from "@/components/Analytics";
-import { useT } from "@/lib/i18n";
+import { useLang, useT } from "@/lib/i18n";
 
-const ROLES = [["", "I am a... (optional)"], ["researcher", "Researcher"], ["birder", "Birder or naturalist"], ["educator", "Teacher or educator"], ["station owner", "Station owner"], ["other", "Other"]];
+const ROLES = [["", "Prefer not to say"], ["researcher", "Researcher"], ["birder", "Birder or naturalist"], ["educator", "Teacher or educator"], ["station owner", "Station owner"], ["other", "Other"]];
 
 /** "Email me when it arrives near me". The place name is geocoded on the server; only its 5 degree square is kept. */
-export default function AlertForm({ species, title, compact = false }: { species: string; title: string; compact?: boolean }) {
+export default function AlertForm({ species, title, names, compact = false }: { species: string; title: string; names?: Record<string, string> | null; compact?: boolean }) {
+  const lang = useLang();
+  const shownName = names?.[lang] ?? title;
   const [state, setState] = useState<{ busy?: boolean; ok?: boolean; msg?: string }>({});
   const [place, setPlace] = useState("");
   const t = useT();
@@ -41,7 +43,7 @@ export default function AlertForm({ species, title, compact = false }: { species
           {ROLES.map(([v, l]) => <option key={v} value={v}>{t(l)}</option>)}
         </select></label>
       <button disabled={state.busy} className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400 disabled:opacity-60">
-        {state.busy ? t("Sending...") : compact ? t("Email me when it arrives") : t("Email me when the {name} arrives", { name: title })}
+        {state.busy ? t("Sending...") : compact ? t("Email me when it arrives") : t("Email me when the {name} arrives", { name: shownName })}
       </button>
       {state.msg && <p className="sm:col-span-2 text-sm text-rose-300">{state.msg}</p>}
       <p className="sm:col-span-2 text-sm text-slate-400">

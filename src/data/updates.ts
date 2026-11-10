@@ -24,7 +24,7 @@ export const UPDATES: Update[] = [
     date: "2026-11-03",
     title: "Site reports and projects",
     items: [
-      { text: "Site reports: pick a place and dates to see what was recorded around it, week by week, and compare two periods, such as before and after a restoration. Where no station keeps its history here, the report uses the surrounding 5 degree area.", href: "/report" },
+      { text: "Site reports: pick a place and dates to see what was recorded around it, week by week, and compare two periods, such as before and after a restoration. Where no station keeps its history here, the report uses the wider area around it (about 550 km across).", href: "/report" },
       { text: "A project board for research questions, where anyone signed in with ORCID can ask to join a project or a study area.", href: "/projects", forResearchers: true },
       { text: "Species photos are no longer cropped, on the site and in alert emails." },
       { text: "GBIF records are refreshed back a full year, so late records are counted.", forResearchers: true },

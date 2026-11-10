@@ -135,7 +135,7 @@ function Report({ r, placeName, contributed }: { r: SiteReport; placeName: strin
       {kept.length === 0 ? (
         <p>
           <T k="No station within {km} km keeps its history on Wildlife Network yet." v={{ km: q.km }} />{" "}
-          {r.mode === "area" && r.cell && <T k="So this report uses the weekly counts for the whole 5 degree grid cell around the point ({lat}° to {lat2}°, {lon}° to {lon2}°, about 550 km across), the same counts as the map and study areas. Shown here, not downloadable." v={{ lat: r.cell.lat, lat2: r.cell.lat + 5, lon: r.cell.lon, lon2: r.cell.lon + 5 }} />}{" "}
+          {r.mode === "area" && r.cell && <T k="So this report uses the weekly counts for the wider area around the point (about 550 km across), the same counts as the map and study areas. Shown here, not downloadable." />}{" "}
           <Link href="/contribute" className="text-cyan-400 hover:underline"><T k="Add a station to start a record for this exact place." /></Link>
         </p>
       ) : (
@@ -221,7 +221,7 @@ function Bars({ mondays, byWeek, value, label }: { mondays: string[]; byWeek: Ma
         if (!w) return <rect key={m} x={i * 12 + 1} y={59} width={10} height={1} className="fill-white/10"><title>{`${m}: no data`}</title></rect>;
         const h = Math.max(1, (value(w) / max) * 58);
         const pale = w.watched === false;
-        return <rect key={m} x={i * 12 + 1} y={60 - h} width={10} height={h} className={pale ? "fill-cyan-500/25" : "fill-cyan-500/70"}><title>{`${w.week}: ${w.detections} ${label === "detections" ? "detections" : "records"}, ${w.species} species${pale ? ", below the coverage threshold" : ""}`}</title></rect>;
+        return <rect key={m} x={i * 12 + 1} y={60 - h} width={10} height={h} className={pale ? "fill-cyan-500/25" : "fill-cyan-500/70"}><title>{`${w.week}: ${w.detections} ${label === "detections" ? "detections" : "records"}, ${w.species} species${pale ? ", too few records to compare" : ""}`}</title></rect>;
       })}
     </svg>
   );

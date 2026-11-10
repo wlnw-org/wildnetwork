@@ -131,7 +131,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
         {ALERTS_ENABLED && !BIRDWEATHER_PAUSED && (
           <section id="alert" className="mt-6 rounded-lg border border-white/10 bg-white/5 p-4">
             <h2 className="text-lg font-semibold text-slate-100"><T k="Get an email when the {name} arrives near you" v={{ name: title }} names={nm} /></h2>
-            <AlertForm species={d.name} title={title} />
+            <AlertForm species={d.name} title={title} names={nm} />
           </section>
         )}
 
