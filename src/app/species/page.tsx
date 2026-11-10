@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import HelpLink from "@/components/HelpLink";
 import Link from "next/link";
+import type { ReactNode } from "react";
+import { TR } from "@/components/TR";
 import PausedNotice from "@/components/PausedNotice";
 import { BIRDWEATHER_PAUSED } from "@/lib/sources";
 import { sql } from "@/lib/db";
@@ -26,7 +28,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   };
 }
 
-const CLASS_TITLE: Record<string, string> = { avian: "Birds", bat: "Bats", amphibian: "Frogs and toads", insect: "Insects", mammal: "Mammals", marine: "Marine mammals", other: "Other" };
+const CLASS_TITLE: Record<string, ReactNode> = { avian: <TR k="Birds" />, bat: <TR k="Bats" />, amphibian: <TR k="Frogs and toads" />, insect: <TR k="Insects" />, mammal: <TR k="Mammals" />, marine: <TR k="Marine mammals" />, other: <TR k="Other" /> };
 
 // The list changes once a day (phenology recompute); one query an hour serves every letter and search.
 const allSpecies = unstable_cache(async () => [...await sql<{ scientific_name: string; vernacular_name: string | null; grp: string }[]>`
@@ -46,6 +48,7 @@ export default async function SpeciesIndex({ searchParams }: Props) {
   const counts = new Map<string, number>();
   for (const r of all) { const l = letterOf(r.vernacular_name ?? r.scientific_name); counts.set(l, (counts.get(l) ?? 0) + 1); }
   const needle = q.toLowerCase();
+  const safeQ = q.replace(/[[\]*]/g, ""); // TR reads [label](href) and **bold** as markup
   const rows = q
     ? all.filter((r) => r.scientific_name.toLowerCase().includes(needle) || (r.vernacular_name ?? "").toLowerCase().includes(needle)).slice(0, 300)
     : all.filter((r) => letterOf(r.vernacular_name ?? r.scientific_name) === letter);
@@ -53,17 +56,16 @@ export default async function SpeciesIndex({ searchParams }: Props) {
   return (
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-100">Species</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-slate-100"><TR k="Species" /></h1>
         <p className="mt-2"><HelpLink to="/help/site/species" /></p>
         {BIRDWEATHER_PAUSED && <PausedNotice className="mt-4" />}
         <p className="mt-3">
-          {all.length.toLocaleString("en-GB")} species have a full seasonal record so far. Each page shows where the species is being detected now, when it arrives in each region, and how its range moves with the weather.
-          Or browse <Link href="/arrivals" className="text-cyan-400 hover:underline">arrival dates by region</Link>, month by month.
+          <TR k="{n} species have a full seasonal record so far. Each page shows where the species is being detected now, when it arrives in each region, and how its range moves with the weather. Or browse [arrival dates by region](/arrivals), month by month." v={{ n: all.length.toLocaleString("en-GB") }} />
         </p>
         <form method="get" action="/species" role="search" className="mt-5 flex gap-2">
           <input name="q" defaultValue={q} placeholder="Search by English or scientific name" aria-label="Search species"
             className="min-w-0 flex-1 rounded-md border border-white/15 bg-white/5 px-3 py-2 text-slate-100 placeholder:text-slate-500" />
-          <button className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400">Search</button>
+          <button className="rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400"><TR k="Search" /></button>
         </form>
         <nav aria-label="Species by first letter" className="mt-4 flex flex-wrap gap-1 text-sm">
           {LETTERS.map((l) => {
@@ -78,8 +80,8 @@ export default async function SpeciesIndex({ searchParams }: Props) {
         </nav>
         <p className="mt-4 text-sm text-slate-400">
           {q
-            ? <>{rows.length >= 300 ? "First 300 matches" : `${rows.length} ${rows.length === 1 ? "match" : "matches"}`} for &quot;{q}&quot;. <Link href="/species" className="text-cyan-400 hover:underline">Clear search</Link></>
-            : <>{rows.length} species starting with {letter === "#" ? "other characters" : letter}.</>}
+            ? <>{rows.length >= 300 ? <TR k="First 300 matches for “{q}”." v={{ q: safeQ }} /> : rows.length === 1 ? <TR k="{n} match for “{q}”." v={{ n: rows.length, q: safeQ }} /> : <TR k="{n} matches for “{q}”." v={{ n: rows.length, q: safeQ }} />} <Link href="/species" className="text-cyan-400 hover:underline"><TR k="Clear search" /></Link></>
+            : letter === "#" ? <TR k="{n} species starting with other characters." v={{ n: rows.length }} /> : <TR k="{n} species starting with {letter}." v={{ n: rows.length, letter }} />}
         </p>
         {groups.map(({ g, items }) => (
           <section key={g}>

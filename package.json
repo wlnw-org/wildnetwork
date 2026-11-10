@@ -18,7 +18,8 @@
     "phenology": "tsx --env-file=.env.local scripts/phenology.mts",
     "classify": "tsx --env-file=.env.local scripts/classify.mts",
     "test": "tsx --test 'src/**/*.test.ts'",
-    "backfill:obis": "tsx --env-file=.env.local scripts/backfill-obis.mts"
+    "backfill:obis": "tsx --env-file=.env.local scripts/backfill-obis.mts",
+    "i18n:body": "tsx scripts/i18n-body.mts"
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.114",

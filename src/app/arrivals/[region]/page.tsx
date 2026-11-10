@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { TR } from "@/components/TR";
 import { cache } from "react";
 import { sql } from "@/lib/db";
 import { REGION } from "@/lib/methods";
@@ -75,9 +76,9 @@ export default async function RegionArrivals({ params, searchParams }: { params:
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <nav className="text-sm text-slate-400">
-          <Link href="/arrivals" className="text-cyan-400 hover:underline">Arrivals</Link> / {r.name}
+          <Link href="/arrivals" className="text-cyan-400 hover:underline"><TR k="Arrivals" /></Link> / {r.name}
         </nav>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">When do {what} arrive in {r.name}?</h1>
+        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><TR k="When do {what} arrive in {region}?" v={{ what, region: r.name }} /></h1>
         {present.length > 1 && (
           <div className="mt-4 flex flex-wrap gap-1.5 text-sm" role="group" aria-label="Animal class">
             {present.map((g) => (
@@ -89,31 +90,30 @@ export default async function RegionArrivals({ params, searchParams }: { params:
           </div>
         )}
         <p className="mt-3">
-          {rows.length.toLocaleString("en-GB")} species of {what} have a seasonal record in {r.name}.
-          Each is listed under the month it typically arrived over the past year: the middle of its first-arrival weeks across the areas where it was recorded
-          (each area about 550 km across). Southern areas usually see a species earlier than northern ones, so open a species to see the range.
-          {grp === "avian" && " Some birds that stay all year appear here when they become easier to hear again, for example when they start singing in spring."}
+          <TR k="{n} species of {what} have a seasonal record in {region}." v={{ n: rows.length.toLocaleString("en-GB"), what, region: r.name }} />{" "}
+          <TR k="Each is listed under the month it typically arrived over the past year: the middle of its first-arrival weeks across the areas where it was recorded (each area about 550 km across). Southern areas usually see a species earlier than northern ones, so open a species to see the range." />
+          {grp === "avian" && <>{" "}<TR k="Some birds that stay all year appear here when they become easier to hear again, for example when they start singing in spring." /></>}
         </p>
 
         {now.length > 0 && (
           <>
-            <h2 className="mt-8 text-xl font-semibold text-slate-100">Arriving around now</h2>
-            <p className="mt-2 text-sm text-slate-400">Species that arrived in {MONTHS[m - 1]} or {MONTHS[m % 12]} last year, most widespread first.{resident.size > 0 && ` Species recorded all year round are left out (${resident.size}).`}</p>
+            <h2 className="mt-8 text-xl font-semibold text-slate-100"><TR k="Arriving around now" /></h2>
+            <p className="mt-2 text-sm text-slate-400"><TR k="Species that arrived in {month} or {next} last year, most widespread first." v={{ month: MONTHS[m - 1], next: MONTHS[m % 12] }} />{resident.size > 0 && <>{" "}<TR k="Species recorded all year round are left out ({n})." v={{ n: resident.size }} /></>}</p>
             <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
               {now.map((x) => <li key={x.scientific_name}><SpeciesLink x={x} /></li>)}
             </ul>
             <p className="mt-3">
-              <Link href="/" className="inline-block rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400">See them on the live map</Link>
+              <Link href="/" className="inline-block rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400"><TR k="See them on the live map" /></Link>
             </p>
             <p className="mt-3 text-sm text-slate-400">
-              Want to know the week one reaches you? Open a species and use <b className="text-amber-200">Get an email when it arrives near you</b>: one email when it turns up in your area after weeks away.
+              <TR k="Want to know the week one reaches you? Open a species and use" /> <b className="text-amber-200"><TR k="Get an email when it arrives near you" /></b><TR k=": one email when it turns up in your area after weeks away." />
             </p>
           </>
         )}
 
         {byMonth.map(({ label, items }) => (
           <section key={label}>
-            <h2 className="mt-8 text-xl font-semibold text-slate-100">Arriving in {label} <span className="text-sm font-normal text-slate-400">{items.length}</span></h2>
+            <h2 className="mt-8 text-xl font-semibold text-slate-100"><TR k="Arriving in {month}" v={{ month: label }} /> <span className="text-sm font-normal text-slate-400">{items.length}</span></h2>
             <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
               {items.map((x) => <li key={x.scientific_name}><SpeciesLink x={x} /></li>)}
             </ul>
@@ -121,14 +121,13 @@ export default async function RegionArrivals({ params, searchParams }: { params:
         ))}
 
         <p className="mt-8 text-sm text-slate-400">
-          Other regions:{" "}
+          <TR k="Other regions:" />{" "}
           {REGIONS.filter((o) => o.slug !== r.slug).map((o, i) => (
             <span key={o.slug}>{i > 0 && " · "}<Link href={`/arrivals/${o.slug}`} className="text-cyan-400 hover:underline">{o.name}</Link></span>
           ))}
         </p>
         <p className="mt-2 text-sm text-slate-400">
-          Arrival dates come from automatic sound identification and open records, corrected for how much each area is watched.{" "}
-          <Link href="/methods" className="text-cyan-400 hover:underline">How this is measured</Link>.
+          <TR k="Arrival dates come from automatic sound identification and open records, corrected for how much each area is watched. [How this is measured](/methods)." />
         </p>
       </div>
     </main>

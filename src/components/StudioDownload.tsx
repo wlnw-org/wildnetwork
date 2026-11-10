@@ -2,6 +2,7 @@
 import { useSyncExternalStore } from "react";
 import { track } from "@/components/Analytics";
 import { studioDownload } from "@/lib/site";
+import { TR } from "@/components/TR";
 
 type Os = "mac" | "windows" | "linux" | "other";
 
@@ -14,9 +15,9 @@ function detectOs(): Os {
 /** One-click download buttons for Wildlife Network Studio; the visitor's own system comes first. */
 export default function StudioDownload() {
   const os = useSyncExternalStore(noop, detectOs, () => "other" as Os);
-  const mac = { os: "mac" as const, label: "Download for Mac", sub: "Apple Silicon (M1 or newer), macOS 11+", href: studioDownload("mac") };
-  const win = { os: "windows" as const, label: "Download for Windows", sub: "64-bit, Windows 10 or 11", href: studioDownload("windows") };
-  const lin = { os: "linux" as const, label: "Download for Linux", sub: "64-bit AppImage, Ubuntu 22.04+ and similar", href: studioDownload("linux") };
+  const mac = { os: "mac" as const, label: <TR k="Download for Mac" />, sub: <TR k="Apple Silicon (M1 or newer), macOS 11+" />, href: studioDownload("mac") };
+  const win = { os: "windows" as const, label: <TR k="Download for Windows" />, sub: <TR k="64-bit, Windows 10 or 11" />, href: studioDownload("windows") };
+  const lin = { os: "linux" as const, label: <TR k="Download for Linux" />, sub: <TR k="64-bit AppImage, Ubuntu 22.04+ and similar" />, href: studioDownload("linux") };
   const order = os === "windows" ? [win, mac] : os === "linux" ? [lin, win, mac] : [mac, win];
   return (
     <>
@@ -30,9 +31,9 @@ export default function StudioDownload() {
       ))}
     </div>
     <p className="mt-2 text-sm text-slate-400">
-      Mac with an Intel processor? <a href={studioDownload("macIntel")} onClick={() => track("download_studio", { os: "mac-intel" })} className="text-cyan-400 hover:underline">Download for Intel Mac</a>.
-      Not sure? Apple menu, About This Mac: &quot;Chip: Apple&quot; means Apple Silicon, &quot;Processor: Intel&quot; means Intel.
-      {os !== "linux" && <> Linux? <a href={studioDownload("linux")} onClick={() => track("download_studio", { os: "linux" })} className="text-cyan-400 hover:underline">Download the AppImage</a>.</>}
+      <TR k="Mac with an Intel processor?" /> <a href={studioDownload("macIntel")} onClick={() => track("download_studio", { os: "mac-intel" })} className="text-cyan-400 hover:underline"><TR k="Download for Intel Mac" /></a>.
+      {" "}<TR k="Not sure? Apple menu, About This Mac: “Chip: Apple” means Apple Silicon, “Processor: Intel” means Intel." />
+      {os !== "linux" && <> <TR k="Linux?" /> <a href={studioDownload("linux")} onClick={() => track("download_studio", { os: "linux" })} className="text-cyan-400 hover:underline"><TR k="Download the AppImage" /></a>.</>}
     </p>
     </>
   );

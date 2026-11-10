@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { TR } from "@/components/TR";
 import { sql } from "@/lib/db";
 import { speciesSlug } from "@/lib/site";
 
@@ -17,17 +18,16 @@ export default async function Confirm({ searchParams }: { searchParams: Promise<
       <div className="mx-auto max-w-xl px-5 py-16 text-[15px] leading-relaxed">
         {row ? (
           <>
-            <h1 className="text-2xl font-semibold text-slate-100">Alert confirmed</h1>
+            <h1 className="text-2xl font-semibold text-slate-100"><TR k="Alert confirmed" /></h1>
             <p className="mt-3">
-              We will email you when <i>{row.scientific_name}</i> arrives in the wider area around {row.place} (about 550 km across): the first records after a month or more without it.
-              Every email has a link to stop it.
+              <TR k="We will email you when" /> <i>{row.scientific_name}</i> <TR k="arrives in the wider area around {place} (about 550 km across): the first records after a month or more without it. Every email has a link to stop it." v={{ place: row.place }} />
             </p>
-            <p className="mt-4"><Link href={`/species/${speciesSlug(row.scientific_name)}`} className="text-cyan-400 hover:underline">Back to the species</Link></p>
+            <p className="mt-4"><Link href={`/species/${speciesSlug(row.scientific_name)}`} className="text-cyan-400 hover:underline"><TR k="Back to the species" /></Link></p>
           </>
         ) : (
           <>
-            <h1 className="text-2xl font-semibold text-slate-100">Link not valid</h1>
-            <p className="mt-3">This link has expired or was already used to unsubscribe. Unconfirmed requests are deleted after 7 days. <Link href="/species" className="text-cyan-400 hover:underline">Set up a new alert</Link> from any species page.</p>
+            <h1 className="text-2xl font-semibold text-slate-100"><TR k="Link not valid" /></h1>
+            <p className="mt-3"><TR k="This link has expired or was already used to unsubscribe. Unconfirmed requests are deleted after 7 days. [Set up a new alert](/species) from any species page." /></p>
           </>
         )}
       </div>

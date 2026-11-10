@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { ReactNode } from "react";
+import { TR } from "@/components/TR";
 import { sql } from "@/lib/db";
 import { roundTo } from "@/lib/optin";
 
@@ -11,9 +13,9 @@ export const metadata: Metadata = {
   description: "How many acoustic stations, camera traps and observers feed Wildlife Network, and the stations whose owners send their detections directly.",
 };
 
-const LABEL: Record<string, string> = { birdweather: "BirdWeather stations", inaturalist: "iNaturalist observers", gbif: "GBIF datasets (live)" };
+const LABEL: Record<string, ReactNode> = { birdweather: <TR k="BirdWeather stations" />, inaturalist: <TR k="iNaturalist observers" />, gbif: <TR k="GBIF datasets (live)" /> };
 
-const KIND: Record<string, string> = { "acoustic-recorder": "Sound recorder", "bat-detector": "Bat detector", "camera-trap": "Camera trap", "ultrasonic-recorder": "Bat detector" };
+const KIND: Record<string, ReactNode> = { "acoustic-recorder": <TR k="Sound recorder" />, "bat-detector": <TR k="Bat detector" />, "camera-trap": <TR k="Camera trap" />, "ultrasonic-recorder": <TR k="Bat detector" /> };
 
 export default async function Stations() {
   const [bySource, direct, optins, devices] = await Promise.all([
@@ -37,36 +39,35 @@ export default async function Stations() {
   return (
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Stations</h1>
-        <p className="mt-3">Everything on the map comes from people: station owners, camera trappers and observers. Active means seen in the last seven days.</p>
+        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><TR k="Stations" /></h1>
+        <p className="mt-3"><TR k="Everything on the map comes from people: station owners, camera trappers and observers. Active means seen in the last seven days." /></p>
 
         <dl className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {bySource.filter((s) => LABEL[s.source_system]).map((s) => (
             <div key={s.source_system} className="rounded-lg border border-white/10 bg-white/5 p-3">
               <dt className="text-xs text-slate-400">{LABEL[s.source_system]}</dt>
               <dd className="text-2xl font-semibold text-slate-100">{s.active.toLocaleString("en-GB")}</dd>
-              <dd className="text-xs text-slate-400">{s.total.toLocaleString("en-GB")} known</dd>
+              <dd className="text-xs text-slate-400"><TR k="{n} known" v={{ n: s.total.toLocaleString("en-GB") }} /></dd>
             </div>
           ))}
           <div className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 p-3">
-            <dt className="text-xs text-cyan-200">Sending directly</dt>
+            <dt className="text-xs text-cyan-200"><TR k="Sending directly" /></dt>
             <dd className="text-2xl font-semibold text-slate-100">{direct.length.toLocaleString("en-GB")}</dd>
-            <dd className="text-xs text-slate-400">owner chooses the licence</dd>
+            <dd className="text-xs text-slate-400"><TR k="owner chooses the licence" /></dd>
           </div>
         </dl>
 
-        <h2 className="mt-10 text-xl font-semibold text-slate-100">BirdWeather stations that opted in</h2>
+        <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="BirdWeather stations that opted in" /></h2>
         <p className="mt-2">
-          These owners chose to share their station&apos;s full daily counts, under their own licence, at the precision they picked.{" "}
-          <Link href="/stations/join" className="text-cyan-400 hover:underline">Add your BirdWeather station</Link>.
+          <TR k="These owners chose to share their station's full daily counts, under their own licence, at the precision they picked. [Add your BirdWeather station](/stations/join)." />
         </p>
         {optins.length ? (
           <table className="mt-4 w-full text-sm">
-            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium">Station</th><th className="font-medium">Where</th><th className="font-medium">Licence</th><th className="font-medium text-right">Species</th><th className="font-medium text-right">Days</th></tr></thead>
+            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><TR k="Station" /></th><th className="font-medium"><TR k="Where" /></th><th className="font-medium"><TR k="Licence" /></th><th className="font-medium text-right"><TR k="Species" /></th><th className="font-medium text-right"><TR k="Days" /></th></tr></thead>
             <tbody>
               {optins.map((o, i) => (
                 <tr key={o.station_id} className="border-b border-white/5">
-                  <td className="py-1.5">{o.display_name ?? `Anonymous station ${i + 1}`}</td>
+                  <td className="py-1.5">{o.display_name ?? <TR k="Anonymous station {n}" v={{ n: i + 1 }} />}</td>
                   <td>{o.lat != null && o.lon != null ? `${roundTo(o.lat, o.precision_km)}°, ${roundTo(o.lon, o.precision_km)}° (±${o.precision_km} km)` : ""}</td>
                   <td>{o.license === "CC0-1.0" ? "CC0" : "CC BY 4.0"}</td>
                   <td className="text-right">{o.species.toLocaleString("en-GB")}</td>
@@ -76,22 +77,21 @@ export default async function Stations() {
             </tbody>
           </table>
         ) : (
-          <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4">No BirdWeather station has opted in yet. <Link href="/stations/join" className="text-cyan-400 hover:underline">Be the first</Link>.</p>
+          <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4"><TR k="No BirdWeather station has opted in yet. [Be the first](/stations/join)." /></p>
         )}
 
-        <h2 className="mt-10 text-xl font-semibold text-slate-100">Stations sending directly</h2>
+        <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="Stations sending directly" /></h2>
         <p className="mt-2">
-          These owners run our free station program (wdx-agent) on a BirdNET-Pi, BirdNET-Go, bat detector or camera trap. Their detections are published under the licence they choose,
-          so they can go into the <Link href="/data" className="text-cyan-400 hover:underline">open data releases</Link>. Coordinates are rounded to about 1 km on the device.
+          <TR k="These owners run our free station program (wdx-agent) on a BirdNET-Pi, BirdNET-Go, bat detector or camera trap. Their detections are published under the licence they choose, so they can go into the [open data releases](/data). Coordinates are rounded to about 1 km on the device." />
         </p>
         {direct.length ? (
           <table className="mt-4 w-full text-sm">
-            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium">Station</th><th className="font-medium">Kind of station</th><th className="font-medium">Where</th><th className="font-medium text-right">Detections</th></tr></thead>
+            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><TR k="Station" /></th><th className="font-medium"><TR k="Kind of station" /></th><th className="font-medium"><TR k="Where" /></th><th className="font-medium text-right"><TR k="Detections" /></th></tr></thead>
             <tbody>
               {direct.map((d) => (
                 <tr key={d.id} className="border-b border-white/5">
                   <td className="py-1.5">{d.name ?? d.id.split(":").slice(1).join(":")}</td>
-                  <td>{KIND[d.sensor_type ?? ""] ?? "Station"}</td>
+                  <td>{KIND[d.sensor_type ?? ""] ?? <TR k="Station" />}</td>
                   <td>{d.lat}°, {d.lon}°</td>
                   <td className="text-right">{d.n.toLocaleString("en-GB")}</td>
                 </tr>
@@ -99,16 +99,15 @@ export default async function Stations() {
             </tbody>
           </table>
         ) : (
-          <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4">No station sends directly yet. Yours could be the first.</p>
+          <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4"><TR k="No station sends directly yet. Yours could be the first." /></p>
         )}
-        <h2 className="mt-10 text-xl font-semibold text-slate-100">Device health</h2>
+        <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="Device health" /></h2>
         <p className="mt-2">
-          Wildlife Network Bases and other registered devices report their battery, storage and backlog. Shown here: devices that reported in the last 30 days.
-          Health reports carry no detections and no location.
+          <TR k="Wildlife Network Bases and other registered devices report their battery, storage and backlog. Shown here: devices that reported in the last 30 days. Health reports carry no detections and no location." />
         </p>
         {devices.length ? (
           <table className="mt-4 w-full text-sm">
-            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium">Device</th><th className="font-medium">Type</th><th className="font-medium">Last report</th><th className="font-medium text-right">Battery</th><th className="font-medium text-right">Storage free</th><th className="font-medium text-right">Waiting to send</th></tr></thead>
+            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><TR k="Device" /></th><th className="font-medium"><TR k="Type" /></th><th className="font-medium"><TR k="Last report" /></th><th className="font-medium text-right"><TR k="Battery" /></th><th className="font-medium text-right"><TR k="Storage free" /></th><th className="font-medium text-right"><TR k="Waiting to send" /></th></tr></thead>
             <tbody>
               {devices.map((d) => {
                 const st = d.last_status ?? {};
@@ -127,10 +126,10 @@ export default async function Stations() {
             </tbody>
           </table>
         ) : (
-          <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4">No device has reported its health yet.</p>
+          <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4"><TR k="No device has reported its health yet." /></p>
         )}
         <p className="mt-6">
-          <Link href="/contribute" className="inline-block rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400">Add your station</Link>
+          <Link href="/contribute" className="inline-block rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400"><TR k="Add your station" /></Link>
         </p>
       </div>
     </main>

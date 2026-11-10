@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import FeedbackForm from "@/components/FeedbackForm";
+import { TR } from "@/components/TR";
 import { CONTACT_EMAIL } from "@/lib/nav";
 
 export const metadata: Metadata = {
@@ -19,10 +20,9 @@ export default async function Feedback({ searchParams }: { searchParams: Promise
   return (
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-2xl px-5 py-10 text-[15px] leading-relaxed">
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Feedback</h1>
+        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><TR k="Feedback" /></h1>
         <p className="mt-3">
-          Found a problem, a species that should not be there, or have an idea? Tell us here. Every message is read by the maintainer, and goes nowhere else.
-          You can also email <a href={`mailto:${CONTACT_EMAIL}`} className="text-cyan-400 hover:underline">{CONTACT_EMAIL}</a>.
+          <TR k="Found a problem, a species that should not be there, or have an idea? Tell us here. Every message is read by the maintainer, and goes nowhere else. You can also email [{email}](mailto:{email})." v={{ email: CONTACT_EMAIL }} />
         </p>
         <FeedbackForm product={product} context={from ? context : ""} />
       </div>
