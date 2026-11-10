@@ -43,6 +43,23 @@ export default function Studio() {
           <li><b>Exports</b>: Darwin Core Archive for GBIF, CSV, WDX, Raven and Audacity tables, Kaleidoscope id.csv or Camtrap DP, or publish straight to a <A href="/datasets/new">dataset here</A>.</li>
         </ul>
 
+        <h2 className="mt-10 mb-2 text-xl font-semibold text-slate-100">See how it works</h2>
+        <div className="grid gap-5 sm:grid-cols-2">
+          {[
+            ["add-recordings", "1. Add a folder of recordings, then name each recorder and say where it was.", "Adding a folder of recordings and entering the recorder's name and place", 626],
+            ["find-species", "2. Find species. The models run on your own computer.", "Finding species, with recordings done, minutes of audio and detections", 564],
+            ["review", "3. Check the results. Play clips and answer yes, no or not sure.", "Reviewing Eurasian Blackbird clips on the spectrogram", 564],
+            ["export", "4. Export for GBIF, as CSV or Raven tables, or publish here.", "The export screen with dataset details and export formats", 564],
+          ].map(([name, caption, alt, h]) => (
+            <figure key={name}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/studio/${name}.gif`} alt={alt as string} width={960} height={h as number} loading="lazy" className="w-full rounded-lg border border-white/10" />
+              <figcaption className="mt-2 text-sm text-slate-300">{caption}</figcaption>
+            </figure>
+          ))}
+        </div>
+        <p className="mt-3 text-xs text-slate-500">The recordings in these clips are CC0 bird recordings shared by iNaturalist users.</p>
+
         <h2 className="mt-10 mb-2 text-xl font-semibold text-slate-100">Installing</h2>
         <ul className="list-disc pl-5 space-y-1">
           <li><b>Mac</b>: open the downloaded file and drag Studio to Applications. The app is signed and notarized by Apple. Macs with an Intel processor have their own download, just below the buttons.</li>
