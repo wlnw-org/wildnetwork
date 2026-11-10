@@ -58,7 +58,7 @@ export default function Studio() {
             </figure>
           ))}
         </div>
-        <p className="mt-4">Video guides: <A href="https://youtu.be/vDXEllkJIJM">your first project, from recordings to results</A> (3 minutes) and <A href="https://youtu.be/wjGv_3yQeBk">find more of a sound and teach Studio your local species</A> (2 minutes).</p>
+        <p className="mt-4">Video guides: <A href="https://youtu.be/vDXEllkJIJM">your first project, from recordings to results</A> (3 minutes), <A href="https://youtu.be/wjGv_3yQeBk">find more of a sound and teach Studio your local species</A> (2 minutes), and <A href="https://youtu.be/4oAlzlFbEHM">find the animals in your camera trap photos</A> (2 minutes).</p>
         <p className="mt-3 text-xs text-slate-500">The recordings in these clips are CC0 bird recordings shared by iNaturalist users.</p>
 
         <h2 className="mt-10 mb-2 text-xl font-semibold text-slate-100">Installing</h2>
