@@ -58,6 +58,7 @@ export default function Studio() {
             </figure>
           ))}
         </div>
+        <p className="mt-4"><A href="https://youtu.be/vDXEllkJIJM">Watch the 3 minute video guide: your first project, from recordings to results</A></p>
         <p className="mt-3 text-xs text-slate-500">The recordings in these clips are CC0 bird recordings shared by iNaturalist users.</p>
 
         <h2 className="mt-10 mb-2 text-xl font-semibold text-slate-100">Installing</h2>
