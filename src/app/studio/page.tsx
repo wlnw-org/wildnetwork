@@ -22,7 +22,7 @@ export default function Studio() {
 
         <StudioDownload />
         <p className="mt-3 text-sm text-slate-400">
-          <TR k="Free, open source (Apache 2.0), no account needed. On first use the app downloads the Perch model (about 410 MB). [All versions and release notes]({releases}). If Studio saves you time, you can [support it on GitHub Sponsors](https://github.com/sponsors/arunrajiah)." v={{ releases: STUDIO_RELEASES }} />
+          <TR k="Free and open source, no account needed. [Licences and credits](#credits) are below. On first use the app downloads the Perch model (about 410 MB). [All versions and release notes]({releases}). If Studio saves you time, you can [support it on GitHub Sponsors](https://github.com/sponsors/arunrajiah)." v={{ releases: STUDIO_RELEASES }} />
         </p>
 
         <h2 className="mt-10 mb-2 text-xl font-semibold text-slate-100"><TR k="What it does" /></h2>
@@ -61,6 +61,15 @@ export default function Studio() {
           <li><TR k="**Windows**: run the installer. The installer is not code signed yet, so Windows may show a blue SmartScreen message: choose" /> <i><TR k="More info" /></i>, <TR k="then" /> <i><TR k="Run anyway" /></i>. <TR k="Prefer an MSI for managed computers? [Download the MSI]({msi})." v={{ msi: studioDownload("windowsMsi") }} /></li>
           <li><TR k="**Linux** (64-bit, Ubuntu 22.04 or newer and similar): [AppImage]({appimage}) (make it executable, then run it) or [.deb package]({deb}) for Debian and Ubuntu." v={{ appimage: studioDownload("linux"), deb: studioDownload("linuxDeb") }} /></li>
           <li><TR k="**Updates**: Studio checks for a new version when it starts and offers to install it. The check sends only the app version and system, counted on wlnw.org without identifying you ([privacy](/privacy#apps))." /></li>
+        </ul>
+
+        <h2 id="credits" className="mt-10 mb-2 scroll-mt-16 text-xl font-semibold text-slate-100"><TR k="Credits and licences" /></h2>
+        <p><TR k="Studio's own code is free and open source under the Apache 2.0 licence. The part of Studio that reproduces BatDetect2 is under BatDetect2's own licence, CC BY-NC 4.0, so the bat feature is for non-commercial use only. Each model keeps its own licence. Studio names the model and its paper in every export, so please cite them too." /></p>
+        <ul className="mt-3 list-disc pl-5 space-y-2">
+          <li><TR k="**BirdNET 2.4** by the K. Lisa Yang Center for Conservation Bioacoustics at the Cornell Lab of Ornithology and Chemnitz University of Technology. CC BY-NC-SA 4.0, used with the BirdNET team's permission for research and conservation. [Paper](https://doi.org/10.1016/j.ecoinf.2021.101236), [source](https://github.com/birdnet-team/BirdNET-Analyzer)." /></li>
+          <li><TR k="**Perch 2.0** by Google DeepMind and Google Research. Apache 2.0. [Paper](https://arxiv.org/abs/2508.04665)." /></li>
+          <li><TR k="**BatDetect2** by Oisin Mac Aodha, Santiago Martínez Balvanera and contributors. CC BY-NC 4.0, non-commercial use only. Its authors publish the model themselves, so you make the Studio files from their official package ([how](/help/studio/bats)). [Paper](https://doi.org/10.1101/2022.12.14.520490), [source](https://github.com/macaodha/batdetect2)." /></li>
+          <li><TR k="**SpeciesNet** by Google, Apache 2.0, and **MegaDetector v6** by Microsoft's AI for Good Lab, MIT code with CC BY 4.0 weights. [SpeciesNet paper](https://doi.org/10.1049/cvi2.12318), [MegaDetector paper](https://arxiv.org/abs/2405.12930)." /></li>
         </ul>
 
         <p className="mt-10 text-sm text-slate-400">
