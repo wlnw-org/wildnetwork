@@ -3,7 +3,7 @@
 
 /** Studio version the Studio guides were last checked against. .github/workflows/help-check.yml opens an issue when a newer
  * Studio release is out; update the guides, then raise this. */
-export const HELP_CHECKED_STUDIO = "0.1.12";
+export const HELP_CHECKED_STUDIO = "0.1.13";
 
 export type Block =
   | { p: string }
@@ -69,7 +69,7 @@ const studio: Guide[] = [
         "SpeciesNet with MegaDetector (Google and Microsoft): animals, people and vehicles in camera-trap photos. Download it from the Find species screen (about 250 MB, from Studio 0.1.9). See [camera traps](/help/studio/camera-traps).",
       ] },
       { h: "Add a model from a folder" },
-      { p: "Perch and SpeciesNet download inside Studio. BirdNET will download inside Studio soon. Until then, if you have the Studio BirdNET files, add them from a folder. BatDetect2's authors publish their model themselves, so Wildlife Network does not host a copy. You make the BatDetect2 files from their official package, as the [bats](/help/studio/bats) guide shows. To add model files from a folder:" },
+      { p: "Perch, BirdNET (from Studio 0.1.13) and SpeciesNet download inside Studio. BatDetect2's authors publish their model themselves, so Wildlife Network does not host a copy. You make the BatDetect2 files from their official package, as the [bats](/help/studio/bats) guide shows. To add model files from a folder:" },
       { steps: ["On Find species choose Add model files from a folder.", "Pick the folder that holds the model files.", "The model shows as Installed."] },
       { h: "Which models run" },
       { p: "With Best for each recorder's region (recommended), Studio picks for you: Perch first in Africa and South Asia with BirdNET as a second opinion, BirdNET elsewhere, and BatDetect2 for bat recordings when it is installed. Choose myself lets you tick the models to run on every recorder." },
@@ -330,8 +330,8 @@ const site: Guide[] = [
       { p: "[Lost species](/lost-species) lists animals that nobody has confirmed in the wild for 10 years or more, with the countries and region where each was last known. Filter by country or animal group, or choose Use my area to see the ones last known in your country." },
       { p: "Every record that reaches Wildlife Network is checked against this list. A record of a lost species never appears on the map or in our data. It goes to a private review by experts, because most turn out to be a similar species. We never publish the exact place of one." },
       { h: "If you think you found one" },
-      { steps: ["Open [Send a possible sighting](/lost-species/report).", "Choose the species, give the date and the place, and add a link to your photo or recording if you have one.", "Send it. It goes to the private review only. If an expert thinks it is worth a closer look, we pass the details, without your email, to Re:wild."] },
-      { p: "To help without a sighting, put up a listening station or run your recordings through [Studio](/studio) in places where lost species were last known. We announce possible rediscoveries in our [update emails](/updates), only after an expert has checked them and Re:wild has been told." },
+      { steps: ["Open [Send a possible sighting](/lost-species/report).", "Choose the species, give the date and the place, and add a link to your photo or recording if you have one.", "Send it. It goes to the private review only. If an expert thinks it is worth a closer look, we pass the details, without your email, to the conservation experts working on that species."] },
+      { p: "To help without a sighting, put up a listening station or run your recordings through [Studio](/studio) in places where lost species were last known. We announce possible rediscoveries in our [update emails](/updates), only after an expert has checked them." },
     ],
   },
   {

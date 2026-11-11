@@ -79,7 +79,7 @@ export default async function LostSpecies({ searchParams }: Props) {
             </div>
             <div>
               <h3 className="font-medium text-slate-100"><TR k="Hear about rediscoveries" /></h3>
-              <p className="mt-1 text-sm"><TR k="We only announce a possible rediscovery after an expert has checked it and Re:wild has been told. [Get our update emails](/updates)" /></p>
+              <p className="mt-1 text-sm"><TR k="We only announce a possible rediscovery after an expert has checked it. [Get our update emails](/updates)" /></p>
             </div>
           </div>
         </section>
