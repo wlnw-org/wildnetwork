@@ -5,6 +5,7 @@ import { TR } from "@/components/TR";
 import { lostSpeciesPublic, type LostPublic } from "@/lib/lostPublic";
 
 export const metadata: Metadata = {
+  robots: { index: false },
   title: "Send a possible lost species sighting",
   description: "Think you saw or heard a lost species? Send your photo or recording for private review by experts.",
   alternates: { canonical: "/lost-species/report" },

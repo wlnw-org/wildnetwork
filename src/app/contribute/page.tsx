@@ -7,7 +7,7 @@ import { MIN_EFFORT_WEEK, REGION } from "@/lib/methods";
 import { TR } from "@/components/TR";
 
 export const metadata: Metadata = {
-  title: "Contribute data: connect a bird station, bat detector or camera trap",
+  title: "Add a bird station, bat detector or camera trap",
   alternates: { canonical: "/contribute" },
   description: "How to send detections from a bird station, bat detector or camera trap to Wildlife Network, whether you already have a device or want to set one up.",
 };

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import HelpLink from "@/components/HelpLink";
 import StudioDownload from "@/components/StudioDownload";
-import { STUDIO_RELEASES, studioDownload } from "@/lib/site";
+import { SITE, STUDIO_RELEASES, studioDownload } from "@/lib/site";
 import { TR } from "@/components/TR";
 
 export const metadata: Metadata = {
-  title: "Wildlife Network Studio: free desktop app for wildlife recordings",
+  title: { absolute: "Wildlife Network Studio: free app for wildlife recordings" },
   alternates: { canonical: "/studio" },
   description: "Wildlife Network Studio is a free desktop app for Mac, Windows and Linux. Point it at a drive of recordings: it finds the species on your own computer with BirdNET or Perch, helps you check them in minutes, and exports them for GBIF or publishes them to Wildlife Network.",
 };
@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 export default function Studio() {
   return (
     <main className="flex-1 bg-slate-950 text-slate-300">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(STUDIO_LD) }} />
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Wildlife Network Studio</h1>
         <p className="mt-2"><HelpLink to="/help/studio" label="Studio guides: how to use it" /></p>
@@ -79,3 +80,11 @@ export default function Studio() {
     </main>
   );
 }
+
+const STUDIO_LD = {
+  "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Wildlife Network Studio", url: `${SITE}/studio`,
+  applicationCategory: "ScienceApplication", operatingSystem: "macOS, Windows, Linux", isAccessibleForFree: true,
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  description: "Free desktop app that finds bird, bat and other species in wildlife recordings and camera trap photos on your own computer, then exports them for GBIF or shares them with Wildlife Network.",
+  downloadUrl: `${SITE}/studio`, softwareHelp: `${SITE}/help/studio`, publisher: { "@type": "Organization", name: "Wildlife Network", url: SITE },
+};

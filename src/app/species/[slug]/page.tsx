@@ -20,6 +20,8 @@ import { SITE, speciesSlug } from "@/lib/site";
 import { getClimate, getYearSpan, speciesStory } from "@/lib/story";
 import { TR } from "@/components/TR";
 import INDIA from "@/data/india-seasons.json";
+import PLACES from "@/data/places.json";
+import { citiesFor } from "@/components/CityBirds";
 
 export const revalidate = 3600;
 // An empty list lets Next.js build each species page on its first visit and cache it (without it the route renders on every request).
@@ -96,7 +98,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!d) return { title: "Species not found" };
   const label = d.common ? `${d.common} (${d.name})` : d.name;
   const description = describe(d);
-  const thin = d.arrivals.length === 0 && d.story.length === 0 && !indiaSeason(d.name);
+  const thin = d.arrivals.length === 0 && d.story.length === 0 && !indiaSeason(d.name) && citiesFor(d.name, PLACES).length === 0;
   return {
     // Without the site suffix, so the name and what the page answers fit in a search result (about 60 characters).
     title: { absolute: `${label}: ${MIGRANT_GROUPS.has(d.grp) ? "arrival dates and migration" : "where and when it is recorded"}` },
@@ -112,6 +114,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
   if (!d) notFound();
   const title = d.common ?? d.name;
   const india = indiaSeason(d.name);
+  const cities = citiesFor(d.name, PLACES).slice(0, 12);
   const names = await getNames([d.name, ...d.genus.map((r) => r.scientific_name), ...d.sameTime.map((r) => r.scientific_name)]);
   const nm = { ...(names[d.name] ?? {}), ...(d.media?.names ?? {}) };
   const url = `${SITE}/species/${speciesSlug(d.name)}`;
@@ -181,6 +184,13 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
             <TR k={india.status === "winter" ? "In India the {name} is a winter visitor{when}." : india.status === "summer" ? "In India the {name} is a summer visitor{when}." : "In India the {name} is mostly seen passing through{when}."}
               v={{ name: title, when: india.arrive && india.leave ? `, usually here from ${MONTH_NAMES[india.arrive - 1]} to ${MONTH_NAMES[india.leave - 1]}` : "" }} />{" "}
             <TR k="[See all migratory birds in India](/arrivals/india)." />
+          </p>
+        )}
+
+        {cities.length > 0 && (
+          <p className="mt-4 text-sm text-slate-400">
+            <TR k="Among the birds recorded most around" />{" "}
+            {cities.map((c, i) => <span key={c.slug}>{i ? ", " : ""}<Link href={`/places/${c.slug}`} className="text-cyan-400 hover:underline">{c.name}</Link></span>)}.
           </p>
         )}
 

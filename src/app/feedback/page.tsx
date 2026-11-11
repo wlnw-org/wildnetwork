@@ -4,6 +4,7 @@ import { TR } from "@/components/TR";
 import { CONTACT_EMAIL } from "@/lib/nav";
 
 export const metadata: Metadata = {
+  robots: { index: false },
   title: "Feedback and problem reports",
   alternates: { canonical: "/feedback" },
   description: "Tell us about a problem, a wrong record or an idea for Wildlife Network, the map, Studio, BirdEcho or a station. Every message is read.",

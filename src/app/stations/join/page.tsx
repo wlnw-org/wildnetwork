@@ -5,6 +5,7 @@ import OptinForm from "@/components/OptinForm";
 import { TR } from "@/components/TR";
 
 export const metadata: Metadata = {
+  robots: { index: false },
   title: "Add your BirdWeather station",
   alternates: { canonical: "/stations/join" },
   description: "Add your BirdWeather station to Wildlife Network: appear by name or anonymously, and share its daily species counts in open, citable data releases under your licence.",

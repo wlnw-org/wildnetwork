@@ -8,6 +8,8 @@ import { cache } from "react";
 import { GROUP_LABEL } from "@/lib/studies";
 import { PLACE_GROUPS, placeBySlug, placeLabel, placeReport } from "@/lib/places";
 import { SITE, speciesSlug } from "@/lib/site";
+import { sql } from "@/lib/db";
+import CityBirds, { cityBirds } from "@/components/CityBirds";
 
 export const revalidate = 86400;
 // Built on first visit and cached. The class is part of the path (/places/<slug>/<class>), not a query, so pages can cache.
@@ -25,12 +27,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const grp = pick(group);
   const r = await placeReport(p.lat, p.lon, grp);
   const what = (GROUP_LABEL[grp] ?? "Birds").toLowerCase();
-  const title = `${GROUP_LABEL[grp] ?? "Birds"} around ${p.name}: arriving now and most recorded`;
-  const description = `Which ${what} are arriving around ${placeLabel(p)} now and in the coming weeks, and which are recorded most, from acoustic stations and open records, effort corrected.`;
+  const city = grp === "avian" ? cityBirds(p.slug) : null;
+  const title = city ? `Birds of ${p.name}: which birds, and when` : `${GROUP_LABEL[grp] ?? "Birds"} around ${p.name}: arriving now`;
+  const description = city
+    ? `Birds of ${p.name} month by month: ${city.species.slice(0, 3).map((x) => x[1] ?? x[0]).join(", ")} and ${city.species.length - 3} more, from ${city.records >= 1e6 ? `${(city.records / 1e6).toFixed(1)} million` : `${Math.round(city.records / 1e3)},000`} open records. Plus which birds are arriving now.`.slice(0, 160)
+    : `Which ${what} are arriving around ${placeLabel(p)} now and in the coming weeks, and which are recorded most, from acoustic stations and open records.`;
   return {
     title, description,
     alternates: { canonical: `/places/${p.slug}${grp === "avian" ? "" : `/${grp}`}` },
-    robots: r.top.length || r.arrivals ? undefined : { index: false },
+    robots: city || r.top.length || r.arrivals ? undefined : { index: false },
     openGraph: { title, description, url: `/places/${p.slug}`, type: "article" },
   };
 }
@@ -51,7 +56,12 @@ export default async function PlacePage({ params }: Props) {
         about: { "@type": "Place", name: placeLabel(p), geo: { "@type": "GeoCoordinates", latitude: p.lat, longitude: p.lon } } },
     ],
   };
-  const names = await getNames([...r.recent, ...r.coming, ...r.top].map((x) => x.scientific_name));
+  const city = grp === "avian" ? cityBirds(p.slug) : null;
+  const citySci = city?.species.map((x) => x[0]) ?? [];
+  const names = await getNames([...[...r.recent, ...r.coming, ...r.top].map((x) => x.scientific_name), ...citySci]);
+  // Only species with a page are linked (a page exists for every species in species_group).
+  const linked = new Set(citySci.length ? (await sql<{ scientific_name: string }[]>`
+    SELECT scientific_name FROM species_group WHERE scientific_name IN ${sql(citySci)} AND is_species`.catch(() => [])).map((x) => x.scientific_name) : []);
   const Species = ({ name, vern }: { name: string; vern: string | null }) => (
     <Link href={`/species/${speciesSlug(name)}`} className="text-cyan-400 hover:underline"><LocalName en={vern ?? name} names={names[name]} /></Link>
   );
@@ -69,7 +79,7 @@ export default async function PlacePage({ params }: Props) {
           <T k="We compare each species with everything recorded in the same weeks, so busy recorders do not skew the list." />{" "}
           <Link href="/methods" className="text-cyan-400 hover:underline"><T k="Methods" /></Link>
         </p>
-        {r.watched === 0 && (
+        {r.watched === 0 && !city && (
           <p className="mt-4 rounded-lg border border-amber-400/40 bg-amber-400/10 p-3 text-sm text-amber-100">
             <T k="Few recordings reach us from this area yet, so there is little to show." />{" "}
             <Link href="/contribute" className="font-medium text-cyan-300 underline"><T k="Add a station to fill the gap." /></Link>
@@ -92,6 +102,8 @@ export default async function PlacePage({ params }: Props) {
             <TR k="Which birds come to India for the winter, and when? See [migratory birds in India](/arrivals/india), month by month." />
           </p>
         )}
+
+        {city && <CityBirds slug={p.slug} place={p.name} names={names} linked={linked} />}
 
         <H2><T k="Arrived in the last four weeks" /></H2>
         <List items={r.recent} empty={<T k="None arrived here in these weeks last year, as far as the records show." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-400"><TDate k="around {d}" iso={a.arrival} /></span></>} />
