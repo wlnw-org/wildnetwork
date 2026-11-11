@@ -18,6 +18,8 @@ import { REGION } from "@/lib/methods";
 import { regionSlug } from "@/lib/regions";
 import { SITE, speciesSlug } from "@/lib/site";
 import { getClimate, getYearSpan, speciesStory } from "@/lib/story";
+import { TR } from "@/components/TR";
+import INDIA from "@/data/india-seasons.json";
 
 export const revalidate = 3600;
 
@@ -25,6 +27,10 @@ export const revalidate = 3600;
 type Related = { scientific_name: string; vernacular_name: string | null };
 
 /** Everything the page shows, straight from the tables behind the public API. */
+const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+/** Its season in India, when it is a migrant there (src/data/india-seasons.json, built by scripts/india-seasons.mts). */
+const indiaSeason = (name: string) => INDIA.species.find((s) => s.sci === name) ?? null;
+
 const load = cache(async (slug: string) => {
   const [sp] = await sql<{ scientific_name: string; grp: string }[]>`
     SELECT scientific_name, grp FROM species_group WHERE lower(replace(scientific_name, ' ', '-')) = ${slug.toLowerCase()} AND is_species LIMIT 1`;
@@ -64,7 +70,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!d) return { title: "Species not found" };
   const label = d.common ? `${d.common} (${d.name})` : d.name;
   const description = `Where the ${d.common ?? d.name} is being detected now, when it arrives in each region and how its range moves through the year, from community acoustic sensors. Effort corrected, with published methods.`;
-  const thin = d.arrivals.length === 0 && d.story.length === 0;
+  const thin = d.arrivals.length === 0 && d.story.length === 0 && !indiaSeason(d.name);
   return {
     title: `${label}: migration, arrival dates and live map`,
     description,
@@ -78,6 +84,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
   const d = await load((await params).slug);
   if (!d) notFound();
   const title = d.common ?? d.name;
+  const india = indiaSeason(d.name);
   const names = await getNames([d.name, ...d.genus.map((r) => r.scientific_name), ...d.sameTime.map((r) => r.scientific_name)]);
   const nm = { ...(names[d.name] ?? {}), ...(d.media?.names ?? {}) };
   const url = `${SITE}/species/${speciesSlug(d.name)}`;
@@ -140,6 +147,14 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
             <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="How the {name} moves through the year" v={{ name: title }} names={nm} /></h2>
             {d.story.map((s) => <p key={s} className="mt-2">{s}</p>)}
           </>
+        )}
+
+        {india && (
+          <p className="mt-6 rounded-lg border border-white/10 bg-white/5 p-3">
+            <TR k={india.status === "winter" ? "In India the {name} is a winter visitor{when}." : india.status === "summer" ? "In India the {name} is a summer visitor{when}." : "In India the {name} is mostly seen passing through{when}."}
+              v={{ name: title, when: india.arrive && india.leave ? `, usually here from ${MONTH_NAMES[india.arrive - 1]} to ${MONTH_NAMES[india.leave - 1]}` : "" }} />{" "}
+            <TR k="[See all migratory birds in India](/arrivals/india)." />
+          </p>
         )}
 
         {d.arrivals.length > 0 && (

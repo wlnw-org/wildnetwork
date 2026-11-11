@@ -35,6 +35,12 @@ export default async function ArrivalsIndex() {
               </Link>
             </li>
           ))}
+          <li>
+            <Link href="/arrivals/india" className="block rounded-lg border border-white/10 px-4 py-3 hover:border-cyan-400/60">
+              <span className="text-slate-100 font-medium"><TR k="Migratory birds in India" /></span>
+              <span className="block text-sm text-slate-400"><TR k="Winter visitors, month by month" /></span>
+            </Link>
+          </li>
         </ul>
         <p className="mt-8 text-sm text-slate-400">
           <Link href="/species" className="text-cyan-400 hover:underline"><TR k="All species" /></Link> ·{" "}

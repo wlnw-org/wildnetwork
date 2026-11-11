@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { TR } from "@/components/TR";
 import Link from "next/link";
 import { LocalName, T, TDate } from "@/components/T";
 import { getNames } from "@/lib/names";
@@ -80,6 +81,12 @@ export default async function PlacePage({ params, searchParams }: Props) {
           <Link href="/studies/new" className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Track this area (for researchers)" /></Link>
           <Link href={`/report?lat=${p.lat.toFixed(4)}&lon=${p.lon.toFixed(4)}`} className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Site report: compare two periods" /></Link>
         </div>
+
+        {p.country === "India" && (
+          <p className="mt-4 rounded-lg border border-cyan-400/30 bg-cyan-400/5 p-3 text-sm">
+            <TR k="Which birds come to India for the winter, and when? See [migratory birds in India](/arrivals/india), month by month." />
+          </p>
+        )}
 
         <H2><T k="Arrived in the last four weeks" /></H2>
         <List items={r.recent} empty={<T k="None arrived here in these weeks last year, as far as the records show." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-400"><TDate k="around {d}" iso={a.arrival} /></span></>} />
