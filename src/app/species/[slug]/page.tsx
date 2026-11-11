@@ -22,6 +22,8 @@ import { TR } from "@/components/TR";
 import INDIA from "@/data/india-seasons.json";
 
 export const revalidate = 3600;
+// An empty list lets Next.js build each species page on its first visit and cache it (without it the route renders on every request).
+export async function generateStaticParams() { return []; }
 
 
 type Related = { scientific_name: string; vernacular_name: string | null };
@@ -65,14 +67,39 @@ const load = cache(async (slug: string) => {
   return { name, grp: sp.grp, common: names[0]?.vernacular_name ?? null, recent: recent[0], arrivals, media, story: speciesStory(name, [], climate, span), top, genus, sameTime, contributed };
 });
 
+const MIGRANT_GROUPS = new Set(["avian", "bat"]);
+const monthOf = (iso: string) => MONTH_NAMES[Number(iso.slice(5, 7)) - 1];
+const nf = new Intl.NumberFormat("en-GB");
+
+/** A search description from the page's own data, under about 160 characters: when it arrives, where it is now, its season
+ *  in India, and where the records come from (sound recorders for birds and bats, people's observations for the rest). */
+function describe(d: NonNullable<Awaited<ReturnType<typeof load>>>): string {
+  const who = d.common ?? d.name;
+  const parts: string[] = [];
+  const a = d.arrivals[0];
+  if (a) parts.push(a.first.slice(0, 7) === a.last.slice(0, 7)
+    ? `The ${who} arrives in ${a.region} around ${monthOf(a.first)}.`
+    : `The ${who} arrives in ${a.region} between ${monthOf(a.first)} and ${monthOf(a.last)}.`);
+  const india = indiaSeason(d.name);
+  if (india) parts.push(india.status === "winter" ? `A winter visitor to India${india.arrive && india.leave ? `, ${MONTH_NAMES[india.arrive - 1]} to ${MONTH_NAMES[india.leave - 1]}` : ""}.`
+    : india.status === "summer" ? "A summer visitor to India." : "Passes through India.");
+  if (d.recent.n > 0) parts.push(`${nf.format(d.recent.n)} records in the last 8 weeks${d.recent.cells > 1 ? ` across ${d.recent.cells} areas` : ""}.`);
+  if (!parts.length) parts.push(`Where the ${who} is recorded and when, on a live map.`);
+  const tail = MIGRANT_GROUPS.has(d.grp) ? " Live map, yearly movement and alerts." : " From open records, with a live map.";
+  let out = parts.join(" ");
+  if ((out + tail).length <= 160) out += tail;
+  return out.length <= 160 ? out : out.slice(0, 157).replace(/\s+\S*$/, "") + "...";
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const d = await load((await params).slug);
   if (!d) return { title: "Species not found" };
   const label = d.common ? `${d.common} (${d.name})` : d.name;
-  const description = `Where the ${d.common ?? d.name} is being detected now, when it arrives in each region and how its range moves through the year, from community acoustic sensors. Effort corrected, with published methods.`;
+  const description = describe(d);
   const thin = d.arrivals.length === 0 && d.story.length === 0 && !indiaSeason(d.name);
   return {
-    title: `${label}: migration, arrival dates and live map`,
+    // Without the site suffix, so the name and what the page answers fit in a search result (about 60 characters).
+    title: { absolute: `${label}: ${MIGRANT_GROUPS.has(d.grp) ? "arrival dates and migration" : "where and when it is recorded"}` },
     description,
     alternates: { canonical: `/species/${speciesSlug(d.name)}` },
     robots: thin ? { index: false, follow: true } : undefined,

@@ -27,6 +27,9 @@ const nextConfig: NextConfig = {
     return [
       { source: "/:path*", has: [{ type: "host", value: "www.wlnw.org" }], destination: `${CANONICAL}/:path*`, permanent: true },
       { source: "/:path((?!api/|agent/).*)", has: [{ type: "host", value: "wildnetwork.arunrajiah.com" }], destination: `${CANONICAL}/:path`, permanent: true },
+      // The class used to be a query (?group=bat); it is a path now, so the pages can be cached.
+      { source: "/places/:slug", has: [{ type: "query", key: "group", value: "(?<g>bat|amphibian|insect)" }], destination: "/places/:slug/:g", permanent: true },
+      { source: "/arrivals/:region", has: [{ type: "query", key: "group", value: "(?<g>bat|amphibian|insect|mammal|marine|other)" }], destination: "/arrivals/:region/:g", permanent: true },
     ];
   },
   async headers() {

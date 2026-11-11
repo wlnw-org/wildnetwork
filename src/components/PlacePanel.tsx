@@ -63,7 +63,7 @@ export default function PlacePanel({ place, group, onPick, onClose }: { place: P
               {r.stations.length ? t("{n} active stations.", { n: r.stations.reduce((s, x) => s + x.n, 0) }) : t("No active stations here yet.")}
             </p>
             {place.slug && (
-              <a href={`/places/${place.slug}${grp === "avian" ? "" : `?group=${grp}`}`} className="block mx-4 my-4 rounded-md bg-cyan-500 px-3 py-2 text-center text-sm font-medium text-slate-950 hover:bg-cyan-400">
+              <a href={`/places/${place.slug}${grp === "avian" ? "" : `/${grp}`}`} className="block mx-4 my-4 rounded-md bg-cyan-500 px-3 py-2 text-center text-sm font-medium text-slate-950 hover:bg-cyan-400">
                 {t("Full report for {p}", { p: place.label.split(",")[0] })}
               </a>
             )}

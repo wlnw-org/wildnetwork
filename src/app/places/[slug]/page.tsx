@@ -10,32 +10,37 @@ import { PLACE_GROUPS, placeBySlug, placeLabel, placeReport } from "@/lib/places
 import { SITE, speciesSlug } from "@/lib/site";
 
 export const revalidate = 86400;
+// Built on first visit and cached. The class is part of the path (/places/<slug>/<class>), not a query, so pages can cache.
+export async function generateStaticParams() { return []; }
 
 const place = cache((slug: string) => placeBySlug(slug));
 const pick = (g?: string) => ((PLACE_GROUPS as readonly string[]).includes(g ?? "") ? g! : "avian");
 
-type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ group?: string }> };
+export type Props = { params: Promise<{ slug: string; group?: string }> };
 
-export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
-  const p = await place((await params).slug);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug, group } = await params;
+  const p = await place(slug);
   if (!p) return { title: "Place not found" };
-  const grp = pick((await searchParams).group);
+  const grp = pick(group);
   const r = await placeReport(p.lat, p.lon, grp);
   const what = (GROUP_LABEL[grp] ?? "Birds").toLowerCase();
   const title = `${GROUP_LABEL[grp] ?? "Birds"} around ${p.name}: arriving now and most recorded`;
   const description = `Which ${what} are arriving around ${placeLabel(p)} now and in the coming weeks, and which are recorded most, from acoustic stations and open records, effort corrected.`;
   return {
     title, description,
-    alternates: { canonical: `/places/${p.slug}${grp === "avian" ? "" : `?group=${grp}`}` },
+    alternates: { canonical: `/places/${p.slug}${grp === "avian" ? "" : `/${grp}`}` },
     robots: r.top.length || r.arrivals ? undefined : { index: false },
     openGraph: { title, description, url: `/places/${p.slug}`, type: "article" },
   };
 }
 
-export default async function PlacePage({ params, searchParams }: Props) {
-  const p = await place((await params).slug);
+export default async function PlacePage({ params }: Props) {
+  const { slug, group } = await params;
+  const p = await place(slug);
   if (!p) notFound();
-  const grp = pick((await searchParams).group);
+  if (group !== undefined && (group === "avian" || pick(group) !== group)) notFound();
+  const grp = pick(group);
   const r = await placeReport(p.lat, p.lon, grp);
   const label = GROUP_LABEL[grp] ?? "Birds";
   const url = `${SITE}/places/${p.slug}`;
@@ -72,7 +77,7 @@ export default async function PlacePage({ params, searchParams }: Props) {
         )}
         <div className="mt-4 flex flex-wrap gap-1.5 text-sm" role="group" aria-label="Animal class">
           {PLACE_GROUPS.map((g) => (
-            <Link key={g} href={`/places/${p.slug}${g === "avian" ? "" : `?group=${g}`}`}
+            <Link key={g} href={`/places/${p.slug}${g === "avian" ? "" : `/${g}`}`}
               className={`rounded px-2.5 py-1 ${g === grp ? "bg-white/90 text-slate-900 font-medium" : "bg-white/5 hover:bg-white/10"}`}><T k={GROUP_LABEL[g]} /></Link>
           ))}
         </div>
