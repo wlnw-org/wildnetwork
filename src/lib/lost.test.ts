@@ -40,3 +40,22 @@ test("list entries with an alternative name give both names", () => {
   assert.deepEqual(listedNames("Chamaeleon monoceras, Furcifer monoceras"), ["chamaeleon monoceras", "furcifer monoceras"]);
   assert.deepEqual(listedNames("Rhinoptilus bitorquatus"), ["rhinoptilus bitorquatus"]);
 });
+
+test("kokako: North Island records are not the lost South Island kokako", async () => {
+  process.env.DATABASE_URL ||= "postgres://test@localhost/test"; // lost.ts imports the database client; the rule never connects
+  const { PLACE_RULES } = await import("./lost");
+  const rule = PLACE_RULES["callaeas cinereus"];
+  const rec = (lat: number, lon: number) => rule({ kind: "record", source: "gbif", lat, lon });
+  assert.equal(rec(-36.61, 174.89), false); // Tawharanui, Auckland
+  assert.equal(rec(-40.85, 174.93), false); // Kapiti Island
+  assert.equal(rec(-41.29, 174.75), false); // Wellington
+  assert.equal(rec(-41.27, 173.28), true);  // Nelson, South Island
+  assert.equal(rec(-45.4, 167.7), true);    // Fiordland
+  assert.equal(rule({ kind: "record", source: "gbif", lat: null, lon: null }), true); // no place: held to be safe
+  // GBIF counts per 5 degree area: held only where the area has no North Island land.
+  assert.equal(rule({ kind: "count", source: "gbif", lat: -37.5, lon: 172.5 }), false);
+  assert.equal(rule({ kind: "count", source: "gbif", lat: -42.5, lon: 172.5 }), false);
+  assert.equal(rule({ kind: "count", source: "gbif", lat: -42.5, lon: 167.5 }), true);
+  // Acoustic counts are always held: classifiers name the North Island bird Callaeas wilsoni.
+  assert.equal(rule({ kind: "count", source: "birdweather", lat: -37.5, lon: 172.5 }), true);
+});

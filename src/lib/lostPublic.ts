@@ -29,12 +29,12 @@ export function splitCountries(field: string | null): string[] {
   }).filter((c) => c.length > 1 && /^[A-ZÀ-Ý]/.test(c)))]; // a lower-case start is a remark ("but some uncertainty..."), not a place
 }
 
-/** Species shown publicly: on the Re:wild and IUCN SSC list, and not listed as Extinct. All are still watched. */
+/** Species shown publicly: on the Re:wild and IUCN SSC list, not listed as Extinct, and not taken off the watch after review. */
 export const lostSpeciesPublic = unstable_cache(async (): Promise<LostPublic[]> => {
   const rows = await sql<{ scientific_name: string; common_name: string | null; class_name: string | null; red_list: string | null; countries: string | null; region: string | null; thumb_url: string | null; attribution: string | null; license: string | null }[]>`
     SELECT s.scientific_name, s.common_name, s.class_name, s.red_list, s.countries, s.region, m.thumb_url, m.attribution, m.license
     FROM lost_species s LEFT JOIN species_media m ON m.scientific_name = s.scientific_name AND m.source <> 'none'
-    WHERE s.on_rewild_list IS TRUE AND COALESCE(s.red_list, '') <> 'EX' AND NOT s.subspecies
+    WHERE s.on_rewild_list IS TRUE AND COALESCE(s.red_list, '') <> 'EX' AND NOT s.subspecies AND s.removed IS NULL
     ORDER BY COALESCE(s.common_name, s.scientific_name)`;
   return rows.map((r) => ({
     scientific_name: r.scientific_name, common_name: r.common_name, class_name: r.class_name, red_list: r.red_list,

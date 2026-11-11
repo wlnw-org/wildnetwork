@@ -49,6 +49,13 @@ if (cmd === "load") {
     for (const name of listedNames(r.scientific_name)) await sql`INSERT INTO lost_names (name, lost_id, via) VALUES (${name}, ${id}, 'list') ON CONFLICT (name) DO NOTHING`;
     n++;
   }
+  // Species taken off the watch after review: scientific_name,reason,decided. Kept in lost_species (with their flags), not watched.
+  let removed = 0;
+  for (const r of parseCsv(readFileSync("src/data/lost-species-removed.csv", "utf8"))) {
+    const res = await sql`UPDATE lost_species SET removed = ${`${r.reason} (${r.decided})`} WHERE scientific_name = ${r.scientific_name}`;
+    if (res.count) removed++; else console.log(`removed list: ${r.scientific_name} is not on the list`);
+  }
+  console.log(`${removed} species marked as removed from the watch`);
   // Extra names (renames, synonyms) a person checked: name,listed_name,reason
   let extra = 0;
   try {

@@ -10,19 +10,23 @@ import { matchLost } from "@/lib/lostNames";
 export { matchLost, nameKeys } from "@/lib/lostNames";
 
 const TTL_MS = 10 * 60_000;
-let cache: { at: number; names: Map<string, number> } | null = null;
+let cache: { at: number; names: Map<string, number>; species: Map<number, string> } | null = null;
+
+async function load() {
+  if (cache && Date.now() - cache.at < TTL_MS) return cache;
+  try {
+    // Species taken off the watch after review (lost_species.removed, migration 0040) are not watched.
+    const rows = await sql<{ name: string; lost_id: number; scientific_name: string }[]>`
+      SELECT n.name, n.lost_id, s.scientific_name FROM lost_names n JOIN lost_species s ON s.id = n.lost_id WHERE s.removed IS NULL`;
+    cache = { at: Date.now(), names: new Map(rows.map((r) => [r.name, r.lost_id])), species: new Map(rows.map((r) => [r.lost_id, r.scientific_name.toLowerCase()])) };
+  } catch {
+    cache = { at: Date.now(), names: new Map(), species: new Map() };
+  }
+  return cache;
+}
 
 /** Watched names, lower case, cached for 10 minutes. Empty when the tables do not exist yet (before migration 0038). */
-export async function watchNames(): Promise<Map<string, number>> {
-  if (cache && Date.now() - cache.at < TTL_MS) return cache.names;
-  try {
-    const rows = await sql<{ name: string; lost_id: number }[]>`SELECT name, lost_id FROM lost_names`;
-    cache = { at: Date.now(), names: new Map(rows.map((r) => [r.name, r.lost_id])) };
-  } catch {
-    cache = { at: Date.now(), names: new Map() };
-  }
-  return cache.names;
-}
+export async function watchNames(): Promise<Map<string, number>> { return (await load()).names; }
 export function resetWatchCache() { cache = null; }
 
 export interface FlagRow {
@@ -46,17 +50,39 @@ async function storeFlags(rows: FlagRow[]): Promise<number> {
   return fresh;
 }
 
+/** Where a row was recorded, for the place rules below. */
+export interface Place { kind: "record" | "count"; source: string; lat: number | null; lon: number | null }
+
+/** The North Island of New Zealand, roughly: excludes the northern tip of the South Island (Golden Bay, Nelson, Marlborough). */
+export const northIsland = (lat: number, lon: number) => lat > -41.7 && lat < -34 && lon > 172.6 && lon < 178.7 && !(lon < 174.4 && lat < -40.4);
+/** Does a 5 degree area (given by its centre) contain any North Island land? */
+const touchesNorthIsland = (lat: number, lon: number) => lat + 2.5 > -41.7 && lat - 2.5 < -34.4 && lon + 2.5 > 172.6 && lon - 2.5 < 178.7;
+
+/**
+ * Species whose name in some sources also covers a common relative, so a record is held only where the lost one could be.
+ * A rule returns true to hold the row. Decided by Arun Rajiah on 11 November 2026 after reviewing flags 1 to 19.
+ */
+export const PLACE_RULES: Record<string, (p: Place) => boolean> = {
+  // GBIF's taxonomy files the North Island kokako (Callaeas wilsoni, not lost) under Callaeas cinereus, the lost South Island
+  // kokako. Every flagged GBIF record so far was a North Island bird. Hold exact records off the North Island, GBIF counts only
+  // for areas with no North Island land, and every other count (acoustic classifiers name the North Island bird C. wilsoni).
+  "callaeas cinereus": (p) => p.kind === "record"
+    ? p.lat == null || p.lon == null || !northIsland(p.lat, p.lon)
+    : p.source !== "gbif" || p.lat == null || p.lon == null || !touchesNorthIsland(p.lat, p.lon),
+};
+
 /** Splits rows into those that may go public and those held for review. Held rows are stored as flags. If storing fails
  *  the held rows are still dropped (never published): the next pull or upload brings them again. */
-async function hold<T>(rows: T[], nameOf: (r: T) => string | null | undefined, toFlag: (r: T, lostId: number) => FlagRow): Promise<T[]> {
+async function hold<T>(rows: T[], nameOf: (r: T) => string | null | undefined, toFlag: (r: T, lostId: number) => FlagRow, place: (r: T) => Place): Promise<T[]> {
   if (!rows.length) return rows;
-  const names = await watchNames();
+  const { names, species } = await load();
   if (!names.size) return rows;
   const keep: T[] = [];
   const flags: FlagRow[] = [];
   for (const r of rows) {
     const id = matchLost(nameOf(r), names);
-    if (id === null) keep.push(r); else flags.push(toFlag(r, id));
+    const rule = id === null ? undefined : PLACE_RULES[species.get(id) ?? ""];
+    if (id === null || (rule && !rule(place(r)))) keep.push(r); else flags.push(toFlag(r, id));
   }
   if (flags.length) {
     try { await storeFlags(flags); } catch (e) { console.error("lost_flags", (e as Error).message); }
@@ -76,7 +102,7 @@ export function holdEvents(events: WdxEvent[]): Promise<WdxEvent[]> {
     media_type: e.media?.mediaType ?? null, media_url: e.media?.url ?? null,
     detail: { vernacularName: e.detection.vernacularName ?? null, classifier: e.detection.classifier ?? null, method: e.detection.observationMethod ?? null,
       provider: e.source.provider ?? null, deployment: e.deployment.deploymentId, sensor: e.deployment.sensorType, license: e.license ?? null },
-  }));
+  }), (e) => ({ kind: "record", source: e.source.system, lat: num(e.deployment.latitude), lon: num(e.deployment.longitude) }));
 }
 
 /** Aggregate counts per cell and day or week (BirdWeather topSpecies, GBIF facets): nothing to look at, only where and when. */
@@ -88,7 +114,7 @@ export function holdCounts<T extends { scientific_name: string; count: number }>
       kind: "count", source_system: source, source_record: null, source_url: null, observed_at: null, period: period(r),
       latitude: c.lat, longitude: c.lon, count: r.count, confidence: null, media_type: null, media_url: null, detail: {},
     };
-  });
+  }, (r) => { const c = centre(r); return { kind: "count", source, lat: c.lat, lon: c.lon }; });
 }
 
 /** Rows of an uploaded dataset (one per detection or observation). */
@@ -98,7 +124,7 @@ export function holdDatasetRows<T extends { dataset_id: string; site: string; la
     kind: "record", source_system: `dataset:${r.dataset_id}`, source_record: r.file_name, source_url: `/datasets/${r.dataset_id}`,
     observed_at: r.ts, period: null, latitude: r.lat, longitude: r.lon, count: r.individuals, confidence: r.confidence,
     media_type: null, media_url: null, detail: { site: r.site, file: r.file_name },
-  }));
+  }), (r) => ({ kind: "record", source: `dataset:${r.dataset_id}`, lat: r.lat, lon: r.lon }));
 }
 
 /** Names that must never be shown publicly (for live lists built straight from GBIF, such as area reports). */
