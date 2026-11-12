@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { HelpBody } from "@/components/HelpText";
 import { HELP, helpGuide, helpSection } from "@/data/help";
+import { SITE } from "@/lib/site";
 
 export const dynamicParams = false;
 export function generateStaticParams() { return HELP.flatMap((s) => s.guides.map((g) => ({ section: s.id, slug: g.slug }))); }
@@ -19,8 +20,21 @@ export default async function HelpGuidePage({ params }: { params: Promise<{ sect
   const s = helpSection(section), g = helpGuide(section, slug);
   if (!s || !g) notFound();
   const i = s.guides.indexOf(g), prev = s.guides[i - 1], next = s.guides[i + 1];
+  const url = `${SITE}/help/${s.id}/${g.slug}`;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "TechArticle", "@id": url, url, headline: g.title, description: g.summary, isPartOf: { "@id": `${SITE}/#website` } },
+      { "@type": "BreadcrumbList", itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Help", item: `${SITE}/help` },
+        { "@type": "ListItem", position: 2, name: s.title, item: `${SITE}/help/${s.id}` },
+        { "@type": "ListItem", position: 3, name: g.title, item: url },
+      ] },
+    ],
+  };
   return (
     <main className="flex-1 bg-slate-950 text-slate-300">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <article className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <p className="mt-4 text-sm"><Link href="/help" className="text-cyan-400 hover:underline"><TR k="Help" /></Link> / <Link href={`/help/${s.id}`} className="text-cyan-400 hover:underline"><TR k={s.title} /></Link></p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight text-slate-100"><TR k={g.title} /></h1>

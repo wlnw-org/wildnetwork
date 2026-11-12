@@ -54,6 +54,11 @@ export default async function PlacePage({ params }: Props) {
     "@graph": [
       { "@type": "WebPage", "@id": url, url, name: `${label} around ${p.name}`, isPartOf: { "@id": `${SITE}/#website` },
         about: { "@type": "Place", name: placeLabel(p), geo: { "@type": "GeoCoordinates", latitude: p.lat, longitude: p.lon } } },
+      { "@type": "BreadcrumbList", itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Wildlife Network", item: SITE },
+        { "@type": "ListItem", position: 2, name: "Places", item: `${SITE}/places` },
+        { "@type": "ListItem", position: 3, name: p.name, item: url },
+      ] },
     ],
   };
   const city = grp === "avian" ? cityBirds(p.slug) : null;
@@ -67,7 +72,7 @@ export default async function PlacePage({ params }: Props) {
   );
   return (
     <main className="flex-1 bg-slate-950 text-slate-300">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <nav className="text-sm text-slate-400 flex items-center gap-2">
           <span><Link href="/places" className="text-cyan-400 hover:underline"><T k="Places" /></Link></span>
