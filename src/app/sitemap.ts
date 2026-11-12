@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import INDIA from "@/data/india-seasons.json";
+import { INDIA_STATES } from "@/lib/indiaStates";
 import { sql } from "@/lib/db";
 import PLACES from "@/data/places.json";
 import CITY from "@/data/place-birds.json";
@@ -43,6 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...HELP.flatMap((s) => [{ url: `${SITE}/help/${s.id}`, changeFrequency: "monthly" as const, priority: 0.6 },
       ...s.guides.map((g) => ({ url: `${SITE}/help/${s.id}/${g.slug}`, changeFrequency: "monthly" as const, priority: 0.5 }))]),
     ...PLACES.map((p) => ({ url: `${SITE}/places/${p.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.6 })),
+    ...INDIA_STATES.filter((s) => s.migrants.length >= 5).map((s) => ({ url: `${SITE}/arrivals/india/${s.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.7 })),
     ...REGIONS.map((r) => ({ url: `${SITE}/arrivals/${r.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 })),
   ];
   // Top 15 of each city checklist, as species pages link those cities (src/components/CityBirds.tsx citiesFor).

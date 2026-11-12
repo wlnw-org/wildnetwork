@@ -715,5 +715,15 @@
  "When": "Wann",
  "All year": "Ganzjährig",
  "Mainly {from} to {to}": "Vor allem {from} bis {to}",
- "Source: GBIF.org, bird records under CC0 and CC BY 4.0, mostly from the eBird Observation Dataset (Cornell Lab of Ornithology). Where people go birding shapes these lists, so quiet or hard to see birds can be missing.": "Quelle: GBIF.org, Vogelmeldungen unter CC0 und CC BY 4.0, meist aus dem eBird Observation Dataset (Cornell Lab of Ornithology). Wo Menschen Vögel beobachten, prägt diese Listen, daher können leise oder schwer zu sehende Vögel fehlen."
+ "Source: GBIF.org, bird records under CC0 and CC BY 4.0, mostly from the eBird Observation Dataset (Cornell Lab of Ornithology). Where people go birding shapes these lists, so quiet or hard to see birds can be missing.": "Quelle: GBIF.org, Vogelmeldungen unter CC0 und CC BY 4.0, meist aus dem eBird Observation Dataset (Cornell Lab of Ornithology). Wo Menschen Vögel beobachten, prägt diese Listen, daher können leise oder schwer zu sehende Vögel fehlen.",
+ "Migratory birds in {place}: when they arrive and leave": "Zugvögel in {place}: wann sie kommen und gehen",
+ "About {w} kinds of birds come to {place} for the winter, and a few more come for the summer or pass through on the way. Below are the months each one is here, worked out from {records} bird records in {place} from {from} to {to}.": "Etwa {w} Vogelarten kommen im Winter nach {place}, einige weitere im Sommer oder auf dem Durchzug. Unten steht, in welchen Monaten jede hier ist, ermittelt aus {records} Vogelbeobachtungen in {place} von {from} bis {to}.",
+ "About {w} kinds of birds come to {place} for the winter. Below are the months each one is here, worked out from {records} bird records in {place} from {from} to {to}.": "Etwa {w} Vogelarten kommen im Winter nach {place}. Unten steht, in welchen Monaten jede hier ist, ermittelt aus {records} Vogelbeobachtungen in {place} von {from} bis {to}.",
+ "The {n} birds recorded most in {place}, residents and visitors together. The strip shows the months each is recorded, darker where it makes up more of what people record that month.": "Die {n} am häufigsten gemeldeten Vögel in {place}, Standvögel und Gäste zusammen. Der Streifen zeigt die Monate, in denen jeder gemeldet wird, dunkler, wo er einen größeren Teil der Meldungen des Monats ausmacht.",
+ "Birds around cities in {place}": "Vögel rund um Städte in {place}",
+ "Other states": "Andere Bundesstaaten",
+ "All of India": "Ganz Indien",
+ "Data: {records} bird records in {place} from {from} to {to}, under CC0 or CC BY 4.0, from [GBIF.org](https://www.gbif.org), most of them from the [eBird](https://ebird.org) Observation Dataset of the Cornell Lab of Ornithology. Thanks to every birder who shares their lists. Updated {date}. [How Wildlife Network works](/methods).": "Daten: {records} Vogelbeobachtungen in {place} von {from} bis {to}, unter CC0 oder CC BY 4.0, von [GBIF.org](https://www.gbif.org), die meisten aus dem [eBird](https://ebird.org)-Beobachtungsdatensatz des Cornell Lab of Ornithology. Danke an alle, die ihre Listen teilen. Aktualisiert am {date}. [So funktioniert Wildlife Network](/methods).",
+ "By state": "Nach Bundesstaat",
+ "By state:": "Nach Bundesstaat:"
 }

@@ -20,6 +20,7 @@ import { SITE, speciesSlug } from "@/lib/site";
 import { getClimate, getYearSpan, speciesStory } from "@/lib/story";
 import { TR } from "@/components/TR";
 import INDIA from "@/data/india-seasons.json";
+import { statesFor } from "@/lib/indiaStates";
 import PLACES from "@/data/places.json";
 import { citiesFor } from "@/components/CityBirds";
 import { ukArrival, ukSeason } from "@/lib/ukSeasons";
@@ -199,6 +200,12 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
             <TR k={india.status === "winter" ? "In India the {name} is a winter visitor{when}." : india.status === "summer" ? "In India the {name} is a summer visitor{when}." : "In India the {name} is mostly seen passing through{when}."}
               v={{ name: title, when: india.arrive && india.leave ? `, usually here from ${MONTH_NAMES[india.arrive - 1]} to ${MONTH_NAMES[india.leave - 1]}` : "" }} />{" "}
             <TR k="[See all migratory birds in India](/arrivals/india)." />
+            {india && statesFor(d.name).length > 0 && (
+              <span className="mt-2 block text-sm">
+                <TR k="By state:" />{" "}
+                {statesFor(d.name).slice(0, 10).map((s, i) => <span key={s.slug}>{i ? ", " : ""}<Link href={`/arrivals/india/${s.slug}`} prefetch={false} className="text-cyan-400 hover:underline">{s.name}</Link></span>)}
+              </span>
+            )}
           </p>
         )}
 

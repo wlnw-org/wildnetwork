@@ -715,5 +715,15 @@
  "When": "कब",
  "All year": "पूरे साल",
  "Mainly {from} to {to}": "ज़्यादातर {from} से {to} तक",
- "Source: GBIF.org, bird records under CC0 and CC BY 4.0, mostly from the eBird Observation Dataset (Cornell Lab of Ornithology). Where people go birding shapes these lists, so quiet or hard to see birds can be missing.": "स्रोत: GBIF.org, CC0 और CC BY 4.0 के तहत पक्षी रिकॉर्ड, ज़्यादातर eBird Observation Dataset (Cornell Lab of Ornithology) से। लोग कहाँ पक्षी देखने जाते हैं, इसका असर इन सूचियों पर पड़ता है, इसलिए शांत या मुश्किल से दिखने वाले पक्षी छूट सकते हैं।"
+ "Source: GBIF.org, bird records under CC0 and CC BY 4.0, mostly from the eBird Observation Dataset (Cornell Lab of Ornithology). Where people go birding shapes these lists, so quiet or hard to see birds can be missing.": "स्रोत: GBIF.org, CC0 और CC BY 4.0 के तहत पक्षी रिकॉर्ड, ज़्यादातर eBird Observation Dataset (Cornell Lab of Ornithology) से। लोग कहाँ पक्षी देखने जाते हैं, इसका असर इन सूचियों पर पड़ता है, इसलिए शांत या मुश्किल से दिखने वाले पक्षी छूट सकते हैं।",
+ "Migratory birds in {place}: when they arrive and leave": "{place} में प्रवासी पक्षी: कब आते हैं और कब जाते हैं",
+ "About {w} kinds of birds come to {place} for the winter, and a few more come for the summer or pass through on the way. Below are the months each one is here, worked out from {records} bird records in {place} from {from} to {to}.": "सर्दियों में लगभग {w} तरह के पक्षी {place} आते हैं, और कुछ और गर्मियों में आते हैं या रास्ते में यहाँ से गुज़रते हैं। नीचे हर पक्षी के यहाँ रहने के महीने हैं, जो {from} से {to} तक {place} के {records} पक्षी रिकॉर्ड से निकाले गए हैं।",
+ "About {w} kinds of birds come to {place} for the winter. Below are the months each one is here, worked out from {records} bird records in {place} from {from} to {to}.": "सर्दियों में लगभग {w} तरह के पक्षी {place} आते हैं। नीचे हर पक्षी के यहाँ रहने के महीने हैं, जो {from} से {to} तक {place} के {records} पक्षी रिकॉर्ड से निकाले गए हैं।",
+ "The {n} birds recorded most in {place}, residents and visitors together. The strip shows the months each is recorded, darker where it makes up more of what people record that month.": "{place} में सबसे ज़्यादा दर्ज किए गए {n} पक्षी, स्थानीय और प्रवासी दोनों। पट्टी दिखाती है कि हर पक्षी किन महीनों में दर्ज होता है; जिस महीने वह लोगों के रिकॉर्ड का बड़ा हिस्सा हो, वहाँ रंग गहरा है।",
+ "Birds around cities in {place}": "{place} के शहरों के आसपास के पक्षी",
+ "Other states": "दूसरे राज्य",
+ "All of India": "पूरा भारत",
+ "Data: {records} bird records in {place} from {from} to {to}, under CC0 or CC BY 4.0, from [GBIF.org](https://www.gbif.org), most of them from the [eBird](https://ebird.org) Observation Dataset of the Cornell Lab of Ornithology. Thanks to every birder who shares their lists. Updated {date}. [How Wildlife Network works](/methods).": "डेटा: {from} से {to} तक {place} के {records} पक्षी रिकॉर्ड, CC0 या CC BY 4.0 के तहत, [GBIF.org](https://www.gbif.org) से, ज़्यादातर Cornell Lab of Ornithology के [eBird](https://ebird.org) Observation Dataset से। अपनी सूचियाँ साझा करने वाले हर पक्षी-प्रेमी का धन्यवाद। अपडेट: {date}। [Wildlife Network कैसे काम करता है](/methods)।",
+ "By state": "राज्य के अनुसार",
+ "By state:": "राज्य के अनुसार:"
 }

@@ -5,6 +5,7 @@ import { sql } from "@/lib/db";
 import { SITE, speciesSlug } from "@/lib/site";
 import SEASONS from "@/data/india-seasons.json";
 import PLACES from "@/data/places.json";
+import { INDIA_STATES } from "@/lib/indiaStates";
 
 // Built from src/data/india-seasons.json (scripts/india-seasons.mts): ten years of openly licensed bird records in India,
 // compared area by area and month by month. Revalidated daily so "arriving now" follows the calendar.
@@ -146,6 +147,11 @@ export default async function IndiaArrivals() {
         <p className="mt-6 flex flex-wrap gap-2 text-sm">
           <Link href="/?lat=22&lon=79" className="rounded-md bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400"><TR k="See India on the live map" /></Link>
           <Link href="/alerts" className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><TR k="Get an email when a bird arrives near you" /></Link>
+        </p>
+
+        <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="By state" /></h2>
+        <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm">
+          {INDIA_STATES.filter((s) => s.migrants.length >= 5).map((s) => <Link key={s.slug} href={`/arrivals/india/${s.slug}`} prefetch={false} className="text-cyan-400 hover:underline">{s.name}</Link>)}
         </p>
 
         <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="Winter visitors" /> <span className="text-sm font-normal text-slate-400">{winter.length}</span></h2>
