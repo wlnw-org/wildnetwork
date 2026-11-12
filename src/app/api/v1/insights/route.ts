@@ -1,3 +1,4 @@
+import { after } from "next/server";
 import { sql } from "@/lib/db";
 import { driftIntervals, moverIntervals } from "@/lib/insightsCi";
 import { overview } from "@/lib/story";
@@ -14,8 +15,52 @@ import { GROUPS, METHODS_VERSION, MIN_CELL_DETECTIONS, REGION, minEffortDay, sca
 const AREA = { NEAR: 10, REGION: 25, MIN_ITEMS: 4 } as const;
 type Scope = "near" | "region" | "world";
 
+/** Normalised inputs: class and the visitor's 5 degree cell (or the world). Shared by the stored copy's key and compute(). */
+function inputs(params: URLSearchParams) {
+  const g = params.get("group");
+  const group = GROUPS.includes(g as Group) ? (g as Group) : null;
+  const la = Number(params.get("lat")), lo = Number(params.get("lon"));
+  const here = params.has("lat") && Number.isFinite(la) && Number.isFinite(lo) && Math.abs(la) <= 90 && Math.abs(lo) <= 180
+    ? { cellLat: Math.floor(la / 5) * 5, cellLon: Math.floor(lo / 5) * 5 } : null;
+  return { group, here, key: `insights|${group ?? "all"}|${here ? `${here.cellLat},${here.cellLon}` : "world"}` };
+}
+
+/**
+ * Working the lists out takes several seconds (bootstrap intervals over the daily tables), and the CDN caches each region
+ * separately, so a cold answer used to keep a visitor waiting about 8 s. Each answer is stored in history_cache once; later
+ * requests get the stored copy at once, and a copy older than FRESH_MS is recomputed after the response is sent.
+ */
+const FRESH_MS = 60 * 60 * 1000, KEEP_DAYS = 7;
+const headers = { "cache-control": "public, s-maxage=1800, stale-while-revalidate=86400" };
+const BACKGROUND_WRITES = process.env.VERCEL_ENV !== "preview";
+
+async function store(key: string, data: unknown) {
+  await sql`INSERT INTO history_cache (key, data, computed_at) VALUES (${key}, ${sql.json(data as never)}, now())
+    ON CONFLICT (key) DO UPDATE SET data = EXCLUDED.data, computed_at = now()`;
+}
+
 export async function GET(req: Request) {
   const params = new URL(req.url).searchParams;
+  const { key } = inputs(params);
+  const [row] = await sql<{ data: unknown; age_ms: number }[]>`
+    SELECT data, (extract(epoch FROM now() - computed_at) * 1000)::float AS age_ms FROM history_cache WHERE key = ${key}`.catch(() => []);
+  if (row) {
+    if (row.age_ms > FRESH_MS && BACKGROUND_WRITES) after(async () => {
+      // Claim the refresh (one request per stale copy), then recompute.
+      const claimed = await sql`UPDATE history_cache SET computed_at = now() - make_interval(secs => ${(FRESH_MS - 5 * 60_000) / 1000})
+        WHERE key = ${key} AND computed_at < now() - make_interval(secs => ${FRESH_MS / 1000}) RETURNING key`;
+      if (!claimed.length) return;
+      await store(key, await compute(params)).catch((e) => console.error("insights refresh", e));
+      await sql`DELETE FROM history_cache WHERE key LIKE 'insights|%' AND computed_at < now() - make_interval(days => ${KEEP_DAYS})`;
+    });
+    return Response.json(row.data, { headers });
+  }
+  const data = await compute(params);
+  if (BACKGROUND_WRITES) await store(key, data).catch((e) => console.error("insights store", e));
+  return Response.json(data, { headers });
+}
+
+async function compute(params: URLSearchParams) {
   const g = params.get("group");
   const group = GROUPS.includes(g as Group) ? (g as Group) : null;
   const only = group ? sql`AND g.grp = ${group}` : sql``;
@@ -178,7 +223,7 @@ export async function GET(req: Request) {
     .map((m) => { const ci = moverCi.get(m.scientificName) ?? null; return { ...m, ratioLow: ci ? Math.round(ci[0] * 100) / 100 : null, ratioHigh: ci ? Math.round(ci[1] * 100) / 100 : null }; })
     .filter((m) => m.ratioLow != null && m.ratioHigh != null && (m.ratioLow > 1 || m.ratioHigh < 1))
     .slice(0, 12);
-  return Response.json({
+  return {
     methods: METHODS_VERSION,
     group: group ?? "all",
     area: here ? { cellLat: here.cellLat, cellLon: here.cellLon, region: homeRegion, scope } : null,
@@ -191,5 +236,5 @@ export async function GET(req: Request) {
     movers: moversOut,
     drift: driftOut,
     arrivals: arrivals.map((r) => ({ scientificName: r.scientific_name, vernacularName: r.vernacular_name, group: r.grp, cellLat: r.cell_lat, cellLon: r.cell_lon, n: r.n })),
-  }, { headers: { "cache-control": "public, s-maxage=1800, stale-while-revalidate=86400" } });
+  };
 }

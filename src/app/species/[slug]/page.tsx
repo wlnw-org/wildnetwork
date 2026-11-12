@@ -21,6 +21,8 @@ import { getClimate, getYearSpan, speciesStory } from "@/lib/story";
 import { TR } from "@/components/TR";
 import INDIA from "@/data/india-seasons.json";
 import { statesFor } from "@/lib/indiaStates";
+import HeroImage from "@/components/HeroImage";
+import { commonsThumb } from "@/lib/commonsThumb";
 import PLACES from "@/data/places.json";
 import { citiesFor } from "@/components/CityBirds";
 import { ukArrival, ukSeason } from "@/lib/ukSeasons";
@@ -109,7 +111,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description,
     alternates: { canonical: `/species/${speciesSlug(d.name)}` },
     robots: thin ? { index: false, follow: true } : undefined,
-    openGraph: { title: `${label} on Wildlife Network`, description, url: `/species/${speciesSlug(d.name)}`, type: "article", ...(d.media?.imageUrl ? { images: [{ url: d.media.imageUrl, alt: label }] } : {}) },
+    openGraph: { title: `${label} on Wildlife Network`, description, url: `/species/${speciesSlug(d.name)}`, type: "article", ...(d.media?.imageUrl ? { images: [{ url: commonsThumb(d.media.imageUrl), alt: label }] } : {}) },
   };
 }
 
@@ -149,8 +151,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
 
         {d.media?.imageUrl && (
           <figure className="mt-6">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={d.media.imageUrl} alt={`${title} (${d.name})`} className="w-full max-h-96 object-contain rounded-lg bg-slate-900" />
+            <HeroImage src={d.media.imageUrl} alt={`${title} (${d.name})`} className="w-full max-h-96 object-contain rounded-lg bg-slate-900" />
             {(d.media.attribution || d.media.license) && <figcaption className="mt-1 text-xs text-slate-400">Image: {[d.media.attribution, d.media.license, d.media.source && !(d.media.attribution ?? "").toLowerCase().includes(d.media.source.toLowerCase()) ? d.media.source : null].filter(Boolean).join(", ")}</figcaption>}
           </figure>
         )}
