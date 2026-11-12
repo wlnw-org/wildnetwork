@@ -97,6 +97,11 @@ export default async function PlacePage({ params }: Props) {
           <Link href={`/report?lat=${p.lat.toFixed(4)}&lon=${p.lon.toFixed(4)}`} className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Site report: compare two periods" /></Link>
         </div>
 
+        {p.country === "United Kingdom" && (
+          <p className="mt-4 rounded-lg border border-cyan-400/30 bg-cyan-400/5 p-3 text-sm">
+            <TR k="When do swallows, cuckoos and swifts arrive? See [when birds arrive in the UK](/arrivals/uk)." />
+          </p>
+        )}
         {p.country === "India" && (
           <p className="mt-4 rounded-lg border border-cyan-400/30 bg-cyan-400/5 p-3 text-sm">
             <TR k="Which birds come to India for the winter, and when? See [migratory birds in India](/arrivals/india), month by month." />

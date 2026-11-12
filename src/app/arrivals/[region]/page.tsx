@@ -96,6 +96,11 @@ export default async function RegionArrivals({ params }: { params: Promise<{ reg
           {grp === "avian" && <>{" "}<TR k="Some birds that stay all year appear here when they become easier to hear again, for example when they start singing in spring." /></>}
         </p>
 
+        {r.slug === "europe" && (
+          <p className="mt-4 rounded-lg border border-cyan-400/30 bg-cyan-400/5 p-3 text-sm">
+            <TR k="In the UK? See [when birds arrive in the UK](/arrivals/uk): swallows, cuckoos, swifts and every other summer and winter visitor." />
+          </p>
+        )}
         {r.slug === "asia" && (
           <p className="mt-4 rounded-lg border border-cyan-400/30 bg-cyan-400/5 p-3 text-sm">
             <TR k="In India? See [migratory birds in India](/arrivals/india): the winter visitors, the months each one is here, and what is arriving now." />

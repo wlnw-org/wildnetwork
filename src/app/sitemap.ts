@@ -3,6 +3,7 @@ import INDIA from "@/data/india-seasons.json";
 import { sql } from "@/lib/db";
 import PLACES from "@/data/places.json";
 import CITY from "@/data/place-birds.json";
+import { UK_SPECIES } from "@/lib/ukSeasons";
 import { REGIONS } from "@/lib/regions";
 import { HELP } from "@/data/help";
 import { SITE, speciesSlug } from "@/lib/site";
@@ -29,6 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE}/data`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE}/stations`, lastModified: now, changeFrequency: "daily", priority: 0.6 },
     { url: `${SITE}/arrivals`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${SITE}/arrivals/uk`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE}/arrivals/india`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE}/lost-species`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE}/research`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
@@ -48,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Only species with something to say: a seasonal record, or a season in India (src/data/india-seasons.json) and a page.
   const rows = await sql<{ scientific_name: string }[]>`
     SELECT DISTINCT scientific_name FROM phenology
-    UNION SELECT scientific_name FROM species_group WHERE scientific_name IN ${sql([...INDIA.species.map((x) => x.sci), ...cityTop])} AND is_species
+    UNION SELECT scientific_name FROM species_group WHERE scientific_name IN ${sql([...INDIA.species.map((x) => x.sci), ...UK_SPECIES.map((x) => x.sci), ...cityTop])} AND is_species
     ORDER BY 1 LIMIT 5000`.catch(() => []);
   const datasets = await sql<{ id: string }[]>`SELECT id FROM datasets WHERE status = 'live'`.catch(() => []);
   return [...pages, ...datasets.map((d) => ({ url: `${SITE}/datasets/${d.id}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.5 })), ...rows.map((r) => ({ url: `${SITE}/species/${speciesSlug(r.scientific_name)}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.6 }))];

@@ -22,6 +22,7 @@ import { TR } from "@/components/TR";
 import INDIA from "@/data/india-seasons.json";
 import PLACES from "@/data/places.json";
 import { citiesFor } from "@/components/CityBirds";
+import { ukArrival, ukSeason } from "@/lib/ukSeasons";
 
 export const revalidate = 3600;
 // An empty list lets Next.js build each species page on its first visit and cache it (without it the route renders on every request).
@@ -82,6 +83,8 @@ function describe(d: NonNullable<Awaited<ReturnType<typeof load>>>): string {
   if (a) parts.push(a.first.slice(0, 7) === a.last.slice(0, 7)
     ? `The ${who} arrives in ${a.region} around ${monthOf(a.first)}.`
     : `The ${who} arrives in ${a.region} between ${monthOf(a.first)} and ${monthOf(a.last)}.`);
+  const uk = ukSeason(d.name);
+  if (uk) parts.push(`${uk.status === "summer" ? "Arrives in the UK" : "Comes to the UK for the winter, arriving"} in ${ukArrival(uk).typical}.`);
   const india = indiaSeason(d.name);
   if (india) parts.push(india.status === "winter" ? `A winter visitor to India${india.arrive && india.leave ? `, ${MONTH_NAMES[india.arrive - 1]} to ${MONTH_NAMES[india.leave - 1]}` : ""}.`
     : india.status === "summer" ? "A summer visitor to India." : "Passes through India.");
@@ -98,7 +101,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!d) return { title: "Species not found" };
   const label = d.common ? `${d.common} (${d.name})` : d.name;
   const description = describe(d);
-  const thin = d.arrivals.length === 0 && d.story.length === 0 && !indiaSeason(d.name) && citiesFor(d.name, PLACES).length === 0;
+  const thin = d.arrivals.length === 0 && d.story.length === 0 && !indiaSeason(d.name) && !ukSeason(d.name) && citiesFor(d.name, PLACES).length === 0;
   return {
     // Without the site suffix, so the name and what the page answers fit in a search result (about 60 characters).
     title: { absolute: `${label}: ${MIGRANT_GROUPS.has(d.grp) ? "arrival dates and migration" : "where and when it is recorded"}` },
@@ -114,6 +117,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
   if (!d) notFound();
   const title = d.common ?? d.name;
   const india = indiaSeason(d.name);
+  const uk = ukSeason(d.name), ukA = uk && ukArrival(uk);
   const cities = citiesFor(d.name, PLACES).slice(0, 12);
   const names = await getNames([d.name, ...d.genus.map((r) => r.scientific_name), ...d.sameTime.map((r) => r.scientific_name)]);
   const nm = { ...(names[d.name] ?? {}), ...(d.media?.names ?? {}) };
@@ -177,6 +181,17 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
             <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="How the {name} moves through the year" v={{ name: title }} names={nm} /></h2>
             {d.story.map((s) => <p key={s} className="mt-2">{s}</p>)}
           </>
+        )}
+
+        {uk && ukA && (
+          <section className="mt-6 rounded-lg border border-white/10 bg-white/5 p-3">
+            <h2 className="font-semibold text-slate-100"><TR k="When does the {name} arrive in the UK?" v={{ name: title }} /></h2>
+            <p className="mt-1">
+              <TR k={uk.status === "summer" ? "It usually arrives in {when}{range}{leave}." : "It comes for the winter, usually arriving in {when}{range}{leave}."}
+                v={{ when: ukA.typical, range: ukA.range ? `, between ${ukA.range} depending on the year` : "", leave: ukA.leave ? `. It is last seen regularly in ${ukA.leave}` : "" }} />{" "}
+              <TR k="[All UK summer and winter visitors](/arrivals/uk)." />
+            </p>
+          </section>
         )}
 
         {india && (

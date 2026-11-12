@@ -36,6 +36,12 @@ export default async function ArrivalsIndex() {
             </li>
           ))}
           <li>
+            <Link href="/arrivals/uk" className="block rounded-lg border border-white/10 px-4 py-3 hover:border-cyan-400/60">
+              <span className="text-slate-100 font-medium"><TR k="When birds arrive in the UK" /></span>
+              <span className="block text-sm text-slate-400"><TR k="Summer and winter visitors, half month by half month" /></span>
+            </Link>
+          </li>
+          <li>
             <Link href="/arrivals/india" className="block rounded-lg border border-white/10 px-4 py-3 hover:border-cyan-400/60">
               <span className="text-slate-100 font-medium"><TR k="Migratory birds in India" /></span>
               <span className="block text-sm text-slate-400"><TR k="Winter visitors, month by month" /></span>
