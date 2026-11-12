@@ -12,6 +12,7 @@ import AskPanel from "./AskPanel";
 import { track } from "./Analytics";
 import SpeciesPanel, { type SpeciesDetail } from "./SpeciesPanel";
 import PlacePanel, { type PickedPlace } from "./PlacePanel";
+import CountryPanel from "./CountryPanel";
 import HistoryPanel, { type History, type Period } from "./HistoryPanel";
 import { areaFor, type XcArea } from "@/lib/xenocanto";
 import Tour, { TOUR_KEY } from "./Tour";
@@ -685,11 +686,16 @@ export default function WorldMap() {
   // Place suggestions for the search box (server-side geocoder), debounced.
   useEffect(() => {
     const q = query.trim();
-    if (q.length < 3) return;
+    if (q.length < 2) return;
     let off = false;
     const id = setTimeout(() => {
-      getJson<{ places: { name: string; admin1: string | null; country: string | null; lat: number; lon: number; slug: string }[] }>(`/api/v1/places?q=${encodeURIComponent(q)}`)
-        .then(({ data: d }) => { if (!off) setPlaceHits({ q, list: (d.places ?? []).slice(0, 5).map((p) => ({ key: `${p.slug}${p.lat}`, slug: p.slug, lat: p.lat, lon: p.lon, label: [p.name, p.admin1, p.country].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(", ") })) }); })
+      getJson<{ places: { name: string; admin1: string | null; country: string | null; lat: number; lon: number; slug: string }[];
+        countries?: { slug: string; name: string; lat: number; lon: number; bbox: [number, number, number, number] }[] }>(`/api/v1/places?q=${encodeURIComponent(q)}`)
+        .then(({ data: d }) => { if (!off) setPlaceHits({ q, list: [
+          // Countries first: "spain" means the country.
+          ...(d.countries ?? []).map((c) => ({ key: `country:${c.slug}`, slug: c.slug, lat: c.lat, lon: c.lon, label: c.name, country: c.slug, bbox: c.bbox })),
+          ...(d.places ?? []).map((p) => ({ key: `${p.slug}${p.lat}`, slug: p.slug, lat: p.lat, lon: p.lon, label: [p.name, p.admin1, p.country].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(", ") })),
+        ].slice(0, 6) }); })
         .catch(() => { if (!off) setPlaceHits({ q, list: [] }); });
     }, 350);
     return () => { off = true; clearTimeout(id); };
@@ -697,9 +703,9 @@ export default function WorldMap() {
   // Search list: species first when the query names species (places then capped at 2), places first when no species match.
   const sq = query.trim();
   const speciesPending = sq.length >= 2 && results.q !== sq;
-  const placesPending = sq.length >= 3 && placeHits.q !== sq;
+  const placesPending = sq.length >= 2 && placeHits.q !== sq;
   const sp = results.q === sq ? results.list.slice(0, 20) : [];
-  const pl = sq.length >= 3 && placeHits.q === sq ? placeHits.list.slice(0, sp.length ? 2 : 5) : [];
+  const pl = sq.length >= 2 && placeHits.q === sq ? placeHits.list.slice(0, sp.length ? (placeHits.list[0]?.country ? 3 : 2) : 6) : [];
   type Opt = { kind: "species"; s: Species } | { kind: "place"; p: PickedPlace & { key: string } };
   const searchOpts: Opt[] = speciesPending ? [] : sp.length
     ? [...sp.map((s) => ({ kind: "species" as const, s })), ...pl.map((p) => ({ kind: "place" as const, p }))]
@@ -713,6 +719,13 @@ export default function WorldMap() {
     if (map) {
       // Opening the panel eases the map padding (300 ms), which would cancel a flight started now: fly once it has settled.
       setTimeout(() => {
+        if (p.bbox) {
+          const [w, s, e, n] = p.bbox;
+          // Countries that cross the antimeridian (Russia, Fiji) come back with a world-wide box: centre on them instead.
+          if (e - w > 180) map.flyTo({ center: [p.lon, p.lat], zoom: 2.5, duration: 1200 });
+          else map.fitBounds([[w, s], [e, n]], { padding: 40, maxZoom: 7, duration: 1200 });
+          return;
+        }
         map.flyTo({ center: [p.lon, p.lat], zoom: 7, duration: 1200 });
         // Live dots are often sparse at city zoom: offer the last 7 days instead of an empty map.
         map.once("moveend", () => setTimeout(() => {
@@ -789,8 +802,10 @@ export default function WorldMap() {
                         </div>
                       ) : (
                         <div className="px-3 py-1.5 text-sm flex items-start gap-2">
-                          <svg viewBox="0 0 24 24" className="w-4 h-4 mt-0.5 shrink-0 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d="M12 21s-6-5.5-6-11a6 6 0 1 1 12 0c0 5.5-6 11-6 11z" /><circle cx="12" cy="10" r="2" /></svg>
-                          <span className="min-w-0 break-words">{o.p.label}</span>
+                          {o.p.country
+                            ? <svg viewBox="0 0 24 24" className="w-4 h-4 mt-0.5 shrink-0 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18" /></svg>
+                            : <svg viewBox="0 0 24 24" className="w-4 h-4 mt-0.5 shrink-0 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d="M12 21s-6-5.5-6-11a6 6 0 1 1 12 0c0 5.5-6 11-6 11z" /><circle cx="12" cy="10" r="2" /></svg>}
+                          <span className="min-w-0 break-words">{o.p.label}{o.p.country && <span className="ml-1.5 text-xs text-slate-400">{t("Country")}</span>}</span>
                         </div>
                       )}
                     </li>
@@ -851,7 +866,9 @@ export default function WorldMap() {
           {species ? (
             <SpeciesPanel name={species} area={listenArea} near={listenNear} alerts={!!status?.alerts} onClose={() => selectSpecies(null)} />
           ) : tab === "place" && place ? (
-            <PlacePanel place={place} group={group} onPick={pick} onClose={() => { setPlace(null); setTab("now"); }} />
+            place.country
+              ? <CountryPanel slug={place.country} onPick={pick} onClose={() => { setPlace(null); setTab("now"); }} />
+              : <PlacePanel place={place} group={group} onPick={pick} onClose={() => { setPlace(null); setTab("now"); }} />
           ) : tab === "now" && period ? (
             <HistoryPanel data={historyData} loading={!historyData} onPick={pick} onBack={() => setPeriod(null)} scopeLabel={scopeLabel} />
           ) : tab === "about" ? (

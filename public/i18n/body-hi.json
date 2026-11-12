@@ -725,5 +725,17 @@
  "All of India": "पूरा भारत",
  "Data: {records} bird records in {place} from {from} to {to}, under CC0 or CC BY 4.0, from [GBIF.org](https://www.gbif.org), most of them from the [eBird](https://ebird.org) Observation Dataset of the Cornell Lab of Ornithology. Thanks to every birder who shares their lists. Updated {date}. [How Wildlife Network works](/methods).": "डेटा: {from} से {to} तक {place} के {records} पक्षी रिकॉर्ड, CC0 या CC BY 4.0 के तहत, [GBIF.org](https://www.gbif.org) से, ज़्यादातर Cornell Lab of Ornithology के [eBird](https://ebird.org) Observation Dataset से। अपनी सूचियाँ साझा करने वाले हर पक्षी-प्रेमी का धन्यवाद। अपडेट: {date}। [Wildlife Network कैसे काम करता है](/methods)।",
  "By state": "राज्य के अनुसार",
- "By state:": "राज्य के अनुसार:"
+ "By state:": "राज्य के अनुसार:",
+ "Migratory birds by country": "देश के अनुसार प्रवासी पक्षी",
+ "Visitors in the northern winter": "उत्तरी सर्दियों के मेहमान",
+ "Visitors in the northern summer": "उत्तरी गर्मियों के मेहमान",
+ "Visitors in the southern winter": "दक्षिणी सर्दियों के मेहमान",
+ "Visitors in the southern summer": "दक्षिणी गर्मियों के मेहमान",
+ "Here mainly from about May to August, from breeding grounds elsewhere. Most recorded first.": "ज़्यादातर मई से अगस्त तक यहाँ, कहीं और के प्रजनन स्थलों से आते हैं। सबसे ज़्यादा दर्ज पहले।",
+ "Here mainly from about May to August, often to breed. Most recorded first.": "ज़्यादातर मई से अगस्त तक यहाँ, अक्सर प्रजनन के लिए। सबसे ज़्यादा दर्ज पहले।",
+ "Here mainly from about November to February, from breeding grounds elsewhere. Most recorded first.": "ज़्यादातर नवंबर से फ़रवरी तक यहाँ, कहीं और के प्रजनन स्थलों से आते हैं। सबसे ज़्यादा दर्ज पहले।",
+ "Here mainly from about November to February, often to breed. Most recorded first.": "ज़्यादातर नवंबर से फ़रवरी तक यहाँ, अक्सर प्रजनन के लिए। सबसे ज़्यादा दर्ज पहले।",
+ "These are the birds that come to {place} for part of the year, and the months each one is here, worked out from {records} bird records from {from} to {to}.": "ये वे पक्षी हैं जो साल का कुछ हिस्सा {place} में बिताते हैं, और हर पक्षी के यहाँ रहने के महीने, जो {from} से {to} तक के {records} पक्षी रिकॉर्ड से निकाले गए हैं।",
+ "See it on the live map": "लाइव नक्शे पर देखें",
+ "Other countries": "दूसरे देश"
 }

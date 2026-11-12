@@ -725,5 +725,17 @@
  "All of India": "Toda a Índia",
  "Data: {records} bird records in {place} from {from} to {to}, under CC0 or CC BY 4.0, from [GBIF.org](https://www.gbif.org), most of them from the [eBird](https://ebird.org) Observation Dataset of the Cornell Lab of Ornithology. Thanks to every birder who shares their lists. Updated {date}. [How Wildlife Network works](/methods).": "Dados: {records} registros de aves em {place} de {from} a {to}, sob CC0 ou CC BY 4.0, do [GBIF.org](https://www.gbif.org), a maioria do conjunto de observações do [eBird](https://ebird.org) do Cornell Lab of Ornithology. Obrigado a cada observador que compartilha suas listas. Atualizado em {date}. [Como o Wildlife Network funciona](/methods).",
  "By state": "Por estado",
- "By state:": "Por estado:"
+ "By state:": "Por estado:",
+ "Migratory birds by country": "Aves migratórias por país",
+ "Visitors in the northern winter": "Visitantes do inverno boreal",
+ "Visitors in the northern summer": "Visitantes do verão boreal",
+ "Visitors in the southern winter": "Visitantes do inverno austral",
+ "Visitors in the southern summer": "Visitantes do verão austral",
+ "Here mainly from about May to August, from breeding grounds elsewhere. Most recorded first.": "Aqui sobretudo de maio a agosto, vindas de áreas de reprodução distantes. As mais registradas primeiro.",
+ "Here mainly from about May to August, often to breed. Most recorded first.": "Aqui sobretudo de maio a agosto, muitas vezes para se reproduzir. As mais registradas primeiro.",
+ "Here mainly from about November to February, from breeding grounds elsewhere. Most recorded first.": "Aqui sobretudo de novembro a fevereiro, vindas de áreas de reprodução distantes. As mais registradas primeiro.",
+ "Here mainly from about November to February, often to breed. Most recorded first.": "Aqui sobretudo de novembro a fevereiro, muitas vezes para se reproduzir. As mais registradas primeiro.",
+ "These are the birds that come to {place} for part of the year, and the months each one is here, worked out from {records} bird records from {from} to {to}.": "Estas são as aves que passam parte do ano em {place} e os meses em que cada uma está aqui, calculados a partir de {records} registros de aves de {from} a {to}.",
+ "See it on the live map": "Ver no mapa ao vivo",
+ "Other countries": "Outros países"
 }

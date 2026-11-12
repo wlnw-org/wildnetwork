@@ -725,5 +725,17 @@
  "All of India": "Ganz Indien",
  "Data: {records} bird records in {place} from {from} to {to}, under CC0 or CC BY 4.0, from [GBIF.org](https://www.gbif.org), most of them from the [eBird](https://ebird.org) Observation Dataset of the Cornell Lab of Ornithology. Thanks to every birder who shares their lists. Updated {date}. [How Wildlife Network works](/methods).": "Daten: {records} Vogelbeobachtungen in {place} von {from} bis {to}, unter CC0 oder CC BY 4.0, von [GBIF.org](https://www.gbif.org), die meisten aus dem [eBird](https://ebird.org)-Beobachtungsdatensatz des Cornell Lab of Ornithology. Danke an alle, die ihre Listen teilen. Aktualisiert am {date}. [So funktioniert Wildlife Network](/methods).",
  "By state": "Nach Bundesstaat",
- "By state:": "Nach Bundesstaat:"
+ "By state:": "Nach Bundesstaat:",
+ "Migratory birds by country": "Zugvögel nach Land",
+ "Visitors in the northern winter": "Gäste im Nordwinter",
+ "Visitors in the northern summer": "Gäste im Nordsommer",
+ "Visitors in the southern winter": "Gäste im Südwinter",
+ "Visitors in the southern summer": "Gäste im Südsommer",
+ "Here mainly from about May to August, from breeding grounds elsewhere. Most recorded first.": "Hier vor allem von Mai bis August, aus Brutgebieten anderswo. Die am häufigsten gemeldeten zuerst.",
+ "Here mainly from about May to August, often to breed. Most recorded first.": "Hier vor allem von Mai bis August, oft zum Brüten. Die am häufigsten gemeldeten zuerst.",
+ "Here mainly from about November to February, from breeding grounds elsewhere. Most recorded first.": "Hier vor allem von November bis Februar, aus Brutgebieten anderswo. Die am häufigsten gemeldeten zuerst.",
+ "Here mainly from about November to February, often to breed. Most recorded first.": "Hier vor allem von November bis Februar, oft zum Brüten. Die am häufigsten gemeldeten zuerst.",
+ "These are the birds that come to {place} for part of the year, and the months each one is here, worked out from {records} bird records from {from} to {to}.": "Das sind die Vögel, die einen Teil des Jahres in {place} verbringen, und die Monate, in denen jeder hier ist, ermittelt aus {records} Vogelbeobachtungen von {from} bis {to}.",
+ "See it on the live map": "Auf der Live-Karte ansehen",
+ "Other countries": "Andere Länder"
 }

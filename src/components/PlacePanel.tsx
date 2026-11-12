@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { useLang, useLocalNames, useT } from "@/lib/i18n";
 import type { PlaceReport } from "@/lib/places";
 
-export interface PickedPlace { label: string; lat: number; lon: number; slug?: string }
+/** country: a country slug (src/lib/countries.ts), shown by CountryPanel with the map fitted to bbox [w, s, e, n]. */
+export interface PickedPlace { label: string; lat: number; lon: number; slug?: string; country?: string; bbox?: [number, number, number, number] }
 
 
 /** Map panel for a searched place: what arrived, what is expected and what is most recorded in its 5 degree cell. */

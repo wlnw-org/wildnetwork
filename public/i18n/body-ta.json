@@ -725,5 +725,17 @@
  "All of India": "இந்தியா முழுவதும்",
  "Data: {records} bird records in {place} from {from} to {to}, under CC0 or CC BY 4.0, from [GBIF.org](https://www.gbif.org), most of them from the [eBird](https://ebird.org) Observation Dataset of the Cornell Lab of Ornithology. Thanks to every birder who shares their lists. Updated {date}. [How Wildlife Network works](/methods).": "தரவு: {from} முதல் {to} வரை {place} இல் {records} பறவைப் பதிவுகள், CC0 அல்லது CC BY 4.0 உரிமத்தில், [GBIF.org](https://www.gbif.org) இலிருந்து, பெரும்பாலும் Cornell Lab of Ornithology இன் [eBird](https://ebird.org) Observation Dataset இலிருந்து. தங்கள் பட்டியல்களைப் பகிரும் ஒவ்வொரு பறவை ஆர்வலருக்கும் நன்றி. புதுப்பிக்கப்பட்டது {date}. [Wildlife Network எப்படி வேலை செய்கிறது](/methods).",
  "By state": "மாநில வாரியாக",
- "By state:": "மாநில வாரியாக:"
+ "By state:": "மாநில வாரியாக:",
+ "Migratory birds by country": "நாடு வாரியாக வலசைப் பறவைகள்",
+ "Visitors in the northern winter": "வடக்குக் குளிர்கால வருகையாளர்கள்",
+ "Visitors in the northern summer": "வடக்குக் கோடைக்கால வருகையாளர்கள்",
+ "Visitors in the southern winter": "தெற்குக் குளிர்கால வருகையாளர்கள்",
+ "Visitors in the southern summer": "தெற்குக் கோடைக்கால வருகையாளர்கள்",
+ "Here mainly from about May to August, from breeding grounds elsewhere. Most recorded first.": "பெரும்பாலும் மே முதல் ஆகஸ்ட் வரை இங்கே, வேறிடத்து இனப்பெருக்கப் பகுதிகளிலிருந்து வருகின்றன. அதிகம் பதிவானவை முதலில்.",
+ "Here mainly from about May to August, often to breed. Most recorded first.": "பெரும்பாலும் மே முதல் ஆகஸ்ட் வரை இங்கே, பெரும்பாலும் இனப்பெருக்கத்திற்காக. அதிகம் பதிவானவை முதலில்.",
+ "Here mainly from about November to February, from breeding grounds elsewhere. Most recorded first.": "பெரும்பாலும் நவம்பர் முதல் பிப்ரவரி வரை இங்கே, வேறிடத்து இனப்பெருக்கப் பகுதிகளிலிருந்து வருகின்றன. அதிகம் பதிவானவை முதலில்.",
+ "Here mainly from about November to February, often to breed. Most recorded first.": "பெரும்பாலும் நவம்பர் முதல் பிப்ரவரி வரை இங்கே, பெரும்பாலும் இனப்பெருக்கத்திற்காக. அதிகம் பதிவானவை முதலில்.",
+ "These are the birds that come to {place} for part of the year, and the months each one is here, worked out from {records} bird records from {from} to {to}.": "ஆண்டின் ஒரு பகுதியை {place} இல் கழிக்கும் பறவைகளும், ஒவ்வொன்றும் இங்கே இருக்கும் மாதங்களும் இவை; {from} முதல் {to} வரையிலான {records} பறவைப் பதிவுகளிலிருந்து கணக்கிடப்பட்டவை.",
+ "See it on the live map": "நேரலை வரைபடத்தில் பார்க்க",
+ "Other countries": "மற்ற நாடுகள்"
 }

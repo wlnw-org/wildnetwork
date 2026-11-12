@@ -5,6 +5,7 @@ import { TR } from "@/components/TR";
 import { sql } from "@/lib/db";
 import { REGION } from "@/lib/methods";
 import { REGIONS } from "@/lib/regions";
+import { COUNTRIES, OWN_PAGE, hasPage } from "@/lib/countries";
 
 export const revalidate = 86400;
 
@@ -48,6 +49,10 @@ export default async function ArrivalsIndex() {
             </Link>
           </li>
         </ul>
+        <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="Migratory birds by country" /></h2>
+        <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm">
+          {COUNTRIES.filter((c) => hasPage(c) || OWN_PAGE.has(c.slug)).map((c) => <Link key={c.slug} href={`/arrivals/${c.slug}`} prefetch={false} className="text-cyan-400 hover:underline">{c.name}</Link>)}
+        </p>
         <p className="mt-8 text-sm text-slate-400">
           <Link href="/species" className="text-cyan-400 hover:underline"><TR k="All species" /></Link> ·{" "}
           <Link href="/methods" className="text-cyan-400 hover:underline"><TR k="How arrival dates are measured" /></Link>

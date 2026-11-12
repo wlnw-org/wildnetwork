@@ -8,9 +8,11 @@ import { REGION } from "@/lib/methods";
 import { yearRound } from "@/lib/yearRound";
 import { REGIONS, regionBySlug } from "@/lib/regions";
 import { SITE, speciesSlug } from "@/lib/site";
+import { countryBySlug, hasPage } from "@/lib/countries";
+import CountryArrivals, { countryDescription, countryTitle } from "@/components/CountryArrivals";
 
 export const revalidate = 86400;
-export const dynamicParams = false;
+// Countries (src/lib/countries.ts) share this route: /arrivals/spain. Made on first visit, then cached.
 export const generateStaticParams = () => REGIONS.map((r) => ({ region: r.slug }));
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -28,8 +30,15 @@ const load = cache(async (name: string) => sql<Row[]>`
   GROUP BY 1 ORDER BY areas DESC, 1`);
 
 export async function generateMetadata({ params }: { params: Promise<{ region: string }> }): Promise<Metadata> {
-  const r = regionBySlug((await params).region);
-  if (!r) return {};
+  const slug = (await params).region;
+  const r = regionBySlug(slug);
+  if (!r) {
+    const c = countryBySlug(slug);
+    if (!c) return {};
+    const title = countryTitle(c), description = countryDescription(c);
+    return { title, description, alternates: { canonical: `/arrivals/${c.slug}` }, openGraph: { title, description, url: `/arrivals/${c.slug}`, type: "article" },
+      robots: hasPage(c) ? undefined : { index: false } };
+  }
   const rows = await load(r.name);
   const title = `When do birds arrive in ${r.name}? Arrival dates by month`;
   const description = `Arrival dates for ${rows.length.toLocaleString("en-GB")} birds, bats and other species in ${r.name}, month by month, with what is arriving now. From acoustic sensors and open biodiversity records, effort corrected.`;
@@ -41,7 +50,11 @@ const cap = (x: string) => x.charAt(0).toUpperCase() + x.slice(1);
 export default async function RegionArrivals({ params }: { params: Promise<{ region: string; group?: string }> }) {
   const { region, group: wanted } = await params;
   const r = regionBySlug(region);
-  if (!r) notFound();
+  if (!r) {
+    const c = countryBySlug(region);
+    if (!c || wanted !== undefined) notFound();
+    return <CountryArrivals c={c} />;
+  }
   const all = await load(r.name);
   const present = [...new Set(all.map((x) => x.grp))].sort((a, b) => (a === "avian" ? -1 : b === "avian" ? 1 : all.filter((x) => x.grp === b).length - all.filter((x) => x.grp === a).length));
   if (wanted !== undefined && (wanted === "avian" || !present.includes(wanted))) notFound();
