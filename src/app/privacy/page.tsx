@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "What Wildlife Network collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
 };
 
-const UPDATED = "10 November 2026";
+const UPDATED = "13 November 2026";
 
 export default function Privacy() {
   return (
@@ -94,10 +94,10 @@ export default function Privacy() {
 
         <H2><TR k="Hosting" /></H2>
         <p>
-          <TR k="Vercel tells the site the approximate area of your IP address (a city, and a position this site rounds to whole degrees, about 100 km). It is used only to start the map near you and to suggest your town in the alert form, and it is not stored or logged." />
+          <TR k="The site looks up your IP address in a copy of the free [DB-IP](https://db-ip.com) City Lite database (CC BY 4.0) kept on its own server, which gives an approximate city and a position this site rounds to whole degrees (about 100 km). It is used only to start the map near you and to suggest your town in the alert form. Your address is not sent anywhere for this, and the result is not stored or logged." />
         </p>
         <p>
-          <TR k="The site runs on Vercel and its database on Neon, both in the United States. Vercel processes IP addresses and request details to serve pages and protect the service, and keeps them in logs for a short time. No other cookies or tracking are used." />
+          <TR k="The site runs on a DigitalOcean server and its database on Neon, both in the United States. The server processes IP addresses and request details to serve pages and protect the service, and keeps them in logs for a short time. No other cookies or tracking are used." />
         </p>
         <p>
           <TR k="Reference recordings in species panels are streamed straight from xeno-canto.org, and only when you press play (the sonogram image loads with the panel). Your browser then contacts xeno-canto, which sees your IP address. To pick the recordings, this site sends xeno-canto the species name and, for most species, the continent in view. Never your location or a detection's coordinates. Your browser also sends this site the centre of the map rounded to whole degrees (about 100 km), used only to put recordings from that country first; it is not passed to xeno-canto, and it is not sent for sensitive species." />

@@ -1,0 +1,6 @@
+[Unit]
+Description=Refresh the IP location database (DB-IP City Lite)
+
+[Service]
+Type=oneshot
+ExecStart=/srv/wlnw/geoip-update.sh
