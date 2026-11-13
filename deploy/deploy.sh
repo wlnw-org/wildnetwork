@@ -28,7 +28,7 @@ ln -sfn "$REL" "$ROOT/current.new" && mv -T "$ROOT/current.new" "$ROOT/current"
 # One copy at a time, each back up (health check answers) before the next, so a deploy never drops requests.
 for port in 3000 3001; do
   sudo /bin/systemctl restart "wlnw@$port"
-  for i in $(seq 1 60); do curl -fsS -o /dev/null "http://127.0.0.1:$port/robots.txt" && break; sleep 2; done
+  for i in $(seq 1 60); do curl -fs -o /dev/null "http://127.0.0.1:$port/robots.txt" && break; sleep 2; done
 done
 # Keep the three newest releases.
 cd "$ROOT/releases" && ls -1t | tail -n +4 | while read -r old; do git -C "$ROOT/repo" worktree remove --force "$ROOT/releases/$old" 2>/dev/null || rm -rf "$old"; done
