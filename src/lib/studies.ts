@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { sql } from "@/lib/db";
 import { ARRIVAL, sendMail } from "@/lib/alerts";
-import { decryptToken } from "@/lib/optin";
+import { tryDecrypt } from "@/lib/optin";
 import { SITE, speciesSlug } from "@/lib/site";
 
 /**
@@ -112,7 +112,9 @@ export async function sendDigests(budgetMs = 60_000): Promise<number> {
     await sql`UPDATE studies SET last_digest = now() WHERE id = ${s.id}`;
     if (!rows.length || !s.email_enc) continue;
     const lines = rows.map((r) => `- ${r.vernacular_name ?? r.scientific_name} (${r.scientific_name}), ${r.n} records in ${r.cell_lat}°, ${r.cell_lon}°: ${SITE}/species/${speciesSlug(r.scientific_name)}`);
-    const ok = await sendMail("digest", decryptToken(s.email_enc), `${rows.length} new ${rows.length === 1 ? "arrival" : "arrivals"} in "${s.title}"`,
+    const to = tryDecrypt(s.email_enc);
+    if (!to) continue; // encrypted with an older key
+    const ok = await sendMail("digest", to, `${rows.length} new ${rows.length === 1 ? "arrival" : "arrivals"} in "${s.title}"`,
       `New this week in your study area "${s.title}", after at least ${ARRIVAL.ABSENT_WEEKS} watched weeks without them:\n\n${lines.join("\n")}\n\n` +
       `Dashboard: ${SITE}/studies/${s.id}\nTurn the weekly digest off on the dashboard.\n\nWildlife Network, ${SITE}`);
     if (!ok) break;

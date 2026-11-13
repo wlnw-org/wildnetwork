@@ -3,7 +3,7 @@ import { hashIp } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { arrivalHtml, confirmHtml, emailImage } from "@/lib/emails";
 import { getSpeciesMedia } from "@/lib/media";
-import { decryptToken, encryptToken } from "@/lib/optin";
+import { tryDecrypt, encryptToken } from "@/lib/optin";
 import { SITE, SITE_NAME, speciesSlug } from "@/lib/site";
 
 /**
@@ -113,7 +113,9 @@ export async function checkAlerts(budgetMs = 60_000): Promise<{ checked: number;
       imageUrl: img.url, imageCredit: img.credit, speciesUrl: `${SITE}/species/${speciesSlug(d.scientific_name)}`,
       mapUrl: `${SITE}/?species=${encodeURIComponent(d.scientific_name)}`, unsubscribeUrl: unsubscribeUrl(d.token),
     });
-    const ok = await sendMail("alert", decryptToken(d.email_enc), `${name} has arrived near ${d.place}`,
+    const to = tryDecrypt(d.email_enc);
+    if (!to) continue; // encrypted with an older key: skipped, never deleted
+    const ok = await sendMail("alert", to, `${name} has arrived near ${d.place}`,
       `The ${name} (${d.scientific_name}) was recorded ${d.n} ${d.n === 1 ? "time" : "times"} in your area in the week of ${fmtWeek(d.week)}, ` +
       `after ${d.absent} watched weeks without a record. Your area is the 5 degree square around ${d.place}.\n\n` +
       `See where it is now: ${SITE}/species/${speciesSlug(d.scientific_name)}\n` +

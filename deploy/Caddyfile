@@ -1,0 +1,17 @@
+# Caddy gets and renews the HTTPS certificates itself once DNS points here.
+wlnw.org {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3000
+}
+www.wlnw.org {
+	redir https://wlnw.org{uri} permanent
+}
+# Old host: pages redirect to wlnw.org in next.config.ts; /api/ and /agent/ are still served for installed agents and BirdEcho.
+wildnetwork.arunrajiah.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3000
+}
+# Plain HTTP on the bare IP, for checks before DNS moves.
+:80 {
+	reverse_proxy 127.0.0.1:3000
+}

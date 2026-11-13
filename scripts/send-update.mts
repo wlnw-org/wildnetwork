@@ -9,7 +9,7 @@
 import { UPDATES } from "../src/data/updates";
 import { sql } from "../src/lib/db";
 import { sendMail } from "../src/lib/alerts";
-import { decryptToken } from "../src/lib/optin";
+import { tryDecrypt } from "../src/lib/optin";
 import { updateOneClickUrl, updateText, UPDATES_ENABLED } from "../src/lib/updates";
 import { SITE_NAME } from "../src/lib/site";
 
@@ -38,7 +38,9 @@ if (!send) {
     WHERE confirmed_at IS NOT NULL AND (last_sent IS NULL OR last_sent < ${u.date}::date) ORDER BY id`;
   let sent = 0;
   for (const s of due) {
-    const ok = await sendMail("update", decryptToken(s.email_enc), `${SITE_NAME}: ${u.title}`, updateText(u, s.token), updateOneClickUrl(s.token));
+    const to = tryDecrypt(s.email_enc);
+    if (!to) continue; // encrypted with an older key
+    const ok = await sendMail("update", to, `${SITE_NAME}: ${u.title}`, updateText(u, s.token), updateOneClickUrl(s.token));
     if (!ok) { console.log("Stopped: daily mail cap reached or a mail error. Run again tomorrow to continue."); break; }
     await sql`UPDATE update_subs SET last_sent = ${u.date}::date WHERE id = ${s.id}`;
     sent++;

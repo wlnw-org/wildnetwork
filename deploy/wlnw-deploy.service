@@ -1,0 +1,9 @@
+[Unit]
+Description=Deploy new commits of main (pull-based)
+
+[Service]
+Type=oneshot
+User=wlnw
+ExecStart=/srv/wlnw/deploy.sh
+StandardOutput=append:/srv/wlnw/logs/deploy.log
+StandardError=append:/srv/wlnw/logs/deploy.log

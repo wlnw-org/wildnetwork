@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { sql } from "@/lib/db";
 import { sendMail } from "@/lib/alerts";
-import { encryptToken, decryptToken } from "@/lib/optin";
+import { encryptToken, tryDecrypt } from "@/lib/optin";
 import { orcidUrl } from "@/lib/orcid";
 import { SITE } from "@/lib/site";
 import { STUDY_LIMITS } from "@/lib/studies";
@@ -30,7 +30,7 @@ export type JoinTarget = { project: string } | { study: string };
 
 /** The maintainer's address is public already, and the starter projects are theirs; everyone else's comes from their own sign-in. */
 export const MAINTAINER = { orcid: "0009-0009-5957-5814", email: "arunrajiah@gmail.com" };
-const contactEmail = (orcid: string, enc: string | null) => (enc ? decryptToken(enc) : orcid === MAINTAINER.orcid ? MAINTAINER.email : null);
+const contactEmail = (orcid: string, enc: string | null) => (enc ? tryDecrypt(enc) : orcid === MAINTAINER.orcid ? MAINTAINER.email : null);
 
 const validEmail = (e: string) => /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,}$/.test(e);
 export const cleanEmail = (v: unknown): string | null => {

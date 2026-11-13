@@ -20,6 +20,12 @@ export function encryptToken(token: string): string {
   return [iv, c.getAuthTag(), data].map((b) => b.toString("base64url")).join(".");
 }
 
+/** decryptToken, or null when the value was encrypted with a key this server does not have (see OPTIN_KEY in CLAUDE notes). */
+export function tryDecrypt(enc: string | null): string | null {
+  if (!enc) return null;
+  try { return decryptToken(enc); } catch { return null; }
+}
+
 export function decryptToken(enc: string): string {
   const [iv, tag, data] = enc.split(".").map((s) => Buffer.from(s, "base64url"));
   const d = createDecipheriv("aes-256-gcm", key(), iv);
