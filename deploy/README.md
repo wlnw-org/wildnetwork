@@ -2,7 +2,7 @@
 
 wlnw.org runs on one Ubuntu 24.04 server (Node 24, Caddy). Nothing in this folder is secret.
 
-- `wlnw.service`: the Next.js app on 127.0.0.1:3000, settings from `/etc/wlnw/env` (only on the server, mode 640, never in git).
+- `wlnw@.service`: two copies of the Next.js app (`wlnw@3000`, `wlnw@3001`), restarted one at a time on deploy, settings from `/etc/wlnw/env` (only on the server, mode 640, never in git).
 - `Caddyfile`: HTTPS (automatic certificates) and the proxy.
 - `deploy.sh` + `wlnw-deploy.timer`: every 2 minutes the server fetches `main` from this public repository; a new commit is built
   in `/srv/wlnw/releases/<sha>` and swapped in. No deploy keys or server credentials exist in GitHub.

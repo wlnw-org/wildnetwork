@@ -1,18 +1,18 @@
 [Unit]
-Description=Wildlife Network (Next.js)
+Description=Wildlife Network (Next.js) on port %i
 After=network-online.target
 
 [Service]
 User=wlnw
 WorkingDirectory=/srv/wlnw/current
 EnvironmentFile=/etc/wlnw/env
-Environment=NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=127.0.0.1
-ExecStart=/usr/bin/node node_modules/next/dist/bin/next start -p 3000 -H 127.0.0.1
+Environment=NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=%i HOSTNAME=127.0.0.1
+ExecStart=/usr/bin/node node_modules/next/dist/bin/next start -p %i -H 127.0.0.1
 Restart=always
 RestartSec=5
 # Background jobs (pulls, rollups, recomputes) run inside the app after responses; keep the box responsive.
 Nice=5
-MemoryMax=1600M
+MemoryMax=900M
 
 [Install]
 WantedBy=multi-user.target
