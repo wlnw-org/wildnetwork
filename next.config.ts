@@ -18,6 +18,7 @@ const csp = [
 const CANONICAL = "https://wlnw.org";
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   // Connectors read the sensitive taxa list at runtime.
   outputFileTracingIncludes: { "/api/**": ["./scripts/sensitive_species.txt"], "/report": ["./scripts/sensitive_species.txt"] },
   // The site moved from wildnetwork.arunrajiah.com to wlnw.org on 2026-10-23. Pages on the old host redirect

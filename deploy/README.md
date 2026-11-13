@@ -11,3 +11,4 @@ wlnw.org runs on one Ubuntu 24.04 server (Node 24, Caddy). Nothing in this folde
 - `geoip-update.sh` + `wlnw-geoip.timer`: monthly download of DB-IP City Lite (CC BY 4.0) to `/var/lib/wlnw/geoip`, read locally by `/api/v1/near` (env `GEOIP_DB`).
 
 The files here are installed on the server by hand (copy to /srv/wlnw, /etc/systemd/system, /etc/caddy); a push does not update them, only the app.
+- `wlnw-rollup.timer`: daily 03:30 UTC call to `/api/cron/rollup` (formerly the Vercel cron in vercel.json), with CRON_SECRET read from `/etc/wlnw/env` on the server. Live pulls and hourly rollups come from the cron-job.org call to `/api/v1/status`; the old GitHub `ingest` workflow was removed so no server secret lives in GitHub.

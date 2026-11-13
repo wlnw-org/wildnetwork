@@ -1,7 +1,23 @@
+{
+	# Admin API on a socket only the caddy user (and root) can open instead of localhost:2019, so the app's user cannot reconfigure the proxy.
+	admin unix//var/lib/caddy/admin.sock|0600
+}
+
+(secure) {
+	encode zstd gzip
+	header {
+		# Vercel used to add HSTS; Caddy does not by default.
+		Strict-Transport-Security "max-age=63072000; includeSubDomains"
+		-Server
+		-Via
+		-X-Powered-By
+	}
+}
+
 # Caddy gets and renews the HTTPS certificates itself once DNS points here.
 # Two copies of the app (wlnw@3000, wlnw@3001): deploys restart one at a time, Caddy sends traffic to whichever is up.
 wlnw.org {
-	encode zstd gzip
+	import secure
 	reverse_proxy 127.0.0.1:3000 127.0.0.1:3001 {
 		lb_policy first
 		lb_try_duration 20s
@@ -15,7 +31,7 @@ www.wlnw.org {
 }
 # Old host: pages redirect to wlnw.org in next.config.ts; /api/ and /agent/ are still served for installed agents and BirdEcho.
 wildnetwork.arunrajiah.com {
-	encode zstd gzip
+	import secure
 	reverse_proxy 127.0.0.1:3000 127.0.0.1:3001 {
 		lb_policy first
 		lb_try_duration 20s

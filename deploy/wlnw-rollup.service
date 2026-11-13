@@ -1,0 +1,8 @@
+[Unit]
+Description=Daily rollup refresh (was a Vercel cron)
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/wlnw/env
+# The secret is read from the server settings here; it never leaves the machine.
+ExecStart=/bin/sh -c 'curl -fsS --max-time 290 -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/rollup | head -c 500'

@@ -60,7 +60,7 @@ export default function LostVerdict({ id, verdict, note, hideArea, rewild }: { i
           <pre className="mt-1 whitespace-pre-wrap font-sans text-slate-300">{rewild.text}</pre>
           {rewild.to ? (
             <button onClick={sendRewild} disabled={sending || state === "saving"} className="mt-3 rounded-md border border-emerald-400 bg-emerald-500/20 px-3 py-1.5 text-slate-100">{sending ? "Sending" : "Send this email"}</button>
-          ) : <p className="mt-3 text-amber-300">Sending is off until the Re:wild contact address is set (REWILD_CONTACT on Vercel).</p>}
+          ) : <p className="mt-3 text-amber-300">Sending is off until the Re:wild contact address is set (REWILD_CONTACT in the server settings).</p>}
           {sendErr && <p className="mt-2 text-rose-400">{sendErr}</p>}
         </details>
       )}
