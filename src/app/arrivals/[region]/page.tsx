@@ -8,8 +8,8 @@ import { REGION } from "@/lib/methods";
 import { yearRound } from "@/lib/yearRound";
 import { REGIONS, regionBySlug } from "@/lib/regions";
 import { SITE, speciesSlug } from "@/lib/site";
-import { countryBySlug, hasPage } from "@/lib/countries";
-import CountryArrivals, { countryDescription, countryTitle } from "@/components/CountryArrivals";
+import { countryBySlug } from "@/lib/countries";
+import CountryArrivals, { countryMetadata } from "@/components/CountryArrivals";
 
 export const revalidate = 86400;
 // Countries (src/lib/countries.ts) share this route: /arrivals/spain. Made on first visit, then cached.
@@ -34,10 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ region: s
   const r = regionBySlug(slug);
   if (!r) {
     const c = countryBySlug(slug);
-    if (!c) return {};
-    const title = countryTitle(c), description = countryDescription(c);
-    return { title, description, alternates: { canonical: `/arrivals/${c.slug}` }, openGraph: { title, description, url: `/arrivals/${c.slug}`, type: "article" },
-      robots: hasPage(c) ? undefined : { index: false } };
+    return c ? countryMetadata("en", c) : {};
   }
   const rows = await load(r.name);
   const title = `When do birds arrive in ${r.name}? Arrival dates by month`;
