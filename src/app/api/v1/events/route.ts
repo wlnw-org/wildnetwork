@@ -114,5 +114,5 @@ export async function GET(req: Request) {
   return Response.json({
     type: "FeatureCollection",
     features: rows.map(toFeature),
-  }, { headers: { "cache-control": "public, s-maxage=120, stale-while-revalidate=600" } });
+  }, { headers: { "cache-control": "public, s-maxage=300, stale-while-revalidate=600" } });
 }

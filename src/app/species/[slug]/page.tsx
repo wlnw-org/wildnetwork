@@ -27,7 +27,8 @@ import PLACES from "@/data/places.json";
 import { citiesFor } from "@/components/CityBirds";
 import { ukArrival, ukSeason } from "@/lib/ukSeasons";
 
-export const revalidate = 3600;
+// Daily: the page's numbers change with the daily recompute, and an hourly refresh made every crawler visit re-render it.
+export const revalidate = 86400;
 // An empty list lets Next.js build each species page on its first visit and cache it (without it the route renders on every request).
 export async function generateStaticParams() { return []; }
 

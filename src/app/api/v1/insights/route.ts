@@ -28,9 +28,9 @@ function inputs(params: URLSearchParams) {
 /**
  * Working the lists out takes several seconds (bootstrap intervals over the daily tables), and the CDN caches each region
  * separately, so a cold answer used to keep a visitor waiting about 8 s. Each answer is stored in history_cache once; later
- * requests get the stored copy at once, and a copy older than FRESH_MS is recomputed after the response is sent.
+ * requests get the stored copy at once, and a copy older than FRESH_MS (4 h; each recompute costs ~2 s of CPU) is recomputed after the response is sent.
  */
-const FRESH_MS = 60 * 60 * 1000, KEEP_DAYS = 7;
+const FRESH_MS = 4 * 60 * 60 * 1000, KEEP_DAYS = 7;
 const headers = { "cache-control": "public, s-maxage=1800, stale-while-revalidate=86400" };
 const BACKGROUND_WRITES = process.env.VERCEL_ENV !== "preview";
 
