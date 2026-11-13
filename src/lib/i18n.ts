@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { createContext, useContext, useEffect, useState, useSyncExternalStore } from "react";
 import { MESSAGES } from "@/lib/messages";
 
 /**
@@ -62,8 +62,13 @@ export function fmtNum(n: number, lang: Lang, long = false): string {
   return new Intl.NumberFormat(lang, { notation: "compact", compactDisplay: long ? "long" : "short", maximumFractionDigits: 1 }).format(n);
 }
 
+/** Set by PageLanguage (src/components/TR.tsx) on pages with a language in the address (/hi/..., /ta/...): it wins over the visitor's choice. */
+export const LangContext = createContext<Lang | null>(null);
+
 export function useLang(): Lang {
-  return useSyncExternalStore(subscribe, getLang, () => "en");
+  const fixed = useContext(LangContext);
+  const chosen = useSyncExternalStore(subscribe, getLang, () => "en" as Lang);
+  return fixed ?? chosen;
 }
 
 export function useT() {

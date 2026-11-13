@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { Fragment, useEffect, useState, type ReactNode } from "react";
-import { useLang, type Lang } from "@/lib/i18n";
+import { createContext, Fragment, useContext, useEffect, useState, type ReactNode } from "react";
+import { LangContext, useLang, type Lang } from "@/lib/i18n";
 
 /**
  * Page body text in the visitor's language. Unlike the map's dictionaries (src/lib/messages.ts, always bundled), body text for
@@ -19,8 +19,12 @@ function load(lang: Lang): Promise<Record<string, string>> {
   return pending[lang]!;
 }
 
+/** Keys handed down by PageLanguage on /hi and /ta pages, so the first render (server and browser) is already translated. */
+const PageBody = createContext<Record<string, string> | null>(null);
+
 /** The body dictionary for the visitor's language (empty for English or while loading). */
 export function useBody(): Record<string, string> {
+  const given = useContext(PageBody);
   const lang = useLang();
   const [, bump] = useState(0);
   useEffect(() => {
@@ -29,7 +33,7 @@ export function useBody(): Record<string, string> {
     load(lang).then(() => { if (!off) bump((n) => n + 1); });
     return () => { off = true; };
   }, [lang]);
-  return lang === "en" ? {} : cache[lang] ?? {};
+  return lang === "en" ? {} : { ...given, ...cache[lang] };
 }
 
 const fill = (s: string, v?: Record<string, string | number>) => (v ? s.replace(/\{(\w+)\}/g, (m, k) => (k in v ? String(v[k]) : m)) : s);
@@ -60,4 +64,16 @@ export function rich(text: string): ReactNode {
 export function TR({ k, v }: { k: string; v?: Record<string, string | number> }) {
   const d = useBody();
   return <>{rich(fill(d[k] ?? k, v))}</>;
+}
+
+/**
+ * Pages whose address carries a language (/hi/arrivals/india): the server renders that language, so search engines index it.
+ * The dictionary comes from the server (src/lib/pageLang.ts) and seeds the cache before the first render on both sides.
+ */
+export function PageLanguage({ lang, body, children }: { lang: Lang; body: Record<string, string>; children: ReactNode }) {
+  return (
+    <LangContext.Provider value={lang}>
+      <PageBody.Provider value={body}><div lang={lang} className="contents">{children}</div></PageBody.Provider>
+    </LangContext.Provider>
+  );
 }

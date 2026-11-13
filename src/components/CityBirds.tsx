@@ -46,14 +46,14 @@ export default function CityBirds({ slug, place, names, linked }: { slug: string
 }
 
 /** The species table: name, main months, and a 12 month strip. Shared with the India state pages. */
-export function BirdTable({ species, names, linked }: { species: Row[]; names: Record<string, Record<string, string> | undefined>; linked: Set<string> }) {
+export function BirdTable({ species, names, linked, short = SHORT }: { species: Row[]; names: Record<string, Record<string, string> | undefined>; linked: Set<string>; short?: string[] }) {
   return (
     <table className="mt-3 w-full text-sm">
       <thead>
         <tr className="text-left text-slate-400 border-b border-white/10">
           <th className="py-1.5 font-medium"><TR k="Species" /></th>
           <th className="font-medium hidden sm:table-cell"><TR k="When" /></th>
-          <th className="font-medium"><span className="inline-flex gap-px" aria-hidden>{SHORT.map((m) => <span key={m} className="w-3 text-center text-[9px]">{m[0]}</span>)}</span></th>
+          <th className="font-medium"><span className="inline-flex gap-px" aria-hidden>{short.map((m, i) => <span key={i} className="w-3 text-center text-[9px]">{[...m][0]}</span>)}</span></th>
         </tr>
       </thead>
       <tbody>
@@ -67,11 +67,11 @@ export function BirdTable({ species, names, linked }: { species: Row[]; names: R
                 <span className="hidden md:inline text-slate-500 italic"> {sci}</span>
               </td>
               <td className="text-slate-400 hidden sm:table-cell whitespace-nowrap pr-2">
-                {"all" in s ? <TR k="All year" /> : <TR k="Mainly {from} to {to}" v={{ from: SHORT[s.from], to: SHORT[s.to] }} />}
+                {"all" in s ? <TR k="All year" /> : <TR k="Mainly {from} to {to}" v={{ from: short[s.from], to: short[s.to] }} />}
               </td>
               <td>
-                <span className="inline-flex gap-px align-middle" role="img" aria-label={"all" in s ? "All year" : `Mainly ${SHORT[s.from]} to ${SHORT[s.to]}`}>
-                  {[...m].map((d, i) => <span key={i} title={SHORT[i]} className="h-3 w-3 rounded-[1px]" style={{ background: `rgba(34, 211, 238, ${Math.max(0.06, Number(d) / 9)})` }} />)}
+                <span className="inline-flex gap-px align-middle" role="img" aria-label={"all" in s ? "All year" : `Mainly ${short[s.from]} to ${short[s.to]}`}>
+                  {[...m].map((d, i) => <span key={i} title={short[i]} className="h-3 w-3 rounded-[1px]" style={{ background: `rgba(34, 211, 238, ${Math.max(0.06, Number(d) / 9)})` }} />)}
                 </span>
               </td>
             </tr>

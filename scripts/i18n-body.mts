@@ -21,6 +21,8 @@ function walk(dir: string) {
     else if (/\.tsx?$/.test(f)) {
       const s = readFileSync(p, "utf8");
       for (const m of s.matchAll(/<TR\s+k="([^"]+)"/g)) keys.add(m[1]);
+      // <X lang={lang} k="..."> on the per-language pages (src/components/ServerTr.tsx).
+      for (const m of s.matchAll(/<X\s+lang=\{\w+\}\s+k="([^"]+)"/g)) keys.add(m[1]);
       for (const m of s.matchAll(/\b(?:tb|tx)\("([^"]+)"/g)) keys.add(m[1]);
     }
   }

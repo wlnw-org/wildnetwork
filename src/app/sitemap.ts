@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import INDIA from "@/data/india-seasons.json";
 import { INDIA_STATES } from "@/lib/indiaStates";
+import { PAGE_LANGS } from "@/lib/pageLang";
 import { COUNTRIES, OWN_PAGE, hasPage } from "@/lib/countries";
 import { sql } from "@/lib/db";
 import PLACES from "@/data/places.json";
@@ -46,6 +47,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...s.guides.map((g) => ({ url: `${SITE}/help/${s.id}/${g.slug}`, changeFrequency: "monthly" as const, priority: 0.5 }))]),
     ...PLACES.map((p) => ({ url: `${SITE}/places/${p.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.6 })),
     ...INDIA_STATES.filter((s) => s.migrants.length >= 5).map((s) => ({ url: `${SITE}/arrivals/india/${s.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.7 })),
+    // Hindi and Tamil versions of the India pages (src/app/hi, src/app/ta).
+    ...PAGE_LANGS.flatMap((l) => [`/arrivals/india`, ...INDIA_STATES.filter((s) => s.migrants.length >= 5).map((s) => `/arrivals/india/${s.slug}`)]
+      .map((p) => ({ url: `${SITE}/${l}${p}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.6 }))),
     ...COUNTRIES.filter((c) => hasPage(c) && !OWN_PAGE.has(c.slug)).map((c) => ({ url: `${SITE}/arrivals/${c.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.7 })),
     ...REGIONS.map((r) => ({ url: `${SITE}/arrivals/${r.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 })),
   ];
