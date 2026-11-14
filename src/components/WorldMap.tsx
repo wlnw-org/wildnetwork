@@ -143,6 +143,9 @@ export default function WorldMap() {
   // Weather layer: wind about 1.5 km up and ground temperature on a 10 degree grid (/api/v1/weather, refreshed every 3 h).
   const [weather, setWeather] = useState<{ at: string; points: { lat: number; lon: number; t: number; ws: number; wd: number }[] } | null>(null);
   const [showWeather, setShowWeather] = useState(false);
+  // Night migration over Europe from weather radars (/api/v1/radar, Aloft, about two days behind).
+  const [radar, setRadar] = useState<{ night: string | null; radars: { radar: string; lat: number; lon: number; vid: number; mtr: number; mtrMax: number; dir: number | null; normal: number | null }[] } | null>(null);
+  const [showRadar, setShowRadar] = useState(false);
   // Map legend starts folded so the list of sources does not cover the map; the choice is remembered.
   const legendOpen = useSyncExternalStore(subscribeLegend, readLegend, () => false);
   const [movement, setMovement] = useState<Movement | null>(null);
@@ -181,7 +184,7 @@ export default function WorldMap() {
     if (cancelled || !containerRef.current || mapRef.current) return;
     setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
     const map = new MLMapClass({ container: containerRef.current, style: STYLE, center: [10, 25], zoom: 1.7, minZoom: 1.3, renderWorldCopies: false, attributionControl: false });
-    map.addControl(new AttributionControl({ compact: true, customAttribution: "BirdWeather · GBIF publishers (CC0/CC BY) · iNaturalist (CC0/CC-BY) · WDX producers · Weather: Open-Meteo (CC BY 4.0)" }));
+    map.addControl(new AttributionControl({ compact: true, customAttribution: "BirdWeather · GBIF publishers (CC0/CC BY) · iNaturalist (CC0/CC-BY) · WDX producers · Weather: Open-Meteo (CC BY 4.0) · Radar: Aloft (CC BY 4.0)" }));
     map.addControl(new NavigationControl({ showCompass: false }), "top-right");
     // Start near the visitor (IP area, whole degrees, from /api/v1/near) unless a species link sets the view; zoom out for the world.
     const qs = new URLSearchParams(window.location.search);
@@ -250,6 +253,21 @@ export default function WorldMap() {
           "icon-opacity": 0.85, "text-color": "#cbd5e1", "text-halo-color": "#020617", "text-halo-width": 1,
           "text-opacity": ["step", ["zoom"], 0, 3, 1],
         },
+      });
+      // Radar: a circle per weather radar, larger with more birds aloft, orange when busier than its last two weeks, blue when quieter.
+      map.addSource("radar", { type: "geojson", data: EMPTY });
+      map.addLayer({
+        id: "radar", type: "circle", source: "radar",
+        paint: {
+          "circle-radius": ["interpolate", ["linear"], ["sqrt", ["get", "vid"]], 0, 3, 5, 9, 15, 22],
+          "circle-color": ["interpolate", ["linear"], ["get", "ratio"], 0.25, "#3b82f6", 1, "#94a3b8", 4, "#f97316"],
+          "circle-opacity": 0.55, "circle-stroke-width": 1, "circle-stroke-color": "rgba(255,255,255,0.5)",
+        },
+      });
+      map.addLayer({
+        id: "radar-arrows", type: "symbol", source: "radar", filter: ["has", "dir"],
+        layout: { "icon-image": "wind-arrow", "icon-rotate": ["get", "dir"], "icon-rotation-alignment": "map", "icon-size": 0.55, "icon-allow-overlap": true },
+        paint: { "icon-color": "#f8fafc" },
       });
       map.addLayer({ id: "deployments", type: "circle", source: "deployments", paint: { "circle-radius": 2, "circle-color": "#475569", "circle-opacity": 0.7 } });
       map.addLayer({
@@ -341,6 +359,16 @@ export default function WorldMap() {
             popup.setHTML(`<div style="font:13px system-ui;color:#e2e8f0">${head}${rows ? `<div style="margin-top:8px;font-size:11px;color:#94a3b8">Also most recorded here</div><div>${rows}</div>` : ""}</div>`);
           }).catch(() => {});
       };
+      map.on("click", "radar", (e: MapLayerMouseEvent) => {
+        const p = e.features?.[0]?.properties as Record<string, string | number> | undefined;
+        if (!p) return;
+        const ratio = Number(p.ratio);
+        const vs = p.normal != null && Number(p.normal) > 0 ? `<br/>${ratio >= 1.5 ? `${ratio.toFixed(1)} times` : ratio <= 0.67 ? `${Math.round(ratio * 100)}% of` : "about the same as"} its usual night over the two weeks before` : "";
+        const dir = p.dir != null ? `, heading ${compass(Number(p.dir))}` : "";
+        new Popup({ closeButton: true, maxWidth: "280px" }).setLngLat(e.lngLat).setHTML(`<div style="font:13px system-ui;color:#e2e8f0"><b>Weather radar ${esc(String(p.radar))}</b> (${esc(String(p.country))})<br/>Night of ${esc(String(p.night))}: about ${Number(p.vid).toLocaleString("en-GB")} birds per km² in the air on average${dir}. At the busiest moment ${Number(p.mtrMax).toLocaleString("en-GB")} birds crossed each km per hour.${vs}<br/><span style="font-size:11px;color:#94a3b8">Aloft vertical profiles (ENRAM, BALTRAD, OPERA), CC BY 4.0</span></div>`).addTo(map);
+      });
+      map.on("mouseenter", "radar", () => (map.getCanvas().style.cursor = "pointer"));
+      map.on("mouseleave", "radar", () => (map.getCanvas().style.cursor = ""));
       for (const layer of ["history-pts", "history-icons"]) {
         map.on("click", layer, showCell);
         map.on("mouseenter", layer, () => (map.getCanvas().style.cursor = "pointer"));
@@ -551,6 +579,20 @@ export default function WorldMap() {
       type: "Feature", properties: { t: p.t, ws: p.ws, wd: p.wd }, geometry: { type: "Point", coordinates: [p.lon, p.lat] },
     })) } : EMPTY);
   }, [showWeather, weather, ready]);
+  // Radar layer: fetched when first shown (the data changes once a day).
+  useEffect(() => {
+    if (!showRadar || radar) return;
+    fetch(`/api/v1/radar`).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.radars) setRadar(d); }).catch(() => {});
+  }, [showRadar, radar]);
+  useEffect(() => {
+    const src = mapRef.current?.getSource("radar") as GeoJSONSource | undefined;
+    if (!src) return;
+    src.setData(showRadar && radar?.night ? { type: "FeatureCollection", features: radar.radars.map((r) => ({
+      type: "Feature", geometry: { type: "Point", coordinates: [r.lon, r.lat] },
+      properties: { radar: r.radar, country: RADAR_COUNTRY[r.radar.slice(0, 2)] ?? r.radar.slice(0, 2).toUpperCase(), night: radar.night, vid: r.vid, mtrMax: r.mtrMax,
+        normal: r.normal, ratio: r.normal && r.normal > 0 ? r.vid / r.normal : 1, ...(r.dir != null ? { dir: r.dir } : {}) },
+    })) } : EMPTY);
+  }, [showRadar, radar, ready]);
   // Past period: totals per cell, most recorded and arrivals from /api/v1/history (cached for hours at the edge).
   const historyKey = period ? `${period}|${group}` : null;
   useEffect(() => {
@@ -1061,6 +1103,18 @@ export default function WorldMap() {
                 {weather && <div>{t("Updated {time}", { time: new Date(weather.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) })} · Open-Meteo</div>}
               </div>
             )}
+            <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("Birds in the air at night over Europe, measured by weather radars. About two days behind.")}>
+              <input type="checkbox" checked={showRadar} onChange={(e) => { setShowRadar(e.target.checked); if (e.target.checked) track("show_radar"); }} className="accent-[#f97316]" />
+              <span>{t("Night migration (radar, Europe)")}</span>
+            </label>
+            {showRadar && (
+              <div className="mt-1 space-y-0.5 text-slate-400">
+                <div>{t("Each circle is a weather radar. Bigger means more birds in the air that night, arrows show where they flew.")}</div>
+                <div className="flex items-center gap-2"><span>{t("quieter")}</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #3b82f6, #94a3b8, #f97316)" }} /><span>{t("busier than usual")}</span></div>
+                {radar?.night && <div>{t("Night of {date}", { date: new Date(radar.night + "T12:00:00Z").toLocaleDateString([], { day: "numeric", month: "short" }) })} · Aloft</div>}
+                {radar && !radar.night && <div>{t("No radar data yet.")}</div>}
+              </div>
+            )}
             {showCoverage && (
               <div className="mt-1 space-y-0.5">
                 <Legend color="#a78bfa" label={`${t("Recordings and sightings")}${coverage ? ` (${coverage.summary.both})` : ""}`} />
@@ -1212,4 +1266,10 @@ function windArrow(): ImageData {
   g.beginPath(); g.moveTo(16, 28); g.lineTo(16, 9); g.stroke();
   g.beginPath(); g.moveTo(16, 3); g.lineTo(23, 13); g.lineTo(9, 13); g.closePath(); g.fill();
   return g.getImageData(0, 0, n, n);
+}
+
+const RADAR_COUNTRY: Record<string, string> = { be: "Belgium", ch: "Switzerland", cz: "Czechia", de: "Germany", dk: "Denmark", ee: "Estonia", es: "Spain", fi: "Finland", fr: "France", gr: "Greece", hr: "Croatia", hu: "Hungary", ie: "Ireland", il: "Israel", is: "Iceland", lt: "Lithuania", lv: "Latvia", nl: "Netherlands", no: "Norway", pl: "Poland", pt: "Portugal", ro: "Romania", se: "Sweden", si: "Slovenia", sk: "Slovakia", uk: "United Kingdom", at: "Austria", it: "Italy", bg: "Bulgaria", rs: "Serbia" };
+
+function compass(deg: number): string {
+  return ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"][Math.round(deg / 45) % 8];
 }

@@ -49,7 +49,8 @@ export default function AboutPanel() {
           <li><Link href="https://www.birdweather.com">BirdWeather</Link>: live acoustic detections from thousands of community stations worldwide. Birds, frogs and insects through BirdNET, and bats from stations with ultrasonic microphones. Detections only, never recordings.</li>
           <li><Link href="https://www.gbif.org">GBIF</Link>: observations published under CC0 or CC BY by national recording schemes and other publishers, cited below by dataset.</li>
           <li><Link href="https://www.inaturalist.org">iNaturalist</Link>: community observations, CC0 and CC BY licensed records only, credited to their observers.</li>
-          <li><Link href="https://open-meteo.com">Open-Meteo</Link>: ERA5 reanalysis weather (CC BY 4.0).</li>
+          <li><Link href="https://open-meteo.com">Open-Meteo</Link>: ERA5 reanalysis weather and the map&apos;s wind layer (CC BY 4.0).</li>
+          <li><Link href="https://aloftdata.eu">Aloft</Link>: bird profiles from European weather radars (ENRAM, BALTRAD, OPERA; CC BY 4.0).</li>
           <li><Link href="https://www.wikipedia.org">Wikipedia</Link> and Wikimedia Commons contributors: species photos and descriptions (CC BY-SA).</li>
           <li><Link href="https://birdnet.cornell.edu/taxonomy">BirdNET+ taxonomy</Link> (Cornell Lab of Ornithology and TU Chemnitz): species names in other languages, and bird photos from <Link href="https://www.avicommons.org">Avicommons</Link> credited to their photographers under their Creative Commons licences.</li>
           <li><Link href="https://xeno-canto.org">xeno-canto</Link>: reference recordings in species panels, played and linked from xeno-canto under each recordist&apos;s Creative Commons licence. Recordings courtesy of xeno-canto.org.</li>

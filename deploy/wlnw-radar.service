@@ -1,0 +1,10 @@
+[Unit]
+Description=Import night migration profiles from European weather radars (Aloft)
+
+[Service]
+Type=oneshot
+User=wlnw
+EnvironmentFile=/etc/wlnw/env
+WorkingDirectory=/srv/wlnw/current
+Nice=10
+ExecStart=/srv/wlnw/current/node_modules/.bin/tsx scripts/radar.mts 5 4

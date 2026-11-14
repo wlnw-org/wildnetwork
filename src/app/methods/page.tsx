@@ -189,6 +189,17 @@ export default function Methods() {
           {YEAR_ROUND_Q25 * 100}% of its busiest month, it counts as recorded all year. Checked on 18 European species: true migrants scored 0 to 0.7%, residents 1.1% to 47%.
           Their arrival dates stay on the species pages and in the monthly lists.
         </p>
+        <p className="mt-3" id="radar">
+          <b>Night migration from weather radars (map layer, Europe).</b> Most migrating birds fly at night, where sound stations and
+          observers see little. European weather radars measure them: <a href="https://aloftdata.eu" className="text-cyan-400 hover:underline">Aloft</a> (ENRAM,
+          BALTRAD and OPERA, CC BY 4.0) publishes a vertical profile of bird density every 15 minutes for about 200 radars, roughly two days late.
+          For each profile taken in darkness (sun more than 6 degrees below the horizon) we add up density over every 200 m height band to get birds
+          per km² in the air, and density times ground speed to get birds crossing each km per hour. Height bands marked as gaps are skipped, and bands
+          whose spread in radial velocity is below the radar&apos;s threshold count as no birds (insects or rain), as in bioRad. A night needs at least 24 such
+          profiles. The map shows each radar&apos;s mean for the night, the busiest moment, the traffic-weighted direction, and compares the night with the
+          median of its previous 14 nights. Limits: heavy rain, sea clutter and insects can still leak in; radars cover only roughly 100 km around
+          themselves; this counts all birds together, not species, and is display only (it feeds no arrival date or trend).
+        </p>
         <p className="mt-3" id="possibly-arriving">
           <b>Possibly arriving.</b> Arrival dates need two weeks of presence, so the newest confirmed date is always about 2 to 3 weeks old. The Possibly arriving list is earlier and less sure.
           It shows a species and cell whose newest one or two weeks, including the current week once it has at least 3 days of data, come after a real absence as defined above, with at least {PHENOLOGY.POSSIBLE_MIN_N} detections and at
@@ -408,6 +419,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.24</b> (14 November 2026): a <a href="#radar" className="text-cyan-400 hover:underline">night migration layer</a> from European weather radars, and a wind and temperature layer from Open-Meteo, both on the map only. No measure changed.</li>
           <li><b>0.23</b> (10 November 2026): <a href="#year-round" className="text-cyan-400 hover:underline">year-round species</a> are left out of &quot;Arriving around now&quot; on the regional arrivals pages. Arrival dates themselves are unchanged.</li>
           <li><b>0.22</b> (10 November 2026): <a href="#words" className="text-cyan-400 hover:underline">This week in words</a> describes the visitor&apos;s own continent when their rough area is known, and marks worldwide sentences as such. Wording only; no measure changed.</li>
           <li><b>0.21</b> (7 November 2026): <a href="#datasets" className="text-cyan-400 hover:underline">contributed datasets</a>: uploaded detection tables, checked for season, place, range and bursts, count in the weekly measures once live, and are credited by name.</li>
