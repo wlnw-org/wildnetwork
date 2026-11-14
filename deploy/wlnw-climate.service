@@ -1,0 +1,10 @@
+[Unit]
+Description=Climate context per 5 degree cell (NASA GISTEMP, NOAA GPCP)
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=wlnw
+Group=wlnw
+Nice=10
+ExecStart=/usr/bin/python3 -I /srv/wlnw/current/scripts/climate.py /var/lib/wlnw/climate/src /var/lib/wlnw/climate/climate.json

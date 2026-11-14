@@ -19,7 +19,7 @@ export default function Methods() {
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100">Methods</h1>
-        <p className="mt-1 text-sm text-slate-400">Version {METHODS_VERSION} · updated 10 November 2026</p>
+        <p className="mt-1 text-sm text-slate-400">Version {METHODS_VERSION} · updated 15 November 2026</p>
 
         {BIRDWEATHER_PAUSED && <PausedNotice className="mt-6" />}
 
@@ -207,6 +207,19 @@ export default function Methods() {
           profiles. The map shows each radar&apos;s mean for the night, the busiest moment, the traffic-weighted direction, and compares the night with the
           median of its previous 14 nights. Radars differ in sensitivity and clutter, so compare a radar with its own usual night rather than with its neighbours. Limits: heavy rain, sea clutter and insects can still leak in; radars cover only roughly 100 km around
           themselves; this counts all birds together, not species, and is display only (it feeds no arrival date or trend).
+        </p>
+        <p className="mt-3" id="climate">
+          <b>Climate context (map layer and API).</b> For each 5 degree square we give the temperature and rainfall of every month since 1991,
+          each against the 1991 to 2020 average for the same calendar month. Temperature comes from{" "}
+          <a href="https://data.giss.nasa.gov/gistemp/" className="text-cyan-400 hover:underline">NASA GISTEMP v4</a> (GHCN v4 stations and ERSST v5 sea
+          surface, 2 degree grid, 1200 km smoothing), rainfall from{" "}
+          <a href="https://psl.noaa.gov/data/gridded/data.gpcp.html" className="text-cyan-400 hover:underline">NOAA GPCP v2.3</a> (satellites and rain
+          gauges, 2.5 degree grid). A square is the mean of the grid points whose centres lie inside it, weighted by the cosine of latitude; GISTEMP
+          anomalies are re-expressed against 1991 to 2020. The map shows the past 12 complete months; the API (<code>/api/v1/climate</code>) also gives
+          each year and the past 24 months. Both datasets are refreshed monthly and lag by about one month. We tried NASA POWER first and did not use it:
+          at the place we compared (central France), from early 2025 its rainfall fell to about 40% of ERA5 and its temperature ran 0.5 to 1.2 °C
+          warmer than ERA5, after agreeing in 2024, which would show a change that is not there. Limits: a square is about 550 km across, so mountains and coasts inside it are averaged away; rain is noisier than
+          temperature, so treat single months with care. This is context only: no arrival date, trend or other measure uses it.
         </p>
         <p className="mt-3" id="possibly-arriving">
           <b>Possibly arriving.</b> Arrival dates need two weeks of presence, so the newest confirmed date is always about 2 to 3 weeks old. The Possibly arriving list is earlier and less sure.
@@ -427,6 +440,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.26</b> (15 November 2026): <a href="#climate" className="text-cyan-400 hover:underline">climate context</a> per 5 degree square from NASA GISTEMP and NOAA GPCP, on the map and in the API. No measure changed.</li>
           <li><b>0.25</b> (15 November 2026): mammals from GBIF. Records of mammals other than bats (published under CC0 or CC BY, many from camera traps) now enter the weekly history and the live map, with effort corrected within the mammal class as before. Taxa at risk from poaching (rhinos, pangolins, elephants, great cats, great apes, musk deer, saiga) are shown on the live map only at 1 degree. Weeks already in the history gain mammals as the rolling GBIF refresh reaches them, newest first.</li>
           <li><b>0.24</b> (14 November 2026): a <a href="#radar" className="text-cyan-400 hover:underline">night migration layer</a> from European weather radars, a wind and temperature layer from Open-Meteo, and <a href="#tracks" className="text-cyan-400 hover:underline">tracked journeys</a> of tagged animals from the Movebank Data Repository, all on the map only. No measure changed.</li>
           <li><b>0.23</b> (10 November 2026): <a href="#year-round" className="text-cyan-400 hover:underline">year-round species</a> are left out of &quot;Arriving around now&quot; on the regional arrivals pages. Arrival dates themselves are unchanged.</li>

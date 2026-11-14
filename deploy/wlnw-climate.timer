@@ -1,0 +1,9 @@
+[Unit]
+Description=Monthly climate context refresh (after GISTEMP and GPCP updates)
+
+[Timer]
+OnCalendar=*-*-20 04:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

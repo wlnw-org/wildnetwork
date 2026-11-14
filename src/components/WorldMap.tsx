@@ -146,6 +146,8 @@ export default function WorldMap() {
   // Night migration over Europe from weather radars (/api/v1/radar, Aloft, about two days behind).
   const [radar, setRadar] = useState<{ night: string | null; radars: { radar: string; lat: number; lon: number; vid: number; mtr: number; mtrMax: number; dir: number | null; normal: number | null }[] } | null>(null);
   const [showRadar, setShowRadar] = useState(false);
+  const [climate, setClimate] = useState<{ base: string; from: string; to: string; cells: { lat: number; lon: number; t: number | null; p: number | null }[] } | null>(null);
+  const [showClimate, setShowClimate] = useState(false);
   // Tracked journeys of the selected species (GPS tags, Movebank Data Repository), shown by default when there are any.
   const [journeys, setJourneys] = useState<{ species: string; datasets: { id: string; title: string; doi: string | null; licence: string }[]; tracks: { dataset: string; animal: string; from: string; to: string; points: [number, number][] }[] } | null>(null);
   const [showJourneys, setShowJourneys] = useState(true);
@@ -187,7 +189,7 @@ export default function WorldMap() {
     if (cancelled || !containerRef.current || mapRef.current) return;
     setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
     const map = new MLMapClass({ container: containerRef.current, style: STYLE, center: [10, 25], zoom: 1.7, minZoom: 1.3, renderWorldCopies: false, attributionControl: false });
-    map.addControl(new AttributionControl({ compact: true, customAttribution: "BirdWeather · GBIF publishers (CC0/CC BY) · iNaturalist (CC0/CC-BY) · WDX producers · Weather: Open-Meteo (CC BY 4.0) · Radar: Aloft (CC BY 4.0) · Tracks: Movebank Data Repository" }));
+    map.addControl(new AttributionControl({ compact: true, customAttribution: "BirdWeather · GBIF publishers (CC0/CC BY) · iNaturalist (CC0/CC-BY) · WDX producers · Weather: Open-Meteo (CC BY 4.0) · Radar: Aloft (CC BY 4.0) · Tracks: Movebank Data Repository · Climate: NASA GISTEMP, NOAA GPCP" }));
     map.addControl(new NavigationControl({ showCompass: false }), "top-right");
     // Start near the visitor (IP area, whole degrees, from /api/v1/near) unless a species link sets the view; zoom out for the world.
     const qs = new URLSearchParams(window.location.search);
@@ -243,6 +245,15 @@ export default function WorldMap() {
           "fill-color": ["match", ["get", "status"], "both", "#a78bfa", "acoustic", "#22d3ee", "observed", "#f59e0b", "#64748b"],
           "fill-opacity": ["match", ["get", "status"], "thin", 0.12, 0.35],
           "fill-outline-color": "rgba(255,255,255,0.15)",
+        },
+      });
+      // Climate context: past 12 months per 5 degree square, warmer (red) or cooler (blue) than 1991-2020.
+      map.addSource("climate", { type: "geojson", data: EMPTY });
+      map.addLayer({
+        id: "climate", type: "fill", source: "climate",
+        paint: {
+          "fill-color": ["interpolate", ["linear"], ["coalesce", ["get", "t"], 0], -2, "#2563eb", -0.5, "#93c5fd", 0, "#e2e8f0", 0.5, "#fca5a5", 2, "#dc2626"],
+          "fill-opacity": 0.3, "fill-outline-color": "rgba(2,6,23,0.4)",
         },
       });
       // Weather arrows: one per grid point, pointing where the wind blows to, longer when stronger, coloured by temperature.
@@ -374,6 +385,16 @@ export default function WorldMap() {
         const vs = p.normal != null && Number(p.normal) > 0 ? `<br/>${ratio >= 1.5 ? `${ratio.toFixed(1)} times` : ratio <= 0.67 ? `${Math.round(ratio * 100)}% of` : "about the same as"} its usual night over the two weeks before` : "";
         const dir = p.dir != null ? `, heading ${compass(Number(p.dir))}` : "";
         new Popup({ closeButton: true, maxWidth: "280px" }).setLngLat(e.lngLat).setHTML(`<div style="font:13px system-ui;color:#e2e8f0"><b>Weather radar ${esc(String(p.radar))}</b> (${esc(String(p.country))})<br/>Night of ${esc(String(p.night))}: about ${Number(p.vid).toLocaleString("en-GB")} birds per km² in the air on average${dir}. At the busiest moment ${Number(p.mtrMax).toLocaleString("en-GB")} birds crossed each km per hour.${vs}<br/><span style="font-size:11px;color:#94a3b8">Aloft vertical profiles (ENRAM, BALTRAD, OPERA), CC BY 4.0</span></div>`).addTo(map);
+      });
+      map.on("click", "climate", (e: MapLayerMouseEvent) => {
+        // Points, radar and tracks above the squares keep their own popups.
+        if (map.queryRenderedFeatures(e.point).some((f) => f.layer.id !== "climate" && ["radar", "journeys", "history-pts", "history-icons", "events", "events-icons", "deployments", "cells", "week-cells"].includes(f.layer.id))) return;
+        const p = e.features?.[0]?.properties as Record<string, string | number | null> | undefined;
+        if (!p) return;
+        const tv = p.t == null || p.t === "null" ? null : Number(p.t), pv = p.p == null || p.p === "null" ? null : Number(p.p);
+        const temp = tv == null ? "" : Math.abs(tv) < 0.25 ? "about as warm as" : `${Math.abs(tv).toFixed(1)} °C ${tv > 0 ? "warmer" : "cooler"} than`;
+        const rain = pv == null ? "" : Math.abs(pv) < 5 ? "about normal rain" : `${Math.abs(pv)}% ${pv > 0 ? "more" : "less"} rain than usual`;
+        new Popup({ closeButton: true, maxWidth: "280px" }).setLngLat(e.lngLat).setHTML(`<div style="font:13px system-ui;color:#e2e8f0"><b>Past 12 months here</b> (${esc(String(p.from))} to ${esc(String(p.to))})<br/>${temp ? `${temp} the ${esc(String(p.base))} average` : ""}${temp && rain ? ", " : ""}${rain}.<br/><span style="font-size:11px;color:#94a3b8">About 550 km square. NASA GISTEMP v4, NOAA GPCP v2.3. <a href="/methods#climate" style="color:#22d3ee">How</a></span></div>`).addTo(map);
       });
       map.on("click", "journeys", (e: MapLayerMouseEvent) => {
         const p = e.features?.[0]?.properties as Record<string, string> | undefined;
@@ -580,6 +601,19 @@ export default function WorldMap() {
       geometry: { type: "Polygon", coordinates: [[[c.lon, c.lat], [c.lon + 5, c.lat], [c.lon + 5, c.lat + 5], [c.lon, c.lat + 5], [c.lon, c.lat]]] },
     })) } : EMPTY);
   }, [showCoverage, species, coverage, ready]);
+  // Climate layer: one request when first shown (the server copy changes monthly).
+  useEffect(() => {
+    if (!showClimate || climate) return;
+    fetch(`/api/v1/climate/grid`).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.cells) setClimate(d); }).catch(() => {});
+  }, [showClimate, climate]);
+  useEffect(() => {
+    const src = mapRef.current?.getSource("climate") as GeoJSONSource | undefined;
+    if (!src) return;
+    src.setData(showClimate && climate ? { type: "FeatureCollection", features: climate.cells.map((c) => ({
+      type: "Feature", properties: { t: c.t, p: c.p, from: climate.from, to: climate.to, base: climate.base },
+      geometry: { type: "Polygon", coordinates: [[[c.lon, c.lat], [c.lon + 5, c.lat], [c.lon + 5, c.lat + 5], [c.lon, c.lat + 5], [c.lon, c.lat]]] },
+    })) } : EMPTY);
+  }, [showClimate, climate, ready]);
   // Weather layer: fetched when first shown, then every 30 minutes while it stays on (the server copy changes every 3 h).
   useEffect(() => {
     if (!showWeather) return;
@@ -1145,6 +1179,17 @@ export default function WorldMap() {
                 <div>{t("Arrows show where the wind blows about 1.5 km up, where most migrating birds fly. Longer arrows are stronger winds.")}</div>
                 <div className="flex items-center gap-2"><span>-20°</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #60a5fa, #e2e8f0, #fbbf24, #ef4444)" }} /><span>35° C</span></div>
                 {weather && <div>{t("Updated {time}", { time: new Date(weather.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) })} · Open-Meteo</div>}
+              </div>
+            )}
+            <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("How the past 12 months compare with the 1991 to 2020 average, for temperature and rain.")}>
+              <input type="checkbox" checked={showClimate} onChange={(e) => { setShowClimate(e.target.checked); if (e.target.checked) track("show_climate"); }} className="accent-[#f87171]" />
+              <span>{t("Warmer or cooler than usual")}</span>
+            </label>
+            {showClimate && (
+              <div className="mt-1 space-y-0.5 text-slate-400">
+                <div>{t("Each square shows the past 12 months against the 1991 to 2020 average. Tap a square for rain too.")}</div>
+                <div className="flex items-center gap-2"><span>-2°</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #2563eb, #93c5fd, #e2e8f0, #fca5a5, #dc2626)" }} /><span>+2° C</span></div>
+                {climate && <div>{climate.from} to {climate.to} · NASA GISTEMP, NOAA GPCP</div>}
               </div>
             )}
             <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("Birds in the air at night over Europe, measured by weather radars. About two days behind.")}>
