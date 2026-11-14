@@ -194,10 +194,11 @@ export default function Methods() {
           observers see little. European weather radars measure them: <a href="https://aloftdata.eu" className="text-cyan-400 hover:underline">Aloft</a> (ENRAM,
           BALTRAD and OPERA, CC BY 4.0) publishes a vertical profile of bird density every 15 minutes for about 200 radars, roughly two days late.
           For each profile taken in darkness (sun more than 6 degrees below the horizon) we add up density over every 200 m height band to get birds
-          per km² in the air, and density times ground speed to get birds crossing each km per hour. Height bands marked as gaps are skipped, and bands
-          whose spread in radial velocity is below the radar&apos;s threshold count as no birds (insects or rain), as in bioRad. A night needs at least 24 such
+          per km² in the air from 200 m up (the lowest band is mostly ground clutter), and density times ground speed to get birds crossing each km per hour.
+          Bands flagged as gaps have no velocity, so they count for density but not for speed or direction; bands whose spread in radial velocity is below
+          the radar&apos;s threshold count as no birds (insects or rain), as in bioRad. A night needs at least 24 such
           profiles. The map shows each radar&apos;s mean for the night, the busiest moment, the traffic-weighted direction, and compares the night with the
-          median of its previous 14 nights. Limits: heavy rain, sea clutter and insects can still leak in; radars cover only roughly 100 km around
+          median of its previous 14 nights. Radars differ in sensitivity and clutter, so compare a radar with its own usual night rather than with its neighbours. Limits: heavy rain, sea clutter and insects can still leak in; radars cover only roughly 100 km around
           themselves; this counts all birds together, not species, and is display only (it feeds no arrival date or trend).
         </p>
         <p className="mt-3" id="possibly-arriving">

@@ -4,11 +4,12 @@ import { sql } from "@/lib/db";
  * Night migration from European weather radars. Aloft (aloftdata.eu; ENRAM / BALTRAD, CC BY 4.0) publishes a vertical
  * profile of birds every 5 minutes per radar, one CSV per radar per UTC day, about two days late. For each profile in
  * darkness (sun below -6 degrees) we integrate over height: VID = sum(dens x 0.2 km) birds per km2, MTR = sum(dens x ground
- * speed x 0.2 km) birds crossing 1 km per hour, and a traffic-weighted mean direction. Bins flagged as gaps are skipped,
- * and bins whose radial velocity spread (sd_vvp) is below its threshold count as no birds (insects or rain), as in bioRad.
+ * speed x 0.2 km) birds crossing 1 km per hour, and a traffic-weighted mean direction. The band below 200 m is left out
+ * (ground clutter). A gap flag means the velocity is missing, not the density, so gap bands count for density but not for
+ * speed or direction. Bins whose radial velocity spread (sd_vvp) is below its threshold count as no birds (insects or rain).
  */
 export const ALOFT = "https://aloftdata.s3-eu-west-1.amazonaws.com";
-export const RADAR = { BIN_KM: 0.2, SUN_DARK: -6, MAX_VID: 3000, MIN_PROFILES: 24, KEEP_DAYS: 200, NORMAL_NIGHTS: 14 };
+export const RADAR = { BIN_KM: 0.2, MIN_HEIGHT_M: 200, SUN_DARK: -6, MAX_VID: 3000, MIN_PROFILES: 24, KEEP_DAYS: 200, NORMAL_NIGHTS: 14 };
 
 export function solarElevation(t: Date, lat: number, lon: number): number {
   const start = Date.UTC(t.getUTCFullYear(), 0, 0);
@@ -33,7 +34,7 @@ export function parseVpts(csv: string): { lat: number; lon: number; parts: Part[
   const lines = csv.split("\n");
   const head = lines[0]?.split(",") ?? [];
   const c = (name: string) => head.indexOf(name);
-  const I = { dt: c("datetime"), dens: c("dens"), ff: c("ff"), u: c("u"), v: c("v"), gap: c("gap"), sd: c("sd_vvp"), thr: c("sd_vvp_threshold"), lat: c("radar_latitude"), lon: c("radar_longitude") };
+  const I = { h: c("height"), dt: c("datetime"), dens: c("dens"), ff: c("ff"), u: c("u"), v: c("v"), gap: c("gap"), sd: c("sd_vvp"), thr: c("sd_vvp_threshold"), lat: c("radar_latitude"), lon: c("radar_longitude") };
   if (Object.values(I).some((i) => i < 0)) return null;
   let lat = NaN, lon = NaN;
   const profiles = new Map<string, { vid: number; mtr: number; u: number; v: number }>();
@@ -43,11 +44,13 @@ export function parseVpts(csv: string): { lat: number; lon: number; parts: Part[
     if (Number.isNaN(lat)) { lat = Number(f[I.lat]); lon = Number(f[I.lon]); }
     const p = profiles.get(f[I.dt]) ?? { vid: 0, mtr: 0, u: 0, v: 0 };
     profiles.set(f[I.dt], p);
-    if (f[I.gap] === "TRUE") continue;
+    if (Number(f[I.h]) < RADAR.MIN_HEIGHT_M) continue;
+    const gap = f[I.gap] === "TRUE";
     const dens = Number(f[I.dens]), sd = Number(f[I.sd]), thr = Number(f[I.thr]);
     if (!Number.isFinite(dens) || dens <= 0 || (Number.isFinite(thr) && Number.isFinite(sd) && sd < thr)) continue;
     const ff = Number(f[I.ff]), u = Number(f[I.u]), v = Number(f[I.v]);
     p.vid += dens * RADAR.BIN_KM;
+    if (gap) continue;
     if (Number.isFinite(ff)) p.mtr += dens * ff * 3.6 * RADAR.BIN_KM;
     if (Number.isFinite(u) && Number.isFinite(v)) { p.u += dens * u; p.v += dens * v; }
   }
@@ -105,7 +108,7 @@ export async function radarNight(night?: string) {
     WITH nights AS (
       SELECT radar, night, SUM(n)::int AS n, SUM(vid_sum) / SUM(n) AS vid, SUM(mtr_sum) / SUM(n) AS mtr, MAX(mtr_max) AS mtr_max,
              SUM(u_sum) AS u, SUM(v_sum) AS v
-      FROM radar_part WHERE night BETWEEN ${pick}::date - ${RADAR.NORMAL_NIGHTS} AND ${pick}::date
+      FROM radar_part WHERE night BETWEEN ${pick}::date - ${RADAR.NORMAL_NIGHTS}::int AND ${pick}::date
       GROUP BY 1, 2 HAVING SUM(n) >= ${RADAR.MIN_PROFILES})
     SELECT t.radar, s.lat, s.lon, t.vid, t.mtr, t.mtr_max, t.u, t.v, t.n,
            (SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY p.vid) FROM nights p WHERE p.radar = t.radar AND p.night < t.night) AS normal

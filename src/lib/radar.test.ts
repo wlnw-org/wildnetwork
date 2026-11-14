@@ -16,9 +16,9 @@ test("sun is down at midnight and up at noon in Belgium", () => {
   assert.ok(solarElevation(new Date("2026-11-12T12:00:00Z"), 51, 3) > 0);
 });
 
-test("integrates density over height, skips gaps, low sd_vvp and daylight", () => {
-  const csv = [HEAD,
-    row("2026-11-12T01:00:00Z", 200), row("2026-11-12T01:00:00Z", 400), row("2026-11-12T01:00:00Z", 600, { gap: true }),
+test("integrates density over height; gaps count for density only; skips the lowest band, low sd_vvp and daylight", () => {
+  const csv = [HEAD, row("2026-11-12T01:00:00Z", 0, { dens: 99 }),
+    row("2026-11-12T01:00:00Z", 200), row("2026-11-12T01:00:00Z", 400, { gap: true, v: 50 }),
     row("2026-11-12T01:00:00Z", 800, { sd: 1 }), row("2026-11-12T12:00:00Z", 200, { dens: 500 })].join("\n");
   const r = parseVpts(csv)!;
   assert.equal(r.parts.length, 1);
@@ -26,6 +26,6 @@ test("integrates density over height, skips gaps, low sd_vvp and daylight", () =
   assert.equal(p.night, "2026-11-11");
   assert.equal(p.n, 1);
   assert.ok(Math.abs(p.vid - 4) < 1e-9); // 2 bins x 10 birds/km3 x 0.2 km
-  assert.ok(Math.abs(p.mtr - 4 * 5 * 3.6) < 1e-9);
-  assert.ok(p.v < 0); // heading south
+  assert.ok(Math.abs(p.mtr - 2 * 5 * 3.6) < 1e-9); // only the bin with velocity
+  assert.ok(Math.abs(p.v - 10 * -5) < 1e-9);
 });
