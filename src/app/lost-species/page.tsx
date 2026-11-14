@@ -3,7 +3,8 @@ import Link from "next/link";
 import HelpLink from "@/components/HelpLink";
 import LostNearMe from "@/components/LostNearMe";
 import { TR } from "@/components/TR";
-import { countryCounts, GROUPS, lostSpeciesPublic, RED_LIST, type LostPublic } from "@/lib/lostPublic";
+import { countryCounts, countrySlug, GROUPS, lostSpeciesPublic, MIN_COUNTRY_PAGE, type LostPublic } from "@/lib/lostPublic";
+import LostCard from "@/components/LostCard";
 
 type Props = { searchParams: Promise<{ country?: string | string[]; group?: string | string[]; page?: string | string[] }> };
 const one = (v?: string | string[]) => (Array.isArray(v) ? v[0] : v) ?? "";
@@ -14,27 +15,6 @@ export const metadata: Metadata = {
   description: "Animals not confirmed in the wild for 10 years or more, where they were last known, and how listening stations and recordings can help find them.",
   alternates: { canonical: "/lost-species" },
 };
-
-const REWILD = "https://www.rewild.org/lost-species";
-const LOST_BIRDS = "https://searchforlostbirds.org/birds";
-
-function Card({ s }: { s: LostPublic }) {
-  return (
-    <li className="flex gap-3 rounded-lg border border-white/10 bg-white/5 p-3">
-      {s.thumb_url ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={s.thumb_url} alt={s.common_name ?? s.scientific_name} title={s.image_credit ?? undefined} loading="lazy" className="h-20 w-20 shrink-0 rounded-md object-cover" />
-      ) : <div className="h-20 w-20 shrink-0 rounded-md bg-slate-800" aria-hidden />}
-      <div className="min-w-0 text-sm">
-        <p className="text-base text-slate-100">{s.common_name ?? <i>{s.scientific_name}</i>}</p>
-        {s.common_name && <p className="italic text-slate-400">{s.scientific_name}</p>}
-        <p className="mt-1 text-slate-300">{[s.class_name && GROUPS[s.class_name]?.replace(/s$/, ""), s.red_list && RED_LIST[s.red_list]].filter(Boolean).join(". ")}</p>
-        {s.countries.length > 0 && <p className="text-slate-400"><TR k="Last known from {places}" v={{ places: `${s.countries.join(", ")}${s.region ? `, ${s.region}` : ""}` }} /></p>}
-        <p className="mt-1"><a href={s.class_name === "Aves" ? LOST_BIRDS : REWILD} target="_blank" rel="noreferrer" className="text-cyan-400 hover:underline">{s.class_name === "Aves" ? "Search for Lost Birds" : "Search for Lost Species"}</a></p>
-      </div>
-    </li>
-  );
-}
 
 /** Public list of lost species with the "Help find lost species" section. List facts only: records we receive are never shown. */
 const REALMS = new Set(["Afrotropic", "Antarctic", "Australasia", "Indomalaya", "Nearctic", "Neotropic", "Oceania", "Palearctic"]);
@@ -120,7 +100,7 @@ export default async function LostSpecies({ searchParams }: Props) {
               : <TR k="{n} species" v={{ n: rows.length.toLocaleString("en-GB") }} />}
             {group ? `, ${GROUPS[group].toLowerCase()}` : ""}.{pages > 1 && <>{" "}<TR k="Page {page} of {pages}." v={{ page, pages }} /></>}
           </p>
-          <ul className="mt-3 grid gap-3 sm:grid-cols-2">{shown.map((s) => <Card key={s.scientific_name} s={s} />)}</ul>
+          <ul className="mt-3 grid gap-3 sm:grid-cols-2">{shown.map((s) => <LostCard key={s.scientific_name} s={s} />)}</ul>
           {pages > 1 && (
             <nav className="mt-4 flex flex-wrap gap-2 text-sm" aria-label="Pages">
               {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
@@ -129,6 +109,15 @@ export default async function LostSpecies({ searchParams }: Props) {
               ))}
             </nav>
           )}
+        </section>
+
+        <section className="mt-10">
+          <h2 className="text-xl font-semibold text-slate-100"><TR k="Lost species by country" /></h2>
+          <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm">
+            {countries.filter(([, n]) => n >= MIN_COUNTRY_PAGE).map(([c, n]) => (
+              <Link key={c} href={`/lost-species/in/${countrySlug(c)}`} prefetch={false} className="text-cyan-400 hover:underline">{c} <span className="text-slate-500">{n}</span></Link>
+            ))}
+          </p>
         </section>
 
         <section className="mt-10 border-t border-white/10 pt-5 text-sm text-slate-400">

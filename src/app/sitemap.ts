@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import INDIA from "@/data/india-seasons.json";
 import { INDIA_STATES } from "@/lib/indiaStates";
+import { countryCounts, countrySlug, lostSpeciesPublic, MIN_COUNTRY_PAGE } from "@/lib/lostPublic";
 import { PAGE_LANGS, countryLangs } from "@/lib/pageLang";
 import { COUNTRIES, OWN_PAGE, hasPage } from "@/lib/countries";
 import { sql } from "@/lib/db";
@@ -64,5 +65,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     UNION SELECT scientific_name FROM species_group WHERE scientific_name IN ${sql([...INDIA.species.map((x) => x.sci), ...UK_SPECIES.map((x) => x.sci), ...cityTop])} AND is_species
     ORDER BY 1 LIMIT 5000`.catch(() => []);
   const datasets = await sql<{ id: string }[]>`SELECT id FROM datasets WHERE status = 'live'`.catch(() => []);
-  return [...pages, ...datasets.map((d) => ({ url: `${SITE}/datasets/${d.id}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.5 })), ...rows.map((r) => ({ url: `${SITE}/species/${speciesSlug(r.scientific_name)}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.6 }))];
+  // Lost species by country (src/app/lost-species/in/[country]).
+  const lost = countryCounts(await lostSpeciesPublic().catch(() => [])).filter(([, n]) => n >= MIN_COUNTRY_PAGE)
+    .map(([c]) => ({ url: `${SITE}/lost-species/in/${countrySlug(c)}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 }));
+  return [...pages, ...lost, ...datasets.map((d) => ({ url: `${SITE}/datasets/${d.id}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.5 })), ...rows.map((r) => ({ url: `${SITE}/species/${speciesSlug(r.scientific_name)}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.6 }))];
 }

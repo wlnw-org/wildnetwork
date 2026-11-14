@@ -49,3 +49,8 @@ export function countryCounts(list: LostPublic[]): [string, number][] {
   for (const s of list) for (const c of s.countries) m.set(c, (m.get(c) ?? 0) + 1);
   return [...m.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 }
+
+/** Countries with at least this many lost species get their own page (/lost-species/in/<slug>). */
+export const MIN_COUNTRY_PAGE = 3;
+export const countrySlug = (country: string) =>
+  country.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
