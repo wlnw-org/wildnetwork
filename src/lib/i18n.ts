@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
 import { MESSAGES } from "@/lib/messages";
 
 /**
@@ -65,8 +66,13 @@ export function fmtNum(n: number, lang: Lang, long = false): string {
 /** Set by PageLanguage (src/components/TR.tsx) on pages with a language in the address (/hi/..., /ta/...): it wins over the visitor's choice. */
 export const LangContext = createContext<Lang | null>(null);
 
+/** Pages with the language in the address (/hi/arrivals/india, /es/arrivals/spain): that language, for every component on
+ *  the page including the header and footer, which sit outside PageLanguage. */
+export const langFromPath = (path: string): Lang | null => (/^\/(hi|ta|es|pt|fr|de)(\/|$)/.exec(path)?.[1] as Lang | undefined) ?? null;
+
 export function useLang(): Lang {
-  const fixed = useContext(LangContext);
+  const fromPath = langFromPath(usePathname() ?? "");
+  const fixed = useContext(LangContext) ?? fromPath;
   const chosen = useSyncExternalStore(subscribe, getLang, () => "en" as Lang);
   return fixed ?? chosen;
 }

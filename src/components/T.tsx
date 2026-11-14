@@ -1,5 +1,6 @@
 "use client";
-import { LANGS, setLang, useLang, useT, type Lang } from "@/lib/i18n";
+import { usePathname } from "next/navigation";
+import { LANGS, langFromPath, setLang, useLang, useT, type Lang } from "@/lib/i18n";
 
 /**
  * Translated text for server-rendered pages (species, places): the server sends English, and after hydration the text
@@ -23,8 +24,18 @@ export function LocalName({ en, names }: { en: string; names?: Record<string, st
 export function PageLang() {
   const lang = useLang();
   const t = useT();
+  const path = usePathname() ?? "";
+  // On a page with the language in its address, go to the same page in the chosen language when it exists (the page lists
+  // its versions as <link rel="alternate" hreflang>), else to the English page; elsewhere just switch the language.
+  const choose = (l: Lang) => {
+    setLang(l);
+    if (!langFromPath(path) && !document.querySelector('link[rel="alternate"][hreflang]')) return;
+    const alt = document.querySelector<HTMLLinkElement>(`link[rel="alternate"][hreflang="${l}"]`)?.href
+      ?? document.querySelector<HTMLLinkElement>('link[rel="alternate"][hreflang="en"]')?.href;
+    if (alt && new URL(alt).pathname !== path) window.location.assign(new URL(alt).pathname);
+  };
   return (
-    <select value={lang} onChange={(e) => setLang(e.target.value as Lang)} aria-label={t("Language")}
+    <select value={lang} onChange={(e) => choose(e.target.value as Lang)} aria-label={t("Language")}
       className="rounded-md bg-white/10 px-1.5 py-1 text-xs text-slate-200 outline-none">
       {LANGS.map((l) => <option key={l.code} value={l.code} className="text-slate-900">{l.label}</option>)}
     </select>
