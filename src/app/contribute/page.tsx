@@ -155,6 +155,14 @@ export default async function Contribute() {
         <CopyBlock>{`curl -fsSL ${SITE}/agent/install.sh | WDX_SOURCE=speciesnet WDX_PATH=/data/camtrap WDX_LAT=11.41 WDX_LON=76.69 bash`}</CopyBlock>
         <p className="text-sm text-slate-400"><TR k="Blank images, people and vehicles are never sent. One agent serves one location, so use one setup per camera site." /></p>
         <p>
+          <TR k="Already use **MegaDetector** with a species classifier (for example in [AddaxAI](https://addaxdatascience.com/addaxai/))? Point the agent at the folder with its output files instead:" />
+        </p>
+        <CopyBlock>{`curl -fsSL ${SITE}/agent/install.sh | WDX_SOURCE=megadetector WDX_PATH=/data/camtrap WDX_LAT=-1.29 WDX_LON=36.82 bash`}</CopyBlock>
+        <p>
+          <TR k="Have a **Frigate** home camera with bird classification turned on? The agent reads Frigate's events and sends the birds it names, never people, cars or pets:" />
+        </p>
+        <CopyBlock>{`curl -fsSL ${SITE}/agent/install.sh | WDX_SOURCE=frigate WDX_PATH=http://frigate.local:5000 WDX_LAT=40.71 WDX_LON=-74.01 bash`}</CopyBlock>
+        <p>
           <TR k="**Want to check the photos yourself first?** Use [Wildlife Network Studio](/studio) instead of the agent: it finds the animals in your photos, lets you confirm or correct each one, and adds the checked results here as a dataset. No commands needed." />
         </p>
         <p className="text-sm text-slate-400"><TR k="Use one route per camera: the agent sends unchecked predictions automatically, Studio sends checked ones." /></p>
