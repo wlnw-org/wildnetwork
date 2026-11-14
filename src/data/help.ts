@@ -284,6 +284,7 @@ const site: Guide[] = [
         "The class buttons show one group, for example only bats or only frogs.",
         "The search box finds a place or a species.",
         "The side rail opens Now (what is being detected), the Feed, Research, Contribute and more.",
+        "Open the Legend to switch on extra layers. Wind and temperature shows where the wind blows about 1.5 km up, where most migrating birds fly, with the temperature on the ground. It is updated every 3 hours.",
       ] },
       { tip: "The map starts near you (from your connection's rough location, never stored). Search for any place to move it." },
     ],

@@ -777,5 +777,10 @@
  "Report a possible sighting": "Signaler une observation possible",
  "Set up a listening station": "Installer une station d'écoute",
  "Lost species by country": "Espèces perdues par pays",
- "All countries": "Tous les pays"
+ "All countries": "Tous les pays",
+ "Open the Legend to switch on extra layers. Wind and temperature shows where the wind blows about 1.5 km up, where most migrating birds fly, with the temperature on the ground. It is updated every 3 hours.": "Ouvrez la Légende pour afficher des couches supplémentaires. Vent et température montre où souffle le vent à environ 1,5 km d'altitude, là où volent la plupart des oiseaux migrateurs, avec la température au sol. Mis à jour toutes les 3 heures.",
+ "Wind on the map, and pages in more languages": "Le vent sur la carte, et des pages dans plus de langues",
+ "A wind and temperature layer on the map: arrows show where the wind blows about 1.5 km up, where most migrating birds fly. Switch it on in the map's Legend. Weather from Open-Meteo, updated every 3 hours.": "Une couche vent et température sur la carte : les flèches montrent où souffle le vent à environ 1,5 km d'altitude, là où volent la plupart des oiseaux migrateurs. Activez-la dans la Légende de la carte. Météo d'Open-Meteo, mise à jour toutes les 3 heures.",
+ "Arrival pages for India and its states in Hindi and Tamil, and country pages in Spanish, Portuguese, French and German.": "Des pages d'arrivées pour l'Inde et ses États en hindi et en tamoul, et des pages de pays en espagnol, portugais, français et allemand.",
+ "Lost species by country: a page for each of 65 countries listing the species not seen for years that could still be there.": "Espèces perdues par pays : une page pour chacun de 65 pays, avec les espèces non observées depuis des années qui pourraient encore y vivre."
 }

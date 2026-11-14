@@ -8,6 +8,15 @@ export interface Update { date: string; title: string; items: UpdateItem[] }
 
 export const UPDATES: Update[] = [
   {
+    date: "2026-11-14",
+    title: "Wind on the map, and pages in more languages",
+    items: [
+      { text: "A wind and temperature layer on the map: arrows show where the wind blows about 1.5 km up, where most migrating birds fly. Switch it on in the map's Legend. Weather from Open-Meteo, updated every 3 hours.", href: "/" },
+      { text: "Arrival pages for India and its states in Hindi and Tamil, and country pages in Spanish, Portuguese, French and German.", href: "/arrivals" },
+      { text: "Lost species by country: a page for each of 65 countries listing the species not seen for years that could still be there.", href: "/lost-species" },
+    ],
+  },
+  {
     date: "2026-11-07",
     title: "Upload your datasets, download more easily, and reports for parks",
     items: [

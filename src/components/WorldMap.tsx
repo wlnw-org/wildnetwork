@@ -140,6 +140,9 @@ export default function WorldMap() {
   const [status, setStatus] = useState<Status | null>(null);
   const [coverage, setCoverage] = useState<{ summary: Record<string, number>; cells: { lat: number; lon: number; status: string; acoustic: number; observed: number }[] } | null>(null);
   const [showCoverage, setShowCoverage] = useState(false);
+  // Weather layer: wind about 1.5 km up and ground temperature on a 10 degree grid (/api/v1/weather, refreshed every 3 h).
+  const [weather, setWeather] = useState<{ at: string; points: { lat: number; lon: number; t: number; ws: number; wd: number }[] } | null>(null);
+  const [showWeather, setShowWeather] = useState(false);
   // Map legend starts folded so the list of sources does not cover the map; the choice is remembered.
   const legendOpen = useSyncExternalStore(subscribeLegend, readLegend, () => false);
   const [movement, setMovement] = useState<Movement | null>(null);
@@ -178,7 +181,7 @@ export default function WorldMap() {
     if (cancelled || !containerRef.current || mapRef.current) return;
     setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
     const map = new MLMapClass({ container: containerRef.current, style: STYLE, center: [10, 25], zoom: 1.7, minZoom: 1.3, renderWorldCopies: false, attributionControl: false });
-    map.addControl(new AttributionControl({ compact: true, customAttribution: "BirdWeather · GBIF publishers (CC0/CC BY) · iNaturalist (CC0/CC-BY) · WDX producers" }));
+    map.addControl(new AttributionControl({ compact: true, customAttribution: "BirdWeather · GBIF publishers (CC0/CC BY) · iNaturalist (CC0/CC-BY) · WDX producers · Weather: Open-Meteo (CC BY 4.0)" }));
     map.addControl(new NavigationControl({ showCompass: false }), "top-right");
     // Start near the visitor (IP area, whole degrees, from /api/v1/near) unless a species link sets the view; zoom out for the world.
     const qs = new URLSearchParams(window.location.search);
@@ -229,6 +232,23 @@ export default function WorldMap() {
           "fill-color": ["match", ["get", "status"], "both", "#a78bfa", "acoustic", "#22d3ee", "observed", "#f59e0b", "#64748b"],
           "fill-opacity": ["match", ["get", "status"], "thin", 0.12, 0.35],
           "fill-outline-color": "rgba(255,255,255,0.15)",
+        },
+      });
+      // Weather arrows: one per grid point, pointing where the wind blows to, longer when stronger, coloured by temperature.
+      if (!map.hasImage("wind-arrow")) map.addImage("wind-arrow", windArrow(), { sdf: true });
+      map.addSource("weather", { type: "geojson", data: EMPTY });
+      map.addLayer({
+        id: "weather", type: "symbol", source: "weather",
+        layout: {
+          "icon-image": "wind-arrow", "icon-rotate": ["+", ["get", "wd"], 180], "icon-rotation-alignment": "map",
+          "icon-size": ["interpolate", ["linear"], ["get", "ws"], 0, 0.35, 20, 0.6, 60, 1.1], "icon-allow-overlap": true,
+          "text-field": ["concat", ["to-string", ["get", "t"]], "°"], "text-size": 10, "text-offset": [0, 1.4], "text-allow-overlap": false,
+          "text-optional": true, "visibility": "visible",
+        },
+        paint: {
+          "icon-color": ["interpolate", ["linear"], ["get", "t"], -20, "#60a5fa", 0, "#e2e8f0", 20, "#fbbf24", 35, "#ef4444"],
+          "icon-opacity": 0.85, "text-color": "#cbd5e1", "text-halo-color": "#020617", "text-halo-width": 1,
+          "text-opacity": ["step", ["zoom"], 0, 3, 1],
         },
       });
       map.addLayer({ id: "deployments", type: "circle", source: "deployments", paint: { "circle-radius": 2, "circle-color": "#475569", "circle-opacity": 0.7 } });
@@ -516,6 +536,21 @@ export default function WorldMap() {
       geometry: { type: "Polygon", coordinates: [[[c.lon, c.lat], [c.lon + 5, c.lat], [c.lon + 5, c.lat + 5], [c.lon, c.lat + 5], [c.lon, c.lat]]] },
     })) } : EMPTY);
   }, [showCoverage, species, coverage, ready]);
+  // Weather layer: fetched when first shown, then every 30 minutes while it stays on (the server copy changes every 3 h).
+  useEffect(() => {
+    if (!showWeather) return;
+    const load = () => fetch(`/api/v1/weather`).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.points) setWeather(d); }).catch(() => {});
+    if (!weather) load();
+    const id = setInterval(load, 30 * 60_000);
+    return () => clearInterval(id);
+  }, [showWeather, weather]);
+  useEffect(() => {
+    const src = mapRef.current?.getSource("weather") as GeoJSONSource | undefined;
+    if (!src) return;
+    src.setData(showWeather && weather ? { type: "FeatureCollection", features: weather.points.map((p) => ({
+      type: "Feature", properties: { t: p.t, ws: p.ws, wd: p.wd }, geometry: { type: "Point", coordinates: [p.lon, p.lat] },
+    })) } : EMPTY);
+  }, [showWeather, weather, ready]);
   // Past period: totals per cell, most recorded and arrivals from /api/v1/history (cached for hours at the edge).
   const historyKey = period ? `${period}|${group}` : null;
   useEffect(() => {
@@ -1015,6 +1050,17 @@ export default function WorldMap() {
               <input type="checkbox" checked={showCoverage} onChange={(e) => { setShowCoverage(e.target.checked); if (e.target.checked) track("show_coverage"); }} className="accent-[#a78bfa]" />
               <span>{t("Coverage")}</span>
             </label>
+            <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("Wind about 1.5 km up, where most migrating birds fly, and the temperature on the ground. Updated every 3 hours.")}>
+              <input type="checkbox" checked={showWeather} onChange={(e) => { setShowWeather(e.target.checked); if (e.target.checked) track("show_weather"); }} className="accent-[#fbbf24]" />
+              <span>{t("Wind and temperature")}</span>
+            </label>
+            {showWeather && (
+              <div className="mt-1 space-y-0.5 text-slate-400">
+                <div>{t("Arrows show where the wind blows about 1.5 km up, where most migrating birds fly. Longer arrows are stronger winds.")}</div>
+                <div className="flex items-center gap-2"><span>-20°</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #60a5fa, #e2e8f0, #fbbf24, #ef4444)" }} /><span>35° C</span></div>
+                {weather && <div>{t("Updated {time}", { time: new Date(weather.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) })} · Open-Meteo</div>}
+              </div>
+            )}
             {showCoverage && (
               <div className="mt-1 space-y-0.5">
                 <Legend color="#a78bfa" label={`${t("Recordings and sightings")}${coverage ? ` (${coverage.summary.both})` : ""}`} />
@@ -1155,4 +1201,15 @@ function Row({ name, sci, value, tone, onClick, thumb }: { name: string; sci: st
 
 function Legend({ color, label }: { color: string; label: string }) {
   return <span><span className="inline-block w-2 h-2 rounded-full mr-1" style={{ background: color }} />{label}</span>;
+}
+
+/** Upward arrow drawn once on a canvas, used as an SDF icon so the layer can colour it by temperature. */
+function windArrow(): ImageData {
+  const n = 32, c = document.createElement("canvas");
+  c.width = c.height = n;
+  const g = c.getContext("2d")!;
+  g.fillStyle = "#fff"; g.strokeStyle = "#fff"; g.lineWidth = 3; g.lineCap = "round";
+  g.beginPath(); g.moveTo(16, 28); g.lineTo(16, 9); g.stroke();
+  g.beginPath(); g.moveTo(16, 3); g.lineTo(23, 13); g.lineTo(9, 13); g.closePath(); g.fill();
+  return g.getImageData(0, 0, n, n);
 }

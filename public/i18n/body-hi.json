@@ -777,5 +777,10 @@
  "Report a possible sighting": "संभावित दिखाई देने की सूचना दें",
  "Set up a listening station": "सुनने वाला स्टेशन लगाएँ",
  "Lost species by country": "देश के अनुसार खोई प्रजातियाँ",
- "All countries": "सभी देश"
+ "All countries": "सभी देश",
+ "Open the Legend to switch on extra layers. Wind and temperature shows where the wind blows about 1.5 km up, where most migrating birds fly, with the temperature on the ground. It is updated every 3 hours.": "अतिरिक्त परतें चालू करने के लिए लेजेंड खोलें। हवा और तापमान दिखाता है कि लगभग 1.5 किमी ऊँचाई पर, जहाँ ज़्यादातर प्रवासी पक्षी उड़ते हैं, हवा किस ओर बह रही है, साथ में ज़मीन का तापमान। हर 3 घंटे में अपडेट होता है।",
+ "Wind on the map, and pages in more languages": "नक्शे पर हवा, और ज़्यादा भाषाओं में पेज",
+ "A wind and temperature layer on the map: arrows show where the wind blows about 1.5 km up, where most migrating birds fly. Switch it on in the map's Legend. Weather from Open-Meteo, updated every 3 hours.": "नक्शे पर हवा और तापमान की परत: तीर दिखाते हैं कि लगभग 1.5 किमी ऊँचाई पर, जहाँ ज़्यादातर प्रवासी पक्षी उड़ते हैं, हवा किस ओर बह रही है। इसे नक्शे के लेजेंड में चालू करें। मौसम Open-Meteo से, हर 3 घंटे में अपडेट।",
+ "Arrival pages for India and its states in Hindi and Tamil, and country pages in Spanish, Portuguese, French and German.": "भारत और उसके राज्यों के आगमन पेज हिंदी और तमिल में, और देशों के पेज स्पेनिश, पुर्तगाली, फ़्रेंच और जर्मन में।",
+ "Lost species by country: a page for each of 65 countries listing the species not seen for years that could still be there.": "देश के अनुसार खोई प्रजातियाँ: 65 देशों में से हर एक का पेज, उन प्रजातियों के साथ जो सालों से नहीं दिखीं पर अब भी वहाँ हो सकती हैं।"
 }
