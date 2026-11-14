@@ -9,3 +9,15 @@ Dermochelyidae
 Dugong dugon
 # Sawfishes
 Pristidae
+# Mammals at risk from poaching or collecting (live GBIF records are shown at 1 degree; see src/lib/connectors/gbif.ts)
+Rhinocerotidae
+Manidae
+Elephantidae
+Panthera
+Neofelis
+Uncia
+Gorilla
+Pan
+Pongo
+Moschus
+Saiga tatarica

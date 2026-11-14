@@ -92,7 +92,7 @@ Weeks covered: ${range.first} to ${range.last} (weeks start on Monday). Licence:
 
 ## What is and is not included
 
-- Included: records published to GBIF under CC0 1.0 or CC BY 4.0 only, classes Aves, Chiroptera (bats), Amphibia and Insecta, human observations and machine observations with coordinates and no geospatial issues.
+- Included: records published to GBIF under CC0 1.0 or CC BY 4.0 only, classes Aves, Chiroptera (bats), Amphibia, Insecta and, from release 6, the other Mammalia, human observations and machine observations with coordinates and no geospatial issues.
 - Not included: BirdWeather acoustic detections. Wildlife Network shows them on its map with BirdWeather's agreement, but redistribution has not been agreed, so they are left out of every release.
 
 ## Files

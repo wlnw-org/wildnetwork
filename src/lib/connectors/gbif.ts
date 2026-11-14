@@ -1,3 +1,4 @@
+import { isSensitiveTaxon } from "@/lib/sensitiveTaxa";
 import { CLASS_TAXA, INAT_DATASET, baseParams, gbifJson, noteDataset } from "@/lib/gbif";
 import { upsertGroups } from "@/lib/rollups";
 import type { WdxEvent } from "@/lib/wdx/types";
@@ -24,6 +25,9 @@ interface Occ {
   speciesKey?: number;
   classKey?: number;
   orderKey?: number;
+  genus?: string;
+  family?: string;
+  order?: string;
   decimalLatitude: number;
   decimalLongitude: number;
   coordinateUncertaintyInMeters?: number;
@@ -46,6 +50,11 @@ function toWdx(o: Occ): WdxEvent | null {
   const name = o.species ?? o.acceptedScientificName ?? o.scientificName;
   if (!name) return null;
   const rank = o.taxonRank?.toLowerCase();
+  // Poaching and collecting risk (scripts/sensitive_species.txt): shown at 1 degree (about 110 km), never at the published point.
+  const sensitive = isSensitiveTaxon([name, o.genus, o.family, o.order]);
+  const lat = sensitive ? Math.round(o.decimalLatitude) : o.decimalLatitude, lon = sensitive ? Math.round(o.decimalLongitude) : o.decimalLongitude;
+  // Machine-recorded mammals other than bats are camera traps; birds, bats, frogs and insects are sound recorders.
+  const camera = o.basisOfRecord === "MACHINE_OBSERVATION" && grpOf(o) === "mammal";
   return {
     wdx: "0.1",
     eventId: `gbif:${o.key}`,
@@ -53,10 +62,10 @@ function toWdx(o: Occ): WdxEvent | null {
     deployment: {
       deploymentId: `dataset:${o.datasetKey}`,
       name: o.datasetName,
-      latitude: o.decimalLatitude,
-      longitude: o.decimalLongitude,
-      coordinateUncertaintyMeters: o.coordinateUncertaintyInMeters || undefined,
-      sensorType: o.basisOfRecord === "MACHINE_OBSERVATION" ? "acoustic-recorder" : "other",
+      latitude: lat,
+      longitude: lon,
+      coordinateUncertaintyMeters: sensitive ? 80_000 : o.coordinateUncertaintyInMeters || undefined,
+      sensorType: camera ? "camera-trap" : o.basisOfRecord === "MACHINE_OBSERVATION" ? "acoustic-recorder" : "other",
       sensorModel: o.basisOfRecord === "MACHINE_OBSERVATION" ? "machine-observation" : "human-observer",
     },
     detection: {

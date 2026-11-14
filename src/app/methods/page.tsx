@@ -427,6 +427,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.25</b> (15 November 2026): mammals from GBIF. Records of mammals other than bats (published under CC0 or CC BY, many from camera traps) now enter the weekly history and the live map, with effort corrected within the mammal class as before. Taxa at risk from poaching (rhinos, pangolins, elephants, great cats, great apes, musk deer, saiga) are shown on the live map only at 1 degree. Weeks already in the history gain mammals as the rolling GBIF refresh reaches them, newest first.</li>
           <li><b>0.24</b> (14 November 2026): a <a href="#radar" className="text-cyan-400 hover:underline">night migration layer</a> from European weather radars, a wind and temperature layer from Open-Meteo, and <a href="#tracks" className="text-cyan-400 hover:underline">tracked journeys</a> of tagged animals from the Movebank Data Repository, all on the map only. No measure changed.</li>
           <li><b>0.23</b> (10 November 2026): <a href="#year-round" className="text-cyan-400 hover:underline">year-round species</a> are left out of &quot;Arriving around now&quot; on the regional arrivals pages. Arrival dates themselves are unchanged.</li>
           <li><b>0.22</b> (10 November 2026): <a href="#words" className="text-cyan-400 hover:underline">This week in words</a> describes the visitor&apos;s own continent when their rough area is known, and marks worldwide sentences as such. Wording only; no measure changed.</li>

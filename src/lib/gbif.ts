@@ -28,12 +28,16 @@ const ebirdInWeek = (week: string, end: string) => {
   return ebirdWeeks.get(week)!;
 };
 
-/** Classes pulled, as GBIF taxon keys. Bats are an order inside mammals, so mammals are not pulled as a class. */
+/**
+ * Classes pulled, as GBIF taxon keys. Bats are an order inside mammals: a taxon in Chiroptera is 'bat' (checked first),
+ * any other mammal is 'mammal' (added 2026-11-15, methods 0.25; camera traps are mostly here).
+ */
 export const CLASS_TAXA: { key: number; grp: string }[] = [
   { key: 212, grp: "avian" },      // Aves
   { key: 734, grp: "bat" },        // Chiroptera
   { key: 131, grp: "amphibian" },  // Amphibia
   { key: 216, grp: "insect" },     // Insecta
+  { key: 359, grp: "mammal" },     // Mammalia (bats stay 'bat': grpOfTaxon checks the order first)
 ];
 
 /** Query parameters shared by every occurrence request: licence, coordinates, observation records only. */
