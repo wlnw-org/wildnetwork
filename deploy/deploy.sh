@@ -12,6 +12,8 @@ git -C repo fetch -q origin main
 SHA=$(git -C repo rev-parse --short=12 origin/main)
 CURRENT=$(basename "$(readlink -f current 2>/dev/null || echo none)")
 [ "$SHA" = "$CURRENT" ] && [ "${1:-}" != "--force" ] && exit 0
+# A commit whose build failed is not retried every 2 minutes; the next commit (or --force) tries again.
+[ "$(cat "$ROOT/logs/failed-sha" 2>/dev/null)" = "$SHA" ] && [ "${1:-}" != "--force" ] && exit 1
 echo "deploying $SHA (was $CURRENT)"
 REL="$ROOT/releases/$SHA"
 rm -rf "$REL"
@@ -23,7 +25,7 @@ export NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 NODE_OPTIONS=--max-old-spac
 pnpm install --frozen-lockfile --prod=false --reporter=silent
 # NEXT_PUBLIC_* values are inlined at build time, so the build reads the same environment file.
 set -a; . /etc/wlnw/env; set +a
-nice -n 10 pnpm build > "$ROOT/logs/build-$SHA.log" 2>&1 || { echo "build failed, see logs/build-$SHA.log"; exit 1; }
+nice -n 10 pnpm build > "$ROOT/logs/build-$SHA.log" 2>&1 || { echo "$SHA" > "$ROOT/logs/failed-sha"; echo "build failed, see logs/build-$SHA.log"; exit 1; }
 ln -sfn "$REL" "$ROOT/current.new" && mv -T "$ROOT/current.new" "$ROOT/current"
 # One copy at a time, each back up (health check answers) before the next, so a deploy never drops requests.
 for port in 3000 3001; do
@@ -32,4 +34,5 @@ for port in 3000 3001; do
 done
 # Keep the three newest releases.
 cd "$ROOT/releases" && ls -1t | tail -n +4 | while read -r old; do git -C "$ROOT/repo" worktree remove --force "$ROOT/releases/$old" 2>/dev/null || rm -rf "$old"; done
+rm -f "$ROOT/logs/failed-sha"
 echo "deployed $SHA"

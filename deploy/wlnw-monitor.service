@@ -1,0 +1,6 @@
+[Unit]
+Description=Wildlife Network server checks (emails MONITOR_TO on trouble)
+
+[Service]
+Type=oneshot
+ExecStart=/srv/wlnw/monitor.sh

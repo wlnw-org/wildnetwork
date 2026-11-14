@@ -12,3 +12,4 @@ wlnw.org runs on one Ubuntu 24.04 server (Node 24, Caddy). Nothing in this folde
 
 The files here are installed on the server by hand (copy to /srv/wlnw, /etc/systemd/system, /etc/caddy); a push does not update them, only the app.
 - `wlnw-rollup.timer`: daily 03:30 UTC call to `/api/cron/rollup` (formerly the Vercel cron in vercel.json), with CRON_SECRET read from `/etc/wlnw/env` on the server. Live pulls and hourly rollups come from the cron-job.org call to `/api/v1/status`; the old GitHub `ingest` workflow was removed so no server secret lives in GitHub.
+- `monitor.sh` + `wlnw-monitor.timer`: every 5 minutes, as root, checks both app copies, Caddy, the public health endpoint, failed deploy/rollup/geoip runs, disk, memory and the certificate; emails `MONITOR_TO` (server env) through Resend when a problem starts, every 6 hours while it lasts, and once on recovery. A build that fails is not retried until the next commit (`logs/failed-sha`).
