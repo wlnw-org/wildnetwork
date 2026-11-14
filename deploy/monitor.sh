@@ -19,7 +19,7 @@ if [ "$code" != 200 ]; then
   problems+=("https://wlnw.org/api/v1/health answered HTTP $code: $(head -c 300 "$STATE/health.json" | tr '\n' ' ')")
 fi
 
-for unit in wlnw-deploy wlnw-rollup wlnw-geoip; do
+for unit in wlnw-deploy wlnw-rollup wlnw-geoip wlnw-radar; do
   systemctl is-failed -q "$unit.service" && problems+=("$unit.service failed: $(journalctl -u "$unit.service" -n 3 --no-pager -o cat | tr '\n' ' ' | head -c 300)")
 done
 
