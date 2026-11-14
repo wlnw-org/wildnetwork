@@ -189,6 +189,13 @@ export default function Methods() {
           {YEAR_ROUND_Q25 * 100}% of its busiest month, it counts as recorded all year. Checked on 18 European species: true migrants scored 0 to 0.7%, residents 1.1% to 47%.
           Their arrival dates stay on the species pages and in the monthly lists.
         </p>
+        <p className="mt-3" id="tracks">
+          <b>Tracked journeys (map, selected species).</b> GPS tracks of tagged animals from studies published in the{" "}
+          <a href="https://datarepository.movebank.org" className="text-cyan-400 hover:underline">Movebank Data Repository</a> under CC0 or CC BY.
+          Each animal is reduced to its first position of each day, rounded to 0.1 degree (about 10 km) so no nest or roost can be found, and at most
+          12 animals per species are kept (the longest tracks, up to three years each). Sea turtles and sawfish are left out. Every line links to its
+          study and DOI. Tracks are shown as they are; they feed no measure.
+        </p>
         <p className="mt-3" id="radar">
           <b>Night migration from weather radars (map layer, Europe).</b> Most migrating birds fly at night, where sound stations and
           observers see little. European weather radars measure them: <a href="https://aloftdata.eu" className="text-cyan-400 hover:underline">Aloft</a> (ENRAM,
@@ -420,7 +427,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
-          <li><b>0.24</b> (14 November 2026): a <a href="#radar" className="text-cyan-400 hover:underline">night migration layer</a> from European weather radars, and a wind and temperature layer from Open-Meteo, both on the map only. No measure changed.</li>
+          <li><b>0.24</b> (14 November 2026): a <a href="#radar" className="text-cyan-400 hover:underline">night migration layer</a> from European weather radars, a wind and temperature layer from Open-Meteo, and <a href="#tracks" className="text-cyan-400 hover:underline">tracked journeys</a> of tagged animals from the Movebank Data Repository, all on the map only. No measure changed.</li>
           <li><b>0.23</b> (10 November 2026): <a href="#year-round" className="text-cyan-400 hover:underline">year-round species</a> are left out of &quot;Arriving around now&quot; on the regional arrivals pages. Arrival dates themselves are unchanged.</li>
           <li><b>0.22</b> (10 November 2026): <a href="#words" className="text-cyan-400 hover:underline">This week in words</a> describes the visitor&apos;s own continent when their rough area is known, and marks worldwide sentences as such. Wording only; no measure changed.</li>
           <li><b>0.21</b> (7 November 2026): <a href="#datasets" className="text-cyan-400 hover:underline">contributed datasets</a>: uploaded detection tables, checked for season, place, range and bursts, count in the weekly measures once live, and are credited by name.</li>

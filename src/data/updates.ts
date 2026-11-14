@@ -13,6 +13,7 @@ export const UPDATES: Update[] = [
     items: [
       { text: "A wind and temperature layer on the map: arrows show where the wind blows about 1.5 km up, where most migrating birds fly. Switch it on in the map's Legend. Weather from Open-Meteo, updated every 3 hours.", href: "/" },
       { text: "Night migration over Europe: weather radars show how many birds were flying at night, which way, and whether the night was busier than usual. Also in the map's Legend.", href: "/methods#radar" },
+      { text: "Tracked journeys: for species that scientists have followed with GPS tags, the map draws the real routes of up to 12 animals, from published studies in the Movebank Data Repository.", href: "/methods#tracks" },
       { text: "Arrival pages for India and its states in Hindi and Tamil, and country pages in Spanish, Portuguese, French and German.", href: "/arrivals" },
       { text: "Lost species by country: a page for each of 65 countries listing the species not seen for years that could still be there.", href: "/lost-species" },
     ],

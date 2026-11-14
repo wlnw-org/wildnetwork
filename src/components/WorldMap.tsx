@@ -146,6 +146,9 @@ export default function WorldMap() {
   // Night migration over Europe from weather radars (/api/v1/radar, Aloft, about two days behind).
   const [radar, setRadar] = useState<{ night: string | null; radars: { radar: string; lat: number; lon: number; vid: number; mtr: number; mtrMax: number; dir: number | null; normal: number | null }[] } | null>(null);
   const [showRadar, setShowRadar] = useState(false);
+  // Tracked journeys of the selected species (GPS tags, Movebank Data Repository), shown by default when there are any.
+  const [journeys, setJourneys] = useState<{ species: string; datasets: { id: string; title: string; doi: string | null; licence: string }[]; tracks: { dataset: string; animal: string; from: string; to: string; points: [number, number][] }[] } | null>(null);
+  const [showJourneys, setShowJourneys] = useState(true);
   // Map legend starts folded so the list of sources does not cover the map; the choice is remembered.
   const legendOpen = useSyncExternalStore(subscribeLegend, readLegend, () => false);
   const [movement, setMovement] = useState<Movement | null>(null);
@@ -184,7 +187,7 @@ export default function WorldMap() {
     if (cancelled || !containerRef.current || mapRef.current) return;
     setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
     const map = new MLMapClass({ container: containerRef.current, style: STYLE, center: [10, 25], zoom: 1.7, minZoom: 1.3, renderWorldCopies: false, attributionControl: false });
-    map.addControl(new AttributionControl({ compact: true, customAttribution: "BirdWeather · GBIF publishers (CC0/CC BY) · iNaturalist (CC0/CC-BY) · WDX producers · Weather: Open-Meteo (CC BY 4.0) · Radar: Aloft (CC BY 4.0)" }));
+    map.addControl(new AttributionControl({ compact: true, customAttribution: "BirdWeather · GBIF publishers (CC0/CC BY) · iNaturalist (CC0/CC-BY) · WDX producers · Weather: Open-Meteo (CC BY 4.0) · Radar: Aloft (CC BY 4.0) · Tracks: Movebank Data Repository" }));
     map.addControl(new NavigationControl({ showCompass: false }), "top-right");
     // Start near the visitor (IP area, whole degrees, from /api/v1/near) unless a species link sets the view; zoom out for the world.
     const qs = new URLSearchParams(window.location.search);
@@ -224,6 +227,11 @@ export default function WorldMap() {
       map.addLayer({
         id: "week-cells", type: "fill", source: "week-cells",
         paint: { "fill-color": "#22d3ee", "fill-opacity": ["interpolate", ["linear"], ["get", "share"], 0, 0.04, 1, 0.7], "fill-outline-color": "rgba(34,211,238,0.25)" },
+      });
+      map.addSource("journeys", { type: "geojson", data: EMPTY });
+      map.addLayer({
+        id: "journeys", type: "line", source: "journeys", layout: { "line-cap": "round", "line-join": "round" },
+        paint: { "line-color": ["get", "color"], "line-width": ["interpolate", ["linear"], ["zoom"], 1, 1.2, 6, 2.5], "line-opacity": 0.8 },
       });
       map.addLayer({ id: "track-line", type: "line", source: "track", filter: ["==", ["geometry-type"], "LineString"], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#f8fafc", "line-width": 3, "line-opacity": 0.75 } });
       map.addLayer({ id: "track-head", type: "circle", source: "track", filter: ["==", ["geometry-type"], "Point"], paint: { "circle-radius": 6, "circle-color": "#f8fafc", "circle-stroke-width": 2, "circle-stroke-color": "#020617" } });
@@ -367,6 +375,14 @@ export default function WorldMap() {
         const dir = p.dir != null ? `, heading ${compass(Number(p.dir))}` : "";
         new Popup({ closeButton: true, maxWidth: "280px" }).setLngLat(e.lngLat).setHTML(`<div style="font:13px system-ui;color:#e2e8f0"><b>Weather radar ${esc(String(p.radar))}</b> (${esc(String(p.country))})<br/>Night of ${esc(String(p.night))}: about ${Number(p.vid).toLocaleString("en-GB")} birds per km² in the air on average${dir}. At the busiest moment ${Number(p.mtrMax).toLocaleString("en-GB")} birds crossed each km per hour.${vs}<br/><span style="font-size:11px;color:#94a3b8">Aloft vertical profiles (ENRAM, BALTRAD, OPERA), CC BY 4.0</span></div>`).addTo(map);
       });
+      map.on("click", "journeys", (e: MapLayerMouseEvent) => {
+        const p = e.features?.[0]?.properties as Record<string, string> | undefined;
+        if (!p) return;
+        const doi = p.doi ? `<a href="https://doi.org/${esc(p.doi.replace(/^doi:/, ""))}" target="_blank" rel="noreferrer" style="color:#22d3ee">${esc(p.dataset)}</a>` : esc(p.dataset);
+        new Popup({ closeButton: true, maxWidth: "300px" }).setLngLat(e.lngLat).setHTML(`<div style="font:13px system-ui;color:#e2e8f0"><b>Tagged animal ${esc(p.animal)}</b><br/>Tracked ${esc(p.from)} to ${esc(p.to)}, one position a day, rounded to about 10 km.<br/><span style="font-size:11px;color:#94a3b8">${doi}. ${esc(p.licence)}, Movebank Data Repository.</span></div>`).addTo(map);
+      });
+      map.on("mouseenter", "journeys", () => (map.getCanvas().style.cursor = "pointer"));
+      map.on("mouseleave", "journeys", () => (map.getCanvas().style.cursor = ""));
       map.on("mouseenter", "radar", () => (map.getCanvas().style.cursor = "pointer"));
       map.on("mouseleave", "radar", () => (map.getCanvas().style.cursor = ""));
       for (const layer of ["history-pts", "history-icons"]) {
@@ -579,6 +595,25 @@ export default function WorldMap() {
       type: "Feature", properties: { t: p.t, ws: p.ws, wd: p.wd }, geometry: { type: "Point", coordinates: [p.lon, p.lat] },
     })) } : EMPTY);
   }, [showWeather, weather, ready]);
+  // Tracked journeys: fetched for each selected species (404 when no open tracking dataset covers it).
+  useEffect(() => {
+    if (!species) return;
+    let cancelled = false;
+    fetch(`/api/v1/species/${encodeURIComponent(species)}/tracks`).then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (!cancelled) setJourneys(d?.tracks?.length ? d : null); }).catch(() => { if (!cancelled) setJourneys(null); });
+    return () => { cancelled = true; };
+  }, [species]);
+  useEffect(() => {
+    const src = mapRef.current?.getSource("journeys") as GeoJSONSource | undefined;
+    if (!src) return;
+    const on = species && showJourneys && journeys && journeys.species === species.split(" ").slice(0, 2).join(" ");
+    const ds = new Map((journeys?.datasets ?? []).map((d) => [d.id, d]));
+    src.setData(on ? { type: "FeatureCollection", features: journeys.tracks.map((tr, i) => ({
+      type: "Feature", geometry: { type: "LineString", coordinates: tr.points },
+      properties: { color: JOURNEY_COLORS[i % JOURNEY_COLORS.length], animal: tr.animal, from: tr.from, to: tr.to,
+        dataset: ds.get(tr.dataset)?.title ?? "", doi: ds.get(tr.dataset)?.doi ?? "", licence: ds.get(tr.dataset)?.licence ?? "" },
+    })) } : EMPTY);
+  }, [species, showJourneys, journeys, ready]);
   // Radar layer: fetched when first shown (the data changes once a day).
   useEffect(() => {
     if (!showRadar || radar) return;
@@ -1082,6 +1117,15 @@ export default function WorldMap() {
             <div className="flex flex-wrap gap-x-3 gap-y-0.5"><Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label={t("Devices")} /><Legend color="#60a5fa" label="Acartia" /><Legend color="#2dd4bf" label="Orcasound" /><Legend color="#38bdf8" label="OBIS" /><Legend color="#475569" label={t("Sensor")} /></div>
           </>
         )}
+        {species && journeys?.tracks.length ? (
+          <div className="mt-1.5 pt-1.5 border-t border-white/10">
+            <label className="flex items-center gap-1.5 cursor-pointer select-none">
+              <input type="checkbox" checked={showJourneys} onChange={(e) => { setShowJourneys(e.target.checked); track("toggle_journeys", { on: e.target.checked ? 1 : 0 }); }} className="accent-[#f472b6]" />
+              <span>{t("Tracked journeys ({n} tagged animals)", { n: journeys.tracks.length })}</span>
+            </label>
+            {showJourneys && <div className="mt-0.5 text-slate-400 max-w-64">{t("GPS tags, one position a day, rounded to about 10 km. Click a line for its study.")} <a href="https://datarepository.movebank.org" target="_blank" rel="noreferrer" className="text-cyan-500 hover:underline">Movebank</a></div>}
+          </div>
+        ) : null}
         {!species && (
           <div className="mt-1.5 pt-1.5 border-t border-white/10">
             <label className="flex items-center gap-1.5 cursor-pointer select-none" title="OBIS, Orcasound hydrophones and Acartia sightings, last 12 months">
@@ -1273,3 +1317,5 @@ const RADAR_COUNTRY: Record<string, string> = { be: "Belgium", ch: "Switzerland"
 function compass(deg: number): string {
   return ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"][Math.round(deg / 45) % 8];
 }
+
+const JOURNEY_COLORS = ["#f472b6", "#facc15", "#34d399", "#60a5fa", "#fb923c", "#a78bfa", "#f87171", "#2dd4bf", "#e879f9", "#a3e635", "#fbbf24", "#38bdf8"];

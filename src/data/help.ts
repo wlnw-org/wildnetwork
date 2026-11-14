@@ -286,6 +286,7 @@ const site: Guide[] = [
         "The side rail opens Now (what is being detected), the Feed, Research, Contribute and more.",
         "Open the Legend to switch on extra layers. Wind and temperature shows where the wind blows about 1.5 km up, where most migrating birds fly, with the temperature on the ground. It is updated every 3 hours.",
         "Night migration (radar, Europe) shows how many birds were in the air at night above each European weather radar, which way they flew, and whether the night was busier than usual. It runs about two days behind.",
+        "When you pick a species that scientists have tracked with GPS tags, its tracked journeys appear as coloured lines, one per animal. Click a line to see the study it comes from.",
       ] },
       { tip: "The map starts near you (from your connection's rough location, never stored). Search for any place to move it." },
     ],
