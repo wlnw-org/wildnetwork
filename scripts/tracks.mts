@@ -107,10 +107,25 @@ async function build(maxMb: number) {
   const tmp = join(DIR, "download.tmp");
   for (const [k, ds] of todo.entries()) {
     try {
-      const r = await fetch(ds.gps!.url, { headers: UA, signal: AbortSignal.timeout(30 * 60_000) });
-      if (!r.ok || !r.body) throw new Error(`HTTP ${r.status}`);
-      await pipeline(Readable.fromWeb(r.body as never), createWriteStream(tmp));
-      const animals = await readDataset(ds, tmp);
+      // Each dataset's reduced animals are cached, so a rerun only downloads datasets that failed (long downloads get cut).
+      const cacheFile = join(DIR, "cache", `${ds.uuid}.json`);
+      let animals: Map<string, { species: string; days: Map<string, [number, number]> }>;
+      if (existsSync(cacheFile)) {
+        const c = JSON.parse(readFileSync(cacheFile, "utf8")) as [string, string, [string, [number, number]][]][];
+        animals = new Map(c.map(([id, sp, days]) => [id, { species: sp, days: new Map(days) }]));
+      } else {
+        for (let attempt = 1; ; attempt++) {
+          try {
+            const r = await fetch(ds.gps!.url, { headers: UA, signal: AbortSignal.timeout(30 * 60_000) });
+            if (!r.ok || !r.body) throw new Error(`HTTP ${r.status}`);
+            await pipeline(Readable.fromWeb(r.body as never), createWriteStream(tmp));
+            break;
+          } catch (e) { if (attempt >= 4) throw e; await sleep(10_000 * attempt); }
+        }
+        animals = await readDataset(ds, tmp);
+        mkdirSync(join(DIR, "cache"), { recursive: true });
+        writeFileSync(cacheFile, JSON.stringify([...animals].map(([id, a]) => [id, a.species, [...a.days]])));
+      }
       for (const [id, a] of animals) {
         const name = a.species.split(" ").slice(0, 2).join(" ");
         if (!name.includes(" ") || sensitive.has(name.toLowerCase()) || a.days.size < 20) continue;
