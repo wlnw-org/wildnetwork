@@ -131,6 +131,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
   const d = await load(slug);
   if (!d) notFound();
   const title = d.common ?? d.name;
+  const lead = describe(d).replace(/ (Live map, yearly movement and alerts|From open records, with a live map)\.$/, "");
   const india = indiaSeason(d.name);
   const uk = ukSeason(d.name), ukA = uk && ukArrival(uk);
   const cities = citiesFor(d.name, PLACES).slice(0, 12);
@@ -160,18 +161,14 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
         <p className="mt-2"><HelpLink to="/help/site/species" /></p>
         {d.common && <p className="mt-1 text-slate-400 italic">{d.name}</p>}
         {BIRDWEATHER_PAUSED && <PausedNotice className="mt-4" />}
+        {/* The answer first: the same sentence search engines show (describe()), before the picture and the details. */}
+        <p className="mt-4 text-lg text-slate-200">{lead}</p>
 
         {d.media?.imageUrl && (
           <figure className="mt-6">
             <HeroImage src={d.media.imageUrl} alt={`${title} (${d.name})`} className="w-full max-h-96 object-contain rounded-lg bg-slate-900" />
             {(d.media.attribution || d.media.license) && <figcaption className="mt-1 text-xs text-slate-400">Image: {[d.media.attribution, d.media.license, d.media.source && !(d.media.attribution ?? "").toLowerCase().includes(d.media.source.toLowerCase()) ? d.media.source : null].filter(Boolean).join(", ")}</figcaption>}
           </figure>
-        )}
-        {d.media?.extract && (
-          <p className="mt-5">
-            {d.media.extract}{" "}
-            {d.media.pageUrl && <a href={d.media.pageUrl} className="text-cyan-400 hover:underline" rel="noopener"><T k={d.media.pageUrl.includes("wikipedia.org") ? "Read more on Wikipedia" : "Source"} /></a>}
-          </p>
         )}
 
         <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="Where is the {name} now?" v={{ name: title }} names={nm} /></h2>
@@ -184,10 +181,10 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
           <Link href={`/?species=${encodeURIComponent(d.name)}`} className="inline-block rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400"><T k="See the {name} on the live map" v={{ name: title }} names={nm} /></Link>
         </p>
         {ALERTS_ENABLED && !BIRDWEATHER_PAUSED && (
-          <section id="alert" className="mt-6 rounded-lg border border-white/10 bg-white/5 p-4">
-            <h2 className="text-lg font-semibold text-slate-100"><T k="Get an email when the {name} arrives near you" v={{ name: title }} names={nm} /></h2>
+          <details id="alert" className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4">
+            <summary className="cursor-pointer font-semibold text-slate-100"><T k="Get an email when the {name} arrives near you" v={{ name: title }} names={nm} /></summary>
             <AlertForm species={d.name} title={title} names={nm} />
-          </section>
+          </details>
         )}
 
         {d.story.length > 0 && (
@@ -241,10 +238,16 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
                 ))}
               </tbody>
             </table>
-            <p className="mt-2 text-sm">
-              <a href={`/api/v1/arrivals?species=${encodeURIComponent(d.name)}&format=csv`} className="text-cyan-400 hover:underline" rel="nofollow"><T k="Download every area as CSV" /></a>
-              {" · "}<Link href={`/species/${speciesSlug(d.name)}/review`} className="text-cyan-400 hover:underline"><T k="Review these arrival dates" /></Link> <T k="(researchers, ORCID sign-in)" />
-            </p>
+          </>
+        )}
+
+        {d.media?.extract && (
+          <>
+          <h2 className="mt-8 text-xl font-semibold text-slate-100"><T k="About the {name}" v={{ name: title }} names={nm} /></h2>
+          <p className="mt-2">
+            {d.media.extract}{" "}
+            {d.media.pageUrl && <a href={d.media.pageUrl} className="text-cyan-400 hover:underline" rel="noopener"><T k={d.media.pageUrl.includes("wikipedia.org") ? "Read more on Wikipedia" : "Source"} /></a>}
+          </p>
           </>
         )}
 
@@ -269,6 +272,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
               <span className="text-slate-400"><T k="Records you may reuse freely, with credit, for areas about 550 km across." /></span></li>
             {d.arrivals.length > 0 && <li><DownloadLink href={`/api/v1/arrivals?species=${encodeURIComponent(d.name)}&format=csv`} k="Arrival dates per area (CSV)" what="species-arrivals" /></li>}
             <li><Link href="/data" className="text-cyan-400 hover:underline"><T k="Every species: open data releases and the API" /></Link></li>
+            {d.arrivals.length > 0 && <li><Link href={`/species/${speciesSlug(d.name)}/review`} className="text-cyan-400 hover:underline"><T k="Review these arrival dates" /></Link> <span className="text-slate-400"><T k="(researchers, ORCID sign-in)" /></span></li>}
           </ul>
         </section>
 
