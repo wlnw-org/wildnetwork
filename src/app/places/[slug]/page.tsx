@@ -116,12 +116,14 @@ export default async function PlacePage({ params }: Props) {
           </p>
         )}
 
-        {night && night.vid >= 0.5 && (
+        {night && (
           <section className="mt-6 rounded-lg border border-white/10 bg-white/5 p-4">
             <h2 className="font-semibold text-slate-100"><TR k="Birds flying over {place} at night" v={{ place: p.name }} /></h2>
             <p className="mt-1">
-              <TR k="On the night of {date}, a weather radar about {km} km away counted about {n} birds in every square kilometre of sky." v={{ date: new Date(night.night + "T12:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long" }), km: night.km, n: night.vid >= 10 ? Math.round(night.vid) : night.vid.toFixed(1) }} />{" "}
-              {ratio != null && (night.unusual ? <TR k="That is a big night: about {x} times the usual here." v={{ x: Math.round(ratio) }} />
+              {night.vid < 0.5
+                ? <TR k="On the night of {date}, a weather radar about {km} km away saw almost no birds in the air." v={{ date: new Date(night.night + "T12:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long" }), km: night.km }} />
+                : <TR k="On the night of {date}, a weather radar about {km} km away counted about {n} birds in every square kilometre of sky." v={{ date: new Date(night.night + "T12:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long" }), km: night.km, n: night.vid >= 10 ? Math.round(night.vid) : night.vid.toFixed(1) }} />}{" "}
+              {night.vid >= 0.5 && ratio != null && (night.unusual ? <TR k="That is a big night: about {x} times the usual here." v={{ x: Math.round(ratio) }} />
                 : ratio >= 1.5 ? <TR k="That is busier than a usual night here." /> : ratio <= 0.5 ? <TR k="That is quieter than a usual night here." /> : <TR k="That is about a usual night here." />)}
             </p>
             <p className="mt-2 text-sm"><Link href="/?layer=radar" className="text-cyan-400 hover:underline"><TR k="See every radar on the map" /></Link></p>
