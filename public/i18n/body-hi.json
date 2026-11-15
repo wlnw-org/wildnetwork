@@ -803,5 +803,6 @@
  "City pages near a weather radar say how many birds flew over on a recent night, and whether that was more than usual.": "रडार के पास वाले शहरों के पेज बताते हैं कि हाल की एक रात कितने पक्षी ऊपर से उड़े और क्या वे सामान्य से ज़्यादा थे।",
  "A simpler map: dots are coloured by heard, seen or ocean survey, the legend shows one extra layer at a time, and the Now panel keeps three short lists.": "एक आसान नक्शा: बिंदुओं का रंग बताता है कि सुना गया, देखा गया या समुद्री सर्वेक्षण से है; लेजेंड एक बार में एक अतिरिक्त परत दिखाता है, और अभी पैनल में तीन छोटी सूचियाँ हैं।",
  "Species pages start with the answer to when a species arrives, and birds that stay all year are no longer listed as arriving on the region pages.": "प्रजाति के पेज अब इस जवाब से शुरू होते हैं कि वह कब आती है, और साल भर रहने वाले पक्षी अब क्षेत्र पेजों पर आगमन में नहीं दिखते।",
- "On the night of {date}, a weather radar about {km} km away saw almost no birds in the air.": "{date} की रात, लगभग {km} किमी दूर एक मौसम रडार को हवा में लगभग कोई पक्षी नहीं दिखा।"
+ "On the night of {date}, a weather radar about {km} km away saw almost no birds in the air.": "{date} की रात, लगभग {km} किमी दूर एक मौसम रडार को हवा में लगभग कोई पक्षी नहीं दिखा।",
+ "Stations by region": "क्षेत्र के अनुसार स्टेशन"
 }

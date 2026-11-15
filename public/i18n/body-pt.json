@@ -803,5 +803,6 @@
  "City pages near a weather radar say how many birds flew over on a recent night, and whether that was more than usual.": "As páginas de cidades perto de um radar dizem quantas aves passaram numa noite recente e se foram mais do que o habitual.",
  "A simpler map: dots are coloured by heard, seen or ocean survey, the legend shows one extra layer at a time, and the Now panel keeps three short lists.": "Um mapa mais simples: os pontos têm cor conforme foram ouvidos, vistos ou vêm de estudos do oceano, a legenda mostra uma camada extra de cada vez e o painel Agora mantém três listas curtas.",
  "Species pages start with the answer to when a species arrives, and birds that stay all year are no longer listed as arriving on the region pages.": "As páginas de espécies começam com a resposta a quando a espécie chega, e as aves que estão cá todo o ano deixaram de aparecer como chegadas nas páginas de região.",
- "On the night of {date}, a weather radar about {km} km away saw almost no birds in the air.": "Na noite de {date}, um radar meteorológico a cerca de {km} km quase não viu aves no ar."
+ "On the night of {date}, a weather radar about {km} km away saw almost no birds in the air.": "Na noite de {date}, um radar meteorológico a cerca de {km} km quase não viu aves no ar.",
+ "Stations by region": "Estações por região"
 }

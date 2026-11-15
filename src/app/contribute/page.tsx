@@ -86,21 +86,25 @@ export default async function Contribute() {
             <p>
               <TR k="Recording stations are spread very unevenly. Africa has {africa} active stations and India and its neighbours {india}, against {europe} in Europe and {na} in North America. Where there are few, a single new station adds far more: it can put a whole area on the map for arrival dates and change." v={{ africa: n("Africa").toLocaleString("en-GB"), india: n("India").toLocaleString("en-GB"), europe: n("Europe").toLocaleString("en-GB"), na: n("North America").toLocaleString("en-GB") }} />
             </p>
-            <table className="mt-3 w-full text-sm">
-              <thead><tr className="text-left text-slate-400 border-b border-white/10">
-                <th className="py-1.5 font-medium"><TR k="Region" /></th><th className="font-medium text-right"><TR k="Active recording stations" /></th>
-                <th className="font-medium text-right"><TR k="Areas watched by stations" /></th>
-              </tr></thead>
-              <tbody>{g.map((r) => (
-                <tr key={r.region} className={`border-b border-white/5 ${r.region === "Africa" || r.region === "India" ? "text-slate-100" : ""}`}>
-                  <td className="py-1.5">{r.region === "India" ? <TR k="India and neighbours" /> : r.region}</td>
-                  <td className="text-right tabular-nums">{r.stations.toLocaleString("en-GB")}</td>
-                  <td className="text-right tabular-nums">{r.watched}</td>
-                </tr>))}</tbody>
-            </table>
-            <p className="mt-2 text-xs text-slate-400">
-              <TR k="Stations heard from in the last 30 days, from BirdWeather and devices sending here directly. An area is a square about 550 km across (5 degrees of latitude and longitude); it counts as watched at {min} bird detections a week, averaged over four recent weeks. India and neighbours is the box from 5 to 35° N and 65 to 95° E and is also counted in Asia. Turn on Coverage in the map legend to see each area." v={{ min: MIN_EFFORT_WEEK.toLocaleString("en-GB") }} />
-            </p>
+            {/* The numbers fold away: the sentence above already says where stations are needed. */}
+            <details className="mt-3">
+              <summary className="cursor-pointer text-sm text-cyan-400"><TR k="Stations by region" /></summary>
+              <table className="mt-3 w-full text-sm">
+                <thead><tr className="text-left text-slate-400 border-b border-white/10">
+                  <th className="py-1.5 font-medium"><TR k="Region" /></th><th className="font-medium text-right"><TR k="Active recording stations" /></th>
+                  <th className="font-medium text-right"><TR k="Areas watched by stations" /></th>
+                </tr></thead>
+                <tbody>{g.map((r) => (
+                  <tr key={r.region} className={`border-b border-white/5 ${r.region === "Africa" || r.region === "India" ? "text-slate-100" : ""}`}>
+                    <td className="py-1.5">{r.region === "India" ? <TR k="India and neighbours" /> : r.region}</td>
+                    <td className="text-right tabular-nums">{r.stations.toLocaleString("en-GB")}</td>
+                    <td className="text-right tabular-nums">{r.watched}</td>
+                  </tr>))}</tbody>
+              </table>
+              <p className="mt-2 text-xs text-slate-400">
+                <TR k="Stations heard from in the last 30 days, from BirdWeather and devices sending here directly. An area is a square about 550 km across (5 degrees of latitude and longitude); it counts as watched at {min} bird detections a week, averaged over four recent weeks. India and neighbours is the box from 5 to 35° N and 65 to 95° E and is also counted in Asia. Turn on Coverage in the map legend to see each area." v={{ min: MIN_EFFORT_WEEK.toLocaleString("en-GB") }} />
+              </p>
+            </details>
             <p className="mt-3">
               <TR k="In one of the thin regions? [Set up a station](#new), or [upload recordings you already have](/datasets/new) as a dataset. Institutions with a network of recorders: [connect it here](/institutions)." />
             </p>

@@ -803,5 +803,6 @@
  "City pages near a weather radar say how many birds flew over on a recent night, and whether that was more than usual.": "ரேடார் அருகே உள்ள நகரப் பக்கங்கள் சமீபத்திய ஒரு இரவில் எத்தனை பறவைகள் மேலே பறந்தன, அது வழக்கத்தைவிட அதிகமா என்று சொல்லும்.",
  "A simpler map: dots are coloured by heard, seen or ocean survey, the legend shows one extra layer at a time, and the Now panel keeps three short lists.": "எளிமையான வரைபடம்: புள்ளிகள் கேட்டவை, பார்த்தவை, கடல் ஆய்வு என நிறமிடப்படுகின்றன; விளக்கம் ஒரு நேரத்தில் ஒரு கூடுதல் அடுக்கைக் காட்டும்; இப்போது பலகையில் மூன்று சிறிய பட்டியல்கள்.",
  "Species pages start with the answer to when a species arrives, and birds that stay all year are no longer listed as arriving on the region pages.": "இனப் பக்கங்கள் அது எப்போது வருகிறது என்ற பதிலுடன் தொடங்குகின்றன; ஆண்டு முழுவதும் இருக்கும் பறவைகள் பகுதிப் பக்கங்களில் இனி வருகையாகக் காட்டப்படுவதில்லை.",
- "On the night of {date}, a weather radar about {km} km away saw almost no birds in the air.": "{date} இரவு, சுமார் {km} கி.மீ. தொலைவில் உள்ள ஒரு வானிலை ரேடார் வானில் ஏறக்குறைய பறவைகளையே காணவில்லை."
+ "On the night of {date}, a weather radar about {km} km away saw almost no birds in the air.": "{date} இரவு, சுமார் {km} கி.மீ. தொலைவில் உள்ள ஒரு வானிலை ரேடார் வானில் ஏறக்குறைய பறவைகளையே காணவில்லை.",
+ "Stations by region": "பகுதி வாரியாக நிலையங்கள்"
 }
