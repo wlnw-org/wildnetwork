@@ -17,7 +17,7 @@ export default function DatasetKey({ id, hasKey, since }: { id: string; hasKey: 
   return (
     <div className="text-sm space-y-2">
       <p className="text-slate-400">
-        For desktop tools and scripts: an upload key can add records, run the checks and submit this dataset, nothing else.
+        For desktop tools and scripts: an upload key can edit the details, add records, run the checks and submit this dataset, nothing else. Adding records to a submitted or live dataset takes it back to draft until it is submitted again.
         {has && !key && <> A key exists{since ? ` (created ${since.slice(0, 10)})` : ""}. Creating a new one replaces it.</>}
       </p>
       <div className="flex flex-wrap gap-2">

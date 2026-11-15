@@ -107,7 +107,10 @@ export class DatasetError extends Error {}
 
 /** Adds checked rows to a draft. Names must already be matched (rename maps an unmatched name to one the uploader chose). */
 export async function addRecords(d: Dataset, rows: UploadRow[], rename: Record<string, string>): Promise<{ added: number; duplicates: number; unmatched: number }> /* unmatched also counts rows below the cut-off */ {
-  if (d.status !== "draft") throw new DatasetError("Records can only be added while the dataset is a draft.");
+  if (d.status === "withdrawn") throw new DatasetError("This dataset was withdrawn.");
+  // Adding the next batch (for example the next SD card from Studio) reopens a submitted or live dataset: its records leave
+  // the measures until it is submitted again, which re-runs the checks on everything.
+  if (d.status !== "draft") { await reopen(d.id); d = { ...d, status: "draft" }; }
   if ((await databaseMb()) > STORAGE.WARN_MB) throw new DatasetError("Uploads are paused while the database is nearly full. Please try again in a few days.");
   if (d.records + rows.length > DATASET_LIMITS.MAX_RECORDS) throw new DatasetError(`A dataset can hold up to ${DATASET_LIMITS.MAX_RECORDS.toLocaleString("en")} records. Please split it.`);
   const names = rows.map((r) => (rename[r.name] ?? r.name).trim());
@@ -230,10 +233,12 @@ export async function submit(d: Dataset): Promise<"live" | "review"> {
 }
 
 export async function goLive(id: string): Promise<void> {
+  const [before] = await sql<{ live_at: Date | null }[]>`SELECT live_at FROM datasets WHERE id = ${id}`;
   const [d] = await sql<{ owner: string; status: string }[]>`UPDATE datasets SET status = 'live', live_at = COALESCE(live_at, now()), review_note = NULL, updated_at = now()
     WHERE id = ${id} RETURNING owner, status`;
   if (!d) return;
-  await sql`INSERT INTO contributors (orcid, clean_datasets) VALUES (${d.owner}, 1)
+  // A dataset that went live before (reopened to add records) counts once towards trust.
+  if (!before?.live_at) await sql`INSERT INTO contributors (orcid, clean_datasets) VALUES (${d.owner}, 1)
     ON CONFLICT (orcid) DO UPDATE SET clean_datasets = contributors.clean_datasets + 1, updated_at = now()`;
   await rollupDataset(id);
 }
@@ -354,7 +359,7 @@ export function datasetFields(b: Record<string, unknown>) {
 }
 
 /** Upload keys (one per dataset) let desktop tools and scripts add records, check and submit. Shown once, stored hashed. */
-export const KEY_ACTIONS = ["names", "records", "events", "check", "submit"];
+export const KEY_ACTIONS = ["update", "names", "records", "events", "check", "submit"];
 export async function newUploadKey(id: string): Promise<string> {
   const raw = `wnds_${randomBytes(24).toString("base64url")}`;
   await sql`UPDATE datasets SET upload_key_hash = ${hashKey(raw)}, upload_key_at = now() WHERE id = ${id}`;
