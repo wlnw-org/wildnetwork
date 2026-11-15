@@ -157,7 +157,7 @@ export default function WorldMap() {
   // Weather layer: wind about 1.5 km up and ground temperature on a 10 degree grid (/api/v1/weather, refreshed every 3 h).
   const [weather, setWeather] = useState<{ at: string; points: { lat: number; lon: number; t: number; ws: number; wd: number }[] } | null>(null);
   // Night migration over Europe from weather radars (/api/v1/radar, Aloft, about two days behind).
-  const [radar, setRadar] = useState<{ night: string | null; radars: { radar: string; lat: number; lon: number; vid: number; mtr: number; mtrMax: number; dir: number | null; normal: number | null; unusual?: boolean; clutter?: boolean }[] } | null>(null);
+  const [radar, setRadar] = useState<{ night: string | null; radars: { radar: string; lat: number; lon: number; vid: number; mtr: number; mtrMax: number; dir: number | null; normal: number | null; unusual?: boolean; clutter?: boolean; still?: boolean }[] } | null>(null);
   const [climate, setClimate] = useState<{ base: string; from: string; to: string; cells: { lat: number; lon: number; t: number | null; p: number | null }[] } | null>(null);
   // Land cover per 1 degree square (ESA WorldCover 2021), one request when first shown.
   const [landcover, setLandcover] = useState<{ classes: string[]; cells: number[][] } | null>(null);
@@ -404,7 +404,7 @@ export default function WorldMap() {
         const p = e.features?.[0]?.properties as Record<string, string | number> | undefined;
         if (!p) return;
         const ratio = Number(p.ratio);
-        const vs = Number(p.clutter) === 1 ? "<br/>This radar reads far more than birds can explain on most nights (likely interference), so it is not compared." : p.normal != null && Number(p.normal) > 0 ? `<br/>${ratio >= 1.5 ? `${ratio.toFixed(1)} times` : ratio <= 0.67 ? `${Math.round(ratio * 100)}% of` : "about the same as"} its usual night over the two weeks before${Number(p.unusual) === 1 ? ". <b>An unusual migration night here.</b>" : ""}` : "";
+        const vs = Number(p.still) === 1 ? "<br/>The echoes barely moved this night (likely ground clutter, not birds), so it is not compared." : Number(p.clutter) === 1 ? "<br/>This radar reads far more than birds can explain on most nights (likely interference), so it is not compared." : p.normal != null && Number(p.normal) > 0 ? `<br/>${ratio >= 1.5 ? `${ratio.toFixed(1)} times` : ratio <= 0.67 ? `${Math.round(ratio * 100)}% of` : "about the same as"} its usual night over the two weeks before${Number(p.unusual) === 1 ? ". <b>An unusual migration night here.</b>" : ""}` : "";
         const dir = p.dir != null ? `, heading ${compass(Number(p.dir))}` : "";
         new Popup({ closeButton: true, maxWidth: "280px" }).setLngLat(e.lngLat).setHTML(`<div style="font:13px system-ui;color:#e2e8f0"><b>Weather radar ${esc(String(p.radar))}</b> (${esc(String(p.country))})<br/>Night of ${esc(String(p.night))}: about ${Number(p.vid).toLocaleString("en-GB")} birds per km² in the air on average${dir}. At the busiest moment ${Number(p.mtrMax).toLocaleString("en-GB")} birds crossed each km per hour.${vs}<br/><span style="font-size:11px;color:#94a3b8">Aloft vertical profiles (ENRAM, BALTRAD, OPERA), CC BY 4.0</span></div>`).addTo(map);
       });
@@ -705,7 +705,7 @@ export default function WorldMap() {
     src.setData(showRadar && radar?.night ? { type: "FeatureCollection", features: radar.radars.map((r) => ({
       type: "Feature", geometry: { type: "Point", coordinates: [r.lon, r.lat] },
       properties: { radar: r.radar, country: RADAR_COUNTRY[r.radar.slice(0, 2)] ?? r.radar.slice(0, 2).toUpperCase(), night: radar.night, vid: r.vid, mtrMax: r.mtrMax,
-        normal: r.normal, ratio: r.normal && r.normal > 0 ? r.vid / r.normal : 1, unusual: r.unusual ? 1 : 0, clutter: r.clutter ? 1 : 0, ...(r.dir != null ? { dir: r.dir } : {}) },
+        normal: r.normal, ratio: r.normal && r.normal > 0 ? r.vid / r.normal : 1, unusual: r.unusual ? 1 : 0, clutter: r.clutter ? 1 : 0, still: r.still ? 1 : 0, ...(r.dir != null ? { dir: r.dir } : {}) },
     })) } : EMPTY);
   }, [showRadar, radar, ready]);
   // Past period: totals per cell, most recorded and arrivals from /api/v1/history (cached for hours at the edge).

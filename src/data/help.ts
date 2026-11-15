@@ -286,7 +286,7 @@ const site: Guide[] = [
         "The side rail opens Now: a short summary, what is arriving and the most heard and seen species (More trends shows the rest). Feed, Research, Contribute and more are there too.",
         "Open the Legend to show one extra thing on the map: Wind, Birds migrating at night or Sea life. Wind shows where the wind blows about 1.5 km up, where most migrating birds fly, with the temperature on the ground, updated every 3 hours.",
         "Birds migrating at night shows how many birds were in the air above each weather radar in Europe and the US, and which way they flew. It runs about two days behind.",
-        "A white ring marks an unusual night, with at least 3 times the radar's usual number of birds. Sea life adds whales, dolphins and other sea animals from ocean surveys and underwater microphones.",
+        "A white ring marks an unusual night, with at least 3 times the radar's usual number of birds. Grey circles are set aside: radars with interference, or nights when the echoes did not move, which means clutter rather than birds. Sea life adds whales, dolphins and other sea animals from ocean surveys and underwater microphones.",
         "When you pick a species that scientists have tracked with GPS tags, its tracked journeys appear as coloured lines, one per animal. Click a line to see the study it comes from.",
       ] },
       { tip: "The map starts near you (from your connection's rough location, never stored). Search for any place to move it." },

@@ -13,7 +13,10 @@ export const RADAR = { BIN_KM: 0.2, MIN_HEIGHT_M: 200, SUN_DARK: -6, MAX_VID: 30
   // Unusual night: at least RATIO times the radar's median of the nights before (NORMAL_NIGHTS window, MIN_NORMAL of them
   // reporting) and at least MIN_VID birds/km2. Radars whose median night over everything kept is above CLUTTER_MEDIAN
   // birds/km2 read interference (Romania, autumn 2026), not birds: drawn grey and never called unusual.
-  UNUSUAL_RATIO: 3, UNUSUAL_MIN_VID: 20, MIN_NORMAL: 7, CLUTTER_MEDIAN: 150 };
+  UNUSUAL_RATIO: 3, UNUSUAL_MIN_VID: 20, MIN_NORMAL: 7, CLUTTER_MEDIAN: 150,
+  // A night whose echoes barely move (traffic / density under STILL_KMH km/h, with at least STILL_MIN_VID per km2) is
+  // ground clutter or anomalous propagation, not migration: migrating birds give 15 to 60 km/h. Set aside like clutter.
+  STILL_KMH: 3, STILL_MIN_VID: 5 };
 
 /**
  * US NEXRAD (scripts/nexrad.mts): a few Level II scans per radar and night through vol2bird instead of Aloft's 5-minute
@@ -113,7 +116,7 @@ export async function listRadars(): Promise<string[]> {
   return [...(await r.text()).matchAll(/<Prefix>baltrad\/daily\/([a-z0-9]+)\/<\/Prefix>/g)].map((m) => m[1]);
 }
 
-export type RadarNight = { radar: string; lat: number; lon: number; vid: number; mtr: number; mtrMax: number; dir: number | null; normal: number | null; profiles: number; unusual: boolean; clutter: boolean };
+export type RadarNight = { radar: string; lat: number; lon: number; vid: number; mtr: number; mtrMax: number; dir: number | null; normal: number | null; profiles: number; unusual: boolean; clutter: boolean; still: boolean };
 
 /** Nights with enough radars reporting, newest first, and the radars for one night with their 14-night normal. */
 export async function radarNight(night?: string) {
@@ -158,11 +161,12 @@ async function clutterRadars(): Promise<Set<string>> {
 }
 
 function toNight(r: Row, clutter: Set<string>): RadarNight {
-  const isClutter = clutter.has(r.radar);
+  const still = r.vid >= RADAR.STILL_MIN_VID && r.mtr < RADAR.STILL_KMH * r.vid;
+  const isClutter = clutter.has(r.radar) || still;
   return {
     radar: r.radar, lat: r.lat, lon: r.lon, vid: Math.round(r.vid * 10) / 10, mtr: Math.round(r.mtr), mtrMax: Math.round(r.mtr_max), profiles: r.n,
     dir: r.vid > 1 && (r.u || r.v) ? Math.round(((Math.atan2(r.u, r.v) * 180) / Math.PI + 360) % 360) : null,
-    normal: r.normal == null ? null : Math.round(r.normal * 10) / 10, clutter: isClutter,
+    normal: r.normal == null ? null : Math.round(r.normal * 10) / 10, clutter: isClutter, still,
     unusual: !isClutter && r.k >= RADAR.MIN_NORMAL && r.vid >= RADAR.UNUSUAL_MIN_VID && r.vid >= RADAR.UNUSUAL_RATIO * Math.max(r.normal ?? 0, 1),
   };
 }

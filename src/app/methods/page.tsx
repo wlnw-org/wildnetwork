@@ -221,6 +221,8 @@ export default function Methods() {
           <b>Unusual migration nights.</b> A radar&apos;s night is called unusual when it holds at least 3 times the median of its previous 14 nights,
           at least 7 of those nights reported, and at least 20 birds per km² were in the air on average. The map rings those radars in white and lists
           the recent nights with any, and <a href="/api/v1/radar/unusual" className="text-cyan-400 hover:underline">/api/v1/radar/unusual</a> returns them.
+          A night whose echoes barely move (traffic divided by density under 3 km/h, with at least 5 per km²) is ground clutter or anomalous
+          propagation, not migration, which moves at 15 to 60 km/h: it is drawn grey and never called unusual.
           Radars whose median night over everything we keep (up to 200 nights) is above 150 birds per km² read far more than birds can explain night
           after night (in autumn 2026 the Romanian radars, with 400 to 1,500 every night): we treat that as interference, draw them grey and never call
           their nights unusual. First month (13 October to 12 November 2026): 24 unusual radar nights on 10 nights, most of them a wave of birds leaving
@@ -472,6 +474,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.30</b> (16 November 2026): radar nights whose echoes barely move are set aside as clutter (<a href="#unusual-nights" className="text-cyan-400 hover:underline">unusual nights</a>). Display only.</li>
           <li><b>0.29</b> (15 November 2026): <a href="#nexrad" className="text-cyan-400 hover:underline">US night migration</a> from NEXRAD radars processed with vol2bird, alongside the European radars. No measure changed.</li>
           <li><b>0.28</b> (15 November 2026): <a href="#landcover" className="text-cyan-400 hover:underline">land cover</a> per 1 degree square from ESA WorldCover 2021, on the map and in the API. No measure changed.</li>
           <li><b>0.27</b> (15 November 2026): <a href="#unusual-nights" className="text-cyan-400 hover:underline">unusual migration nights</a> from the radar layer, and radars with persistent interference set aside. No other measure changed.</li>
