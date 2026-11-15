@@ -197,7 +197,7 @@ export default function Methods() {
           study and DOI. Tracks are shown as they are; they feed no measure.
         </p>
         <p className="mt-3" id="radar">
-          <b>Night migration from weather radars (map layer, Europe).</b> Most migrating birds fly at night, where sound stations and
+          <b>Night migration from weather radars (map layer, Europe and the US).</b> Most migrating birds fly at night, where sound stations and
           observers see little. European weather radars measure them: <a href="https://aloftdata.eu" className="text-cyan-400 hover:underline">Aloft</a> (ENRAM,
           BALTRAD and OPERA, CC BY 4.0) publishes a vertical profile of bird density every 15 minutes for about 200 radars, roughly two days late.
           For each profile taken in darkness (sun more than 6 degrees below the horizon) we add up density over every 200 m height band to get birds
@@ -207,6 +207,15 @@ export default function Methods() {
           profiles. The map shows each radar&apos;s mean for the night, the busiest moment, the traffic-weighted direction, and compares the night with the
           median of its previous 14 nights. Radars differ in sensitivity and clutter, so compare a radar with its own usual night rather than with its neighbours. Limits: heavy rain, sea clutter and insects can still leak in; radars cover only roughly 100 km around
           themselves; this counts all birds together, not species, and is display only (it feeds no arrival date or trend).
+        </p>
+        <p className="mt-3" id="nexrad">
+          <b>US radars.</b> No one publishes ready-made profiles for the US, so we make them: for each of about 140 NEXRAD radars in the contiguous
+          US we take the Level II scans nearest local solar 22:00, 00:00, 02:00 and 04:00 from the{" "}
+          <a href="https://registry.opendata.aws/noaa-nexrad/" className="text-cyan-400 hover:underline">NOAA open archive</a> and run{" "}
+          <a href="https://github.com/adokter/vol2bird" className="text-cyan-400 hover:underline">vol2bird</a> (Dokter et al. 2011, the same method behind
+          Aloft, with rain removed by the dual polarisation correlation coefficient). Each scan then goes through the steps above and counts as 2 hours of
+          profiles. Four snapshots miss short bursts that Aloft&apos;s every-15-minute profiles catch, so US night means are rougher, and radars with
+          fewer than 2 dark scans that night are left out. Same lag as Europe: the newest night is about two days old.
         </p>
         <p className="mt-3" id="unusual-nights">
           <b>Unusual migration nights.</b> A radar&apos;s night is called unusual when it holds at least 3 times the median of its previous 14 nights,
@@ -460,6 +469,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.29</b> (15 November 2026): <a href="#nexrad" className="text-cyan-400 hover:underline">US night migration</a> from NEXRAD radars processed with vol2bird, alongside the European radars. No measure changed.</li>
           <li><b>0.28</b> (15 November 2026): <a href="#landcover" className="text-cyan-400 hover:underline">land cover</a> per 1 degree square from ESA WorldCover 2021, on the map and in the API. No measure changed.</li>
           <li><b>0.27</b> (15 November 2026): <a href="#unusual-nights" className="text-cyan-400 hover:underline">unusual migration nights</a> from the radar layer, and radars with persistent interference set aside. No other measure changed.</li>
           <li><b>0.26</b> (15 November 2026): <a href="#climate" className="text-cyan-400 hover:underline">climate context</a> per 5 degree square from NASA GISTEMP and NOAA GPCP, on the map and in the API. No measure changed.</li>

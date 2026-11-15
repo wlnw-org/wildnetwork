@@ -1220,9 +1220,9 @@ export default function WorldMap() {
                 {weather && <div>{t("Updated {time}", { time: new Date(weather.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) })} · Open-Meteo</div>}
               </div>
             )}
-            <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("Birds in the air at night over Europe, measured by weather radars. About two days behind.")}>
+            <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("Birds in the air at night over Europe and the US, measured by weather radars. About two days behind.")}>
               <input type="checkbox" checked={showRadar} onChange={(e) => { setShowRadar(e.target.checked); if (e.target.checked) track("show_radar"); }} className="accent-[#f97316]" />
-              <span>{t("Night migration (radar, Europe)")}</span>
+              <span>{t("Night migration (radar)")}</span>
             </label>
             {showRadar && (
               <div className="mt-1 space-y-0.5 text-slate-400">

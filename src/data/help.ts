@@ -287,7 +287,7 @@ const site: Guide[] = [
         "Open the Legend to switch on extra layers. Wind and temperature shows where the wind blows about 1.5 km up, where most migrating birds fly, with the temperature on the ground. It is updated every 3 hours.",
         "Under More layers, Warmer or cooler than usual colours each square by how its past 12 months compare with the 1991 to 2020 average. Tap a square to see rain as well.",
         "Also under More layers, Land cover colours each square by its main cover (forest, grass and shrub, cropland, towns, bare ground, water) from a 2021 satellite map. Tap a square for the full mix. Coverage shows which areas are watched well enough to use.",
-        "Night migration (radar, Europe) shows how many birds were in the air at night above each European weather radar, which way they flew, and whether the night was busier than usual. It runs about two days behind.",
+        "Night migration (radar) shows how many birds were in the air at night above each weather radar in Europe and the US, which way they flew, and whether the night was busier than usual. It runs about two days behind.",
         "A white ring marks an unusual night, with at least 3 times the radar's usual number of birds. Pick a recent unusual night from the list under the radar layer to see it.",
         "When you pick a species that scientists have tracked with GPS tags, its tracked journeys appear as coloured lines, one per animal. Click a line to see the study it comes from.",
       ] },

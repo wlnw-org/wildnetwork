@@ -9,4 +9,5 @@ WorkingDirectory=/srv/wlnw/current
 Nice=19
 MemoryMax=900M
 TimeoutStartSec=6h
+ExecCondition=/bin/sh -c "! systemctl is-active -q wlnw-nexrad-backfill"
 ExecStart=/srv/wlnw/current/node_modules/.bin/tsx scripts/nexrad.mts 3 1
