@@ -178,12 +178,10 @@
  "Species": "இனங்கள்",
  "Days": "நாட்கள்",
  "Anonymous station {n}": "பெயரில்லா நிலையம் {n}",
- "No BirdWeather station has opted in yet. [Be the first](/stations/join).": "இதுவரை எந்த BirdWeather நிலையமும் பங்கேற்கவில்லை. [முதலாவதாக இருங்கள்](/stations/join).",
  "Stations sending directly": "நேரடியாக அனுப்பும் நிலையங்கள்",
  "These owners run our free station program (wdx-agent) on a BirdNET-Pi, BirdNET-Go, bat detector or camera trap. Their detections are published under the licence they choose, so they can go into the [open data releases](/data). Coordinates are rounded to about 1 km on the device.": "இந்த உரிமையாளர்கள் எங்கள் இலவச நிலைய நிரலை (wdx-agent) BirdNET-Pi, BirdNET-Go, வௌவால் கண்டறிவி அல்லது கேமரா பொறியில் இயக்குகிறார்கள். அவர்களின் கண்டறிதல்கள் அவர்கள் தேர்வு செய்யும் உரிமத்தின் கீழ் வெளியிடப்படுகின்றன, எனவே [திறந்த தரவு வெளியீடுகளில்](/data) சேரலாம். ஆயத்தொலைவுகள் கருவியிலேயே சுமார் 1 கிமீக்கு முழுமையாக்கப்படுகின்றன.",
  "Kind of station": "நிலைய வகை",
  "Detections": "கண்டறிதல்கள்",
- "No station sends directly yet. Yours could be the first.": "இதுவரை எந்த நிலையமும் நேரடியாக அனுப்பவில்லை. உங்களுடையது முதலாவதாக இருக்கலாம்.",
  "Device health": "கருவி நிலை",
  "Wildlife Network Bases and other registered devices report their battery, storage and backlog. Shown here: devices that reported in the last 30 days. Health reports carry no detections and no location.": "Wildlife Network Base-களும் பதிவுசெய்யப்பட்ட பிற கருவிகளும் தங்கள் பேட்டரி, சேமிப்பகம், அனுப்பக் காத்திருப்பவை பற்றித் தெரிவிக்கின்றன. இங்கே காட்டப்படுபவை: கடந்த 30 நாட்களில் தெரிவித்த கருவிகள். நிலை அறிக்கைகளில் கண்டறிதல்களோ இருப்பிடமோ இல்லை.",
  "Device": "கருவி",
@@ -192,7 +190,6 @@
  "Battery": "பேட்டரி",
  "Storage free": "காலியான சேமிப்பகம்",
  "Waiting to send": "அனுப்பக் காத்திருப்பவை",
- "No device has reported its health yet.": "இதுவரை எந்தக் கருவியும் தன் நிலையைத் தெரிவிக்கவில்லை.",
  "Add your station": "உங்கள் நிலையத்தைச் சேருங்கள்",
  "A free desktop app for the recordings sitting on your drives. Point it at a folder or an SD card copy: it finds the species on your own computer, helps you check them in minutes, and exports them for GBIF or publishes them here. Nothing is uploaded unless you choose to publish.": "உங்கள் டிரைவ்களில் உள்ள ஒலிப்பதிவுகளுக்கான இலவசக் கணினிச் செயலி. ஒரு கோப்புறையையோ SD கார்டின் நகலையோ காட்டுங்கள்: அது உங்கள் சொந்தக் கணினியிலேயே இனங்களைக் கண்டறியும், சில நிமிடங்களில் சரிபார்க்க உதவும், GBIF-க்காக ஏற்றுமதி செய்யும் அல்லது இங்கே வெளியிடும். நீங்கள் வெளியிடத் தேர்வு செய்யாவிட்டால் எதுவும் பதிவேற்றப்படாது.",
  "What it does": "இது என்ன செய்கிறது",
@@ -790,5 +787,6 @@
  "Each dot is a recent detection: light blue was heard by a sound recorder, orange was seen by people, purple comes from an ocean survey. Click one to see the species and its source.": "ஒவ்வொரு புள்ளியும் சமீபத்திய பதிவு: வெளிர் நீலம், ஒலிப்பதிவுக் கருவி கேட்டது; ஆரஞ்சு, மக்கள் பார்த்தது; ஊதா, கடல் ஆய்வில் இருந்து. இனத்தையும் மூலத்தையும் பார்க்க ஒரு புள்ளியைக் கிளிக் செய்யவும்.",
  "Open the Legend to show one extra thing on the map: Wind, Birds migrating at night or Sea life. Wind shows where the wind blows about 1.5 km up, where most migrating birds fly, with the temperature on the ground, updated every 3 hours.": "வரைபடத்தில் இன்னும் ஒன்றைக் காட்ட விளக்கத்தைத் திறக்கவும்: காற்று, இரவில் வலசை போகும் பறவைகள் அல்லது கடல் உயிர்கள். காற்று, பெரும்பாலான வலசை பறவைகள் பறக்கும் சுமார் 1.5 கி.மீ. உயரத்தில் காற்று எந்தத் திசையில் வீசுகிறது என்பதையும் தரை வெப்பநிலையையும் காட்டும், 3 மணி நேரத்துக்கு ஒருமுறை புதுப்பிக்கப்படும்.",
  "Birds migrating at night shows how many birds were in the air above each weather radar in Europe and the US, and which way they flew. It runs about two days behind.": "இரவில் வலசை போகும் பறவைகள், ஐரோப்பா மற்றும் அமெரிக்காவின் ஒவ்வொரு வானிலை ரேடாரின் மேலும் எத்தனை பறவைகள் வானில் இருந்தன, எந்தத் திசையில் பறந்தன என்பதைக் காட்டும். சுமார் இரண்டு நாள் தாமதம்.",
- "A white ring marks an unusual night, with at least 3 times the radar's usual number of birds. Sea life adds whales, dolphins and other sea animals from ocean surveys and underwater microphones.": "வெள்ளை வளையம் ஒரு அசாதாரண இரவைக் குறிக்கிறது, அப்போது ரேடாரில் வழக்கத்தைவிடக் குறைந்தது 3 மடங்கு பறவைகள். கடல் உயிர்கள், கடல் ஆய்வுகள் மற்றும் நீருக்கடியிலான ஒலிவாங்கிகளிலிருந்து திமிங்கிலங்கள், டால்பின்கள் மற்றும் பிற கடல் விலங்குகளைச் சேர்க்கிறது."
+ "A white ring marks an unusual night, with at least 3 times the radar's usual number of birds. Sea life adds whales, dolphins and other sea animals from ocean surveys and underwater microphones.": "வெள்ளை வளையம் ஒரு அசாதாரண இரவைக் குறிக்கிறது, அப்போது ரேடாரில் வழக்கத்தைவிடக் குறைந்தது 3 மடங்கு பறவைகள். கடல் உயிர்கள், கடல் ஆய்வுகள் மற்றும் நீருக்கடியிலான ஒலிவாங்கிகளிலிருந்து திமிங்கிலங்கள், டால்பின்கள் மற்றும் பிற கடல் விலங்குகளைச் சேர்க்கிறது.",
+ "Show all countries": "எல்லா நாடுகளையும் காட்டு"
 }

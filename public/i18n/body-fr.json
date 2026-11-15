@@ -178,12 +178,10 @@
  "Species": "Espèce",
  "Days": "Jours",
  "Anonymous station {n}": "Station anonyme {n}",
- "No BirdWeather station has opted in yet. [Be the first](/stations/join).": "Aucune station BirdWeather ne s'est encore inscrite. [Soyez la première](/stations/join).",
  "Stations sending directly": "Stations en envoi direct",
  "These owners run our free station program (wdx-agent) on a BirdNET-Pi, BirdNET-Go, bat detector or camera trap. Their detections are published under the licence they choose, so they can go into the [open data releases](/data). Coordinates are rounded to about 1 km on the device.": "Ces propriétaires utilisent notre programme de station gratuit (wdx-agent) sur un BirdNET-Pi, un BirdNET-Go, un détecteur de chauves-souris ou un piège photographique. Leurs détections sont publiées sous la licence qu'ils choisissent, et peuvent donc entrer dans les [publications de données ouvertes](/data). Les coordonnées sont arrondies à environ 1 km sur l'appareil.",
  "Kind of station": "Type de station",
  "Detections": "Détections",
- "No station sends directly yet. Yours could be the first.": "Aucune station n'envoie encore directement. La vôtre pourrait être la première.",
  "Device health": "État des appareils",
  "Wildlife Network Bases and other registered devices report their battery, storage and backlog. Shown here: devices that reported in the last 30 days. Health reports carry no detections and no location.": "Les Wildlife Network Bases et autres appareils enregistrés signalent leur batterie, leur stockage et leurs envois en attente. Affichés ici : les appareils qui se sont signalés ces 30 derniers jours. Les rapports d'état ne contiennent ni détection ni position.",
  "Device": "Appareil",
@@ -192,7 +190,6 @@
  "Battery": "Batterie",
  "Storage free": "Stockage libre",
  "Waiting to send": "En attente d'envoi",
- "No device has reported its health yet.": "Aucun appareil n'a encore signalé son état.",
  "Add your station": "Ajoutez votre station",
  "A free desktop app for the recordings sitting on your drives. Point it at a folder or an SD card copy: it finds the species on your own computer, helps you check them in minutes, and exports them for GBIF or publishes them here. Nothing is uploaded unless you choose to publish.": "Une application de bureau gratuite pour les enregistrements qui dorment sur vos disques. Indiquez-lui un dossier ou une copie de carte SD : elle trouve les espèces sur votre propre ordinateur, vous aide à les vérifier en quelques minutes, et les exporte pour GBIF ou les publie ici. Rien n'est envoyé sauf si vous choisissez de publier.",
  "What it does": "Ce qu'elle fait",
@@ -790,5 +787,6 @@
  "Each dot is a recent detection: light blue was heard by a sound recorder, orange was seen by people, purple comes from an ocean survey. Click one to see the species and its source.": "Chaque point est une détection récente : bleu clair, entendue par un enregistreur ; orange, vue par des personnes ; violet, issue d'un relevé en mer. Cliquez sur un point pour voir l'espèce et sa source.",
  "Open the Legend to show one extra thing on the map: Wind, Birds migrating at night or Sea life. Wind shows where the wind blows about 1.5 km up, where most migrating birds fly, with the temperature on the ground, updated every 3 hours.": "Ouvrez la Légende pour afficher une chose de plus sur la carte : Vent, Oiseaux migrant la nuit ou Vie marine. Vent montre où souffle le vent à environ 1,5 km d'altitude, là où volent la plupart des oiseaux migrateurs, avec la température au sol, mis à jour toutes les 3 heures.",
  "Birds migrating at night shows how many birds were in the air above each weather radar in Europe and the US, and which way they flew. It runs about two days behind.": "Oiseaux migrant la nuit montre combien d'oiseaux étaient en vol au-dessus de chaque radar météo en Europe et aux États-Unis, et dans quelle direction. Environ deux jours de retard.",
- "A white ring marks an unusual night, with at least 3 times the radar's usual number of birds. Sea life adds whales, dolphins and other sea animals from ocean surveys and underwater microphones.": "Un anneau blanc marque une nuit inhabituelle, avec au moins 3 fois le nombre habituel d'oiseaux du radar. Vie marine ajoute baleines, dauphins et autres animaux marins issus de relevés en mer et de micros sous-marins."
+ "A white ring marks an unusual night, with at least 3 times the radar's usual number of birds. Sea life adds whales, dolphins and other sea animals from ocean surveys and underwater microphones.": "Un anneau blanc marque une nuit inhabituelle, avec au moins 3 fois le nombre habituel d'oiseaux du radar. Vie marine ajoute baleines, dauphins et autres animaux marins issus de relevés en mer et de micros sous-marins.",
+ "Show all countries": "Voir tous les pays"
 }

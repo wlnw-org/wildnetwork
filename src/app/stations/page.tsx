@@ -50,18 +50,21 @@ export default async function Stations() {
               <dd className="text-xs text-slate-400"><TR k="{n} known" v={{ n: s.total.toLocaleString("en-GB") }} /></dd>
             </div>
           ))}
+          {direct.length > 0 && (
           <div className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 p-3">
             <dt className="text-xs text-cyan-200"><TR k="Sending directly" /></dt>
             <dd className="text-2xl font-semibold text-slate-100">{direct.length.toLocaleString("en-GB")}</dd>
             <dd className="text-xs text-slate-400"><TR k="owner chooses the licence" /></dd>
           </div>
+          )}
         </dl>
 
+        {optins.length > 0 && (
+          <>
         <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="BirdWeather stations that opted in" /></h2>
         <p className="mt-2">
           <TR k="These owners chose to share their station's full daily counts, under their own licence, at the precision they picked. [Add your BirdWeather station](/stations/join)." />
         </p>
-        {optins.length ? (
           <table className="mt-4 w-full text-sm">
             <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><TR k="Station" /></th><th className="font-medium"><TR k="Where" /></th><th className="font-medium"><TR k="Licence" /></th><th className="font-medium text-right"><TR k="Species" /></th><th className="font-medium text-right"><TR k="Days" /></th></tr></thead>
             <tbody>
@@ -76,15 +79,15 @@ export default async function Stations() {
               ))}
             </tbody>
           </table>
-        ) : (
-          <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4"><TR k="No BirdWeather station has opted in yet. [Be the first](/stations/join)." /></p>
+          </>
         )}
 
+        {direct.length > 0 && (
+          <>
         <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="Stations sending directly" /></h2>
         <p className="mt-2">
           <TR k="These owners run our free station program (wdx-agent) on a BirdNET-Pi, BirdNET-Go, bat detector or camera trap. Their detections are published under the licence they choose, so they can go into the [open data releases](/data). Coordinates are rounded to about 1 km on the device." />
         </p>
-        {direct.length ? (
           <table className="mt-4 w-full text-sm">
             <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><TR k="Station" /></th><th className="font-medium"><TR k="Kind of station" /></th><th className="font-medium"><TR k="Where" /></th><th className="font-medium text-right"><TR k="Detections" /></th></tr></thead>
             <tbody>
@@ -98,14 +101,14 @@ export default async function Stations() {
               ))}
             </tbody>
           </table>
-        ) : (
-          <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4"><TR k="No station sends directly yet. Yours could be the first." /></p>
+          </>
         )}
+        {devices.length > 0 && (
+          <>
         <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="Device health" /></h2>
         <p className="mt-2">
           <TR k="Wildlife Network Bases and other registered devices report their battery, storage and backlog. Shown here: devices that reported in the last 30 days. Health reports carry no detections and no location." />
         </p>
-        {devices.length ? (
           <table className="mt-4 w-full text-sm">
             <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><TR k="Device" /></th><th className="font-medium"><TR k="Type" /></th><th className="font-medium"><TR k="Last report" /></th><th className="font-medium text-right"><TR k="Battery" /></th><th className="font-medium text-right"><TR k="Storage free" /></th><th className="font-medium text-right"><TR k="Waiting to send" /></th></tr></thead>
             <tbody>
@@ -125,8 +128,7 @@ export default async function Stations() {
               })}
             </tbody>
           </table>
-        ) : (
-          <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4"><TR k="No device has reported its health yet." /></p>
+          </>
         )}
         <p className="mt-6">
           <Link href="/contribute" className="inline-block rounded-md bg-cyan-500 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-400"><TR k="Add your station" /></Link>

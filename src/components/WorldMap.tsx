@@ -120,6 +120,8 @@ export default function WorldMap() {
   // Off on first load (the legend toggle turns it on); choosing the Marine class or a species shows its records regardless.
   // One extra layer at a time (legend "Show on the map"); coverage, land cover and climate only via ?layer= (researchers, methods page).
   const [layer, setLayerState] = useState<Layer>("");
+  // The Now panel shows three lists; the rest of the trends open on request.
+  const [moreTrends, setMoreTrends] = useState(false);
   const setLayer = (l: Layer) => { setLayerState(l); if (l) track("show_layer", { layer: l }); };
   useEffect(() => {
     const l = new URLSearchParams(window.location.search).get("layer") as Layer | null;
@@ -1116,18 +1118,45 @@ export default function WorldMap() {
                   </ul>
                 </section>
               )}
+              <Section title={t("Arriving now")} hint={t("Most recent arrival week")} badge={scopeLabel(insights?.area?.scope.seasonal)}>
+                {insights?.seasonal?.map((a) => (
+                  <Row key={a.scientificName} thumb={thumbs[a.scientificName]} onClick={() => pick(a.scientificName)} name={a.vernacularName ?? a.scientificName} sci={`${a.scientificName} · ${t(regionOf(a.cellLat, a.cellLon))}`}
+                    value={weekLabel(a.week)} tone="neutral" />
+                ))}
+              </Section>
+              <Section title={t("Most heard and seen")} hint={group === "bat" ? t("Last 24h") : t("Last {h}h", { h: hours })} badge={scopeLabel(speciesList.scope)}>
+                {speciesList.list.slice(0, 15).map((s) => (
+                  <Row key={s.scientificName} thumb={thumbs[s.scientificName]} onClick={() => pick(s.scientificName)} name={s.vernacularName ?? s.scientificName} sci={s.scientificName} value={fmtNum(s.count, lang)} tone="neutral" />
+                ))}
+              </Section>
+              {moreTrends ? (
+                <>
               {!!insights?.possible?.length && (
-                <Section title={t("Possibly arriving")} hint={t("One strong recent week, not confirmed yet")} badge={scopeLabel(insights?.area?.scope.possible)}>
+                <Section title={t("Possibly arriving")} hint={t("Maybe arriving")} badge={scopeLabel(insights?.area?.scope.possible)}>
                   {insights.possible.map((a) => (
                     <Row key={a.scientificName} thumb={thumbs[a.scientificName]} onClick={() => pick(a.scientificName)} name={a.vernacularName ?? a.scientificName} sci={`${a.scientificName} · ${t(regionOf(a.cellLat, a.cellLon))}`}
                       value={weekLabel(a.week)} tone="neutral" />
                   ))}
                 </Section>
               )}
-              <Section title={t("Latest arrivals")} hint={t("Most recent arrival week, from the weekly history")} badge={scopeLabel(insights?.area?.scope.seasonal)}>
-                {insights?.seasonal?.map((a) => (
-                  <Row key={a.scientificName} thumb={thumbs[a.scientificName]} onClick={() => pick(a.scientificName)} name={a.vernacularName ?? a.scientificName} sci={`${a.scientificName} · ${t(regionOf(a.cellLat, a.cellLon))}`}
-                    value={weekLabel(a.week)} tone="neutral" />
+              {!!insights?.arrivals.length && (
+              <Section title={t("New arrivals")} hint={t("Back after a gap")} badge={scopeLabel(insights?.area?.scope.arrivals)}>
+                {insights?.arrivals.map((a) => (
+                  <Row key={`${a.scientificName}${a.cellLat}${a.cellLon}`} thumb={thumbs[a.scientificName]} onClick={() => pick(a.scientificName)} name={a.vernacularName ?? a.scientificName} sci={a.scientificName}
+                    value={t(regionOf(a.cellLat, a.cellLon))} tone="neutral" />
+                ))}
+              </Section>
+              )}
+              <Section title={t("Moving")} hint={t("Shifting north or south")}>
+                {insights?.drift.map((d) => (
+                  <Row key={d.scientificName + d.region} thumb={thumbs[d.scientificName]} onClick={() => pick(d.scientificName)} name={d.vernacularName ?? d.scientificName} sci={`${d.scientificName} · ${d.region}${d.driftLow != null && d.driftHigh != null ? ` · ${Math.abs(d.driftLow) < Math.abs(d.driftHigh) ? Math.abs(d.driftLow).toFixed(0) : Math.abs(d.driftHigh).toFixed(0)} to ${Math.max(Math.abs(d.driftLow), Math.abs(d.driftHigh)).toFixed(0)}°` : ""}`}
+                    value={`${Math.abs(d.driftDeg).toFixed(1)}° ${d.driftDeg > 0 ? "N" : "S"}`} tone={d.driftDeg > 0 ? "warm" : "cool"} />
+                ))}
+              </Section>
+              <Section title={t("Surging and fading")} hint={t("Busier or quieter than last week")} badge={insights?.area ? t("Worldwide") : null}>
+                {insights?.movers.map((m) => (
+                  <Row key={m.scientificName} thumb={thumbs[m.scientificName]} onClick={() => pick(m.scientificName)} name={m.vernacularName ?? m.scientificName} sci={`${m.scientificName}${m.ratioLow != null && m.ratioHigh != null ? ` · ${m.ratio >= 1 ? "×" + m.ratioLow.toFixed(1) + " to ×" + m.ratioHigh.toFixed(1) : "÷" + (1 / m.ratioHigh).toFixed(1) + " to ÷" + (1 / m.ratioLow).toFixed(1)}` : ""}`}
+                    value={`${m.ratio >= 1 ? "×" + m.ratio.toFixed(1) : "÷" + (1 / m.ratio).toFixed(1)}`} tone={m.ratio >= 1 ? "warm" : "cool"} />
                 ))}
               </Section>
               <Section title={t("Most recorded")} hint={t("Latest four weeks with data")} badge={scopeLabel(insights?.area?.scope.common)}>
@@ -1135,31 +1164,10 @@ export default function WorldMap() {
                   <Row key={s.scientificName} thumb={thumbs[s.scientificName]} onClick={() => pick(s.scientificName)} name={s.vernacularName ?? s.scientificName} sci={s.scientificName} value={fmtNum(s.n, lang)} tone="neutral" />
                 ))}
               </Section>
-              <Section title={t("Moving")} hint={t("Range centre shift, 95% interval")}>
-                {insights?.drift.map((d) => (
-                  <Row key={d.scientificName + d.region} thumb={thumbs[d.scientificName]} onClick={() => pick(d.scientificName)} name={d.vernacularName ?? d.scientificName} sci={`${d.scientificName} · ${d.region}${d.driftLow != null && d.driftHigh != null ? ` · ${Math.abs(d.driftLow) < Math.abs(d.driftHigh) ? Math.abs(d.driftLow).toFixed(0) : Math.abs(d.driftHigh).toFixed(0)} to ${Math.max(Math.abs(d.driftLow), Math.abs(d.driftHigh)).toFixed(0)}°` : ""}`}
-                    value={`${Math.abs(d.driftDeg).toFixed(1)}° ${d.driftDeg > 0 ? "N" : "S"}`} tone={d.driftDeg > 0 ? "warm" : "cool"} />
-                ))}
-              </Section>
-              <Section title={t("Surging and fading")} hint={t("Yesterday vs 7 days, 95% interval")} badge={insights?.area ? t("Worldwide") : null}>
-                {insights?.movers.map((m) => (
-                  <Row key={m.scientificName} thumb={thumbs[m.scientificName]} onClick={() => pick(m.scientificName)} name={m.vernacularName ?? m.scientificName} sci={`${m.scientificName}${m.ratioLow != null && m.ratioHigh != null ? ` · ${m.ratio >= 1 ? "×" + m.ratioLow.toFixed(1) + " to ×" + m.ratioHigh.toFixed(1) : "÷" + (1 / m.ratioHigh).toFixed(1) + " to ÷" + (1 / m.ratioLow).toFixed(1)}` : ""}`}
-                    value={`${m.ratio >= 1 ? "×" + m.ratio.toFixed(1) : "÷" + (1 / m.ratio).toFixed(1)}`} tone={m.ratio >= 1 ? "warm" : "cool"} />
-                ))}
-              </Section>
-              {!!insights?.arrivals.length && (
-              <Section title={t("New arrivals")} hint={t("First in 12 days, in a watched 5° cell")} badge={scopeLabel(insights?.area?.scope.arrivals)}>
-                {insights?.arrivals.map((a) => (
-                  <Row key={`${a.scientificName}${a.cellLat}${a.cellLon}`} thumb={thumbs[a.scientificName]} onClick={() => pick(a.scientificName)} name={a.vernacularName ?? a.scientificName} sci={a.scientificName}
-                    value={t(regionOf(a.cellLat, a.cellLon))} tone="neutral" />
-                ))}
-              </Section>
+                </>
+              ) : (
+                <button type="button" onClick={() => setMoreTrends(true)} className={`self-start rounded-full border border-slate-600 px-3 py-1 text-xs text-slate-300 hover:border-slate-400 hover:text-white ${FOCUS}`}>{t("More trends")}</button>
               )}
-              <Section title={t("Most detected")} hint={group === "bat" ? t("Last 24h") : t("Last {h}h", { h: hours })} badge={scopeLabel(speciesList.scope)}>
-                {speciesList.list.slice(0, 15).map((s) => (
-                  <Row key={s.scientificName} thumb={thumbs[s.scientificName]} onClick={() => pick(s.scientificName)} name={s.vernacularName ?? s.scientificName} sci={s.scientificName} value={fmtNum(s.count, lang)} tone="neutral" />
-                ))}
-              </Section>
             </div>
           )}
           <div className="px-4 py-2 border-t border-white/5 text-xs text-slate-300 flex flex-wrap gap-x-3 gap-y-1 max-md:hidden">
@@ -1180,13 +1188,13 @@ export default function WorldMap() {
         <button onClick={() => setLegendOpen(false)} aria-expanded={true} className={`float-right -mr-1 ml-2 text-slate-400 hover:text-white rounded ${FOCUS}`}>{t("Hide")}</button>
         {activeFrame ? (
           <>
-            <div className="text-slate-400 mb-1">{t("Share of all detections that week")}</div>
+            <div className="text-slate-400 mb-1">{t("How common that week")}</div>
             <div className="flex items-center gap-2"><span>{t("low")}</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, rgba(34,211,238,0.08), rgba(34,211,238,0.75))" }} /><span>{t("high")}</span></div>
             <div className="flex items-center gap-2 mt-1"><span className="inline-block w-5 h-0.5 bg-slate-100" /><span>{t("range centre, last 10 weeks")}</span></div>
           </>
         ) : species ? (
           <>
-            <div className="text-slate-400 mb-1">{t("Change in share, 3 days vs week before")}</div>
+            <div className="text-slate-400 mb-1">{t("Busier or quieter than last week")}</div>
             <div className="flex items-center gap-2"><span>{t("fading")}</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #3b82f6, #64748b, #ea580c)" }} /><span>{t("surging")}</span></div>
           </>
         ) : (

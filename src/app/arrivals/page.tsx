@@ -50,9 +50,13 @@ export default async function ArrivalsIndex() {
           </li>
         </ul>
         <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="Migratory birds by country" /></h2>
-        <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm">
-          {COUNTRIES.filter((c) => hasPage(c) || OWN_PAGE.has(c.slug)).map((c) => <Link key={c.slug} href={`/arrivals/${c.slug}`} prefetch={false} className="text-cyan-400 hover:underline">{c.name}</Link>)}
-        </p>
+        {/* Folded so the page is not a wall of names; the links stay in the HTML for search engines. */}
+        <details className="mt-2">
+          <summary className="cursor-pointer text-cyan-400 hover:underline"><TR k="Show all countries" /></summary>
+          <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm">
+            {COUNTRIES.filter((c) => hasPage(c) || OWN_PAGE.has(c.slug)).map((c) => <Link key={c.slug} href={`/arrivals/${c.slug}`} prefetch={false} className="text-cyan-400 hover:underline">{c.name}</Link>)}
+          </p>
+        </details>
         <p className="mt-8 text-sm text-slate-400">
           <Link href="/species" className="text-cyan-400 hover:underline"><TR k="All species" /></Link> ·{" "}
           <Link href="/methods" className="text-cyan-400 hover:underline"><TR k="How arrival dates are measured" /></Link>

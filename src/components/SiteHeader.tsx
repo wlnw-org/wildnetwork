@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useT } from "@/lib/i18n";
 import { NAV } from "@/lib/nav";
+
+const HEADER_NAV = NAV.map((g) => ({ ...g, links: g.links.filter((l) => !l.footer) }));
 import { PageLang } from "@/components/T";
 
 const isActive = (path: string, href: string) => path === href || (href !== "/report" && path.startsWith(href + "/"));
@@ -40,7 +42,7 @@ export function SiteHeader() {
           <span className="whitespace-nowrap">Wildlife Network</span>
         </Link>
         <nav aria-label={t("Site sections")} className="ml-4 hidden items-center gap-0.5 lg:flex">
-          {NAV.map((g) => {
+          {HEADER_NAV.map((g) => {
             const here = g.links.some((l) => isActive(path, l.href));
             return (
               <div key={g.label} className="relative">
@@ -79,7 +81,7 @@ export function SiteHeader() {
         <nav id="site-menu" aria-label={t("Site sections")} className="max-h-[calc(100vh-3rem)] overflow-y-auto border-t border-white/10 px-4 pb-4 lg:hidden">
           {link("/", "Live map", "mt-2 block rounded-md px-2 py-2 font-medium")}
           {link("/help", "Help and how-to guides", "block rounded-md px-2 py-2 font-medium")}
-          {NAV.map((g) => (
+          {HEADER_NAV.map((g) => (
             <div key={g.label} className="mt-3">
               <p className="px-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{t(g.label)}</p>
               {g.links.map((l) => link(l.href, l.label, "block rounded-md px-2 py-2"))}

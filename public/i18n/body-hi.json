@@ -178,12 +178,10 @@
  "Species": "प्रजातियाँ",
  "Days": "दिन",
  "Anonymous station {n}": "गुमनाम स्टेशन {n}",
- "No BirdWeather station has opted in yet. [Be the first](/stations/join).": "अभी तक कोई BirdWeather स्टेशन नहीं जुड़ा। [पहले बनें](/stations/join)।",
  "Stations sending directly": "सीधे भेजने वाले स्टेशन",
  "These owners run our free station program (wdx-agent) on a BirdNET-Pi, BirdNET-Go, bat detector or camera trap. Their detections are published under the licence they choose, so they can go into the [open data releases](/data). Coordinates are rounded to about 1 km on the device.": "ये मालिक BirdNET-Pi, BirdNET-Go, चमगादड़ डिटेक्टर या कैमरा ट्रैप पर हमारा मुफ़्त स्टेशन प्रोग्राम (wdx-agent) चलाते हैं। उनकी पहचानें उनके चुने लाइसेंस के तहत प्रकाशित होती हैं, इसलिए वे [खुले डेटा रिलीज़](/data) में जा सकती हैं। निर्देशांक उपकरण पर लगभग 1 किमी तक गोल किए जाते हैं।",
  "Kind of station": "स्टेशन का प्रकार",
  "Detections": "पहचानें",
- "No station sends directly yet. Yours could be the first.": "अभी तक कोई स्टेशन सीधे नहीं भेजता। आपका पहला हो सकता है।",
  "Device health": "उपकरण की सेहत",
  "Wildlife Network Bases and other registered devices report their battery, storage and backlog. Shown here: devices that reported in the last 30 days. Health reports carry no detections and no location.": "Wildlife Network Base और दूसरे रजिस्टर्ड उपकरण अपनी बैटरी, स्टोरेज और बाकी काम की रिपोर्ट करते हैं। यहाँ दिखाए गए: पिछले 30 दिनों में रिपोर्ट करने वाले उपकरण। सेहत की रिपोर्ट में कोई पहचान और कोई जगह नहीं होती।",
  "Device": "उपकरण",
@@ -192,7 +190,6 @@
  "Battery": "बैटरी",
  "Storage free": "खाली स्टोरेज",
  "Waiting to send": "भेजने के इंतज़ार में",
- "No device has reported its health yet.": "अभी तक किसी उपकरण ने अपनी सेहत की रिपोर्ट नहीं दी।",
  "Add your station": "अपना स्टेशन जोड़ें",
  "A free desktop app for the recordings sitting on your drives. Point it at a folder or an SD card copy: it finds the species on your own computer, helps you check them in minutes, and exports them for GBIF or publishes them here. Nothing is uploaded unless you choose to publish.": "आपकी ड्राइव में पड़ी रिकॉर्डिंग के लिए एक मुफ़्त डेस्कटॉप ऐप। इसे कोई फ़ोल्डर या SD कार्ड की कॉपी दिखाएँ: यह आपके अपने कंप्यूटर पर प्रजातियाँ ढूँढता है, मिनटों में उन्हें जाँचने में मदद करता है, और उन्हें GBIF के लिए निर्यात करता है या यहाँ प्रकाशित करता है। जब तक आप प्रकाशित करना न चुनें, कुछ अपलोड नहीं होता।",
  "What it does": "यह क्या करता है",
@@ -790,5 +787,6 @@
  "Each dot is a recent detection: light blue was heard by a sound recorder, orange was seen by people, purple comes from an ocean survey. Click one to see the species and its source.": "हर बिंदु एक हाल की पहचान है: हल्का नीला, रिकॉर्डर से सुना गया; नारंगी, लोगों ने देखा; बैंगनी, समुद्री सर्वेक्षण से। प्रजाति और स्रोत देखने के लिए किसी बिंदु पर क्लिक करें।",
  "Open the Legend to show one extra thing on the map: Wind, Birds migrating at night or Sea life. Wind shows where the wind blows about 1.5 km up, where most migrating birds fly, with the temperature on the ground, updated every 3 hours.": "नक्शे पर एक और चीज़ दिखाने के लिए लेजेंड खोलें: हवा, रात में प्रवास करते पक्षी या समुद्री जीवन। हवा दिखाती है कि लगभग 1.5 किमी ऊँचाई पर, जहाँ ज़्यादातर प्रवासी पक्षी उड़ते हैं, हवा किधर बह रही है, साथ में ज़मीन का तापमान, हर 3 घंटे में अपडेट।",
  "Birds migrating at night shows how many birds were in the air above each weather radar in Europe and the US, and which way they flew. It runs about two days behind.": "रात में प्रवास करते पक्षी दिखाता है कि यूरोप और अमेरिका के हर मौसम रडार के ऊपर कितने पक्षी हवा में थे और वे किधर उड़े। लगभग दो दिन पीछे चलता है।",
- "A white ring marks an unusual night, with at least 3 times the radar's usual number of birds. Sea life adds whales, dolphins and other sea animals from ocean surveys and underwater microphones.": "सफ़ेद घेरा असामान्य रात दिखाता है, जब रडार पर सामान्य से कम से कम 3 गुना पक्षी थे। समुद्री जीवन समुद्री सर्वेक्षणों और पानी के नीचे के माइक्रोफ़ोन से व्हेल, डॉल्फ़िन और दूसरे समुद्री जीव जोड़ता है।"
+ "A white ring marks an unusual night, with at least 3 times the radar's usual number of birds. Sea life adds whales, dolphins and other sea animals from ocean surveys and underwater microphones.": "सफ़ेद घेरा असामान्य रात दिखाता है, जब रडार पर सामान्य से कम से कम 3 गुना पक्षी थे। समुद्री जीवन समुद्री सर्वेक्षणों और पानी के नीचे के माइक्रोफ़ोन से व्हेल, डॉल्फ़िन और दूसरे समुद्री जीव जोड़ता है।",
+ "Show all countries": "सभी देश दिखाएँ"
 }

@@ -236,7 +236,7 @@ export default function Methods() {
           water (open sea) are left out. WorldCover is a single 2021 map, so this shows where things are, not how land use changes. Context only:
           it feeds no arrival date or trend. <a href="/api/v1/landcover?lat=52&lon=0" className="text-cyan-400 hover:underline">/api/v1/landcover?lat=&amp;lon=</a> returns one square,
           /api/v1/landcover/grid all of them.
-         <a href="/?layer=landcover" className="text-cyan-400 hover:underline">Open this layer on the map</a>.
+         <Link href="/?layer=landcover" className="text-cyan-400 hover:underline">Open this layer on the map</Link>.
         </p>
         <p className="mt-3" id="climate">
           <b>Climate context (map layer and API).</b> For each 5 degree square we give the temperature and rainfall of every month since 1991,
@@ -250,7 +250,7 @@ export default function Methods() {
           at the place we compared (central France), from early 2025 its rainfall fell to about 40% of ERA5 and its temperature ran 0.5 to 1.2 °C
           warmer than ERA5, after agreeing in 2024, which would show a change that is not there. Limits: a square is about 550 km across, so mountains and coasts inside it are averaged away; rain is noisier than
           temperature, so treat single months with care. This is context only: no arrival date, trend or other measure uses it.
-         <a href="/?layer=climate" className="text-cyan-400 hover:underline">Open this layer on the map</a>.
+         <Link href="/?layer=climate" className="text-cyan-400 hover:underline">Open this layer on the map</Link>.
         </p>
         <p className="mt-3" id="possibly-arriving">
           <b>Possibly arriving.</b> Arrival dates need two weeks of presence, so the newest confirmed date is always about 2 to 3 weeks old. The Possibly arriving list is earlier and less sure.
@@ -352,7 +352,7 @@ export default function Methods() {
           GBIF late, by a week or two at first and for months after that): <b>recordings</b> at {MIN_EFFORT_WEEK.toLocaleString("en-GB")} or more bird detections a week, <b>sightings</b> at{" "}
           {OBSERVED.MIN_EFFORT_WEEK} or more bird records a week, both, or too thin to use. Check it before drawing conclusions about a region. Available as{" "}
           <code className="text-slate-200">/api/v1/coverage</code>.
-         <a href="/?layer=coverage" className="text-cyan-400 hover:underline">Open this layer on the map</a>.
+         <Link href="/?layer=coverage" className="text-cyan-400 hover:underline">Open this layer on the map</Link>.
         </p>
 
         <H3><span id="reports" className="scroll-mt-6">Site reports</span></H3>

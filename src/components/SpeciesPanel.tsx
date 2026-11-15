@@ -160,11 +160,11 @@ export default function SpeciesPanel({ name, area = null, near = null, alerts = 
       )}
       <dl className="grid grid-cols-3 gap-2 text-xs">
         <Stat label={t("Detections, 30d")} value={total.toLocaleString(lang)} />
-        <Stat label={t("Range centre drift")} value={drift == null ? "n/a" : `${Math.abs(drift).toFixed(1)}° ${drift > 0 ? t("north") : t("south")}`} />
-        <Stat label={t("Frequency vs max temp")} value={corr == null ? "n/a" : `r = ${corr.toFixed(2)}`} />
+        <Stat label={t("Moving north or south")} value={drift == null ? "n/a" : `${Math.abs(drift).toFixed(1)}° ${drift > 0 ? t("north") : t("south")}`} />
+        <Stat label={t("Busier on warmer days?")} value={corr == null ? "n/a" : `r = ${corr.toFixed(2)}`} />
       </dl>
       <Line title={`Relative frequency (per 1,000${CLASS_NOUN[data.group ?? "avian"] ? " " + CLASS_NOUN[data.group ?? "avian"] : ""})`} values={days.map((d) => d.index)} labels={labels} format={(v) => (v >= 10 ? v.toFixed(0) : v >= 1 ? v.toFixed(1) : v.toFixed(2))} color="#22d3ee" />
-      <Line title={t("Range centre latitude")} values={days.map((d) => d.lat)} low={days.map((d) => d.latLow ?? null)} high={days.map((d) => d.latHigh ?? null)} labels={labels} format={(v) => `${v.toFixed(1)}°`} color="#a78bfa" />
+      <Line title={t("Middle of its range, north to south")} values={days.map((d) => d.lat)} low={days.map((d) => d.latLow ?? null)} high={days.map((d) => d.latHigh ?? null)} labels={labels} format={(v) => `${v.toFixed(1)}°`} color="#a78bfa" />
       <Line title={t("Max temperature at range centre (°C)")} values={days.map((d) => d.weather?.tmax ?? null)} labels={labels} format={(v) => `${v.toFixed(0)}°`} color="#fb923c" />
       <Line title={t("Max wind at range centre (km/h)")} values={days.map((d) => d.weather?.wind ?? null)} labels={labels} format={(v) => `${v.toFixed(0)}`} color="#94a3b8" />
       <ArrivalTable rows={arr} name={name} />

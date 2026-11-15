@@ -98,7 +98,6 @@ export default async function PlacePage({ params }: Props) {
         </div>
         <div className="mt-4 flex flex-wrap gap-2 text-sm">
           <Link href={`/?lat=${p.lat.toFixed(2)}&lon=${p.lon.toFixed(2)}`} className="rounded-md bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400"><T k="Open on the live map" /></Link>
-          <Link href="/studies/new" className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Track this area (for researchers)" /></Link>
           <Link href={`/report?lat=${p.lat.toFixed(4)}&lon=${p.lon.toFixed(4)}`} className="rounded-md border border-white/15 px-3 py-1.5 hover:bg-white/5"><T k="Site report: compare two periods" /></Link>
         </div>
 
@@ -115,28 +114,36 @@ export default async function PlacePage({ params }: Props) {
 
         {city && <CityBirds slug={p.slug} place={p.name} names={names} linked={linked} />}
 
-        <H2><T k="Arrived in the last four weeks" /></H2>
-        <List items={r.recent} empty={<T k="None arrived here in these weeks last year, as far as the records show." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-400"><TDate k="around {d}" iso={a.arrival} /></span></>} />
-
-        <H2><T k="Expected in the next six weeks" /></H2>
-        <List items={r.coming} empty={<T k="No arrivals expected here in the next six weeks, going by last year." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-400"><TDate k="around {d}" iso={a.arrival} />{a.support != null && a.support < 0.5 ? <> <T k="(weak evidence)" /></> : null}</span></>} />
-        <p className="mt-2 text-xs text-slate-400"><T k="Dates are last year's first regular records after at least six weeks away, with each species' own uncertainty on its page. Each species page can email you when it turns up." /></p>
+        {r.recent.length > 0 && (
+          <>
+          <H2><T k="Arrived in the last four weeks" /></H2>
+          <List items={r.recent} empty={<T k="None arrived here in these weeks last year, as far as the records show." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-400"><TDate k="around {d}" iso={a.arrival} /></span></>} />
+          </>
+        )}
+        {r.coming.length > 0 && (
+          <>
+          <H2><T k="Expected in the next six weeks" /></H2>
+          <List items={r.coming} empty={<T k="No arrivals expected here in the next six weeks, going by last year." />} render={(a) => <><Species name={a.scientific_name} vern={a.vernacular_name} /> <span className="text-slate-400"><TDate k="around {d}" iso={a.arrival} />{a.support != null && a.support < 0.5 ? <> <T k="(weak evidence)" /></> : null}</span></>} />
+          </>
+        )}
+        {(r.recent.length > 0 || r.coming.length > 0) && (
+          <p className="mt-2 text-xs text-slate-400"><T k="Dates are last year's first regular records after at least six weeks away, with each species' own uncertainty on its page. Each species page can email you when it turns up." /></p>
+        )}
 
         <H2><T k="Most recorded, last eight weeks" /></H2>
         {r.top.length === 0 ? <p className="text-slate-400"><T k="No records here in the last eight weeks." /></p> : (
           <table className="mt-2 w-full text-sm">
-            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><T k="Species" /></th><th className="font-medium text-right"><T k="Records" /></th><th className="font-medium text-right"><T k="In every 1,000 records" /></th></tr></thead>
+            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><T k="Species" /></th><th className="font-medium text-right"><T k="Records" /></th></tr></thead>
             <tbody>{r.top.map((x) => (
               <tr key={x.scientific_name} className="border-b border-white/5">
                 <td className="py-1.5"><Species name={x.scientific_name} vern={x.vernacular_name} /> <span className="text-slate-400 italic">{x.scientific_name}</span></td>
-                <td className="text-right tabular-nums">{x.n.toLocaleString("en-GB")}</td><td className="text-right tabular-nums">{x.share.toFixed(1)}</td>
+                <td className="text-right tabular-nums">{x.n.toLocaleString("en-GB")}</td>
               </tr>))}</tbody>
           </table>
         )}
 
         <H2><T k="How well this area is covered" /></H2>
         <p>
-          <T k="Watched in {w} of the last 12 weeks (enough records to count; unwatched weeks say nothing about absence)." v={{ w: r.watched }} />{" "}
           {r.stations.length > 0
             ? <T k="Active stations here in the last 30 days: {list}." v={{ list: r.stations.map((s) => `${s.n} ${s.source_system === "birdweather" ? "BirdWeather" : s.source_system}`).join(", ") }} />
             : <T k="No active stations in this area: records come from observers." />}
