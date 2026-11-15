@@ -31,18 +31,21 @@ export default function Updates() {
           </section>
         )}
 
-        {UPDATES.map((u) => (
-          <article key={u.date} id={u.date} className="mt-10 scroll-mt-6">
-            <p className="text-sm text-slate-400">{fmt(u.date)}</p>
-            <h2 className="mt-1 text-xl font-semibold text-slate-100"><TR k={u.title} /></h2>
+        {/* Newest update open; older ones fold to their title, and researcher notes fold inside each. */}
+        {UPDATES.map((u, n) => (
+          <details key={u.date} id={u.date} open={n === 0} className="group mt-8 scroll-mt-6">
+            <summary className="cursor-pointer list-none">
+              <p className="text-sm text-slate-400">{fmt(u.date)}</p>
+              <h2 className="mt-1 text-xl font-semibold text-slate-100 group-open:text-slate-100 hover:text-cyan-300"><TR k={u.title} /></h2>
+            </summary>
             <Items items={u.items.filter((i) => !i.forResearchers)} />
             {u.items.some((i) => i.forResearchers) && (
-              <>
-                <h3 className="mt-4 text-sm font-semibold uppercase tracking-wide text-slate-400"><TR k="For researchers" /></h3>
+              <details className="mt-3">
+                <summary className="cursor-pointer text-sm font-semibold uppercase tracking-wide text-slate-400"><TR k="For researchers" /></summary>
                 <Items items={u.items.filter((i) => i.forResearchers)} />
-              </>
+              </details>
             )}
-          </article>
+          </details>
         ))}
 
         <p className="mt-10 text-sm text-slate-400">
