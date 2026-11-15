@@ -1218,7 +1218,6 @@ export default function WorldMap() {
             </label>
             {showWeather && (
               <div className="mt-1 space-y-0.5 text-slate-400">
-                <div>{t("Arrows show where the wind blows about 1.5 km up, where most migrating birds fly. Longer arrows are stronger winds.")}</div>
                 <div className="flex items-center gap-2"><span>-20°</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #60a5fa, #e2e8f0, #fbbf24, #ef4444)" }} /><span>35° C</span></div>
                 {weather && <div>{t("Updated {time}", { time: new Date(weather.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) })} · Open-Meteo</div>}
               </div>
@@ -1229,7 +1228,6 @@ export default function WorldMap() {
             </label>
             {showLandcover && (
               <div className="mt-1 space-y-0.5 text-slate-400">
-                <div>{t("Each square takes the colour of its main cover. Tap a square for the full mix.")}</div>
                 <div className="grid grid-cols-2 gap-x-2">{LANDCOVER.map((c) => <Legend key={c.label} color={c.color} label={t(c.label)} />)}</div>
                 <div>ESA WorldCover 2021</div>
               </div>
@@ -1240,7 +1238,6 @@ export default function WorldMap() {
             </label>
             {showClimate && (
               <div className="mt-1 space-y-0.5 text-slate-400">
-                <div>{t("Each square shows the past 12 months against the 1991 to 2020 average. Tap a square for rain too.")}</div>
                 <div className="flex items-center gap-2"><span>-2°</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #2563eb, #93c5fd, #e2e8f0, #fca5a5, #dc2626)" }} /><span>+2° C</span></div>
                 {climate && <div>{climate.from} to {climate.to} · NASA GISTEMP, NOAA GPCP</div>}
               </div>
@@ -1251,25 +1248,19 @@ export default function WorldMap() {
             </label>
             {showRadar && (
               <div className="mt-1 space-y-0.5 text-slate-400">
-                <div>{t("Each circle is a weather radar. Bigger means more birds in the air that night, arrows show where they flew.")}</div>
                 <div className="flex items-center gap-2"><span>{t("quieter")}</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #3b82f6, #94a3b8, #f97316)" }} /><span>{t("busier than usual")}</span></div>
                 {radar?.night && <div>{t("Night of {date}", { date: new Date(radar.night + "T12:00:00Z").toLocaleDateString([], { day: "numeric", month: "short" }) })} · Aloft</div>}
                 {radar && !radar.night && <div>{t("No radar data yet.")}</div>}
                 <div className="flex items-center gap-2"><span className="inline-block h-3 w-3 rounded-full border-2 border-white" /><span>{t("Unusual night: at least 3 times its usual")}</span></div>
                 {unusual && unusual.length > 0 && (
-                  <div className="pt-0.5">
-                    <div>{t("Unusual nights lately")}</div>
-                    <div className="mt-0.5 flex flex-wrap gap-1">
-                      {unusual.slice(0, 8).map((u) => (
-                        <button key={u.night} type="button" onClick={() => { setRadarPick(u.night); track("radar_night", { night: u.night }); }}
-                          title={t("{n} radars", { n: u.radars.length })}
-                          className={`rounded border px-1.5 py-0.5 ${radar?.night === u.night ? "border-white text-white" : "border-slate-600 hover:border-slate-400"}`}>
-                          {new Date(u.night + "T12:00:00Z").toLocaleDateString([], { day: "numeric", month: "short" })} · {u.radars.length}
-                        </button>
-                      ))}
-                      {radarPick && <button type="button" onClick={() => { setRadarPick(null); setRadar(null); }} className="rounded border border-slate-600 px-1.5 py-0.5 hover:border-slate-400">{t("Latest")}</button>}
-                    </div>
-                  </div>
+                  <select value={radarPick ?? ""} aria-label={t("Unusual nights lately")}
+                    onChange={(e) => { const v = e.target.value || null; setRadarPick(v); if (v) track("radar_night", { night: v }); else setRadar(null); }}
+                    className="rounded border border-slate-600 bg-black/60 px-1 py-0.5 text-slate-300">
+                    <option value="">{t("Latest")}</option>
+                    {unusual.slice(0, 10).map((u) => (
+                      <option key={u.night} value={u.night}>{new Date(u.night + "T12:00:00Z").toLocaleDateString([], { day: "numeric", month: "short" })} · {t("{n} radars", { n: u.radars.length })}</option>
+                    ))}
+                  </select>
                 )}
               </div>
             )}
