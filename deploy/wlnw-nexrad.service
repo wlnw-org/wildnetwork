@@ -1,0 +1,12 @@
+[Unit]
+Description=Night migration over the US from NEXRAD weather radars (vol2bird, needs R + vol2birdR)
+
+[Service]
+Type=oneshot
+User=wlnw
+EnvironmentFile=/etc/wlnw/env
+WorkingDirectory=/srv/wlnw/current
+Nice=19
+MemoryMax=900M
+TimeoutStartSec=6h
+ExecStart=/srv/wlnw/current/node_modules/.bin/tsx scripts/nexrad.mts 3 1

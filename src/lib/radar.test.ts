@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { nightOf, parseVpts, solarElevation } from "./radar";
+import { nexradTargets, nightOf, parseVpts, solarElevation } from "./radar";
 
 const HEAD = "radar,datetime,height,u,v,w,ff,dd,sd_vvp,gap,eta,dens,dbz,dbz_all,n,n_dbz,n_all,n_dbz_all,rcs,sd_vvp_threshold,vcp,radar_latitude,radar_longitude,radar_height,radar_wavelength,source_file";
 const row = (dt: string, h: number, o: { u?: number; v?: number; ff?: number; sd?: number; gap?: boolean; dens?: number } = {}) =>
@@ -28,4 +28,10 @@ test("integrates density over height; gaps count for density only; skips the low
   assert.ok(Math.abs(p.vid - 4) < 1e-9); // 2 bins x 10 birds/km3 x 0.2 km
   assert.ok(Math.abs(p.mtr - 2 * 5 * 3.6) < 1e-9); // only the bin with velocity
   assert.ok(Math.abs(p.v - 10 * -5) < 1e-9);
+});
+
+test("NEXRAD scan times are local solar night hours at the radar", () => {
+  const t = nexradTargets("2026-11-13", -75).map((x) => new Date(x).toISOString());
+  assert.deepEqual(t, ["2026-11-14T03:00:00.000Z", "2026-11-14T05:00:00.000Z", "2026-11-14T07:00:00.000Z", "2026-11-14T09:00:00.000Z"]);
+  for (const x of t) assert.equal(nightOf(new Date(x), -75), "2026-11-13");
 });

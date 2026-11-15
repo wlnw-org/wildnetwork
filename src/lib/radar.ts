@@ -15,6 +15,21 @@ export const RADAR = { BIN_KM: 0.2, MIN_HEIGHT_M: 200, SUN_DARK: -6, MAX_VID: 30
   // birds/km2 read interference (Romania, autumn 2026), not birds: drawn grey and never called unusual.
   UNUSUAL_RATIO: 3, UNUSUAL_MIN_VID: 20, MIN_NORMAL: 7, CLUTTER_MEDIAN: 150 };
 
+/**
+ * US NEXRAD (scripts/nexrad.mts): a few Level II scans per radar and night through vol2bird instead of Aloft's 5-minute
+ * profiles. Scans at local solar 22:00, 00:00, 02:00 and 04:00 (the sun filter in parseVpts drops any still in twilight);
+ * each counts as SCAN_WEIGHT five-minute profiles (2 hours) so the night means and RADAR.MIN_PROFILES apply unchanged.
+ * Contiguous US radars only (K codes). LAG_DAYS 2 keeps the newest night in step with Aloft's.
+ */
+export const NEXRAD = { BUCKET: "https://unidata-nexrad-level2.s3.amazonaws.com", HOURS: [22, 24, 26, 28], SCAN_WEIGHT: 24, MIN_SCANS: 2,
+  MAX_GAP_MS: 20 * 60_000, SITE: /^K[A-Z]{3}$/, DEFAULT_LON: -95, LAG_DAYS: 2 };
+
+/** UTC times (ms) of the scans wanted for a night (local evening date) at a radar's longitude. */
+export function nexradTargets(night: string, lon: number): number[] {
+  const base = Date.parse(night + "T00:00:00Z");
+  return NEXRAD.HOURS.map((h) => base + (h - lon / 15) * 3_600_000);
+}
+
 export function solarElevation(t: Date, lat: number, lon: number): number {
   const start = Date.UTC(t.getUTCFullYear(), 0, 0);
   const day = (t.getTime() - start) / 86_400_000;

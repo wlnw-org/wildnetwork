@@ -1,0 +1,9 @@
+[Unit]
+Description=NEXRAD import daily at 06:00 UTC (about 2.5 h on one core)
+
+[Timer]
+OnCalendar=*-*-* 06:00:00 UTC
+Persistent=true
+
+[Install]
+WantedBy=timers.target
