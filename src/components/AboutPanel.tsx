@@ -52,6 +52,7 @@ export default function AboutPanel() {
           <li><Link href="https://open-meteo.com">Open-Meteo</Link>: ERA5 reanalysis weather and the map&apos;s wind layer (CC BY 4.0).</li>
           <li><Link href="https://datarepository.movebank.org">Movebank Data Repository</Link>: GPS tracks of tagged animals from published studies (CC0 or CC BY); each study is credited on its track.</li>
           <li><Link href="https://data.giss.nasa.gov/gistemp/">NASA GISTEMP v4</Link> and <Link href="https://psl.noaa.gov/data/gridded/data.gpcp.html">NOAA GPCP v2.3</Link>: temperature and rainfall for the climate layer.</li>
+          <li><Link href="https://esa-worldcover.org">ESA WorldCover 2021</Link> (CC BY 4.0, Zanaga et al. 2022): the land cover layer.</li>
           <li><Link href="https://aloftdata.eu">Aloft</Link>: bird profiles from European weather radars (ENRAM, BALTRAD, OPERA; CC BY 4.0).</li>
           <li><Link href="https://www.wikipedia.org">Wikipedia</Link> and Wikimedia Commons contributors: species photos and descriptions (CC BY-SA).</li>
           <li><Link href="https://birdnet.cornell.edu/taxonomy">BirdNET+ taxonomy</Link> (Cornell Lab of Ornithology and TU Chemnitz): species names in other languages, and bird photos from <Link href="https://www.avicommons.org">Avicommons</Link> credited to their photographers under their Creative Commons licences.</li>

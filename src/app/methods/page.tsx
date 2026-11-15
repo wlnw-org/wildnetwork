@@ -218,6 +218,16 @@ export default function Methods() {
           Scandinavia to the south-west on 28 to 30 October. The rule is a fixed threshold, not a test: a quiet radar with a small normal crosses it
           more easily, and with no earlier seasons kept we cannot yet say how unusual a night is for its time of year.
         </p>
+        <p className="mt-3" id="landcover">
+          <b>Land cover (map layer and API).</b> For each 1 degree square (about 110 km) we give the share of forest (with mangroves), grass and
+          shrub (with moss and lichen), cropland, towns and cities, bare ground with snow and ice, and water with wetland, from{" "}
+          <a href="https://esa-worldcover.org" className="text-cyan-400 hover:underline">ESA WorldCover 2021</a> v200 (10 m, CC BY 4.0,
+          Zanaga et al. 2022). We read the smallest overview built into each 3 degree WorldCover tile (about 600 m pixels) rather than the
+          full 10 m map, which is plenty for shares of a 110 km square but misses small woods, hedges and ponds. Squares that are 99% or more
+          water (open sea) are left out. WorldCover is a single 2021 map, so this shows where things are, not how land use changes. Context only:
+          it feeds no arrival date or trend. <a href="/api/v1/landcover?lat=52&lon=0" className="text-cyan-400 hover:underline">/api/v1/landcover?lat=&amp;lon=</a> returns one square,
+          /api/v1/landcover/grid all of them.
+        </p>
         <p className="mt-3" id="climate">
           <b>Climate context (map layer and API).</b> For each 5 degree square we give the temperature and rainfall of every month since 1991,
           each against the 1991 to 2020 average for the same calendar month. Temperature comes from{" "}
@@ -450,6 +460,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.28</b> (15 November 2026): <a href="#landcover" className="text-cyan-400 hover:underline">land cover</a> per 1 degree square from ESA WorldCover 2021, on the map and in the API. No measure changed.</li>
           <li><b>0.27</b> (15 November 2026): <a href="#unusual-nights" className="text-cyan-400 hover:underline">unusual migration nights</a> from the radar layer, and radars with persistent interference set aside. No other measure changed.</li>
           <li><b>0.26</b> (15 November 2026): <a href="#climate" className="text-cyan-400 hover:underline">climate context</a> per 5 degree square from NASA GISTEMP and NOAA GPCP, on the map and in the API. No measure changed.</li>
           <li><b>0.25</b> (15 November 2026): mammals from GBIF. Records of mammals other than bats (published under CC0 or CC BY, many from camera traps) now enter the weekly history and the live map, with effort corrected within the mammal class as before. Taxa at risk from poaching (rhinos, pangolins, elephants, great cats, great apes, musk deer, saiga) are shown on the live map only at 1 degree. Weeks already in the history gain mammals as the rolling GBIF refresh reaches them, newest first.</li>

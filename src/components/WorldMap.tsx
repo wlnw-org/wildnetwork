@@ -150,6 +150,9 @@ export default function WorldMap() {
   const [showRadar, setShowRadar] = useState(false);
   const [climate, setClimate] = useState<{ base: string; from: string; to: string; cells: { lat: number; lon: number; t: number | null; p: number | null }[] } | null>(null);
   const [showClimate, setShowClimate] = useState(false);
+  // Land cover per 1 degree square (ESA WorldCover 2021), one request when first shown.
+  const [landcover, setLandcover] = useState<{ classes: string[]; cells: number[][] } | null>(null);
+  const [showLandcover, setShowLandcover] = useState(false);
   // Tracked journeys of the selected species (GPS tags, Movebank Data Repository), shown by default when there are any.
   const [journeys, setJourneys] = useState<{ species: string; datasets: { id: string; title: string; doi: string | null; licence: string }[]; tracks: { dataset: string; animal: string; from: string; to: string; points: [number, number][] }[] } | null>(null);
   const [showJourneys, setShowJourneys] = useState(true);
@@ -191,7 +194,7 @@ export default function WorldMap() {
     if (cancelled || !containerRef.current || mapRef.current) return;
     setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
     const map = new MLMapClass({ container: containerRef.current, style: STYLE, center: [10, 25], zoom: 1.7, minZoom: 1.3, renderWorldCopies: false, attributionControl: false });
-    map.addControl(new AttributionControl({ compact: true, customAttribution: "BirdWeather · GBIF publishers (CC0/CC BY) · iNaturalist (CC0/CC-BY) · WDX producers · Weather: Open-Meteo (CC BY 4.0) · Radar: Aloft (CC BY 4.0) · Tracks: Movebank Data Repository · Climate: NASA GISTEMP, NOAA GPCP" }));
+    map.addControl(new AttributionControl({ compact: true, customAttribution: "BirdWeather · GBIF publishers (CC0/CC BY) · iNaturalist (CC0/CC-BY) · WDX producers · Weather: Open-Meteo (CC BY 4.0) · Radar: Aloft (CC BY 4.0) · Tracks: Movebank Data Repository · Climate: NASA GISTEMP, NOAA GPCP · Land cover: ESA WorldCover 2021 (CC BY 4.0)" }));
     map.addControl(new NavigationControl({ showCompass: false }), "top-right");
     // Start near the visitor (IP area, whole degrees, from /api/v1/near) unless a species link sets the view; zoom out for the world.
     const qs = new URLSearchParams(window.location.search);
@@ -248,6 +251,12 @@ export default function WorldMap() {
           "fill-opacity": ["match", ["get", "status"], "thin", 0.12, 0.35],
           "fill-outline-color": "rgba(255,255,255,0.15)",
         },
+      });
+      // Land cover: each 1 degree square in the colour of its main cover, stronger when that cover dominates.
+      map.addSource("landcover", { type: "geojson", data: EMPTY });
+      map.addLayer({
+        id: "landcover", type: "fill", source: "landcover",
+        paint: { "fill-color": ["get", "color"], "fill-opacity": ["interpolate", ["linear"], ["get", "top"], 30, 0.15, 100, 0.5] },
       });
       // Climate context: past 12 months per 5 degree square, warmer (red) or cooler (blue) than 1991-2020.
       map.addSource("climate", { type: "geojson", data: EMPTY });
@@ -390,6 +399,15 @@ export default function WorldMap() {
         const vs = Number(p.clutter) === 1 ? "<br/>This radar reads far more than birds can explain on most nights (likely interference), so it is not compared." : p.normal != null && Number(p.normal) > 0 ? `<br/>${ratio >= 1.5 ? `${ratio.toFixed(1)} times` : ratio <= 0.67 ? `${Math.round(ratio * 100)}% of` : "about the same as"} its usual night over the two weeks before${Number(p.unusual) === 1 ? ". <b>An unusual migration night here.</b>" : ""}` : "";
         const dir = p.dir != null ? `, heading ${compass(Number(p.dir))}` : "";
         new Popup({ closeButton: true, maxWidth: "280px" }).setLngLat(e.lngLat).setHTML(`<div style="font:13px system-ui;color:#e2e8f0"><b>Weather radar ${esc(String(p.radar))}</b> (${esc(String(p.country))})<br/>Night of ${esc(String(p.night))}: about ${Number(p.vid).toLocaleString("en-GB")} birds per km² in the air on average${dir}. At the busiest moment ${Number(p.mtrMax).toLocaleString("en-GB")} birds crossed each km per hour.${vs}<br/><span style="font-size:11px;color:#94a3b8">Aloft vertical profiles (ENRAM, BALTRAD, OPERA), CC BY 4.0</span></div>`).addTo(map);
+      });
+      map.on("click", "landcover", (e: MapLayerMouseEvent) => {
+        // Points, radar, tracks and the climate squares above keep their own popups.
+        if (map.queryRenderedFeatures(e.point).some((f) => f.layer.id !== "landcover" && ["climate", "radar", "journeys", "history-pts", "history-icons", "events", "events-icons", "deployments", "cells", "week-cells"].includes(f.layer.id))) return;
+        const p = e.features?.[0]?.properties as Record<string, string | number> | undefined;
+        if (!p) return;
+        const rows = LANDCOVER.map((c, i) => ({ c, v: Number(p[`s${i}`]) })).filter((r) => r.v >= 1).sort((a, b) => b.v - a.v)
+          .map((r) => `<div><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${r.c.color};margin-right:6px"></span>${r.c.label}: ${Math.round(r.v)}%</div>`).join("");
+        new Popup({ closeButton: true, maxWidth: "260px" }).setLngLat(e.lngLat).setHTML(`<div style="font:13px system-ui;color:#e2e8f0"><b>Land cover here</b>${rows}<span style="font-size:11px;color:#94a3b8">About 110 km square. ESA WorldCover 2021 (CC BY 4.0). <a href="/methods#landcover" style="color:#22d3ee">How</a></span></div>`).addTo(map);
       });
       map.on("click", "climate", (e: MapLayerMouseEvent) => {
         // Points, radar and tracks above the squares keep their own popups.
@@ -606,6 +624,21 @@ export default function WorldMap() {
       geometry: { type: "Polygon", coordinates: [[[c.lon, c.lat], [c.lon + 5, c.lat], [c.lon + 5, c.lat + 5], [c.lon, c.lat + 5], [c.lon, c.lat]]] },
     })) } : EMPTY);
   }, [showCoverage, species, coverage, ready]);
+  useEffect(() => {
+    if (!showLandcover || landcover) return;
+    fetch(`/api/v1/landcover/grid`).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.cells) setLandcover(d); }).catch(() => {});
+  }, [showLandcover, landcover]);
+  useEffect(() => {
+    const src = mapRef.current?.getSource("landcover") as GeoJSONSource | undefined;
+    if (!src) return;
+    src.setData(showLandcover && landcover ? { type: "FeatureCollection", features: landcover.cells.map(([lat, lon, ...v]) => {
+      const top = v.reduce((b, x, i) => (x > v[b] ? i : b), 0);
+      return {
+        type: "Feature" as const, properties: { color: LANDCOVER[top]?.color ?? "#64748b", top: v[top], ...Object.fromEntries(v.map((x, i) => [`s${i}`, x])) },
+        geometry: { type: "Polygon" as const, coordinates: [[[lon, lat], [lon + 1, lat], [lon + 1, lat + 1], [lon, lat + 1], [lon, lat]]] },
+      };
+    }) } : EMPTY);
+  }, [showLandcover, landcover, ready]);
   // Climate layer: one request when first shown (the server copy changes monthly).
   useEffect(() => {
     if (!showClimate || climate) return;
@@ -1190,6 +1223,17 @@ export default function WorldMap() {
                 {weather && <div>{t("Updated {time}", { time: new Date(weather.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) })} · Open-Meteo</div>}
               </div>
             )}
+            <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("Forest, farmland, towns and water in each square, from satellite maps.")}>
+              <input type="checkbox" checked={showLandcover} onChange={(e) => { setShowLandcover(e.target.checked); if (e.target.checked) track("show_landcover"); }} className="accent-[#16a34a]" />
+              <span>{t("Land cover")}</span>
+            </label>
+            {showLandcover && (
+              <div className="mt-1 space-y-0.5 text-slate-400">
+                <div>{t("Each square takes the colour of its main cover. Tap a square for the full mix.")}</div>
+                <div className="grid grid-cols-2 gap-x-2">{LANDCOVER.map((c) => <Legend key={c.label} color={c.color} label={t(c.label)} />)}</div>
+                <div>ESA WorldCover 2021</div>
+              </div>
+            )}
             <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("How the past 12 months compare with the 1991 to 2020 average, for temperature and rain.")}>
               <input type="checkbox" checked={showClimate} onChange={(e) => { setShowClimate(e.target.checked); if (e.target.checked) track("show_climate"); }} className="accent-[#f87171]" />
               <span>{t("Warmer or cooler than usual")}</span>
@@ -1382,6 +1426,11 @@ function windArrow(): ImageData {
   return g.getImageData(0, 0, n, n);
 }
 
+// Land cover classes in the order of scripts/landcover.py CLASSES.
+const LANDCOVER = [
+  { label: "Forest", color: "#16a34a" }, { label: "Grass and shrub", color: "#a3e635" }, { label: "Cropland", color: "#facc15" },
+  { label: "Towns and cities", color: "#ef4444" }, { label: "Bare, snow and ice", color: "#d6d3d1" }, { label: "Water and wetland", color: "#38bdf8" },
+];
 const RADAR_COUNTRY: Record<string, string> = { be: "Belgium", ch: "Switzerland", cz: "Czechia", de: "Germany", dk: "Denmark", ee: "Estonia", es: "Spain", fi: "Finland", fr: "France", gr: "Greece", hr: "Croatia", hu: "Hungary", ie: "Ireland", il: "Israel", is: "Iceland", lt: "Lithuania", lv: "Latvia", nl: "Netherlands", no: "Norway", pl: "Poland", pt: "Portugal", ro: "Romania", se: "Sweden", si: "Slovenia", sk: "Slovakia", uk: "United Kingdom", at: "Austria", it: "Italy", bg: "Bulgaria", rs: "Serbia" };
 
 function compass(deg: number): string {
