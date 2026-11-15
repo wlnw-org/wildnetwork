@@ -61,9 +61,11 @@ export default async function RegionArrivals({ params }: { params: Promise<{ reg
   // Arrival weeks are from the past year: "now" is the same month a year on, plus the next one.
   const m = new Date().getUTCMonth() + 1;
   const soon = rows.filter((x) => x.month === m || x.month === (m % 12) + 1);
-  const resident = await yearRound(r.name, soon.slice(0, 120).map((x) => x.scientific_name), grp).catch(() => new Set<string>());
+  // Species recorded all year here (yearRound.ts) have no real arrival: they are listed apart, not under a month.
+  const resident = await yearRound(r.name, rows.map((x) => x.scientific_name), grp).catch(() => new Set<string>());
   const now = soon.filter((x) => !resident.has(x.scientific_name)).slice(0, 24);
-  const byMonth = MONTHS.map((label, i) => ({ label, items: rows.filter((x) => x.month === i + 1) })).filter((x) => x.items.length);
+  const byMonth = MONTHS.map((label, i) => ({ label, items: rows.filter((x) => x.month === i + 1 && !resident.has(x.scientific_name)) })).filter((x) => x.items.length);
+  const allYear = rows.filter((x) => resident.has(x.scientific_name));
   const url = `${SITE}/arrivals/${r.slug}`;
   const jsonLd = {
     "@context": "https://schema.org",
@@ -141,6 +143,16 @@ export default async function RegionArrivals({ params }: { params: Promise<{ reg
             </ul>
           </section>
         ))}
+
+        {allYear.length > 0 && (
+          <details className="mt-8">
+            <summary className="cursor-pointer text-xl font-semibold text-slate-100"><TR k="Here all year" /> <span className="text-sm font-normal text-slate-400">{allYear.length}</span></summary>
+            <p className="mt-2 text-sm text-slate-400"><TR k="Recorded in every season, so they have no arrival date here, even when they get louder in spring." /></p>
+            <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
+              {allYear.map((x) => <li key={x.scientific_name}><SpeciesLink x={x} /></li>)}
+            </ul>
+          </details>
+        )}
 
         <p className="mt-8 text-sm text-slate-400">
           <TR k="Other regions:" />{" "}

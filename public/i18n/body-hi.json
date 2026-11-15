@@ -788,5 +788,7 @@
  "Open the Legend to show one extra thing on the map: Wind, Birds migrating at night or Sea life. Wind shows where the wind blows about 1.5 km up, where most migrating birds fly, with the temperature on the ground, updated every 3 hours.": "नक्शे पर एक और चीज़ दिखाने के लिए लेजेंड खोलें: हवा, रात में प्रवास करते पक्षी या समुद्री जीवन। हवा दिखाती है कि लगभग 1.5 किमी ऊँचाई पर, जहाँ ज़्यादातर प्रवासी पक्षी उड़ते हैं, हवा किधर बह रही है, साथ में ज़मीन का तापमान, हर 3 घंटे में अपडेट।",
  "Birds migrating at night shows how many birds were in the air above each weather radar in Europe and the US, and which way they flew. It runs about two days behind.": "रात में प्रवास करते पक्षी दिखाता है कि यूरोप और अमेरिका के हर मौसम रडार के ऊपर कितने पक्षी हवा में थे और वे किधर उड़े। लगभग दो दिन पीछे चलता है।",
  "A white ring marks an unusual night, with at least 3 times the radar's usual number of birds. Sea life adds whales, dolphins and other sea animals from ocean surveys and underwater microphones.": "सफ़ेद घेरा असामान्य रात दिखाता है, जब रडार पर सामान्य से कम से कम 3 गुना पक्षी थे। समुद्री जीवन समुद्री सर्वेक्षणों और पानी के नीचे के माइक्रोफ़ोन से व्हेल, डॉल्फ़िन और दूसरे समुद्री जीव जोड़ता है।",
- "Show all countries": "सभी देश दिखाएँ"
+ "Show all countries": "सभी देश दिखाएँ",
+ "Here all year": "साल भर यहीं",
+ "Recorded in every season, so they have no arrival date here, even when they get louder in spring.": "हर मौसम में दर्ज होते हैं, इसलिए यहाँ इनकी आगमन तारीख नहीं है, भले ही वसंत में ज़्यादा सुनाई दें।"
 }

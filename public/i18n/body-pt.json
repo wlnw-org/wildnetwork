@@ -788,5 +788,7 @@
  "Open the Legend to show one extra thing on the map: Wind, Birds migrating at night or Sea life. Wind shows where the wind blows about 1.5 km up, where most migrating birds fly, with the temperature on the ground, updated every 3 hours.": "Abra a Legenda para mostrar mais uma coisa no mapa: Vento, Aves a migrar à noite ou Vida marinha. Vento mostra para onde sopra o vento a cerca de 1,5 km de altitude, onde voa a maioria das aves migratórias, com a temperatura no solo, atualizado a cada 3 horas.",
  "Birds migrating at night shows how many birds were in the air above each weather radar in Europe and the US, and which way they flew. It runs about two days behind.": "Aves a migrar à noite mostra quantas aves estavam no ar sobre cada radar meteorológico da Europa e dos EUA, e para onde voaram. Cerca de dois dias de atraso.",
  "A white ring marks an unusual night, with at least 3 times the radar's usual number of birds. Sea life adds whales, dolphins and other sea animals from ocean surveys and underwater microphones.": "Um anel branco marca uma noite invulgar, com pelo menos 3 vezes o número habitual de aves do radar. Vida marinha acrescenta baleias, golfinhos e outros animais marinhos de estudos do oceano e microfones subaquáticos.",
- "Show all countries": "Ver todos os países"
+ "Show all countries": "Ver todos os países",
+ "Here all year": "Aqui todo o ano",
+ "Recorded in every season, so they have no arrival date here, even when they get louder in spring.": "Registadas em todas as estações, por isso não têm data de chegada aqui, mesmo que se ouçam mais na primavera."
 }
