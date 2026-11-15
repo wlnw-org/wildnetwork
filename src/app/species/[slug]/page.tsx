@@ -4,7 +4,7 @@ import { credits } from "@/lib/datasets";
 import Link from "next/link";
 import PausedNotice from "@/components/PausedNotice";
 import { BIRDWEATHER_PAUSED } from "@/lib/sources";
-import { notFound } from "next/navigation";
+import { permanentRedirect, notFound } from "next/navigation";
 import { cache } from "react";
 import { sql } from "@/lib/db";
 import AlertForm from "@/components/AlertForm";
@@ -16,7 +16,8 @@ import { LocalDate, LocalName, T } from "@/components/T";
 import { getNames } from "@/lib/names";
 import { REGION } from "@/lib/methods";
 import { regionSlug } from "@/lib/regions";
-import { SITE, speciesSlug } from "@/lib/site";
+import { INDEXED_GROUPS, SITE, speciesSlug } from "@/lib/site";
+import { yearRound } from "@/lib/yearRound";
 import { getClimate, getYearSpan, speciesStory } from "@/lib/story";
 import { TR } from "@/components/TR";
 import INDIA from "@/data/india-seasons.json";
@@ -71,7 +72,9 @@ const load = cache(async (slug: string) => {
       WHERE a.scientific_name <> ${name} AND abs(a.w - me.w) <= 10 ORDER BY a.n DESC LIMIT 8` : Promise.resolve([] as Related[]),
     credits({ species: name }),
   ]);
-  return { name, grp: sp.grp, common: names[0]?.vernacular_name ?? null, recent: recent[0], arrivals, media, story: speciesStory(name, [], climate, span), top, genus, sameTime, contributed };
+  // Recorded all year in its main region: the search text says so instead of an "arrival" (src/lib/yearRound.ts).
+  const resident = arrivals[0] ? (await yearRound(arrivals[0].region, [name], sp.grp).catch(() => new Set<string>())).has(name) : false;
+  return { name, grp: sp.grp, resident, common: names[0]?.vernacular_name ?? null, recent: recent[0], arrivals, media, story: speciesStory(name, [], climate, span), top, genus, sameTime, contributed };
 });
 
 const MIGRANT_GROUPS = new Set(["avian", "bat"]);
@@ -81,19 +84,22 @@ const nf = new Intl.NumberFormat("en-GB");
 /** A search description from the page's own data, under about 160 characters: when it arrives, where it is now, its season
  *  in India, and where the records come from (sound recorders for birds and bats, people's observations for the rest). */
 function describe(d: NonNullable<Awaited<ReturnType<typeof load>>>): string {
-  const who = d.common ?? d.name;
+  // "The Blackbird" for a common name, the bare scientific name otherwise ("The Turdus merula" reads wrong).
+  const Who = d.common ? `The ${d.common}` : d.name, who = d.common ? `the ${d.common}` : d.name;
   const parts: string[] = [];
   const a = d.arrivals[0];
-  if (a) parts.push(a.first.slice(0, 7) === a.last.slice(0, 7)
-    ? `The ${who} arrives in ${a.region} around ${monthOf(a.first)}.`
-    : `The ${who} arrives in ${a.region} between ${monthOf(a.first)} and ${monthOf(a.last)}.`);
+  if (a && d.resident) parts.push(`${Who} is recorded all year in ${a.region}.`);
+  else if (a) parts.push(a.first.slice(0, 7) === a.last.slice(0, 7)
+    ? `${Who} arrives in ${a.region} around ${monthOf(a.first)}.`
+    : `${Who} arrives in ${a.region} between ${monthOf(a.first)} and ${monthOf(a.last)}.`);
+  const named = parts.length > 0;
   const uk = ukSeason(d.name);
   if (uk) parts.push(`${uk.status === "summer" ? "Arrives in the UK" : "Comes to the UK for the winter, arriving"} in ${ukArrival(uk).typical}.`);
   const india = indiaSeason(d.name);
-  if (india) parts.push(india.status === "winter" ? `A winter visitor to India${india.arrive && india.leave ? `, ${MONTH_NAMES[india.arrive - 1]} to ${MONTH_NAMES[india.leave - 1]}` : ""}.`
-    : india.status === "summer" ? "A summer visitor to India." : "Passes through India.");
-  if (d.recent.n > 0) parts.push(`${nf.format(d.recent.n)} records in the last 8 weeks${d.recent.cells > 1 ? ` across ${d.recent.cells} areas` : ""}.`);
-  if (!parts.length) parts.push(`Where the ${who} is recorded and when, on a live map.`);
+  if (india) parts.push((named ? "" : `${Who} is `) + (india.status === "winter" ? `${named ? "A" : "a"} winter visitor to India${india.arrive && india.leave ? `, ${MONTH_NAMES[india.arrive - 1]} to ${MONTH_NAMES[india.leave - 1]}` : ""}.`
+    : india.status === "summer" ? `${named ? "A" : "a"} summer visitor to India.` : `${named ? "Passes" : "passing"} through India.`));
+  if (d.recent.n > 0) parts.push(`${nf.format(d.recent.n)} ${d.recent.n === 1 ? "record" : "records"} in the last 8 weeks${d.recent.cells > 1 ? ` across ${d.recent.cells} areas` : ""}.`);
+  if (!parts.length) parts.push(`Where ${who} is recorded and when, on a live map.`);
   const tail = MIGRANT_GROUPS.has(d.grp) ? " Live map, yearly movement and alerts." : " From open records, with a live map.";
   let out = parts.join(" ");
   if ((out + tail).length <= 160) out += tail;
@@ -105,10 +111,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!d) return { title: "Species not found" };
   const label = d.common ? `${d.common} (${d.name})` : d.name;
   const description = describe(d);
-  const thin = d.arrivals.length === 0 && d.story.length === 0 && !indiaSeason(d.name) && !ukSeason(d.name) && citiesFor(d.name, PLACES).length === 0;
+  // Indexed when the page answers something: an arrival date for a vertebrate class, or a season in India or the UK, or a
+  // city checklist. Insect and other pages stay reachable but out of search (mostly thin, few records). Same rule as sitemap.ts.
+  const thin = !((INDEXED_GROUPS.has(d.grp) && (d.arrivals.length > 0 || d.story.length > 0)) || indiaSeason(d.name) || ukSeason(d.name) || citiesFor(d.name, PLACES).length > 0);
   return {
     // Without the site suffix, so the name and what the page answers fit in a search result (about 60 characters).
-    title: { absolute: `${label}: ${MIGRANT_GROUPS.has(d.grp) ? "arrival dates and migration" : "where and when it is recorded"}` },
+    title: { absolute: `${label}: ${MIGRANT_GROUPS.has(d.grp) && !d.resident ? "arrival dates and migration" : "where and when it is recorded"}` },
     description,
     alternates: { canonical: `/species/${speciesSlug(d.name)}` },
     robots: thin ? { index: false, follow: true } : undefined,
@@ -117,7 +125,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function SpeciesPage({ params }: { params: Promise<{ slug: string }> }) {
-  const d = await load((await params).slug);
+  const slug = (await params).slug;
+  // One address per species: /species/Turdus-merula and the like move to the lowercase slug.
+  if (slug !== slug.toLowerCase()) permanentRedirect(`/species/${slug.toLowerCase()}`);
+  const d = await load(slug);
   if (!d) notFound();
   const title = d.common ?? d.name;
   const india = indiaSeason(d.name);

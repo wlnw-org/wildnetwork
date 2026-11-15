@@ -80,3 +80,6 @@ export const DATA_RELEASES: { date: string; url: string; zip: string; weeks: str
 
 /** Published uses of the data (papers, theses, notebooks, reports), newest first, shown on /research. Add entries as they appear. */
 export const DATA_USES: { title: string; authors: string; year: number; url: string; kind: "paper" | "preprint" | "thesis" | "notebook" | "report" }[] = [];
+
+/** Classes whose species pages are indexed on the strength of an arrival date (insects and others only via India, UK or city lists). */
+export const INDEXED_GROUPS = new Set(["avian", "bat", "amphibian", "mammal"]);

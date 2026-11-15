@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import WorldMap from "@/components/WorldMap";
-import { SITE, SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
+import { sql } from "@/lib/db";
+import { REGION } from "@/lib/methods";
+import { REGIONS } from "@/lib/regions";
+import { INDEXED_GROUPS, SITE, SITE_DESCRIPTION, SITE_NAME, speciesSlug } from "@/lib/site";
+
+// The species list below is read from the arrivals table; refreshed hourly.
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -20,7 +26,20 @@ const jsonLd = {
   ],
 };
 
-export default function Home() {
+/** Species whose well supported arrival falls in the last eight weeks, newest first: crawlable links from the home page. */
+async function arrivingNow(): Promise<{ name: string; common: string | null; region: string }[]> {
+  const rows = await sql<{ scientific_name: string; vernacular_name: string | null; region: string }[]>`
+    SELECT DISTINCT ON (p.scientific_name) p.scientific_name, p.vernacular_name,
+      ${REGION} AS region
+    FROM phenology p JOIN species_group g USING (scientific_name)
+    WHERE g.grp IN ${sql([...INDEXED_GROUPS])} AND COALESCE(p.arrival_support, 0) >= 0.5
+      AND make_date(EXTRACT(YEAR FROM now())::int, EXTRACT(MONTH FROM p.arrival_week)::int, 1) BETWEEN date_trunc('month', now()) - interval '1 month' AND now()
+    ORDER BY p.scientific_name, p.arrival_support DESC LIMIT 400`.catch(() => []);
+  return rows.slice(0, 40).map((r) => ({ name: r.scientific_name, common: r.vernacular_name, region: r.region }));
+}
+
+export default async function Home() {
+  const arriving = await arrivingNow();
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -41,6 +60,17 @@ export default function Home() {
           <Link href="/stations">Stations</Link>
           <Link href="/privacy">Privacy</Link>
         </nav>
+        <nav aria-label="Arrival dates by region">
+          {REGIONS.map((r) => <Link key={r.slug} href={`/arrivals/${r.slug}`}>When birds arrive in {r.name}</Link>)}
+          <Link href="/arrivals/uk">When birds arrive in the UK</Link>
+          <Link href="/arrivals/india">Migratory birds in India</Link>
+        </nav>
+        {arriving.length > 0 && (
+          <section aria-label="Arriving around now">
+            <h2>Arriving around now</h2>
+            <ul>{arriving.map((a) => <li key={a.name}><Link href={`/species/${speciesSlug(a.name)}`}>{a.common ?? a.name}</Link> ({a.region})</li>)}</ul>
+          </section>
+        )}
       </div>
       <WorldMap />
     </>

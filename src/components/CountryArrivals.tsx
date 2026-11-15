@@ -54,7 +54,7 @@ export async function countryMetadata(lang: PageLang, c: Country): Promise<Metad
   const title = tr(lang, K.title, { in: w }), url = path(lang, c.slug);
   const langs = countryLangs(c.slug);
   return {
-    title, description,
+    title: { absolute: title }, description,
     alternates: { canonical: url, languages: { "x-default": path("en", c.slug), en: path("en", c.slug), ...Object.fromEntries(langs.map((l) => [l, path(l, c.slug)])) } },
     openGraph: { title, description, url, type: "article" },
     robots: hasPage(c) ? undefined : { index: false },
