@@ -3,7 +3,8 @@ import type { Map as MLMap } from "maplibre-gl";
 // Silhouettes from EarthRanger (Apache 2.0), see public/icons/er/NOTICE.md.
 // The bat silhouette is our own (public/icons/bat.svg); the rest come from EarthRanger.
 const GROUPS = ["bird", "bat", "mammal", "amphibian", "reptile", "camera", "generic"] as const;
-const SOURCES: Record<string, string> = { birdweather: "#0891b2", inaturalist: "#65a30d", gbif: "#f59e0b", acartia: "#60a5fa", orcasound: "#2dd4bf", obis: "#38bdf8", wdx: "#db2777" };
+// Coloured by how the animal was found (KIND_COLOR in WorldMap): heard, seen by people, ocean survey.
+const SOURCES: Record<string, string> = { birdweather: "#22d3ee", inaturalist: "#f59e0b", gbif: "#f59e0b", acartia: "#f59e0b", orcasound: "#22d3ee", obis: "#a78bfa", wdx: "#22d3ee" };
 const SIZE = 64;
 
 function svgToImage(svg: string): Promise<HTMLImageElement> {

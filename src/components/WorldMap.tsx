@@ -47,7 +47,12 @@ const STYLE = "https://tiles.openfreemap.org/styles/dark";
 const HOURS = [1, 3]; // the live window of single detections
 const PERIODS: Period[] = ["7d", "30d", "12m"]; // past periods, drawn from the daily and weekly rollups
 // Validated for the dark surface (dataviz validator): sources are categorical, change is diverging.
-const SOURCE_COLOR: unknown[] = ["match", ["get", "source"], "birdweather", "#0891b2", "inaturalist", "#65a30d", "gbif", "#f59e0b", "wildnetwork-base", "#a78bfa", "acartia", "#60a5fa", "orcasound", "#2dd4bf", "obis", "#38bdf8", "#db2777"];
+// Dots are coloured by how the animal was found, not by data source (the popup names the source): heard by a sound
+// recorder, seen by people, or found by an ocean survey.
+const KIND_COLOR = { heard: "#22d3ee", seen: "#f59e0b", sea: "#a78bfa" };
+const SOURCE_COLOR: unknown[] = ["match", ["get", "source"], "inaturalist", KIND_COLOR.seen, "gbif", KIND_COLOR.seen, "acartia", KIND_COLOR.seen, "obis", KIND_COLOR.sea, KIND_COLOR.heard];
+type Layer = "" | "weather" | "radar" | "marine" | "coverage" | "landcover" | "climate";
+const LAYERS: Layer[] = ["weather", "radar", "marine", "coverage", "landcover", "climate"];
 // Marine records (OBIS, Orcasound, Acartia) are mostly older than the 1 to 3 hour live window (OBIS lags by months and killer
 // whale records are shown a day late), so the map draws them as their own layer from /api/v1/marine, spread evenly over space.
 const MARINE_DAYS = 365;
@@ -113,7 +118,15 @@ export default function WorldMap() {
   const [query, setQuery] = useState("");
   const [sightings, setSightings] = useState<FC>(EMPTY);
   // Off on first load (the legend toggle turns it on); choosing the Marine class or a species shows its records regardless.
-  const [showMarine, setShowMarine] = useState(false);
+  // One extra layer at a time (legend "Show on the map"); coverage, land cover and climate only via ?layer= (researchers, methods page).
+  const [layer, setLayerState] = useState<Layer>("");
+  const setLayer = (l: Layer) => { setLayerState(l); if (l) track("show_layer", { layer: l }); };
+  useEffect(() => {
+    const l = new URLSearchParams(window.location.search).get("layer") as Layer | null;
+    if (l && LAYERS.includes(l)) setLayerState(l); // eslint-disable-line react-hooks/set-state-in-effect
+  }, []);
+  const showMarine = layer === "marine", showWeather = layer === "weather", showRadar = layer === "radar";
+  const showCoverage = layer === "coverage", showLandcover = layer === "landcover", showClimate = layer === "climate";
   const [deployments, setDeployments] = useState<FC>(EMPTY);
   const [cells, setCells] = useState<FC>(EMPTY);
   const [playhead, setPlayhead] = useState<number | null>(null);
@@ -139,22 +152,13 @@ export default function WorldMap() {
   }, [query]);
   const [status, setStatus] = useState<Status | null>(null);
   const [coverage, setCoverage] = useState<{ summary: Record<string, number>; cells: { lat: number; lon: number; status: string; acoustic: number; observed: number }[] } | null>(null);
-  const [showCoverage, setShowCoverage] = useState(false);
-  // Coverage, land cover and climate sit behind "More layers" so the legend stays short.
-  const [moreLayers, setMoreLayers] = useState(false);
   // Weather layer: wind about 1.5 km up and ground temperature on a 10 degree grid (/api/v1/weather, refreshed every 3 h).
   const [weather, setWeather] = useState<{ at: string; points: { lat: number; lon: number; t: number; ws: number; wd: number }[] } | null>(null);
-  const [showWeather, setShowWeather] = useState(false);
   // Night migration over Europe from weather radars (/api/v1/radar, Aloft, about two days behind).
   const [radar, setRadar] = useState<{ night: string | null; radars: { radar: string; lat: number; lon: number; vid: number; mtr: number; mtrMax: number; dir: number | null; normal: number | null; unusual?: boolean; clutter?: boolean }[] } | null>(null);
-  const [radarPick, setRadarPick] = useState<string | null>(null);
-  const [unusual, setUnusual] = useState<{ night: string; radars: { radar: string }[] }[] | null>(null);
-  const [showRadar, setShowRadar] = useState(false);
   const [climate, setClimate] = useState<{ base: string; from: string; to: string; cells: { lat: number; lon: number; t: number | null; p: number | null }[] } | null>(null);
-  const [showClimate, setShowClimate] = useState(false);
   // Land cover per 1 degree square (ESA WorldCover 2021), one request when first shown.
   const [landcover, setLandcover] = useState<{ classes: string[]; cells: number[][] } | null>(null);
-  const [showLandcover, setShowLandcover] = useState(false);
   // Tracked journeys of the selected species (GPS tags, Movebank Data Repository), shown by default when there are any.
   const [journeys, setJourneys] = useState<{ species: string; datasets: { id: string; title: string; doi: string | null; licence: string }[]; tracks: { dataset: string; animal: string; from: string; to: string; points: [number, number][] }[] } | null>(null);
   const [showJourneys, setShowJourneys] = useState(true);
@@ -690,13 +694,9 @@ export default function WorldMap() {
   }, [species, showJourneys, journeys, ready]);
   // Radar layer: fetched when first shown (the data changes once a day).
   useEffect(() => {
-    if (!showRadar || (radar && (radarPick == null || radar.night === radarPick))) return;
-    fetch(`/api/v1/radar${radarPick ? `?night=${radarPick}` : ""}`).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.radars) setRadar(d); }).catch(() => {});
-  }, [showRadar, radar, radarPick]);
-  useEffect(() => {
-    if (!showRadar || unusual) return;
-    fetch(`/api/v1/radar/unusual?days=60`).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.nights) setUnusual(d.nights); }).catch(() => {});
-  }, [showRadar, unusual]);
+    if (!showRadar || radar) return;
+    fetch(`/api/v1/radar`).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.radars) setRadar(d); }).catch(() => {});
+  }, [showRadar, radar]);
   useEffect(() => {
     const src = mapRef.current?.getSource("radar") as GeoJSONSource | undefined;
     if (!src) return;
@@ -1163,7 +1163,7 @@ export default function WorldMap() {
             </div>
           )}
           <div className="px-4 py-2 border-t border-white/5 text-xs text-slate-300 flex flex-wrap gap-x-3 gap-y-1 max-md:hidden">
-            <Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label={t("Stations sending directly")} /><Legend color="#60a5fa" label="Acartia" /><Legend color="#2dd4bf" label="Orcasound" /><Legend color="#38bdf8" label="OBIS" />
+            <DotKinds />
             <span className="text-slate-400">{t("{n} sensors", { n: deployments.features.length.toLocaleString() })}</span>
           </div>
         </aside>
@@ -1192,7 +1192,7 @@ export default function WorldMap() {
         ) : (
           <>
             <div className="text-slate-400 mb-1" title="The newest detections from each source, refreshed every few minutes. Measures use full counts, not these dots.">{period ? (period === "12m" ? t("Last 12 months") : period === "30d" ? t("Last 30 days") : t("Last 7 days")) + " · " + t("species per area") : group === "bat" ? t("Bat detections, last 24h") : t("Detections, last {h}h (sample)", { h: hours })}</div>
-            <div className="flex flex-wrap gap-x-3 gap-y-0.5"><Legend color="#0891b2" label="BirdWeather" /><Legend color="#f59e0b" label="GBIF" /><Legend color="#65a30d" label="iNaturalist" /><Legend color="#db2777" label={t("Devices")} /><Legend color="#60a5fa" label="Acartia" /><Legend color="#2dd4bf" label="Orcasound" /><Legend color="#38bdf8" label="OBIS" /><Legend color="#475569" label={t("Sensor")} /></div>
+            <DotKinds />
           </>
         )}
         {species && journeys?.tracks.length ? (
@@ -1206,80 +1206,42 @@ export default function WorldMap() {
         ) : null}
         {!species && (
           <div className="mt-1.5 pt-1.5 border-t border-white/10">
-            <label className="flex items-center gap-1.5 cursor-pointer select-none" title="OBIS, Orcasound hydrophones and Acartia sightings, last 12 months">
-              <input type="checkbox" checked={showMarine} onChange={(e) => { setShowMarine(e.target.checked); track("toggle_marine", { on: e.target.checked ? 1 : 0 }); }} className="accent-[#60a5fa]" />
-              <span>{t("Marine records")}</span>
-            </label>
-            <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("Wind about 1.5 km up, where most migrating birds fly, and the temperature on the ground. Updated every 3 hours.")}>
-              <input type="checkbox" checked={showWeather} onChange={(e) => { setShowWeather(e.target.checked); if (e.target.checked) track("show_weather"); }} className="accent-[#fbbf24]" />
-              <span>{t("Wind and temperature")}</span>
-            </label>
+            <div className="text-slate-400 mb-1">{t("Show on the map")}</div>
+            <div className="flex flex-wrap gap-1">
+              {([["weather", t("Wind")], ["radar", t("Birds migrating at night")], ["marine", t("Sea life")]] as const).map(([k, label]) => (
+                <button key={k} type="button" aria-pressed={layer === k} onClick={() => setLayer(layer === k ? "" : k)}
+                  className={`rounded-full border px-2 py-0.5 ${layer === k ? "border-cyan-400 bg-cyan-400/15 text-white" : "border-slate-600 hover:border-slate-400"} ${FOCUS}`}>{label}</button>
+              ))}
+            </div>
             {showWeather && (
-              <div className="mt-1 space-y-0.5 text-slate-400">
+              <div className="mt-1.5 space-y-0.5 text-slate-400">
+                <div>{t("Arrows: wind where birds fly. Colour: temperature.")}</div>
                 <div className="flex items-center gap-2"><span>-20°</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #60a5fa, #e2e8f0, #fbbf24, #ef4444)" }} /><span>35° C</span></div>
-                {weather && <div>{t("Updated {time}", { time: new Date(weather.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) })} · Open-Meteo</div>}
               </div>
             )}
-            <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("Birds in the air at night over Europe and the US, measured by weather radars. About two days behind.")}>
-              <input type="checkbox" checked={showRadar} onChange={(e) => { setShowRadar(e.target.checked); if (e.target.checked) track("show_radar"); }} className="accent-[#f97316]" />
-              <span>{t("Night migration (radar)")}</span>
-            </label>
             {showRadar && (
-              <div className="mt-1 space-y-0.5 text-slate-400">
+              <div className="mt-1.5 space-y-0.5 text-slate-400">
+                <div>{t("Bigger circles: more birds in the air. Europe and the US.")}</div>
                 <div className="flex items-center gap-2"><span>{t("quieter")}</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #3b82f6, #94a3b8, #f97316)" }} /><span>{t("busier than usual")}</span></div>
-                {radar?.night && <div>{t("Night of {date}", { date: new Date(radar.night + "T12:00:00Z").toLocaleDateString([], { day: "numeric", month: "short" }) })} · Aloft</div>}
-                {radar && !radar.night && <div>{t("No radar data yet.")}</div>}
                 <div className="flex items-center gap-2"><span className="inline-block h-3 w-3 rounded-full border-2 border-white" /><span>{t("Unusual night: at least 3 times its usual")}</span></div>
-                {unusual && unusual.length > 0 && (
-                  <select value={radarPick ?? ""} aria-label={t("Unusual nights lately")}
-                    onChange={(e) => { const v = e.target.value || null; setRadarPick(v); if (v) track("radar_night", { night: v }); else setRadar(null); }}
-                    className="rounded border border-slate-600 bg-black/60 px-1 py-0.5 text-slate-300">
-                    <option value="">{t("Latest")}</option>
-                    {unusual.slice(0, 10).map((u) => (
-                      <option key={u.night} value={u.night}>{new Date(u.night + "T12:00:00Z").toLocaleDateString([], { day: "numeric", month: "short" })} · {t("{n} radars", { n: u.radars.length })}</option>
-                    ))}
-                  </select>
-                )}
+                {radar?.night && <div>{t("Night of {date}", { date: new Date(radar.night + "T12:00:00Z").toLocaleDateString([], { day: "numeric", month: "short" }) })}</div>}
+                {radar && !radar.night && <div>{t("No radar data yet.")}</div>}
               </div>
             )}
-            {moreLayers ? (
-              <>
-              <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                <input type="checkbox" checked={showCoverage} onChange={(e) => { setShowCoverage(e.target.checked); if (e.target.checked) track("show_coverage"); }} className="accent-[#a78bfa]" />
-                <span>{t("Coverage")}</span>
-              </label>
-              {showCoverage && (
-                <div className="mt-1 space-y-0.5">
-                  <Legend color="#a78bfa" label={`${t("Recordings and sightings")}${coverage ? ` (${coverage.summary.both})` : ""}`} />
-                  <Legend color="#22d3ee" label={`${t("Recordings only")}${coverage ? ` (${coverage.summary.acoustic})` : ""}`} />
-                  <Legend color="#f59e0b" label={`${t("Sightings only")}${coverage ? ` (${coverage.summary.observed})` : ""}`} />
-                  <Legend color="#64748b" label={t("Too thin to use")} />
-                  <Link href="/methods#coverage" className="block text-cyan-500 hover:underline">{t("What counts as watched")}</Link>
-                </div>
-              )}
-              <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("Forest, farmland, towns and water in each square, from satellite maps.")}>
-                <input type="checkbox" checked={showLandcover} onChange={(e) => { setShowLandcover(e.target.checked); if (e.target.checked) track("show_landcover"); }} className="accent-[#16a34a]" />
-                <span>{t("Land cover")}</span>
-              </label>
-              {showLandcover && (
-                <div className="mt-1 space-y-0.5 text-slate-400">
-                  <div className="grid grid-cols-2 gap-x-2">{LANDCOVER.map((c) => <Legend key={c.label} color={c.color} label={t(c.label)} />)}</div>
-                  <div>ESA WorldCover 2021</div>
-                </div>
-              )}
-              <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("How the past 12 months compare with the 1991 to 2020 average, for temperature and rain.")}>
-                <input type="checkbox" checked={showClimate} onChange={(e) => { setShowClimate(e.target.checked); if (e.target.checked) track("show_climate"); }} className="accent-[#f87171]" />
-                <span>{t("Warmer or cooler than usual")}</span>
-              </label>
-              {showClimate && (
-                <div className="mt-1 space-y-0.5 text-slate-400">
-                  <div className="flex items-center gap-2"><span>-2°</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #2563eb, #93c5fd, #e2e8f0, #fca5a5, #dc2626)" }} /><span>+2° C</span></div>
-                  {climate && <div>{climate.from} to {climate.to} · NASA GISTEMP, NOAA GPCP</div>}
-                </div>
-              )}
-              </>
-            ) : (
-              <button type="button" onClick={() => setMoreLayers(true)} className={`mt-0.5 text-slate-400 hover:text-white rounded ${FOCUS}`}>{t("More layers")}</button>
+            {showCoverage && (
+              <div className="mt-1.5 space-y-0.5">
+                <Legend color="#a78bfa" label={`${t("Recordings and sightings")}${coverage ? ` (${coverage.summary.both})` : ""}`} />
+                <Legend color="#22d3ee" label={`${t("Recordings only")}${coverage ? ` (${coverage.summary.acoustic})` : ""}`} />
+                <Legend color="#f59e0b" label={`${t("Sightings only")}${coverage ? ` (${coverage.summary.observed})` : ""}`} />
+                <Legend color="#64748b" label={t("Too thin to use")} />
+                <Link href="/methods#coverage" className="block text-cyan-500 hover:underline">{t("What counts as watched")}</Link>
+              </div>
+            )}
+            {showLandcover && (
+              <div className="mt-1.5 grid grid-cols-2 gap-x-2 text-slate-400">{LANDCOVER.map((c) => <Legend key={c.label} color={c.color} label={t(c.label)} />)}</div>
+            )}
+            {showClimate && (
+              <div className="mt-1.5 flex items-center gap-2 text-slate-400"><span>-2°</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #2563eb, #93c5fd, #e2e8f0, #fca5a5, #dc2626)" }} /><span>+2° C</span></div>
             )}
           </div>
         )}
@@ -1408,6 +1370,11 @@ function Row({ name, sci, value, tone, onClick, thumb }: { name: string; sci: st
       <span className={`text-xs tabular-nums shrink-0 ${toneCls}`}>{value}</span>
     </button>
   );
+}
+
+function DotKinds() {
+  const t = useT();
+  return <span className="flex flex-wrap gap-x-3 gap-y-0.5"><Legend color={KIND_COLOR.heard} label={t("Heard by sound recorders")} /><Legend color={KIND_COLOR.seen} label={t("Seen by people")} /><Legend color={KIND_COLOR.sea} label={t("Ocean surveys")} /></span>;
 }
 
 function Legend({ color, label }: { color: string; label: string }) {
