@@ -208,7 +208,7 @@ const studio: Guide[] = [
       { h: "Occupancy tables in R" },
       { p: "Days are the recorder's local calendar days and weeks run Monday to Sunday. A recording that runs past midnight counts for both days. Recordings without a start time are left out. Read the table, keep one species and drop the first five columns to get the detection matrix, for example for unmarked::unmarkedFrameOccu(y = ...). Use the effort file as an observation covariate." },
       { h: "Publish to Wildlife Network" },
-      { steps: ["Create a dataset at [wlnw.org/datasets](/datasets/new) (sign in with ORCID).", "On the dataset page create its upload key.", "Paste the dataset id and key into Studio and send. Sending again is safe: duplicates are ignored."] },
+      { steps: ["Create a dataset at [wlnw.org/datasets](/datasets/new) (sign in with ORCID).", "On the dataset page create its upload key.", "Paste the dataset id and key into Studio and send. Sending again is safe: duplicates are ignored. Records sent after you submitted (for example the next SD card) take the dataset back to draft until you submit it again."] },
       { p: "The site checks every record again and credits your dataset by name wherever it is used." },
     ],
   },
@@ -283,7 +283,7 @@ const site: Guide[] = [
         "The slider at the bottom picks the time: the last hour or 3 hours live, or the last 7 days, 30 days or 12 months.",
         "The class buttons show one group, for example only bats or only frogs.",
         "The search box finds a place or a species.",
-        "The side rail opens Now (what is being detected), the Feed, Research, Contribute and more.",
+        "The side rail opens Now: a short summary, what is arriving and the most heard and seen species (More trends shows the rest). Feed, Research, Contribute and more are there too.",
         "Open the Legend to show one extra thing on the map: Wind, Birds migrating at night or Sea life. Wind shows where the wind blows about 1.5 km up, where most migrating birds fly, with the temperature on the ground, updated every 3 hours.",
         "Birds migrating at night shows how many birds were in the air above each weather radar in Europe and the US, and which way they flew. It runs about two days behind.",
         "A white ring marks an unusual night, with at least 3 times the radar's usual number of birds. Sea life adds whales, dolphins and other sea animals from ocean surveys and underwater microphones.",
@@ -298,7 +298,7 @@ const site: Guide[] = [
     summary: "Species pages, arrival dates, movement through the year and recordings to listen to.",
     body: [
       { steps: ["Search for the species on the map, or open the [species list](/species).", "The panel shows a photo, how often it is being recorded, where its range centre is moving and the weather there.", "Choose Play the year (when a species is selected) to watch it move week by week."] },
-      { p: "Species pages give the typical arrival week per region with an uncertainty range, plus recordings from xeno-canto to listen to, credited to their recordists." },
+      { p: "A species page opens with a one-line answer to when it arrives, then the live map button and an email alert. Below are the usual arrival week per region with an uncertainty range, how it moves through the year, and recordings from xeno-canto to listen to, credited to their recordists." },
       { tip: "Every number has a plain explanation on the [methods page](/methods)." },
     ],
   },
@@ -308,11 +308,11 @@ const site: Guide[] = [
     summary: "When species arrive in your region, and the ones possibly arriving now.",
     body: [
       { p: "[Arrivals](/arrivals) lists, per region, the week each migrant usually arrives, worked out from a year of records. Weak estimates are left out." },
-      { p: "On the map's Now panel, Possibly arriving lists species that have just started being recorded in an area after weeks without records." },
+      { p: "On the map's Now panel, choose More trends to see Possibly arriving: species that have just started being recorded in an area after weeks without records." },
       { h: "What the date range means" },
       { p: "A species reaches the south of a region before the north, so a region shows a first and a last arrival. Each species page also gives the likely spread of its date in each area. Dates come from last year's records, so this year can differ by a week or two." },
       { h: "Why a bird that stays all year may have an arrival date" },
-      { p: "The records only show when a bird is heard or seen. A resident bird that goes quiet in winter and starts singing in spring can look like a new arrival. We remove most of these, but some remain, so treat a date for a resident bird as the week it became easy to hear." },
+      { p: "The records only show when a bird is heard or seen. Birds recorded in every season are listed apart under Here all year on each region page, so they do not show as arriving. A few residents that go quiet in winter can still slip through, so treat a date for a resident bird as the week it became easy to hear." },
       { h: "Get told when one arrives" },
       { p: "Open a species page and use Get an email when it arrives near you. You get one email when it turns up in your area after weeks away, at most once every two months. See [Species alerts](/alerts)." },
     ],
@@ -323,7 +323,7 @@ const site: Guide[] = [
     summary: "Search a town or click the map to see the species recorded around it.",
     body: [
       { steps: ["Type a town or city in the map's search box and choose it under Places.", "The panel lists the species recorded in that area, the most recorded ones and the recording stations nearby."] },
-      { p: "Popular cities also have their own pages on the [places list](/places)." },
+      { p: "Popular cities also have their own pages on the [places list](/places). Near a weather radar in Europe or the US, a city page also says how many birds flew over on a recent night, and whether that was more than usual." },
     ],
   },
   {
@@ -344,7 +344,7 @@ const site: Guide[] = [
     summary: "Printable species reports for a station, a 5 degree area or your own boundary.",
     body: [
       { h: "Site report" },
-      { p: "[Site reports](/report) summarise one place: with a recording station nearby, its weekly records; otherwise the species of the surrounding area. Compare two periods and download CSV where the data allows it." },
+      { p: "[Site reports](/report) summarise one place: with a recording station nearby, its weekly records; otherwise the species of the surrounding area. Type a town (or choose it on the map) and press Show report. Dates, the radius, a name for the place and a second period to compare are under More options. Download CSV where the data allows it." },
       { h: "Area report" },
       { steps: [
         "Open [Area report](/report/area).",
@@ -359,7 +359,7 @@ const site: Guide[] = [
     title: "Get an email when a species arrives",
     summary: "Species alerts for your area, and update emails.",
     body: [
-      { steps: ["Open a species page and find Email me when it arrives.", "Enter your town and email, and confirm from the email we send.", "You get one email when the species is recorded in your area after weeks without records, at most once every 8 weeks."] },
+      { steps: ["Open a species page and choose Get an email when it arrives near you.", "Enter your town and email, and confirm from the email we send.", "You get one email when the species is recorded in your area after weeks without records, at most once every 8 weeks."] },
       { p: "Every email has a link to stop it. For news about the site itself, sign up on [Updates](/updates)." },
     ],
   },

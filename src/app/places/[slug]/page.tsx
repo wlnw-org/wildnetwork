@@ -9,6 +9,7 @@ import { GROUP_LABEL } from "@/lib/studies";
 import { PLACE_GROUPS, placeBySlug, placeLabel, placeReport } from "@/lib/places";
 import { SITE, speciesSlug } from "@/lib/site";
 import { sql } from "@/lib/db";
+import { radarNear } from "@/lib/radar";
 import CityBirds, { cityBirds } from "@/components/CityBirds";
 
 export const revalidate = 86400;
@@ -62,6 +63,9 @@ export default async function PlacePage({ params }: Props) {
     ],
   };
   const city = grp === "avian" ? cityBirds(p.slug) : null;
+  // Night migration from the closest weather radar (Europe and the US only, within about 150 km).
+  const night = grp === "avian" ? await radarNear(p.lat, p.lon).catch(() => null) : null;
+  const ratio = night?.normal && night.normal >= 1 ? night.vid / night.normal : null;
   const citySci = city?.species.map((x) => x[0]) ?? [];
   const names = await getNames([...[...r.recent, ...r.coming, ...r.top].map((x) => x.scientific_name), ...citySci]);
   // Only species with a page are linked (a page exists for every species in species_group).
@@ -110,6 +114,18 @@ export default async function PlacePage({ params }: Props) {
           <p className="mt-4 rounded-lg border border-cyan-400/30 bg-cyan-400/5 p-3 text-sm">
             <TR k="Which birds come to India for the winter, and when? See [migratory birds in India](/arrivals/india), month by month." />
           </p>
+        )}
+
+        {night && night.vid >= 0.5 && (
+          <section className="mt-6 rounded-lg border border-white/10 bg-white/5 p-4">
+            <h2 className="font-semibold text-slate-100"><TR k="Birds flying over {place} at night" v={{ place: p.name }} /></h2>
+            <p className="mt-1">
+              <TR k="On the night of {date}, a weather radar about {km} km away counted about {n} birds in every square kilometre of sky." v={{ date: new Date(night.night + "T12:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long" }), km: night.km, n: night.vid >= 10 ? Math.round(night.vid) : night.vid.toFixed(1) }} />{" "}
+              {ratio != null && (night.unusual ? <TR k="That is a big night: about {x} times the usual here." v={{ x: Math.round(ratio) }} />
+                : ratio >= 1.5 ? <TR k="That is busier than a usual night here." /> : ratio <= 0.5 ? <TR k="That is quieter than a usual night here." /> : <TR k="That is about a usual night here." />)}
+            </p>
+            <p className="mt-2 text-sm"><Link href="/?layer=radar" className="text-cyan-400 hover:underline"><TR k="See every radar on the map" /></Link></p>
+          </section>
         )}
 
         {city && <CityBirds slug={p.slug} place={p.name} names={names} linked={linked} />}

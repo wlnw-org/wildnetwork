@@ -8,6 +8,16 @@ export interface Update { date: string; title: string; items: UpdateItem[] }
 
 export const UPDATES: Update[] = [
   {
+    date: "2026-11-16",
+    title: "Night migration over the US, and a simpler site",
+    items: [
+      { text: "Night migration now covers the United States as well as Europe: about 140 US weather radars show how many birds flew over at night and which way.", href: "/methods#nexrad" },
+      { text: "City pages near a weather radar say how many birds flew over on a recent night, and whether that was more than usual.", href: "/places" },
+      { text: "A simpler map: dots are coloured by heard, seen or ocean survey, the legend shows one extra layer at a time, and the Now panel keeps three short lists." },
+      { text: "Species pages start with the answer to when a species arrives, and birds that stay all year are no longer listed as arriving on the region pages.", href: "/arrivals" },
+    ],
+  },
+  {
     date: "2026-11-14",
     title: "Wind and night migration on the map, and pages in more languages",
     items: [

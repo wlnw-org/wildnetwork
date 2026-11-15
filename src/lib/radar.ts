@@ -198,3 +198,33 @@ export async function pruneRadar() {
   await sql`DELETE FROM radar_part WHERE night < CURRENT_DATE - ${RADAR.KEEP_DAYS}::int`;
   await sql`DELETE FROM radar_files WHERE file_day < CURRENT_DATE - ${RADAR.KEEP_DAYS}::int`;
 }
+
+/** Great-circle distance in km. */
+function km(a: { lat: number; lon: number }, b: { lat: number; lon: number }): number {
+  const r = Math.PI / 180, dLat = (b.lat - a.lat) * r, dLon = (b.lon - a.lon) * r;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dLon / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.sqrt(h));
+}
+
+/** Radars cover roughly 100 km around themselves; a place further than this from every radar gets no night summary. */
+export const NEAR_RADAR_KM = 150;
+let nearMemo: { at: number; data: Awaited<ReturnType<typeof radarNight>> } | null = null;
+
+/** The latest night at the closest working radar (interference radars and empty nights left out), for place pages. */
+export async function radarNear(lat: number, lon: number) {
+  if (!nearMemo || Date.now() - nearMemo.at > 3600_000) nearMemo = { at: Date.now(), data: await radarNight() };
+  const { night, radars } = nearMemo.data;
+  if (!night) return null;
+  let best: (RadarNight & { km: number }) | null = null;
+  for (const r of radars) {
+    if (r.clutter) continue;
+    const d = km({ lat, lon }, r);
+    if (d <= NEAR_RADAR_KM && (!best || d < best.km)) best = { ...r, km: Math.round(d) };
+  }
+  return best ? { night, ...best } : null;
+}
+
+/** Compass word for a direction of movement in degrees ("towards the south-west"). */
+export function compass(deg: number): string {
+  return ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"][Math.round(((deg % 360) + 360) % 360 / 45) % 8];
+}
