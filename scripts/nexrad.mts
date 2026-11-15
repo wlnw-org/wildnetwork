@@ -14,6 +14,8 @@ import { NEXRAD, nexradTargets, parseVpts, pruneRadar } from "../src/lib/radar";
 const run = promisify(execFile);
 const back = Number(process.argv[2] ?? 3), conc = Number(process.argv[3] ?? 1), maxRadars = Number(process.argv[4] ?? 1e9);
 const UA = { "user-agent": "WildlifeNetwork/0.1" };
+// Read once: a deploy can replace (and prune) this release folder while a long run is going, so each job writes its own copy.
+const R_SCRIPT = await readFile(join(import.meta.dirname, "nexrad.R"), "utf8");
 const day = (t: number) => new Date(t).toISOString().slice(0, 10);
 
 async function list(prefix: string, delimiter = false): Promise<string[]> {
@@ -52,8 +54,11 @@ async function radarNight(code: string, night: string, lon: number): Promise<"ok
       await writeFile(f, Buffer.from(await r.arrayBuffer()));
       files.push(f);
     }
-    const out = join(dir, "vpts.csv");
-    try { await run("Rscript", [join(import.meta.dirname, "nexrad.R"), out, ...files], { timeout: 30 * 60_000 }); } catch { return "missing"; }
+    const out = join(dir, "vpts.csv"), script = join(dir, "nexrad.R");
+    await writeFile(script, R_SCRIPT);
+    // Exit 2 = no scan gave a profile (rain, outage): a real "missing". Anything else is a failure to retry later.
+    try { await run("Rscript", [script, out, ...files], { timeout: 30 * 60_000 }); }
+    catch (e) { if ((e as { code?: number }).code === 2) return "missing"; throw e; }
     const parsed = parseVpts(await readFile(out, "utf8"));
     const part = parsed?.parts.find((p) => p.night === night);
     if (!parsed || !part || part.n < NEXRAD.MIN_SCANS) return "missing";
