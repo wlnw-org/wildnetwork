@@ -75,23 +75,30 @@ export default async function ReportPage({ searchParams }: Props) {
 function Form({ params, q, fromPlace, inner = false }: { params: Record<string, string | undefined>; q: ReturnType<typeof parseReportQuery>; fromPlace: boolean; inner?: boolean }) {
   const field = "mt-1 w-full min-w-0 rounded-md border border-white/15 bg-white/5 px-2.5 py-1.5 text-slate-100";
   const label = "block text-sm text-slate-400";
+  const advanced = !!(params.from || params.to || params.from2 || params.to2 || params.name || params.km || (!fromPlace && params.lat));
   return (
     <form method="get" className={`grid grid-cols-2 gap-3 sm:grid-cols-4 p-4 ${inner ? "border-t border-white/10" : "mt-6 rounded-lg border border-white/10"}`}>
       <label className={`${label} col-span-2`}><T k="Town or place" /><input name="place" defaultValue={q && !fromPlace ? "" : params.place ?? ""} placeholder={"Chennai"} className={`${field} placeholder:text-slate-500 placeholder:italic`} /></label>
-      <label className={label}><T k="Latitude" /><input name="lat" inputMode="decimal" defaultValue={fromPlace ? "" : q?.lat ?? ""} className={field} /></label>
-      <label className={label}><T k="Longitude" /><input name="lon" inputMode="decimal" defaultValue={fromPlace ? "" : q?.lon ?? ""} className={field} /></label>
-      <div className="col-span-2 sm:col-span-4 -mt-1"><MapPick /></div>
-      <label className={`${label} col-span-2 sm:col-span-4`}><T k="Name of the place (optional, for example a park)" /><input name="name" maxLength={80} defaultValue={q?.name ?? params.name ?? ""} className={field} /></label>
-      <label className={label}><T k="Radius (km)" /><input name="km" type="number" min={1} max={REPORT_LIMITS.MAX_KM} defaultValue={q?.km ?? REPORT_LIMITS.DEFAULT_KM} className={field} /></label>
       <label className={label}><T k="Animals" />
         <select name="group" defaultValue={q?.group ?? "all"} className={field}>
           {REPORT_GROUPS.map((g) => <option key={g} value={g}>{g === "all" ? "All" : GROUP_LABEL[g]}</option>)}
         </select>
       </label>
-      <label className={label}><T k="From" /><input name="from" type="date" defaultValue={q?.a.from} className={field} /></label>
-      <label className={label}><T k="To" /><input name="to" type="date" defaultValue={q?.a.to} className={field} /></label>
-      <label className={label}><T k="Compare from (optional)" /><input name="from2" type="date" defaultValue={q?.b?.from} className={field} /></label>
-      <label className={label}><T k="Compare to" /><input name="to2" type="date" defaultValue={q?.b?.to} className={field} /></label>
+      <div className="col-span-2 sm:col-span-4 -mt-1"><MapPick /></div>
+      {/* Coordinates, name, radius and dates are optional (defaults: 10 km, the last 12 weeks), so they fold away. */}
+      <details open={advanced} className="col-span-2 sm:col-span-4">
+        <summary className="cursor-pointer text-sm text-cyan-400"><T k="More options" /></summary>
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <label className={label}><T k="Latitude" /><input name="lat" inputMode="decimal" defaultValue={fromPlace ? "" : q?.lat ?? ""} className={field} /></label>
+        <label className={label}><T k="Longitude" /><input name="lon" inputMode="decimal" defaultValue={fromPlace ? "" : q?.lon ?? ""} className={field} /></label>
+        <label className={`${label} col-span-2 sm:col-span-4`}><T k="Name of the place (optional, for example a park)" /><input name="name" maxLength={80} defaultValue={q?.name ?? params.name ?? ""} className={field} /></label>
+        <label className={label}><T k="Radius (km)" /><input name="km" type="number" min={1} max={REPORT_LIMITS.MAX_KM} defaultValue={q?.km ?? REPORT_LIMITS.DEFAULT_KM} className={field} /></label>
+        <label className={label}><T k="From" /><input name="from" type="date" defaultValue={q?.a.from} className={field} /></label>
+        <label className={label}><T k="To" /><input name="to" type="date" defaultValue={q?.a.to} className={field} /></label>
+        <label className={label}><T k="Compare from (optional)" /><input name="from2" type="date" defaultValue={q?.b?.from} className={field} /></label>
+        <label className={label}><T k="Compare to" /><input name="to2" type="date" defaultValue={q?.b?.to} className={field} /></label>
+        </div>
+      </details>
       <div className="col-span-2 sm:col-span-4 flex flex-wrap items-center gap-3">
         <button className="rounded-md bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400"><T k="Show report" /></button>
         <span className="text-xs text-slate-400"><T k="If you fill in both, the latitude and longitude are used. Periods up to three years." /></span>
