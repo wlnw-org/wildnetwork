@@ -140,6 +140,8 @@ export default function WorldMap() {
   const [status, setStatus] = useState<Status | null>(null);
   const [coverage, setCoverage] = useState<{ summary: Record<string, number>; cells: { lat: number; lon: number; status: string; acoustic: number; observed: number }[] } | null>(null);
   const [showCoverage, setShowCoverage] = useState(false);
+  // Coverage, land cover and climate sit behind "More layers" so the legend stays short.
+  const [moreLayers, setMoreLayers] = useState(false);
   // Weather layer: wind about 1.5 km up and ground temperature on a 10 degree grid (/api/v1/weather, refreshed every 3 h).
   const [weather, setWeather] = useState<{ at: string; points: { lat: number; lon: number; t: number; ws: number; wd: number }[] } | null>(null);
   const [showWeather, setShowWeather] = useState(false);
@@ -1208,10 +1210,6 @@ export default function WorldMap() {
               <input type="checkbox" checked={showMarine} onChange={(e) => { setShowMarine(e.target.checked); track("toggle_marine", { on: e.target.checked ? 1 : 0 }); }} className="accent-[#60a5fa]" />
               <span>{t("Marine records")}</span>
             </label>
-            <label className="flex items-center gap-1.5 cursor-pointer select-none">
-              <input type="checkbox" checked={showCoverage} onChange={(e) => { setShowCoverage(e.target.checked); if (e.target.checked) track("show_coverage"); }} className="accent-[#a78bfa]" />
-              <span>{t("Coverage")}</span>
-            </label>
             <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("Wind about 1.5 km up, where most migrating birds fly, and the temperature on the ground. Updated every 3 hours.")}>
               <input type="checkbox" checked={showWeather} onChange={(e) => { setShowWeather(e.target.checked); if (e.target.checked) track("show_weather"); }} className="accent-[#fbbf24]" />
               <span>{t("Wind and temperature")}</span>
@@ -1220,26 +1218,6 @@ export default function WorldMap() {
               <div className="mt-1 space-y-0.5 text-slate-400">
                 <div className="flex items-center gap-2"><span>-20°</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #60a5fa, #e2e8f0, #fbbf24, #ef4444)" }} /><span>35° C</span></div>
                 {weather && <div>{t("Updated {time}", { time: new Date(weather.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) })} · Open-Meteo</div>}
-              </div>
-            )}
-            <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("Forest, farmland, towns and water in each square, from satellite maps.")}>
-              <input type="checkbox" checked={showLandcover} onChange={(e) => { setShowLandcover(e.target.checked); if (e.target.checked) track("show_landcover"); }} className="accent-[#16a34a]" />
-              <span>{t("Land cover")}</span>
-            </label>
-            {showLandcover && (
-              <div className="mt-1 space-y-0.5 text-slate-400">
-                <div className="grid grid-cols-2 gap-x-2">{LANDCOVER.map((c) => <Legend key={c.label} color={c.color} label={t(c.label)} />)}</div>
-                <div>ESA WorldCover 2021</div>
-              </div>
-            )}
-            <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("How the past 12 months compare with the 1991 to 2020 average, for temperature and rain.")}>
-              <input type="checkbox" checked={showClimate} onChange={(e) => { setShowClimate(e.target.checked); if (e.target.checked) track("show_climate"); }} className="accent-[#f87171]" />
-              <span>{t("Warmer or cooler than usual")}</span>
-            </label>
-            {showClimate && (
-              <div className="mt-1 space-y-0.5 text-slate-400">
-                <div className="flex items-center gap-2"><span>-2°</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #2563eb, #93c5fd, #e2e8f0, #fca5a5, #dc2626)" }} /><span>+2° C</span></div>
-                {climate && <div>{climate.from} to {climate.to} · NASA GISTEMP, NOAA GPCP</div>}
               </div>
             )}
             <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("Birds in the air at night over Europe, measured by weather radars. About two days behind.")}>
@@ -1264,14 +1242,44 @@ export default function WorldMap() {
                 )}
               </div>
             )}
-            {showCoverage && (
-              <div className="mt-1 space-y-0.5">
-                <Legend color="#a78bfa" label={`${t("Recordings and sightings")}${coverage ? ` (${coverage.summary.both})` : ""}`} />
-                <Legend color="#22d3ee" label={`${t("Recordings only")}${coverage ? ` (${coverage.summary.acoustic})` : ""}`} />
-                <Legend color="#f59e0b" label={`${t("Sightings only")}${coverage ? ` (${coverage.summary.observed})` : ""}`} />
-                <Legend color="#64748b" label={t("Too thin to use")} />
-                <Link href="/methods#coverage" className="block text-cyan-500 hover:underline">{t("What counts as watched")}</Link>
-              </div>
+            {moreLayers ? (
+              <>
+              <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                <input type="checkbox" checked={showCoverage} onChange={(e) => { setShowCoverage(e.target.checked); if (e.target.checked) track("show_coverage"); }} className="accent-[#a78bfa]" />
+                <span>{t("Coverage")}</span>
+              </label>
+              {showCoverage && (
+                <div className="mt-1 space-y-0.5">
+                  <Legend color="#a78bfa" label={`${t("Recordings and sightings")}${coverage ? ` (${coverage.summary.both})` : ""}`} />
+                  <Legend color="#22d3ee" label={`${t("Recordings only")}${coverage ? ` (${coverage.summary.acoustic})` : ""}`} />
+                  <Legend color="#f59e0b" label={`${t("Sightings only")}${coverage ? ` (${coverage.summary.observed})` : ""}`} />
+                  <Legend color="#64748b" label={t("Too thin to use")} />
+                  <Link href="/methods#coverage" className="block text-cyan-500 hover:underline">{t("What counts as watched")}</Link>
+                </div>
+              )}
+              <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("Forest, farmland, towns and water in each square, from satellite maps.")}>
+                <input type="checkbox" checked={showLandcover} onChange={(e) => { setShowLandcover(e.target.checked); if (e.target.checked) track("show_landcover"); }} className="accent-[#16a34a]" />
+                <span>{t("Land cover")}</span>
+              </label>
+              {showLandcover && (
+                <div className="mt-1 space-y-0.5 text-slate-400">
+                  <div className="grid grid-cols-2 gap-x-2">{LANDCOVER.map((c) => <Legend key={c.label} color={c.color} label={t(c.label)} />)}</div>
+                  <div>ESA WorldCover 2021</div>
+                </div>
+              )}
+              <label className="flex items-center gap-1.5 cursor-pointer select-none" title={t("How the past 12 months compare with the 1991 to 2020 average, for temperature and rain.")}>
+                <input type="checkbox" checked={showClimate} onChange={(e) => { setShowClimate(e.target.checked); if (e.target.checked) track("show_climate"); }} className="accent-[#f87171]" />
+                <span>{t("Warmer or cooler than usual")}</span>
+              </label>
+              {showClimate && (
+                <div className="mt-1 space-y-0.5 text-slate-400">
+                  <div className="flex items-center gap-2"><span>-2°</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #2563eb, #93c5fd, #e2e8f0, #fca5a5, #dc2626)" }} /><span>+2° C</span></div>
+                  {climate && <div>{climate.from} to {climate.to} · NASA GISTEMP, NOAA GPCP</div>}
+                </div>
+              )}
+              </>
+            ) : (
+              <button type="button" onClick={() => setMoreLayers(true)} className={`mt-0.5 text-slate-400 hover:text-white rounded ${FOCUS}`}>{t("More layers")}</button>
             )}
           </div>
         )}
