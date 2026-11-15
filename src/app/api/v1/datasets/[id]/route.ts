@@ -25,7 +25,10 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   try {
     switch (b.action) {
       case "update": {
-        const v = datasetFields(b);
+        // Fields left out keep their current value, so a tool can send only what it knows (Studio: title, people, licence).
+        const cur = { title: d.title, license: d.license, grp: d.grp, method: d.method, minConf: d.min_conf, precisionKm: d.precision_km, doi: d.doi,
+          institution: d.institution, description: d.description, device: d.device, classifier: d.classifier, people: d.people };
+        const v = datasetFields({ ...cur, ...Object.fromEntries(Object.entries(b).filter(([, x]) => x !== undefined && x !== null)) });
         if ("error" in v) return Response.json({ error: v.error }, { status: 400 });
         // The licence and checking rules are fixed once records count anywhere.
         const locked = d.status === "live" ? { license: d.license, min_conf: d.min_conf, method: d.method } : {};
