@@ -77,7 +77,8 @@ const codes = (await list(`${day(today - 86_400_000).replaceAll("-", "/")}/`, tr
 const sites = new Map((await sql<{ radar: string; lon: number }[]>`SELECT radar, lon FROM radar_sites`).map((r) => [r.radar, r.lon]));
 const done = new Set((await sql<{ k: string }[]>`
   SELECT radar || '|' || file_day::text AS k FROM radar_files WHERE file_day >= ${nights[nights.length - 1]}`).map((r) => r.k));
-const jobs = codes.flatMap((c) => nights.map((n) => [c, n] as const)).filter(([c, n]) => !done.has(`${c.toLowerCase()}|${n}`));
+// Newest night first for every radar, so the map fills in before older nights are added.
+const jobs = nights.flatMap((n) => codes.map((c) => [c, n] as const)).filter(([c, n]) => !done.has(`${c.toLowerCase()}|${n}`));
 console.log(`${codes.length} radars, ${nights.length} nights, ${jobs.length} to process`);
 let ok = 0, missing = 0, failed = 0, i = 0;
 const t0 = Date.now();
