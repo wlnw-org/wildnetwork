@@ -144,7 +144,9 @@ export default function WorldMap() {
   const [weather, setWeather] = useState<{ at: string; points: { lat: number; lon: number; t: number; ws: number; wd: number }[] } | null>(null);
   const [showWeather, setShowWeather] = useState(false);
   // Night migration over Europe from weather radars (/api/v1/radar, Aloft, about two days behind).
-  const [radar, setRadar] = useState<{ night: string | null; radars: { radar: string; lat: number; lon: number; vid: number; mtr: number; mtrMax: number; dir: number | null; normal: number | null }[] } | null>(null);
+  const [radar, setRadar] = useState<{ night: string | null; radars: { radar: string; lat: number; lon: number; vid: number; mtr: number; mtrMax: number; dir: number | null; normal: number | null; unusual?: boolean; clutter?: boolean }[] } | null>(null);
+  const [radarPick, setRadarPick] = useState<string | null>(null);
+  const [unusual, setUnusual] = useState<{ night: string; radars: { radar: string }[] }[] | null>(null);
   const [showRadar, setShowRadar] = useState(false);
   const [climate, setClimate] = useState<{ base: string; from: string; to: string; cells: { lat: number; lon: number; t: number | null; p: number | null }[] } | null>(null);
   const [showClimate, setShowClimate] = useState(false);
@@ -279,8 +281,11 @@ export default function WorldMap() {
         id: "radar", type: "circle", source: "radar",
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["sqrt", ["get", "vid"]], 0, 3, 5, 9, 15, 22],
-          "circle-color": ["interpolate", ["linear"], ["get", "ratio"], 0.25, "#3b82f6", 1, "#94a3b8", 4, "#f97316"],
-          "circle-opacity": 0.55, "circle-stroke-width": 1, "circle-stroke-color": "rgba(255,255,255,0.5)",
+          "circle-color": ["case", ["==", ["get", "clutter"], 1], "#475569", ["interpolate", ["linear"], ["get", "ratio"], 0.25, "#3b82f6", 1, "#94a3b8", 4, "#f97316"]],
+          "circle-opacity": 0.55,
+          // Unusual night (at least 3 times its usual): a thick white ring.
+          "circle-stroke-width": ["case", ["==", ["get", "unusual"], 1], 3, 1],
+          "circle-stroke-color": ["case", ["==", ["get", "unusual"], 1], "#ffffff", "rgba(255,255,255,0.5)"],
         },
       });
       map.addLayer({
@@ -382,7 +387,7 @@ export default function WorldMap() {
         const p = e.features?.[0]?.properties as Record<string, string | number> | undefined;
         if (!p) return;
         const ratio = Number(p.ratio);
-        const vs = p.normal != null && Number(p.normal) > 0 ? `<br/>${ratio >= 1.5 ? `${ratio.toFixed(1)} times` : ratio <= 0.67 ? `${Math.round(ratio * 100)}% of` : "about the same as"} its usual night over the two weeks before` : "";
+        const vs = Number(p.clutter) === 1 ? "<br/>This radar reads far more than birds can explain on most nights (likely interference), so it is not compared." : p.normal != null && Number(p.normal) > 0 ? `<br/>${ratio >= 1.5 ? `${ratio.toFixed(1)} times` : ratio <= 0.67 ? `${Math.round(ratio * 100)}% of` : "about the same as"} its usual night over the two weeks before${Number(p.unusual) === 1 ? ". <b>An unusual migration night here.</b>" : ""}` : "";
         const dir = p.dir != null ? `, heading ${compass(Number(p.dir))}` : "";
         new Popup({ closeButton: true, maxWidth: "280px" }).setLngLat(e.lngLat).setHTML(`<div style="font:13px system-ui;color:#e2e8f0"><b>Weather radar ${esc(String(p.radar))}</b> (${esc(String(p.country))})<br/>Night of ${esc(String(p.night))}: about ${Number(p.vid).toLocaleString("en-GB")} birds per km² in the air on average${dir}. At the busiest moment ${Number(p.mtrMax).toLocaleString("en-GB")} birds crossed each km per hour.${vs}<br/><span style="font-size:11px;color:#94a3b8">Aloft vertical profiles (ENRAM, BALTRAD, OPERA), CC BY 4.0</span></div>`).addTo(map);
       });
@@ -650,16 +655,20 @@ export default function WorldMap() {
   }, [species, showJourneys, journeys, ready]);
   // Radar layer: fetched when first shown (the data changes once a day).
   useEffect(() => {
-    if (!showRadar || radar) return;
-    fetch(`/api/v1/radar`).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.radars) setRadar(d); }).catch(() => {});
-  }, [showRadar, radar]);
+    if (!showRadar || (radar && (radarPick == null || radar.night === radarPick))) return;
+    fetch(`/api/v1/radar${radarPick ? `?night=${radarPick}` : ""}`).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.radars) setRadar(d); }).catch(() => {});
+  }, [showRadar, radar, radarPick]);
+  useEffect(() => {
+    if (!showRadar || unusual) return;
+    fetch(`/api/v1/radar/unusual?days=60`).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.nights) setUnusual(d.nights); }).catch(() => {});
+  }, [showRadar, unusual]);
   useEffect(() => {
     const src = mapRef.current?.getSource("radar") as GeoJSONSource | undefined;
     if (!src) return;
     src.setData(showRadar && radar?.night ? { type: "FeatureCollection", features: radar.radars.map((r) => ({
       type: "Feature", geometry: { type: "Point", coordinates: [r.lon, r.lat] },
       properties: { radar: r.radar, country: RADAR_COUNTRY[r.radar.slice(0, 2)] ?? r.radar.slice(0, 2).toUpperCase(), night: radar.night, vid: r.vid, mtrMax: r.mtrMax,
-        normal: r.normal, ratio: r.normal && r.normal > 0 ? r.vid / r.normal : 1, ...(r.dir != null ? { dir: r.dir } : {}) },
+        normal: r.normal, ratio: r.normal && r.normal > 0 ? r.vid / r.normal : 1, unusual: r.unusual ? 1 : 0, clutter: r.clutter ? 1 : 0, ...(r.dir != null ? { dir: r.dir } : {}) },
     })) } : EMPTY);
   }, [showRadar, radar, ready]);
   // Past period: totals per cell, most recorded and arrivals from /api/v1/history (cached for hours at the edge).
@@ -1202,6 +1211,22 @@ export default function WorldMap() {
                 <div className="flex items-center gap-2"><span>{t("quieter")}</span><span className="h-2 w-24 rounded-sm" style={{ background: "linear-gradient(90deg, #3b82f6, #94a3b8, #f97316)" }} /><span>{t("busier than usual")}</span></div>
                 {radar?.night && <div>{t("Night of {date}", { date: new Date(radar.night + "T12:00:00Z").toLocaleDateString([], { day: "numeric", month: "short" }) })} · Aloft</div>}
                 {radar && !radar.night && <div>{t("No radar data yet.")}</div>}
+                <div className="flex items-center gap-2"><span className="inline-block h-3 w-3 rounded-full border-2 border-white" /><span>{t("Unusual night: at least 3 times its usual")}</span></div>
+                {unusual && unusual.length > 0 && (
+                  <div className="pt-0.5">
+                    <div>{t("Unusual nights lately")}</div>
+                    <div className="mt-0.5 flex flex-wrap gap-1">
+                      {unusual.slice(0, 8).map((u) => (
+                        <button key={u.night} type="button" onClick={() => { setRadarPick(u.night); track("radar_night", { night: u.night }); }}
+                          title={t("{n} radars", { n: u.radars.length })}
+                          className={`rounded border px-1.5 py-0.5 ${radar?.night === u.night ? "border-white text-white" : "border-slate-600 hover:border-slate-400"}`}>
+                          {new Date(u.night + "T12:00:00Z").toLocaleDateString([], { day: "numeric", month: "short" })} · {u.radars.length}
+                        </button>
+                      ))}
+                      {radarPick && <button type="button" onClick={() => { setRadarPick(null); setRadar(null); }} className="rounded border border-slate-600 px-1.5 py-0.5 hover:border-slate-400">{t("Latest")}</button>}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
             {showCoverage && (

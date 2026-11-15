@@ -208,6 +208,16 @@ export default function Methods() {
           median of its previous 14 nights. Radars differ in sensitivity and clutter, so compare a radar with its own usual night rather than with its neighbours. Limits: heavy rain, sea clutter and insects can still leak in; radars cover only roughly 100 km around
           themselves; this counts all birds together, not species, and is display only (it feeds no arrival date or trend).
         </p>
+        <p className="mt-3" id="unusual-nights">
+          <b>Unusual migration nights.</b> A radar&apos;s night is called unusual when it holds at least 3 times the median of its previous 14 nights,
+          at least 7 of those nights reported, and at least 20 birds per km² were in the air on average. The map rings those radars in white and lists
+          the recent nights with any, and <a href="/api/v1/radar/unusual" className="text-cyan-400 hover:underline">/api/v1/radar/unusual</a> returns them.
+          Radars whose median night over everything we keep (up to 200 nights) is above 150 birds per km² read far more than birds can explain night
+          after night (in autumn 2026 the Romanian radars, with 400 to 1,500 every night): we treat that as interference, draw them grey and never call
+          their nights unusual. First month (13 October to 12 November 2026): 24 unusual radar nights on 10 nights, most of them a wave of birds leaving
+          Scandinavia to the south-west on 28 to 30 October. The rule is a fixed threshold, not a test: a quiet radar with a small normal crosses it
+          more easily, and with no earlier seasons kept we cannot yet say how unusual a night is for its time of year.
+        </p>
         <p className="mt-3" id="climate">
           <b>Climate context (map layer and API).</b> For each 5 degree square we give the temperature and rainfall of every month since 1991,
           each against the 1991 to 2020 average for the same calendar month. Temperature comes from{" "}
@@ -440,6 +450,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.27</b> (15 November 2026): <a href="#unusual-nights" className="text-cyan-400 hover:underline">unusual migration nights</a> from the radar layer, and radars with persistent interference set aside. No other measure changed.</li>
           <li><b>0.26</b> (15 November 2026): <a href="#climate" className="text-cyan-400 hover:underline">climate context</a> per 5 degree square from NASA GISTEMP and NOAA GPCP, on the map and in the API. No measure changed.</li>
           <li><b>0.25</b> (15 November 2026): mammals from GBIF. Records of mammals other than bats (published under CC0 or CC BY, many from camera traps) now enter the weekly history and the live map, with effort corrected within the mammal class as before. Taxa at risk from poaching (rhinos, pangolins, elephants, great cats, great apes, musk deer, saiga) are shown on the live map only at 1 degree. Weeks already in the history gain mammals as the rolling GBIF refresh reaches them, newest first.</li>
           <li><b>0.24</b> (14 November 2026): a <a href="#radar" className="text-cyan-400 hover:underline">night migration layer</a> from European weather radars, a wind and temperature layer from Open-Meteo, and <a href="#tracks" className="text-cyan-400 hover:underline">tracked journeys</a> of tagged animals from the Movebank Data Repository, all on the map only. No measure changed.</li>

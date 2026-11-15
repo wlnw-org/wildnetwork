@@ -9,7 +9,11 @@ import { sql } from "@/lib/db";
  * speed or direction. Bins whose radial velocity spread (sd_vvp) is below its threshold count as no birds (insects or rain).
  */
 export const ALOFT = "https://aloftdata.s3-eu-west-1.amazonaws.com";
-export const RADAR = { BIN_KM: 0.2, MIN_HEIGHT_M: 200, SUN_DARK: -6, MAX_VID: 3000, MIN_PROFILES: 24, KEEP_DAYS: 200, NORMAL_NIGHTS: 14 };
+export const RADAR = { BIN_KM: 0.2, MIN_HEIGHT_M: 200, SUN_DARK: -6, MAX_VID: 3000, MIN_PROFILES: 24, KEEP_DAYS: 200, NORMAL_NIGHTS: 14,
+  // Unusual night: at least RATIO times the radar's median of the nights before (NORMAL_NIGHTS window, MIN_NORMAL of them
+  // reporting) and at least MIN_VID birds/km2. Radars whose median night over everything kept is above CLUTTER_MEDIAN
+  // birds/km2 read interference (Romania, autumn 2026), not birds: drawn grey and never called unusual.
+  UNUSUAL_RATIO: 3, UNUSUAL_MIN_VID: 20, MIN_NORMAL: 7, CLUTTER_MEDIAN: 150 };
 
 export function solarElevation(t: Date, lat: number, lon: number): number {
   const start = Date.UTC(t.getUTCFullYear(), 0, 0);
@@ -94,7 +98,7 @@ export async function listRadars(): Promise<string[]> {
   return [...(await r.text()).matchAll(/<Prefix>baltrad\/daily\/([a-z0-9]+)\/<\/Prefix>/g)].map((m) => m[1]);
 }
 
-export type RadarNight = { radar: string; lat: number; lon: number; vid: number; mtr: number; mtrMax: number; dir: number | null; normal: number | null; profiles: number };
+export type RadarNight = { radar: string; lat: number; lon: number; vid: number; mtr: number; mtrMax: number; dir: number | null; normal: number | null; profiles: number; unusual: boolean; clutter: boolean };
 
 /** Nights with enough radars reporting, newest first, and the radars for one night with their 14-night normal. */
 export async function radarNight(night?: string) {
@@ -104,21 +108,75 @@ export async function radarNight(night?: string) {
     GROUP BY 1 HAVING COUNT(*) >= 20 ORDER BY 1 DESC LIMIT 60`;
   const pick = night && nights.some((n) => n.night === night) ? night : nights[0]?.night;
   if (!pick) return { night: null, nights: [], radars: [] as RadarNight[] };
-  const rows = await sql<{ radar: string; lat: number; lon: number; vid: number; mtr: number; mtr_max: number; u: number; v: number; n: number; normal: number | null }[]>`
+  const [rows, clutter] = await Promise.all([nightRows(pick, pick), clutterRadars()]);
+  const radars = rows.map((r) => toNight(r, clutter));
+  return { night: pick, nights: nights.map((n) => n.night), radars };
+}
+
+type Row = { radar: string; night: string; lat: number; lon: number; vid: number; mtr: number; mtr_max: number; u: number; v: number; n: number; normal: number | null; k: number };
+
+/** Radar nights from `from` to `to`, each with the median and count of its own previous NORMAL_NIGHTS nights. */
+async function nightRows(from: string, to: string, onlyUnusual = false) {
+  return sql<Row[]>`
     WITH nights AS (
       SELECT radar, night, SUM(n)::int AS n, SUM(vid_sum) / SUM(n) AS vid, SUM(mtr_sum) / SUM(n) AS mtr, MAX(mtr_max) AS mtr_max,
              SUM(u_sum) AS u, SUM(v_sum) AS v
-      FROM radar_part WHERE night BETWEEN ${pick}::date - ${RADAR.NORMAL_NIGHTS}::int AND ${pick}::date
-      GROUP BY 1, 2 HAVING SUM(n) >= ${RADAR.MIN_PROFILES})
-    SELECT t.radar, s.lat, s.lon, t.vid, t.mtr, t.mtr_max, t.u, t.v, t.n,
-           (SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY p.vid) FROM nights p WHERE p.radar = t.radar AND p.night < t.night) AS normal
-    FROM nights t JOIN radar_sites s USING (radar) WHERE t.night = ${pick}`;
-  const radars: RadarNight[] = rows.map((r) => ({
+      FROM radar_part WHERE night BETWEEN ${from}::date - ${RADAR.NORMAL_NIGHTS}::int AND ${to}::date
+      GROUP BY 1, 2 HAVING SUM(n) >= ${RADAR.MIN_PROFILES}),
+    rated AS (
+      SELECT t.*, b.normal, b.k FROM nights t, LATERAL (
+        SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY p.vid) AS normal, COUNT(*)::int AS k FROM nights p
+        WHERE p.radar = t.radar AND p.night < t.night AND p.night >= t.night - ${RADAR.NORMAL_NIGHTS}::int) b
+      WHERE t.night >= ${from}::date)
+    SELECT r.radar, r.night::text, s.lat, s.lon, r.vid, r.mtr, r.mtr_max, r.u, r.v, r.n, r.normal, r.k
+    FROM rated r JOIN radar_sites s USING (radar)
+    WHERE NOT ${onlyUnusual} OR (r.k >= ${RADAR.MIN_NORMAL} AND r.vid >= ${RADAR.UNUSUAL_MIN_VID}
+      AND r.vid >= ${RADAR.UNUSUAL_RATIO} * GREATEST(r.normal, 1))`;
+}
+
+/** Radars whose median night is implausibly high for birds over everything kept: interference. */
+async function clutterRadars(): Promise<Set<string>> {
+  const rows = await sql<{ radar: string }[]>`
+    SELECT radar FROM (SELECT radar, night, SUM(vid_sum) / SUM(n) AS vid FROM radar_part GROUP BY 1, 2 HAVING SUM(n) >= ${RADAR.MIN_PROFILES}) x
+    GROUP BY 1 HAVING percentile_cont(0.5) WITHIN GROUP (ORDER BY vid) > ${RADAR.CLUTTER_MEDIAN}`;
+  return new Set(rows.map((r) => r.radar));
+}
+
+function toNight(r: Row, clutter: Set<string>): RadarNight {
+  const isClutter = clutter.has(r.radar);
+  return {
     radar: r.radar, lat: r.lat, lon: r.lon, vid: Math.round(r.vid * 10) / 10, mtr: Math.round(r.mtr), mtrMax: Math.round(r.mtr_max), profiles: r.n,
     dir: r.vid > 1 && (r.u || r.v) ? Math.round(((Math.atan2(r.u, r.v) * 180) / Math.PI + 360) % 360) : null,
-    normal: r.normal == null ? null : Math.round(r.normal * 10) / 10,
-  }));
-  return { night: pick, nights: nights.map((n) => n.night), radars };
+    normal: r.normal == null ? null : Math.round(r.normal * 10) / 10, clutter: isClutter,
+    unusual: !isClutter && r.k >= RADAR.MIN_NORMAL && r.vid >= RADAR.UNUSUAL_MIN_VID && r.vid >= RADAR.UNUSUAL_RATIO * Math.max(r.normal ?? 0, 1),
+  };
+}
+
+/** Unusual migration nights in the last `days` nights, newest first, each with its unusual radars (interference excluded). */
+const unusualMemo = new Map<number, { at: number; data: Awaited<ReturnType<typeof computeUnusual>> }>();
+export async function unusualNights(days = 60) {
+  const hit = unusualMemo.get(days);
+  if (hit && Date.now() - hit.at < 3600_000) return hit.data;
+  const data = await computeUnusual(days);
+  unusualMemo.set(days, { at: Date.now(), data });
+  return data;
+}
+
+async function computeUnusual(days: number) {
+  const last = await sql<{ night: string }[]>`SELECT MAX(night)::text AS night FROM radar_part`;
+  const to = last[0]?.night;
+  if (!to) return { from: null as string | null, to: null as string | null, nights: [] as { night: string; radars: RadarNight[] }[] };
+  const from = new Date(Date.parse(to + "T00:00:00Z") - (days - 1) * 86400_000).toISOString().slice(0, 10);
+  const [rows, clutter] = await Promise.all([nightRows(from, to, true), clutterRadars()]);
+  const by = new Map<string, RadarNight[]>();
+  for (const r of rows) {
+    const n = toNight(r, clutter);
+    if (!n.unusual) continue;
+    by.set(r.night, [...(by.get(r.night) ?? []), n]);
+  }
+  const nights = [...by].map(([night, radars]) => ({ night, radars: radars.sort((a, b) => b.vid / Math.max(b.normal ?? 1, 1) - a.vid / Math.max(a.normal ?? 1, 1)) }))
+    .sort((a, b) => b.night.localeCompare(a.night));
+  return { from, to, nights };
 }
 
 export async function pruneRadar() {
