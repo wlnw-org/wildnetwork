@@ -38,7 +38,7 @@ export default function AboutPanel() {
           <Link href="https://github.com/sponsors/arunrajiah">support it on GitHub Sponsors</Link>.
         </p>
         <p className="mt-2">
-          Follow along: <Link href="https://www.youtube.com/@wlnw-org">video guides on YouTube</Link> and <Link href="https://github.com/wlnw-org">code on GitHub</Link>.
+          Follow along on <Link href="https://www.youtube.com/@wlnw-org">YouTube</Link> (video guides), <Link href="https://www.linkedin.com/company/wildlife-network/">LinkedIn</Link> and <Link href="https://x.com/wlnw_org">X</Link>; the code is on <Link href="https://github.com/wlnw-org">GitHub</Link>.
         </p>
         <p className="mt-2">
           New here? <button onClick={() => window.dispatchEvent(new Event("wn:tour"))} className="text-cyan-400 hover:underline">Take the one-minute tour</button>.

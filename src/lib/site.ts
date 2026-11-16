@@ -88,4 +88,6 @@ export const INDEXED_GROUPS = new Set(["avian", "bat", "amphibian", "mammal"]);
 export const SOCIAL: { name: string; href: string; label: string }[] = [
   { name: "YouTube", href: "https://www.youtube.com/@wlnw-org", label: "Video guides on YouTube" },
   { name: "GitHub", href: "https://github.com/wlnw-org", label: "Open source code on GitHub" },
+  { name: "LinkedIn", href: "https://www.linkedin.com/company/wildlife-network/", label: "Wildlife Network on LinkedIn" },
+  { name: "X", href: "https://x.com/wlnw_org", label: "Wildlife Network on X" },
 ];
