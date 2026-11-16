@@ -82,7 +82,7 @@ const studio: Guide[] = [
     body: [
       { steps: [
         "Go to Find species and check the models (see [models](/help/studio/models)).",
-        "Choose Start. Progress shows recordings done, hours of audio, detections, speed and time left.",
+        "Choose Start. Progress shows recordings done, hours of audio, detections, speed and time left. If Start is greyed out, no model is installed yet: download one on the same screen (Perch is the one to start with).",
         "Choose Pause after this file to stop. Start again later and Studio carries on where it stopped, even after closing the app or restarting the computer.",
       ] },
       { p: "Everything runs on your computer and nothing is uploaded. Studio checks there is enough disk space before it starts." },
@@ -209,7 +209,7 @@ const studio: Guide[] = [
       { p: "Days are the recorder's local calendar days and weeks run Monday to Sunday. A recording that runs past midnight counts for both days. Recordings without a start time are left out. Read the table, keep one species and drop the first five columns to get the detection matrix, for example for unmarked::unmarkedFrameOccu(y = ...). Use the effort file as an observation covariate." },
       { h: "Publish to Wildlife Network" },
       { steps: ["Create a dataset at [wlnw.org/datasets](/datasets/new) (sign in with ORCID).", "On the dataset page create its upload key.", "Paste the dataset id and key into Studio and send. Sending again is safe: duplicates are ignored. Records sent after you submitted (for example the next SD card) take the dataset back to draft until you submit it again."] },
-      { p: "The site checks every record again and credits your dataset by name wherever it is used." },
+      { p: "From Studio 0.1.15, Studio also sends the title, people to credit, institution, description and licence, and fills in the dataset id you used last time (the key is never stored). After sending it says how many detections were left out because a recorder or camera has no place or a file has no time, and links to your dataset. The site checks every record again and credits your dataset by name wherever it is used." },
     ],
   },
   {
@@ -240,7 +240,7 @@ const studio: Guide[] = [
       { steps: [
         "Open Settings (bottom of the sidebar, or on the start screen).",
         "Turn on Share my checked answers to improve species ID.",
-        "Keep reviewing as usual. Studio sends new answers in the background when a project is open, and the Settings box shows how many were shared.",
+        "Keep reviewing as usual. Studio sends new answers in the background when a project is open, and the Settings box shows how many were shared. If sending fails, for example when you are offline, Settings says so and Studio tries again later.",
       ] },
       { h: "What is sent" },
       { list: [
