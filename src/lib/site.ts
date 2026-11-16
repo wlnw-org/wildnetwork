@@ -83,3 +83,9 @@ export const DATA_USES: { title: string; authors: string; year: number; url: str
 
 /** Classes whose species pages are indexed on the strength of an arrival date (insects and others only via India, UK or city lists). */
 export const INDEXED_GROUPS = new Set(["avian", "bat", "amphibian", "mammal"]);
+
+/** Official Wildlife Network accounts: footer icons, the map's About panel and Organization sameAs on the home page. */
+export const SOCIAL: { name: string; href: string; label: string }[] = [
+  { name: "YouTube", href: "https://www.youtube.com/@wlnw-org", label: "Video guides on YouTube" },
+  { name: "GitHub", href: "https://github.com/wlnw-org", label: "Open source code on GitHub" },
+];

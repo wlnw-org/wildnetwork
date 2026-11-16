@@ -38,6 +38,9 @@ export default function AboutPanel() {
           <Link href="https://github.com/sponsors/arunrajiah">support it on GitHub Sponsors</Link>.
         </p>
         <p className="mt-2">
+          Follow along: <Link href="https://www.youtube.com/@wlnw-org">video guides on YouTube</Link> and <Link href="https://github.com/wlnw-org">code on GitHub</Link>.
+        </p>
+        <p className="mt-2">
           New here? <button onClick={() => window.dispatchEvent(new Event("wn:tour"))} className="text-cyan-400 hover:underline">Take the one-minute tour</button>.
           What changed lately: <a href="/updates" className="text-cyan-400 hover:underline">updates</a>, also by email.
         </p>

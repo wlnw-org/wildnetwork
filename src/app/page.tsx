@@ -4,7 +4,7 @@ import WorldMap from "@/components/WorldMap";
 import { sql } from "@/lib/db";
 import { REGION } from "@/lib/methods";
 import { REGIONS } from "@/lib/regions";
-import { INDEXED_GROUPS, SITE, SITE_DESCRIPTION, SITE_NAME, speciesSlug } from "@/lib/site";
+import { INDEXED_GROUPS, SITE, SITE_DESCRIPTION, SITE_NAME, SOCIAL, speciesSlug } from "@/lib/site";
 
 // The species list below is read from the arrivals table; refreshed hourly.
 export const revalidate = 3600;
@@ -20,6 +20,7 @@ const jsonLd = {
   "@graph": [
     { "@type": "WebSite", "@id": `${SITE}/#website`, url: SITE, name: SITE_NAME, description: SITE_DESCRIPTION, inLanguage: "en",
       publisher: { "@type": "Person", name: "Arun Rajiah", url: "https://www.arunrajiah.com" } },
+    { "@type": "Organization", "@id": `${SITE}/#org`, name: SITE_NAME, url: SITE, logo: `${SITE}/logo.svg`, sameAs: SOCIAL.map((s) => s.href) },
     { "@type": "WebApplication", name: SITE_NAME, url: SITE, applicationCategory: "EducationalApplication", operatingSystem: "Any",
       description: SITE_DESCRIPTION, offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, isAccessibleForFree: true,
       codeRepository: "https://github.com/wlnw-org/wildnetwork", license: "https://www.gnu.org/licenses/agpl-3.0.html" },
