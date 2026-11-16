@@ -71,6 +71,12 @@ export function TR({ k, v }: { k: string; v?: Record<string, string | number> })
  * The dictionary comes from the server (src/lib/pageLang.ts) and seeds the cache before the first render on both sides.
  */
 export function PageLanguage({ lang, body, children }: { lang: Lang; body: Record<string, string>; children: ReactNode }) {
+  // The root layout renders <html lang="en">; language pages correct it once loaded (the content div already says it).
+  useEffect(() => {
+    const before = document.documentElement.lang;
+    document.documentElement.lang = lang;
+    return () => { document.documentElement.lang = before; };
+  }, [lang]);
   return (
     <LangContext.Provider value={lang}>
       <PageBody.Provider value={body}><div lang={lang} className="contents">{children}</div></PageBody.Provider>
