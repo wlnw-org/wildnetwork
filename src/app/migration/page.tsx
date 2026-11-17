@@ -17,13 +17,13 @@ export const metadata: Metadata = {
 
 type Region = { key: "europe" | "us"; label: string; radars: RadarNight[] };
 
-/** Nearest city on our places list within 250 km, for a readable radar name. */
+/** Nearest city on our places list within 150 km, for a readable radar name ("near Brussels"). */
 function near(r: { lat: number; lon: number }): string | null {
   let best: { name: string; d: number } | null = null;
   for (const p of PLACES as { name: string; lat: number; lon: number }[]) {
     const dLat = (p.lat - r.lat) * 111, dLon = (p.lon - r.lon) * 111 * Math.cos((r.lat * Math.PI) / 180);
     const d = Math.hypot(dLat, dLon);
-    if (d <= 250 && (!best || d < best.d)) best = { name: p.name, d };
+    if (d <= 150 && (!best || d < best.d)) best = { name: p.name, d };
   }
   return best?.name ?? null;
 }
@@ -82,7 +82,7 @@ export default async function MigrationPage() {
               {unusual.length > 0 && (
                 <p className="mt-2 rounded-lg border border-white/10 bg-white/5 p-3 text-sm">
                   <TR k="Unusually busy (at least 3 times a usual night):" />{" "}
-                  {unusual.slice(0, 12).map((r, i) => <span key={r.radar}>{i > 0 && ", "}{label(r)}</span>)}.
+                  {unusual.slice(0, 12).map(label).join("; ")}.
                 </p>
               )}
               <table className="mt-3 w-full text-sm">
@@ -118,5 +118,5 @@ export default async function MigrationPage() {
 function label(r: RadarNight): string {
   const city = near(r);
   const code = r.radar.toUpperCase();
-  return city ? `${city} (${code})` : `${code} (${Math.abs(r.lat).toFixed(1)}°${r.lat >= 0 ? "N" : "S"}, ${Math.abs(r.lon).toFixed(1)}°${r.lon >= 0 ? "E" : "W"})`;
+  return city ? `${code}, near ${city}` : `${code} (${Math.abs(r.lat).toFixed(1)}°${r.lat >= 0 ? "N" : "S"}, ${Math.abs(r.lon).toFixed(1)}°${r.lon >= 0 ? "E" : "W"})`;
 }
