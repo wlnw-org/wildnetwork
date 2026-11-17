@@ -360,7 +360,7 @@ const site: Guide[] = [
     summary: "Species alerts for your area, and update emails.",
     body: [
       { steps: ["Open a species page and choose Get an email when it arrives near you.", "Enter your town and email, and confirm from the email we send.", "You get one email when the species is recorded in your area after weeks without records, at most once every 8 weeks."] },
-      { p: "Every email has a link to stop it. For news about the site itself, sign up on [Updates](/updates)." },
+      { p: "Every email has a link to stop it. You can also set an alert from a species page in the BirdEcho Android app (from version 0.13). For news about the site itself, sign up on [Updates](/updates)." },
     ],
   },
   {
@@ -370,7 +370,7 @@ const site: Guide[] = [
     body: [
       { list: [
         "Have a BirdWeather station? [Join here](/stations/join) with its token: no extra software needed.",
-        "Run BirdNET-Pi, BirdNET-Go or another recorder? Install the small wdx-agent: see [Contribute](/contribute).",
+        "Run BirdNET-Pi, BirdNET-Go or another recorder? Install the small wdx-agent: see [Contribute](/contribute). With the BirdEcho Android app, open Share with Wildlife Network to get the install command; from BirdEcho 0.13 the same screen shows whether your Pi is sending and when it last reported.",
         "Have a folder of recordings or camera-trap photos? Process them with [Studio](/studio) and publish from there.",
         "Have results in a spreadsheet? Upload them as a [dataset](/datasets/new).",
       ] },
