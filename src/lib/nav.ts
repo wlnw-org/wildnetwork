@@ -4,6 +4,7 @@ export const NAV: { label: string; links: { label: string; href: string; footer?
   { label: "Explore", links: [
     { label: "All species", href: "/species" },
     { label: "Arrivals by region", href: "/arrivals" },
+    { label: "Migration last night", href: "/migration" },
     { label: "Places", href: "/places" },
     { label: "Lost species", href: "/lost-species" },
   ] },

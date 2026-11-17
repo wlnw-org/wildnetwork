@@ -1859,7 +1859,7 @@ const AREA: Record<string, Dict> = {
 // Site header and footer, 404, /alerts, site report area banner, area search labels.
 const PAGEUX: Record<string, Dict> = {
   es: {
-    "All species": "Todas las especies", "Arrivals by region": "Llegadas por región", "Reports": "Informes", "Species alerts": "Alertas de especies",
+    "All species": "Todas las especies", "Arrivals by region": "Llegadas por región", "Migration last night": "Migración anoche", "Reports": "Informes", "Species alerts": "Alertas de especies",
     "Contribute": "Contribuir", "How to contribute": "Cómo contribuir", "Studio app": "App Studio", "Upload a dataset": "Subir un conjunto de datos",
     "Join with a BirdWeather station": "Unirse con una estación BirdWeather", "Stations": "Estaciones", "Research and data": "Investigación y datos",
     "Open data": "Datos abiertos", "Developers and API": "Desarrolladores y API", "Study areas": "Áreas de estudio", "Projects": "Proyectos",
@@ -1886,7 +1886,7 @@ const PAGEUX: Record<string, Dict> = {
     "For a place, district or protected area": "Para un lugar, distrito o área protegida",
   },
   fr: {
-    "All species": "Toutes les espèces", "Arrivals by region": "Arrivées par région", "Reports": "Rapports", "Species alerts": "Alertes espèces",
+    "All species": "Toutes les espèces", "Arrivals by region": "Arrivées par région", "Migration last night": "Migration la nuit dernière", "Reports": "Rapports", "Species alerts": "Alertes espèces",
     "Contribute": "Contribuer", "How to contribute": "Comment contribuer", "Studio app": "Application Studio", "Upload a dataset": "Déposer un jeu de données",
     "Join with a BirdWeather station": "Rejoindre avec une station BirdWeather", "Stations": "Stations", "Research and data": "Recherche et données",
     "Open data": "Données ouvertes", "Developers and API": "Développeurs et API", "Study areas": "Zones d'étude", "Projects": "Projets",
@@ -1913,7 +1913,7 @@ const PAGEUX: Record<string, Dict> = {
     "For a place, district or protected area": "Pour un lieu, un district ou une aire protégée",
   },
   de: {
-    "All species": "Alle Arten", "Arrivals by region": "Ankunft nach Region", "Reports": "Berichte", "Species alerts": "Artenbenachrichtigungen",
+    "All species": "Alle Arten", "Arrivals by region": "Ankunft nach Region", "Migration last night": "Vogelzug letzte Nacht", "Reports": "Berichte", "Species alerts": "Artenbenachrichtigungen",
     "Contribute": "Mitmachen", "How to contribute": "So machen Sie mit", "Studio app": "Studio-App", "Upload a dataset": "Datensatz hochladen",
     "Join with a BirdWeather station": "Mit einer BirdWeather-Station teilnehmen", "Stations": "Stationen", "Research and data": "Forschung und Daten",
     "Open data": "Offene Daten", "Developers and API": "Entwickler und API", "Study areas": "Untersuchungsgebiete", "Projects": "Projekte",
@@ -1940,7 +1940,7 @@ const PAGEUX: Record<string, Dict> = {
     "For a place, district or protected area": "Für einen Ort, Kreis oder ein Schutzgebiet",
   },
   pt: {
-    "All species": "Todas as espécies", "Arrivals by region": "Chegadas por região", "Reports": "Relatórios", "Species alerts": "Alertas de espécies",
+    "All species": "Todas as espécies", "Arrivals by region": "Chegadas por região", "Migration last night": "Migração ontem à noite", "Reports": "Relatórios", "Species alerts": "Alertas de espécies",
     "Contribute": "Contribuir", "How to contribute": "Como contribuir", "Studio app": "App Studio", "Upload a dataset": "Enviar um conjunto de dados",
     "Join with a BirdWeather station": "Participar com uma estação BirdWeather", "Stations": "Estações", "Research and data": "Pesquisa e dados",
     "Open data": "Dados abertos", "Developers and API": "Desenvolvedores e API", "Study areas": "Áreas de estudo", "Projects": "Projetos",
@@ -1967,7 +1967,7 @@ const PAGEUX: Record<string, Dict> = {
     "For a place, district or protected area": "Para um lugar, distrito ou área protegida",
   },
   hi: {
-    "All species": "सभी प्रजातियाँ", "Arrivals by region": "क्षेत्र के अनुसार आगमन", "Reports": "रिपोर्ट", "Species alerts": "प्रजाति अलर्ट",
+    "All species": "सभी प्रजातियाँ", "Arrivals by region": "क्षेत्र के अनुसार आगमन", "Migration last night": "कल रात का प्रवास", "Reports": "रिपोर्ट", "Species alerts": "प्रजाति अलर्ट",
     "Contribute": "योगदान दें", "How to contribute": "योगदान कैसे दें", "Studio app": "Studio ऐप", "Upload a dataset": "डेटासेट अपलोड करें",
     "Join with a BirdWeather station": "BirdWeather स्टेशन के साथ जुड़ें", "Stations": "स्टेशन", "Research and data": "शोध और डेटा",
     "Open data": "खुला डेटा", "Developers and API": "डेवलपर और API", "Study areas": "अध्ययन क्षेत्र", "Projects": "परियोजनाएँ",
@@ -1994,7 +1994,7 @@ const PAGEUX: Record<string, Dict> = {
     "For a place, district or protected area": "किसी जगह, ज़िले या संरक्षित क्षेत्र के लिए",
   },
   ta: {
-    "All species": "அனைத்து இனங்கள்", "Arrivals by region": "பகுதி வாரியான வருகை", "Reports": "அறிக்கைகள்", "Species alerts": "இன எச்சரிக்கைகள்",
+    "All species": "அனைத்து இனங்கள்", "Arrivals by region": "பகுதி வாரியான வருகை", "Migration last night": "நேற்றிரவு வலசை", "Reports": "அறிக்கைகள்", "Species alerts": "இன எச்சரிக்கைகள்",
     "Contribute": "பங்களிக்க", "How to contribute": "எப்படி பங்களிப்பது", "Studio app": "Studio செயலி", "Upload a dataset": "தரவுத்தொகுப்பைப் பதிவேற்று",
     "Join with a BirdWeather station": "BirdWeather நிலையத்துடன் இணைக", "Stations": "நிலையங்கள்", "Research and data": "ஆய்வும் தரவும்",
     "Open data": "திறந்த தரவு", "Developers and API": "டெவலப்பர்களும் API-யும்", "Study areas": "ஆய்வுப் பகுதிகள்", "Projects": "திட்டங்கள்",
