@@ -38,6 +38,9 @@ export default function AboutPanel() {
           <Link href="https://github.com/sponsors/arunrajiah">support it on GitHub Sponsors</Link>.
         </p>
         <p className="mt-2">
+          How every number on the map is worked out, and its limits: <Link href="/methods">Methods</Link>.
+        </p>
+        <p className="mt-2">
           Follow along on <Link href="https://www.youtube.com/@wlnw-org">YouTube</Link> (video guides), <Link href="https://www.linkedin.com/company/wildlife-network/">LinkedIn</Link> and <Link href="https://x.com/wlnw_org">X</Link>; the code is on <Link href="https://github.com/wlnw-org">GitHub</Link>.
         </p>
         <p className="mt-2">
