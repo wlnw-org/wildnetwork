@@ -3,7 +3,7 @@
 
 /** Studio version the Studio guides were last checked against. .github/workflows/help-check.yml opens an issue when a newer
  * Studio release is out; update the guides, then raise this. */
-export const HELP_CHECKED_STUDIO = "0.1.15";
+export const HELP_CHECKED_STUDIO = "0.1.16";
 
 export type Block =
   | { p: string }
@@ -190,6 +190,17 @@ const studio: Guide[] = [
     ],
   },
   {
+    slug: "live-station",
+    title: "Check a live station's detections",
+    summary: "Read a Wildlife Network Base or BirdNET-Go station over your network and review what it found.",
+    body: [
+      { p: "From Studio 0.1.16 you can check what a running station is detecting, without taking its memory card out. Studio reads the station's detections over your network, and you review them in Review like any other results. This is how researchers can validate a live station." },
+      { steps: ["Make sure the computer is on the same network as the station (the same Wi-Fi, or the Base's own Wi-Fi).", "On the Recordings screen choose Add a live station, type the station's address (for example the Base's address, or http://<station>:8080 for BirdNET-Go) and pick the days to read.", "Studio adds the detections to the project. In Review, each clip is fetched from the station the first time you play it and then kept with the project, so it plays later without the station.", "Choose Refresh later to add only the detections made since the last time. Nothing is added twice."] },
+      { list: ["Works with a Wildlife Network Base and with BirdNET-Go. BirdNET-Pi has no stable way to read its detections over the network: copy its files and use [Import results](/help/studio/import).", "Studio only reads from the station and never changes anything on it. It works only while the station can be reached on the network.", "Detections that came from a Wildlife Network Base are not published to Wildlife Network again, because the Base already shares them. Exports (Darwin Core, CSV and the others) include them as usual.", "If a BirdNET-Go station also sends to Wildlife Network itself (with wdx-agent) or to BirdWeather, do not publish its detections from Studio, or they would count twice."] },
+      { tip: "If clips do not play, the station may require a login for audio or save clips as AAC or Opus. Studio explains which: switch BirdNET-Go's clip format to WAV or FLAC." },
+    ],
+  },
+  {
     slug: "export",
     title: "Export and publish your results",
     summary: "Darwin Core for GBIF, Camtrap DP, CSV, Raven, Kaleidoscope, or publish to Wildlife Network.",
@@ -209,7 +220,7 @@ const studio: Guide[] = [
       { p: "Days are the recorder's local calendar days and weeks run Monday to Sunday. A recording that runs past midnight counts for both days. Recordings without a start time are left out. Read the table, keep one species and drop the first five columns to get the detection matrix, for example for unmarked::unmarkedFrameOccu(y = ...). Use the effort file as an observation covariate." },
       { h: "Publish to Wildlife Network" },
       { steps: ["Create a dataset at [wlnw.org/datasets](/datasets/new) (sign in with ORCID).", "On the dataset page create its upload key.", "Paste the dataset id and key into Studio and send. Sending again is safe: duplicates are ignored. Records sent after you submitted (for example the next SD card) take the dataset back to draft until you submit it again."] },
-      { p: "From Studio 0.1.15, Studio also sends the title, people to credit, institution, description and licence, and fills in the dataset id you used last time (the key is never stored). After sending it says how many detections were left out because a recorder or camera has no place or a file has no time, and links to your dataset. The site checks every record again and credits your dataset by name wherever it is used." },
+      { p: "From Studio 0.1.15, Studio also sends the title, people to credit, institution, description and licence, and fills in the dataset id you used last time (the key is never stored). After sending it says how many detections were left out because a recorder or camera has no place or a file has no time, and links to your dataset. The site checks every record again and credits your dataset by name wherever it is used. From Studio 0.1.16, detections that came live from a Wildlife Network Base are not sent again (the Base already shares them), and a project with more than 300,000 records is stopped before anything is sent, with a note on how to split it." },
     ],
   },
   {
