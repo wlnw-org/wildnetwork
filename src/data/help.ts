@@ -379,6 +379,21 @@ const site: Guide[] = [
     ],
   },
   {
+    slug: "base",
+    title: "Set up a Wildlife Network Base",
+    summary: "An open listening station on a Raspberry Pi: flash the card, power on, set it up from your phone.",
+    body: [
+      { p: "A Wildlife Network Base is an open station you build yourself: a Raspberry Pi 4 or 5 with a USB microphone (optionally a 4G modem and a solar battery) in a weatherproof box. It identifies birds on the spot with BirdNET-Go and sends what it hears to Wildlife Network. Without internet it keeps its detections until it can send them, or until a phone carries them out. It is still in testing." },
+      { h: "What you need" },
+      { list: ["A Raspberry Pi 4 or 5 and its power supply.", "A microSD card of 32 GB or more.", "A USB microphone. The Base picks the first USB microphone it finds.", "For outdoors: a weatherproof box, and a 4G modem or a Wi-Fi network in reach."] },
+      { h: "Set it up" },
+      { steps: ["Download the newest Wildlife Network Base image and its checksum from the [releases page](https://github.com/arunrajiah/wildnetwork-base/releases), and check the checksum.", "Write the image to the microSD card with Raspberry Pi Imager (choose Use custom, and skip Imager's customisation).", "Put the card in the Pi and power it on. The first start takes about 2 minutes.", "On your phone, join the Wi-Fi Wildlife Network-XXXX with the password on the label. No label? The name, password and setup code are in the file wildnetwork-setup.txt on the card.", "Open the BirdEcho app and add a Base, or open http://10.42.0.1 in a browser. Give the station a name and its location, and choose how it reaches the internet.", "Tick Test station while you try it out at home. Its detections stay off the public map. Untick it once the Base is in its real place."] },
+      { tip: "Already running Raspberry Pi OS? You can install the Base software with one command instead of flashing the image: see the [Base guide on GitHub](https://github.com/arunrajiah/wildnetwork-base#install-on-a-stock-raspberry-pi)." },
+      { h: "Privacy" },
+      { p: "The Base rounds its location to about 1 km before anything leaves it. Its health reports (temperature, storage, microphone, signal) are private to you and carry no audio. BirdNET-Go's settings on the Base are protected by a password; reading detections stays open on the Base's own network, so the BirdEcho app can show them." },
+    ],
+  },
+  {
     slug: "data",
     title: "Download data and cite it",
     summary: "Open records, data releases and the API.",

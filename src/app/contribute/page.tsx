@@ -193,6 +193,7 @@ export default async function Contribute() {
 
         <H2 id="new"><TR k="I want to set one up" /></H2>
         <p><TR k="Three kinds of station, from easiest to most involved. Each links to the maker's own guide for the build, then you come back here to connect it." /></p>
+        <p className="mt-2 rounded-lg border border-white/10 bg-white/5 p-3 text-sm"><TR k="Want a station that runs on its own, even without internet? Build a **Wildlife Network Base**: a Raspberry Pi with a USB microphone that you set up from your phone. [How to set up a Base](/help/site/base)." /></p>
 
         <H3 id="new-bird"><TR k="A bird listening station" /></H3>
         <p><TR k="The most popular way to start. It sits in a garden or on a balcony and identifies birds by their song, all day, every day." /></p>
