@@ -85,6 +85,15 @@ export default function Methods() {
         </p>
         <Src files={[["src/lib/rollups.ts", "rollups"], ["src/lib/connectors", "connectors"]]} />
 
+        <p className="mt-3" id="test-stations">
+          <b>Test stations.</b> A Wildlife Network Base or other registered device can be marked as a test station while it is
+          being set up (from the Base&apos;s setup page, or a top-level <code>test: true</code> on its events). Its detections are kept
+          apart and appear nowhere public: not on the map, in history, site reports, rollups, measures or open data releases. Only
+          the holder of the device&apos;s key can read them back. When test mode is switched off, only detections made after the
+          switch are counted. Device health heartbeats (temperature, storage, microphone, queue, signal) feed no measure and
+          are private to the device&apos;s owner.
+        </p>
+
         <H2 id="effort">2. Correcting for observation effort</H2>
         <p>
           Raw counts mostly reflect where and how much people are listening. A cell with two hundred stations produces far more detections than a cell with
@@ -474,6 +483,7 @@ export default function Methods() {
 
         <H2 id="changes">7. Changes</H2>
         <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><b>0.31</b> (19 November 2026): <a href="#test-stations" className="text-cyan-400 hover:underline">test stations</a> are kept out of every public table and measure.</li>
           <li><b>0.30</b> (16 November 2026): radar nights whose echoes barely move are set aside as clutter (<a href="#unusual-nights" className="text-cyan-400 hover:underline">unusual nights</a>). Display only.</li>
           <li><b>0.29</b> (15 November 2026): <a href="#nexrad" className="text-cyan-400 hover:underline">US night migration</a> from NEXRAD radars processed with vol2bird, alongside the European radars. No measure changed.</li>
           <li><b>0.28</b> (15 November 2026): <a href="#landcover" className="text-cyan-400 hover:underline">land cover</a> per 1 degree square from ESA WorldCover 2021, on the map and in the API. No measure changed.</li>

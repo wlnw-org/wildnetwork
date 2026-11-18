@@ -212,7 +212,8 @@
           "413": {
             "description": "more than 5,000 events"
           }
-        }
+        },
+        "description": "A top-level \"test\": true on an event (or test mode on the device) keeps it out of every public table; such events are counted in the response field test."
       }
     },
     "/api/v1/register": {
@@ -673,6 +674,218 @@
         "responses": {
           "200": {
             "description": "species[] with scientificName, vernacularName, group, records; records total; truncated"
+          }
+        }
+      }
+    },
+    "/api/v1/devices/{id}/health": {
+      "post": {
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Health heartbeat from a Wildlife Network Base (one object or an array of queued ones, up to 200). Private; unknown fields are dropped.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device id (wnd_...). The key must be this device's own key."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "software": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  "uptimeSeconds": {
+                    "type": "number"
+                  },
+                  "boots": {
+                    "type": "integer"
+                  },
+                  "temperatureC": {
+                    "type": "number"
+                  },
+                  "storage": {
+                    "type": "object",
+                    "properties": {
+                      "freeMb": {
+                        "type": "number"
+                      },
+                      "totalMb": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "microphone": {
+                    "type": "object",
+                    "properties": {
+                      "active": {
+                        "type": "boolean"
+                      },
+                      "lastDetectionAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                      }
+                    }
+                  },
+                  "queue": {
+                    "type": "object",
+                    "properties": {
+                      "pending": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "network": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "signal": {
+                        "type": "number"
+                      },
+                      "signalUnit": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "received, stored, rejected"
+          },
+          "401": {
+            "description": "missing or unknown key"
+          },
+          "403": {
+            "description": "not this device's key"
+          }
+        }
+      },
+      "get": {
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Latest heartbeat and history (newest first) for the device's owner. ?days= 1 to 90, default 7.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device id (wnd_...). The key must be this device's own key."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ latest, history }"
+          },
+          "403": {
+            "description": "not this device's key"
+          }
+        }
+      }
+    },
+    "/api/v1/devices/{id}/settings": {
+      "post": {
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Switch test mode. Body {\"test\": true|false}. While on, the device's detections are kept apart and never public; switching off counts only detections made after the switch.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device id (wnd_...). The key must be this device's own key."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ test, fieldSince }"
+          }
+        }
+      },
+      "get": {
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Current settings: { test, fieldSince }",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device id (wnd_...). The key must be this device's own key."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ test, fieldSince }"
+          }
+        }
+      }
+    },
+    "/api/v1/devices/{id}/test-events": {
+      "get": {
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "A test station's own detections (WDX events, newest first), for the device's owner. ?limit= up to 1000.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device id (wnd_...). The key must be this device's own key."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ events }"
           }
         }
       }
