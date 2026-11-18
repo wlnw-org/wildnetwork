@@ -23,6 +23,15 @@ for unit in wlnw-deploy wlnw-rollup wlnw-geoip wlnw-radar wlnw-nexrad wlnw-clima
   systemctl is-failed -q "$unit.service" && problems+=("$unit.service failed: $(journalctl -u "$unit.service" -n 3 --no-pager -o cat | tr '\n' ' ' | head -c 300)")
 done
 
+# Wildlife Network Bases: no heartbeat for 6 hours, microphone not active, or above 75 C (src/lib/baseDevices.ts).
+if [ -n "${CRON_SECRET:-}" ]; then
+  while IFS= read -r line; do [ -n "$line" ] && problems+=("$line"); done < <(
+    curl -fs --max-time 30 -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/devices 2>/dev/null |
+      python3 -c 'import json,sys
+try: print("\n".join(json.load(sys.stdin).get("problems", [])[:20]))
+except Exception: pass')
+fi
+
 disk=$(df --output=pcent / | tail -1 | tr -dc 0-9)
 [ "$disk" -ge 85 ] && problems+=("disk is ${disk}% full")
 avail=$(awk '/MemAvailable/ {print int($2/1024)}' /proc/meminfo)
