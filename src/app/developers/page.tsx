@@ -93,6 +93,21 @@ export default function Developers() {
           Connecting a national system, a GBIF node or a park&apos;s network: <Link href="/institutions" className="text-cyan-400 hover:underline">for institutions</Link>.
         </p>
 
+        <h2 className="mt-8 text-xl font-semibold text-slate-100">Devices and test stations</h2>
+        <p className="mt-2">
+          A registered device (<code className="text-slate-200">POST /api/v1/devices</code>, for example a 
+          <Link href="/help/site/base" className="text-cyan-400 hover:underline">Wildlife Network Base</Link>) gets its own key. With that key, and only for
+          that device:
+        </p>
+        <ul className="mt-2 list-disc pl-5 space-y-1">
+          <li><code className="text-slate-200">POST /api/v1/devices/{"{id}"}/health</code>: a heartbeat (software versions, uptime and boots, temperature, free storage, microphone
+            active and last detection, queue, signal), or an array of queued ones. Kept 90 days, private: <code className="text-slate-200">GET</code> on the same path returns the latest and the history.</li>
+          <li><code className="text-slate-200">POST /api/v1/devices/{"{id}"}/settings</code> with <code className="text-slate-200">{"{"}&quot;test&quot;: true{"}"}</code> marks a test station. Its detections, and any event sent with
+            a top-level <code className="text-slate-200">&quot;test&quot;: true</code>, are kept apart and never reach the map, history, reports or open data. Switching it off counts only detections made after the switch.</li>
+          <li><code className="text-slate-200">GET /api/v1/devices/{"{id}"}/test-events</code>: the test station&apos;s own detections, for its owner.</li>
+        </ul>
+        <p className="mt-2 text-sm text-slate-400">The public device list (<code className="text-slate-200">GET /api/v1/devices</code>) shows only name, type, software and when each device last reported. Full details are in the <a href="/openapi.json" className="text-cyan-400 hover:underline">OpenAPI description</a>.</p>
+
         <h2 className="mt-8 text-xl font-semibold text-slate-100">Bulk files</h2>
         <CopyBlock>{RELEASE}</CopyBlock>
         <p className="mt-2 text-sm">Found something wrong? <a href="https://github.com/wlnw-org/wildnetwork/issues" className="text-cyan-400 hover:underline">Open an issue</a> or email arunrajiah@gmail.com.</p>

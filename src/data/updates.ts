@@ -8,6 +8,18 @@ export interface Update { date: string; title: string; items: UpdateItem[] }
 
 export const UPDATES: Update[] = [
   {
+    date: "2026-11-19",
+    title: "Build your own station, and last night's migration in words",
+    items: [
+      { text: "Bird migration last night: a new page sums up each night's weather radar data for Europe and the US in plain words, with the busiest and most unusual radars.", href: "/migration" },
+      { text: "Wildlife Network Base: build an open listening station from a Raspberry Pi and a USB microphone, set it up from your phone, and it sends what it hears even from places without internet. A new guide shows how, step by step.", href: "/help/site/base" },
+      { text: "BirdEcho for Android and iPhone: get an email when a species arrives near you, see whether your BirdNET-Pi or BirdNET-Go is reaching Wildlife Network, and find and set up a Base on your home Wi-Fi.", href: "/contribute" },
+      { text: "Studio 0.1.15: publishing to Wildlife Network now sends your dataset's title and credits too, remembers the dataset, and says clearly what was left out and where your records will show up.", href: "/studio" },
+      { text: "Follow Wildlife Network on YouTube, LinkedIn and X: the links are at the bottom of every page." },
+      { text: "Test stations and private device health: a registered device can be marked as a test station while it is set up, and its detections stay out of every public table, measure and release. Device health reports are now private to the device's owner (methods 0.31).", href: "/developers", forResearchers: true },
+    ],
+  },
+  {
     date: "2026-11-16",
     title: "Night migration over the US, and a simpler site",
     items: [
