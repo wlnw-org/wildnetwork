@@ -1,6 +1,5 @@
 import { authenticate } from "@/lib/auth";
-import { sql } from "@/lib/db";
-import { STATUS_KEEP_DAYS, STATUS_MIN_SECONDS } from "@/lib/devices";
+import { pruneStatus, storeStatus } from "@/lib/baseDevices";
 import { validateStatus } from "@/lib/wdx/validate";
 
 /**
@@ -25,17 +24,8 @@ export async function POST(req: Request) {
     if (st.deviceId !== key.deviceId) { rejected.push({ index, errors: [`deviceId must be ${key.deviceId}`] }); continue; }
     const at = new Date(st.at);
     if (Number.isNaN(at.getTime()) || at.getTime() > Date.now() + 3600_000) { rejected.push({ index, errors: ["at is not a valid past time"] }); continue; }
-    await sql`UPDATE devices SET last_status = ${sql.json(item as never)}, last_status_at = ${at}
-              WHERE id = ${key.deviceId} AND (last_status_at IS NULL OR last_status_at <= ${at})`;
-    const r = await sql`
-      INSERT INTO device_status (device_id, at, status)
-      SELECT ${key.deviceId}, ${at}, ${sql.json(item as never)}
-      WHERE NOT EXISTS (SELECT 1 FROM device_status WHERE device_id = ${key.deviceId}
-                        AND at > ${at}::timestamptz - make_interval(secs => ${STATUS_MIN_SECONDS})
-                        AND at < ${at}::timestamptz + make_interval(secs => ${STATUS_MIN_SECONDS}))
-      ON CONFLICT DO NOTHING`;
-    stored += r.count;
+    if (await storeStatus(key.deviceId, at, item as Record<string, unknown>)) stored++;
   }
-  await sql`DELETE FROM device_status WHERE device_id = ${key.deviceId} AND at < now() - make_interval(days => ${STATUS_KEEP_DAYS})`;
+  await pruneStatus(key.deviceId);
   return Response.json({ received: items.length, stored, rejected: rejected.length, rejectedDetails: rejected.slice(0, 10) });
 }

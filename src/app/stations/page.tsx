@@ -32,7 +32,7 @@ export default async function Stations() {
              COUNT(DISTINCT d.scientific_name)::int AS species, COUNT(DISTINCT d.day)::int AS days
       FROM bw_optin o LEFT JOIN bw_optin_daily d USING (station_id)
       WHERE o.status = 'active' GROUP BY 1 ORDER BY o.created_at`.catch(() => []),
-    sql<{ id: string; name: string; model: string; last_status: { battery?: { percent?: number }; storage?: { freeMb?: number; totalMb?: number }; queue?: { pending?: number } } | null; last_status_at: string | null }[]>`
+    sql<{ id: string; name: string; model: string; last_status_at: string | null }[]>`
       SELECT id, name, model, last_status, last_status_at::text FROM devices
       WHERE last_status_at > now() - interval '30 days' ORDER BY last_status_at DESC LIMIT 200`.catch(() => []),
   ]);
@@ -105,27 +105,20 @@ export default async function Stations() {
         )}
         {devices.length > 0 && (
           <>
-        <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="Device health" /></h2>
+        <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="Registered devices" /></h2>
         <p className="mt-2">
-          <TR k="Wildlife Network Bases and other registered devices report their battery, storage and backlog. Shown here: devices that reported in the last 30 days. Health reports carry no detections and no location." />
+          <TR k="Wildlife Network Bases and other registered devices that reported in the last 30 days. Their health details (battery, storage, temperature, microphone) are private to the device's owner." />
         </p>
           <table className="mt-4 w-full text-sm">
-            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><TR k="Device" /></th><th className="font-medium"><TR k="Type" /></th><th className="font-medium"><TR k="Last report" /></th><th className="font-medium text-right"><TR k="Battery" /></th><th className="font-medium text-right"><TR k="Storage free" /></th><th className="font-medium text-right"><TR k="Waiting to send" /></th></tr></thead>
+            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><TR k="Device" /></th><th className="font-medium"><TR k="Type" /></th><th className="font-medium"><TR k="Last report" /></th></tr></thead>
             <tbody>
-              {devices.map((d) => {
-                const st = d.last_status ?? {};
-                const free = st.storage?.freeMb != null && st.storage?.totalMb ? Math.round((100 * st.storage.freeMb) / st.storage.totalMb) : null;
-                return (
-                  <tr key={d.id} className="border-b border-white/5">
-                    <td className="py-1.5">{d.name}</td>
-                    <td>{d.model}</td>
-                    <td>{d.last_status_at ? new Date(d.last_status_at).toISOString().slice(0, 16).replace("T", " ") + " UTC" : ""}</td>
-                    <td className="text-right">{st.battery?.percent != null ? `${Math.round(st.battery.percent)}%` : ""}</td>
-                    <td className="text-right">{free != null ? `${free}%` : ""}</td>
-                    <td className="text-right">{st.queue?.pending != null ? st.queue.pending.toLocaleString("en-GB") : ""}</td>
-                  </tr>
-                );
-              })}
+              {devices.map((d) => (
+                <tr key={d.id} className="border-b border-white/5">
+                  <td className="py-1.5">{d.name}</td>
+                  <td>{d.model}</td>
+                  <td>{d.last_status_at ? new Date(d.last_status_at).toISOString().slice(0, 16).replace("T", " ") + " UTC" : ""}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
           </>

@@ -43,14 +43,12 @@ export async function GET() {
   const rows = await sql`
     SELECT id, name, model, source_system, created_at, last_status, last_status_at FROM devices
     WHERE created_at > now() - interval '365 days' ORDER BY last_status_at DESC NULLS LAST, created_at DESC LIMIT 500`;
+  // Public: who reported when, and which software. Health details (battery, storage, temperature, microphone, queue,
+  // signal) are private: the owner reads them with the device key at /api/v1/devices/{id}/health.
   return Response.json({
     devices: rows.map((d) => {
-      const s = (d.last_status ?? {}) as Record<string, Record<string, unknown> | number | string | undefined>;
-      return {
-        id: d.id, name: d.name, model: d.model, source: d.source_system, registered: d.created_at, lastReport: d.last_status_at,
-        battery: s.battery ?? null, storage: s.storage ?? null, temperatureC: s.temperatureC ?? null, network: s.network ?? null,
-        queue: s.queue ?? null, software: s.software ?? null,
-      };
+      const s = (d.last_status ?? {}) as Record<string, unknown>;
+      return { id: d.id, name: d.name, model: d.model, source: d.source_system, registered: d.created_at, lastReport: d.last_status_at, software: s.software ?? null };
     }),
   }, { headers: { "cache-control": "public, s-maxage=60, stale-while-revalidate=300" } });
 }

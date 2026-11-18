@@ -182,14 +182,9 @@
  "These owners run our free station program (wdx-agent) on a BirdNET-Pi, BirdNET-Go, bat detector or camera trap. Their detections are published under the licence they choose, so they can go into the [open data releases](/data). Coordinates are rounded to about 1 km on the device.": "ये मालिक BirdNET-Pi, BirdNET-Go, चमगादड़ डिटेक्टर या कैमरा ट्रैप पर हमारा मुफ़्त स्टेशन प्रोग्राम (wdx-agent) चलाते हैं। उनकी पहचानें उनके चुने लाइसेंस के तहत प्रकाशित होती हैं, इसलिए वे [खुले डेटा रिलीज़](/data) में जा सकती हैं। निर्देशांक उपकरण पर लगभग 1 किमी तक गोल किए जाते हैं।",
  "Kind of station": "स्टेशन का प्रकार",
  "Detections": "पहचानें",
- "Device health": "उपकरण की सेहत",
- "Wildlife Network Bases and other registered devices report their battery, storage and backlog. Shown here: devices that reported in the last 30 days. Health reports carry no detections and no location.": "Wildlife Network Base और दूसरे रजिस्टर्ड उपकरण अपनी बैटरी, स्टोरेज और बाकी काम की रिपोर्ट करते हैं। यहाँ दिखाए गए: पिछले 30 दिनों में रिपोर्ट करने वाले उपकरण। सेहत की रिपोर्ट में कोई पहचान और कोई जगह नहीं होती।",
  "Device": "उपकरण",
  "Type": "प्रकार",
  "Last report": "आखिरी रिपोर्ट",
- "Battery": "बैटरी",
- "Storage free": "खाली स्टोरेज",
- "Waiting to send": "भेजने के इंतज़ार में",
  "Add your station": "अपना स्टेशन जोड़ें",
  "A free desktop app for the recordings sitting on your drives. Point it at a folder or an SD card copy: it finds the species on your own computer, helps you check them in minutes, and exports them for GBIF or publishes them here. Nothing is uploaded unless you choose to publish.": "आपकी ड्राइव में पड़ी रिकॉर्डिंग के लिए एक मुफ़्त डेस्कटॉप ऐप। इसे कोई फ़ोल्डर या SD कार्ड की कॉपी दिखाएँ: यह आपके अपने कंप्यूटर पर प्रजातियाँ ढूँढता है, मिनटों में उन्हें जाँचने में मदद करता है, और उन्हें GBIF के लिए निर्यात करता है या यहाँ प्रकाशित करता है। जब तक आप प्रकाशित करना न चुनें, कुछ अपलोड नहीं होता।",
  "What it does": "यह क्या करता है",
@@ -819,5 +814,7 @@
  "Sources: Aloft (European weather radars, CC BY 4.0) and NOAA NEXRAD (US weather radars, processed with vol2bird). Radars with interference, and nights when the echoes did not move, are left out. [How this is measured](/methods#radar).": "स्रोत: Aloft (यूरोपीय मौसम रडार, CC BY 4.0) और NOAA NEXRAD (अमेरिकी मौसम रडार, vol2bird से संसाधित)। व्यवधान वाले रडार और वे रातें जब गूँज हिली नहीं, शामिल नहीं हैं। [यह कैसे मापा जाता है](/methods#radar)।",
  "Night of {date}": "{date} की रात",
  "No radar data yet.": "अभी रडार डेटा नहीं है।",
- "For the same night in plain words, open [Bird migration last night](/migration): how busy Europe and the US were, which way most birds flew, and the busiest and most unusual radars.": "उसी रात का आसान शब्दों में सार देखने के लिए [कल रात पक्षियों का प्रवास](/migration) खोलें: यूरोप और अमेरिका में कितनी हलचल थी, ज़्यादातर पक्षी किधर उड़े, और सबसे व्यस्त व असामान्य रडार।"
+ "For the same night in plain words, open [Bird migration last night](/migration): how busy Europe and the US were, which way most birds flew, and the busiest and most unusual radars.": "उसी रात का आसान शब्दों में सार देखने के लिए [कल रात पक्षियों का प्रवास](/migration) खोलें: यूरोप और अमेरिका में कितनी हलचल थी, ज़्यादातर पक्षी किधर उड़े, और सबसे व्यस्त व असामान्य रडार।",
+ "Registered devices": "पंजीकृत उपकरण",
+ "Wildlife Network Bases and other registered devices that reported in the last 30 days. Their health details (battery, storage, temperature, microphone) are private to the device's owner.": "पिछले 30 दिनों में रिपोर्ट देने वाले Wildlife Network Base और दूसरे पंजीकृत उपकरण। उनकी स्थिति की जानकारी (बैटरी, स्टोरेज, तापमान, माइक्रोफ़ोन) केवल उनके मालिक देख सकते हैं।"
 }

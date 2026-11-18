@@ -182,14 +182,9 @@
  "These owners run our free station program (wdx-agent) on a BirdNET-Pi, BirdNET-Go, bat detector or camera trap. Their detections are published under the licence they choose, so they can go into the [open data releases](/data). Coordinates are rounded to about 1 km on the device.": "Estos propietarios usan nuestro programa de estación gratuito (wdx-agent) en una BirdNET-Pi, BirdNET-Go, un detector de murciélagos o una cámara trampa. Sus detecciones se publican con la licencia que eligen, así que pueden incluirse en las [publicaciones de datos abiertos](/data). Las coordenadas se redondean a aproximadamente 1 km en el dispositivo.",
  "Kind of station": "Tipo de estación",
  "Detections": "Detecciones",
- "Device health": "Estado del dispositivo",
- "Wildlife Network Bases and other registered devices report their battery, storage and backlog. Shown here: devices that reported in the last 30 days. Health reports carry no detections and no location.": "Las bases de Wildlife Network y otros dispositivos registrados informan de su batería, almacenamiento y datos pendientes. Aquí se muestran los dispositivos que han informado en los últimos 30 días. Los informes de estado no incluyen detecciones ni ubicación.",
  "Device": "Dispositivo",
  "Type": "Tipo",
  "Last report": "Último informe",
- "Battery": "Batería",
- "Storage free": "Almacenamiento libre",
- "Waiting to send": "Pendiente de envío",
  "Add your station": "Añade tu estación",
  "A free desktop app for the recordings sitting on your drives. Point it at a folder or an SD card copy: it finds the species on your own computer, helps you check them in minutes, and exports them for GBIF or publishes them here. Nothing is uploaded unless you choose to publish.": "Una app de escritorio gratuita para las grabaciones que tienes en tus discos. Indícale una carpeta o una copia de una tarjeta SD: encuentra las especies en tu propio ordenador, te ayuda a revisarlas en minutos y las exporta para GBIF o las publica aquí. No se sube nada salvo que decidas publicarlo.",
  "What it does": "Qué hace",
@@ -819,5 +814,7 @@
  "Sources: Aloft (European weather radars, CC BY 4.0) and NOAA NEXRAD (US weather radars, processed with vol2bird). Radars with interference, and nights when the echoes did not move, are left out. [How this is measured](/methods#radar).": "Fuentes: Aloft (radares meteorológicos europeos, CC BY 4.0) y NOAA NEXRAD (radares de EE. UU., procesados con vol2bird). Se excluyen los radares con interferencias y las noches en que los ecos no se movieron. [Cómo se mide](/methods#radar).",
  "Night of {date}": "Noche del {date}",
  "No radar data yet.": "Aún no hay datos de radar.",
- "For the same night in plain words, open [Bird migration last night](/migration): how busy Europe and the US were, which way most birds flew, and the busiest and most unusual radars.": "Para la misma noche en palabras sencillas, abre [Migración de aves anoche](/migration): cuánta actividad hubo en Europa y EE. UU., hacia dónde voló la mayoría y los radares más activos e inusuales."
+ "For the same night in plain words, open [Bird migration last night](/migration): how busy Europe and the US were, which way most birds flew, and the busiest and most unusual radars.": "Para la misma noche en palabras sencillas, abre [Migración de aves anoche](/migration): cuánta actividad hubo en Europa y EE. UU., hacia dónde voló la mayoría y los radares más activos e inusuales.",
+ "Registered devices": "Dispositivos registrados",
+ "Wildlife Network Bases and other registered devices that reported in the last 30 days. Their health details (battery, storage, temperature, microphone) are private to the device's owner.": "Wildlife Network Bases y otros dispositivos registrados que informaron en los últimos 30 días. Sus datos de estado (batería, almacenamiento, temperatura, micrófono) son privados para su propietario."
 }

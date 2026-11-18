@@ -5,7 +5,7 @@ export const SOURCES = ["wildnetwork-base", "birdnet-pi", "birdnet-go", "birdech
 export const PER_IP_PER_DAY = 5;
 /** Health reports closer together than this are not stored (the latest is still kept on the device row). */
 export const STATUS_MIN_SECONDS = 60;
-export const STATUS_KEEP_DAYS = 30;
+export const STATUS_KEEP_DAYS = 90;
 
 export const newDeviceId = () => `wnd_${randomBytes(8).toString("base64url")}`;
 export const clientIp = (req: Request) =>

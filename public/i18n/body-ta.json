@@ -182,14 +182,9 @@
  "These owners run our free station program (wdx-agent) on a BirdNET-Pi, BirdNET-Go, bat detector or camera trap. Their detections are published under the licence they choose, so they can go into the [open data releases](/data). Coordinates are rounded to about 1 km on the device.": "இந்த உரிமையாளர்கள் எங்கள் இலவச நிலைய நிரலை (wdx-agent) BirdNET-Pi, BirdNET-Go, வௌவால் கண்டறிவி அல்லது கேமரா பொறியில் இயக்குகிறார்கள். அவர்களின் கண்டறிதல்கள் அவர்கள் தேர்வு செய்யும் உரிமத்தின் கீழ் வெளியிடப்படுகின்றன, எனவே [திறந்த தரவு வெளியீடுகளில்](/data) சேரலாம். ஆயத்தொலைவுகள் கருவியிலேயே சுமார் 1 கிமீக்கு முழுமையாக்கப்படுகின்றன.",
  "Kind of station": "நிலைய வகை",
  "Detections": "கண்டறிதல்கள்",
- "Device health": "கருவி நிலை",
- "Wildlife Network Bases and other registered devices report their battery, storage and backlog. Shown here: devices that reported in the last 30 days. Health reports carry no detections and no location.": "Wildlife Network Base-களும் பதிவுசெய்யப்பட்ட பிற கருவிகளும் தங்கள் பேட்டரி, சேமிப்பகம், அனுப்பக் காத்திருப்பவை பற்றித் தெரிவிக்கின்றன. இங்கே காட்டப்படுபவை: கடந்த 30 நாட்களில் தெரிவித்த கருவிகள். நிலை அறிக்கைகளில் கண்டறிதல்களோ இருப்பிடமோ இல்லை.",
  "Device": "கருவி",
  "Type": "வகை",
  "Last report": "கடைசி அறிக்கை",
- "Battery": "பேட்டரி",
- "Storage free": "காலியான சேமிப்பகம்",
- "Waiting to send": "அனுப்பக் காத்திருப்பவை",
  "Add your station": "உங்கள் நிலையத்தைச் சேருங்கள்",
  "A free desktop app for the recordings sitting on your drives. Point it at a folder or an SD card copy: it finds the species on your own computer, helps you check them in minutes, and exports them for GBIF or publishes them here. Nothing is uploaded unless you choose to publish.": "உங்கள் டிரைவ்களில் உள்ள ஒலிப்பதிவுகளுக்கான இலவசக் கணினிச் செயலி. ஒரு கோப்புறையையோ SD கார்டின் நகலையோ காட்டுங்கள்: அது உங்கள் சொந்தக் கணினியிலேயே இனங்களைக் கண்டறியும், சில நிமிடங்களில் சரிபார்க்க உதவும், GBIF-க்காக ஏற்றுமதி செய்யும் அல்லது இங்கே வெளியிடும். நீங்கள் வெளியிடத் தேர்வு செய்யாவிட்டால் எதுவும் பதிவேற்றப்படாது.",
  "What it does": "இது என்ன செய்கிறது",
@@ -819,5 +814,7 @@
  "Sources: Aloft (European weather radars, CC BY 4.0) and NOAA NEXRAD (US weather radars, processed with vol2bird). Radars with interference, and nights when the echoes did not move, are left out. [How this is measured](/methods#radar).": "மூலங்கள்: Aloft (ஐரோப்பிய வானிலை ரேடார்கள், CC BY 4.0) மற்றும் NOAA NEXRAD (அமெரிக்க ரேடார்கள், vol2bird மூலம் செயலாக்கப்பட்டவை). குறுக்கீடு உள்ள ரேடார்களும் எதிரொலிகள் நகராத இரவுகளும் சேர்க்கப்படவில்லை. [இது எப்படி அளக்கப்படுகிறது](/methods#radar).",
  "Night of {date}": "{date} இரவு",
  "No radar data yet.": "இன்னும் ரேடார் தரவு இல்லை.",
- "For the same night in plain words, open [Bird migration last night](/migration): how busy Europe and the US were, which way most birds flew, and the busiest and most unusual radars.": "அதே இரவை எளிய சொற்களில் பார்க்க [நேற்றிரவு பறவைகளின் வலசை](/migration) பக்கத்தைத் திறக்கவும்: ஐரோப்பா, அமெரிக்காவில் எவ்வளவு செயல்பாடு, பெரும்பாலான பறவைகள் எந்தத் திசையில் பறந்தன, அதிகச் செயல்பாடும் அசாதாரணமும் உள்ள ரேடார்கள்."
+ "For the same night in plain words, open [Bird migration last night](/migration): how busy Europe and the US were, which way most birds flew, and the busiest and most unusual radars.": "அதே இரவை எளிய சொற்களில் பார்க்க [நேற்றிரவு பறவைகளின் வலசை](/migration) பக்கத்தைத் திறக்கவும்: ஐரோப்பா, அமெரிக்காவில் எவ்வளவு செயல்பாடு, பெரும்பாலான பறவைகள் எந்தத் திசையில் பறந்தன, அதிகச் செயல்பாடும் அசாதாரணமும் உள்ள ரேடார்கள்.",
+ "Registered devices": "பதிவுசெய்த சாதனங்கள்",
+ "Wildlife Network Bases and other registered devices that reported in the last 30 days. Their health details (battery, storage, temperature, microphone) are private to the device's owner.": "கடந்த 30 நாட்களில் அறிவித்த Wildlife Network Base மற்றும் பிற பதிவுசெய்த சாதனங்கள். அவற்றின் நிலை விவரங்கள் (மின்கலம், சேமிப்பு, வெப்பநிலை, ஒலிவாங்கி) உரிமையாளருக்கு மட்டுமே."
 }
