@@ -35,6 +35,38 @@ export async function upsertDeployments(rows: { id: string; source_system: strin
  * Upsert a batch of already-validated WDX events.
  * Dedupe rule (WDX 0.1): same eventId, later review.reviewedAt wins; otherwise later-received wins.
  */
+/** The events row for one WDX event (without raw). Pure, so tests can check that no field is lost. */
+export function eventRow(e: WdxEvent) {
+  return {
+    event_id: e.eventId,
+    deployment_id: `${e.source.system}:${e.deployment.deploymentId}`,
+    source_system: e.source.system,
+    source_record_id: e.source.sourceRecordId ?? null,
+    event_start: e.eventStart,
+    event_end: e.eventEnd ?? null,
+    scientific_name: e.detection.scientificName ?? null,
+    vernacular_name: e.detection.vernacularName ?? null,
+    taxon_rank: e.detection.taxonRank ?? null,
+    taxon_id: e.detection.taxonId ?? null,
+    confidence: e.detection.confidence ?? null,
+    classifier_name: e.detection.classifier?.name ?? null,
+    classifier_version: e.detection.classifier?.version ?? null,
+    observation_method: e.detection.observationMethod ?? "machine",
+    individual_count: e.detection.individualCount ?? null,
+    source_provider: e.source.provider ?? null,
+    source_trusted: e.source.trusted ?? null,
+    source_provider_url: e.source.providerUrl ?? null,
+    dedupe_key: dedupeKey(e.source.system, e.source.sourceRecordId, e.source.occurrenceId, e.source.institutionCode),
+    media_type: e.media?.mediaType ?? null,
+    media_url: e.media?.url ?? null,
+    media_file: e.media?.fileName ? String(e.media.fileName).slice(0, 200) : null,
+    review_status: e.review?.status ?? "unreviewed",
+    license: e.license ?? null,
+    latitude: e.deployment.latitude,
+    longitude: e.deployment.longitude,
+  };
+}
+
 export async function ingestEvents(events: WdxEvent[], opts: { keepRaw?: boolean } = {}): Promise<IngestResult> {
   // Pulled sources can be re-fetched, so their raw JSON is not stored (it is most of the row size).
   const keepRaw = opts.keepRaw ?? true;
@@ -63,34 +95,7 @@ export async function ingestEvents(events: WdxEvent[], opts: { keepRaw?: boolean
     coord_uncertainty_m: d.coordinateUncertaintyMeters ?? null,
   }));
 
-  const evRows = events.map((e) => ({
-    event_id: e.eventId,
-    deployment_id: `${e.source.system}:${e.deployment.deploymentId}`,
-    source_system: e.source.system,
-    source_record_id: e.source.sourceRecordId ?? null,
-    event_start: e.eventStart,
-    event_end: e.eventEnd ?? null,
-    scientific_name: e.detection.scientificName ?? null,
-    vernacular_name: e.detection.vernacularName ?? null,
-    taxon_rank: e.detection.taxonRank ?? null,
-    taxon_id: e.detection.taxonId ?? null,
-    confidence: e.detection.confidence ?? null,
-    classifier_name: e.detection.classifier?.name ?? null,
-    classifier_version: e.detection.classifier?.version ?? null,
-    observation_method: e.detection.observationMethod ?? "machine",
-    individual_count: e.detection.individualCount ?? null,
-    source_provider: e.source.provider ?? null,
-    source_trusted: e.source.trusted ?? null,
-    source_provider_url: e.source.providerUrl ?? null,
-    dedupe_key: dedupeKey(e.source.system, e.source.sourceRecordId, e.source.occurrenceId, e.source.institutionCode),
-    media_type: e.media?.mediaType ?? null,
-    media_url: e.media?.url ?? null,
-    review_status: e.review?.status ?? "unreviewed",
-    license: e.license ?? null,
-    latitude: e.deployment.latitude,
-    longitude: e.deployment.longitude,
-    raw: sql.json((keepRaw ? e : {}) as unknown as Parameters<typeof sql.json>[0]),
-  }));
+  const evRows = events.map((e) => ({ ...eventRow(e), raw: sql.json((keepRaw ? e : {}) as unknown as Parameters<typeof sql.json>[0]) }));
 
   // Same occurrence already held from another aggregator: keep that row and add this source's credit to it.
   const keys = [...new Set(evRows.map((r) => r.dedupe_key).filter((k): k is string => !!k))];
@@ -124,6 +129,7 @@ export async function ingestEvents(events: WdxEvent[], opts: { keepRaw?: boolean
         individual_count = EXCLUDED.individual_count,
         source_trusted = EXCLUDED.source_trusted,
         media_url = COALESCE(EXCLUDED.media_url, events.media_url),
+        media_file = COALESCE(EXCLUDED.media_file, events.media_file),
         raw = EXCLUDED.raw,
         received_at = now()
       WHERE events.source_system = EXCLUDED.source_system
