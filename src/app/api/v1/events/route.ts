@@ -1,9 +1,10 @@
 import { authenticate } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { delayFilter } from "@/lib/delay";
+import { HIDDEN_DEPLOYMENT_SOURCES } from "@/lib/sources";
 import { toFeature } from "@/lib/eventFeature";
 import { ingestEvents } from "@/lib/wdx/ingest";
-import { divertTestEvents } from "@/lib/baseDevices";
+import { divertTestEvents, ownerTestEvents } from "@/lib/baseDevices";
 import type { WdxEvent } from "@/lib/wdx/types";
 import { parseEventsBody, validateWdx } from "@/lib/wdx/validate";
 
@@ -46,6 +47,8 @@ export async function POST(req: Request) {
 /**
  * Query events for the map.
  * ?bbox=w,s,e,n  ?from=ISO ?to=ISO ?species=Scientific+name ?source=birdweather ?group=bat ?minConfidence=0.7 ?limit=5000
+ * ?deployment=<source:deploymentId> one station's detections (delay rules apply as usual). With that station's own device
+ * key (Authorization: Bearer), a test station's detections are added, marked test: true; nobody else ever sees them.
  */
 export async function GET(req: Request) {
   const p = new URL(req.url).searchParams;
@@ -56,6 +59,9 @@ export async function GET(req: Request) {
   const species = p.get("species");
   const source = p.get("source");
   const group = p.get("group");
+  const deployment = p.get("deployment")?.trim().slice(0, 200) || null;
+  // BirdWeather and hidden-position sources never expose station identity, so they cannot be asked for by station either.
+  if (deployment && ["birdweather", ...HIDDEN_DEPLOYMENT_SOURCES].includes(deployment.split(":")[0])) return Response.json({ error: "this source does not publish stations" }, { status: 400 });
   const minConf = Number(p.get("minConfidence") ?? 0) || 0;
   if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) return Response.json({ error: "from and to must be ISO dates" }, { status: 400 });
   const bbox = p.get("bbox")?.split(",").map(Number);
@@ -81,6 +87,7 @@ export async function GET(req: Request) {
       ${species ? sql`AND e.scientific_name = ${species}` : sql``}
       ${source ? sql`AND source_system = ${source}` : sql``}
       ${group ? sql`AND g.grp = ${group}` : sql``}
+      ${deployment ? sql`AND e.deployment_id = ${deployment}` : sql``}
       ${hasBbox ? sql`AND geom && ST_MakeEnvelope(${bbox![0]}, ${bbox![1]}, ${bbox![2]}, ${bbox![3]}, 4326)::geography` : sql``}
     )
     SELECT * FROM (
@@ -109,13 +116,24 @@ export async function GET(req: Request) {
       ${species ? sql`AND e.scientific_name = ${species}` : sql``}
       ${source ? sql`AND source_system = ${source}` : sql``}
       ${group ? sql`AND g.grp = ${group}` : sql``}
+      ${deployment ? sql`AND e.deployment_id = ${deployment}` : sql``}
       ${hasBbox ? sql`AND geom && ST_MakeEnvelope(${bbox![0]}, ${bbox![1]}, ${bbox![2]}, ${bbox![3]}, 4326)::geography` : sql``}
     ORDER BY event_start DESC
     LIMIT ${limit}
   `;
 
-  return Response.json({
-    type: "FeatureCollection",
-    features: rows.map(toFeature),
-  }, { headers: { "cache-control": "public, s-maxage=300, stale-while-revalidate=600" } });
+  const features: ReturnType<typeof toFeature>[] = rows.map(toFeature);
+  // The owner's test-station detections: only with a deployment filter and that device's own key, never cached.
+  const key = deployment && (req.headers.get("authorization") || req.headers.get("x-api-key")) ? await authenticate(req) : null;
+  if (key?.deviceId) {
+    const test = await ownerTestEvents(key.deviceId, deployment!, from, to, limit);
+    if (test.length) {
+      features.push(...test);
+      features.sort((a, b) => new Date(b.properties.t as string).getTime() - new Date(a.properties.t as string).getTime());
+      features.splice(limit);
+    }
+  }
+  return Response.json({ type: "FeatureCollection", features }, {
+    headers: { "cache-control": key ? "private, no-store" : "public, s-maxage=300, stale-while-revalidate=600" },
+  });
 }

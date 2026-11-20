@@ -12,6 +12,8 @@
 import { sql } from "@/lib/db";
 import { STATUS_KEEP_DAYS, STATUS_MIN_SECONDS } from "@/lib/devices";
 import type { WdxEvent } from "@/lib/wdx/types";
+import { eventRow } from "@/lib/wdx/ingest";
+import { toFeature } from "@/lib/eventFeature";
 
 export const HEALTH_ALERT = { QUIET_HOURS: 6, MAX_TEMP_C: 75, FORGET_DAYS: 30 };
 export const TEST_EVENTS_KEEP_DAYS = 90;
@@ -130,4 +132,20 @@ export async function setTestMode(deviceId: string, on: boolean) {
     UPDATE devices SET test = ${on}, field_since = CASE WHEN ${on} THEN NULL WHEN test THEN now() ELSE field_since END
     WHERE id = ${deviceId} RETURNING test, field_since`;
   return d ? { test: d.test, fieldSince: d.field_since } : null;
+}
+
+/** A test station's stored detection as a map/API feature, marked test: true. Only ever shown to the device's owner. Pure. */
+export function testEventFeature(e: WdxEvent) {
+  const f = toFeature({ ...eventRow(e), n: 1, grp: null });
+  return { ...f, properties: { ...f.properties, test: true } as Record<string, unknown> };
+}
+
+/** The owner's test-station detections for one deployment (source:deploymentId), newest first. */
+export async function ownerTestEvents(deviceId: string, deployment: string, from: Date, to: Date, limit: number) {
+  const rows = await sql<{ event: WdxEvent }[]>`
+    SELECT event FROM test_events
+    WHERE device_id = ${deviceId} AND event_start >= ${from} AND event_start <= ${to}
+      AND (event->'source'->>'system') || ':' || (event->'deployment'->>'deploymentId') = ${deployment}
+    ORDER BY event_start DESC LIMIT ${limit}`;
+  return rows.map((r) => testEventFeature(r.event));
 }

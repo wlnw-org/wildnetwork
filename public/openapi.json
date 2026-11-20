@@ -135,6 +135,14 @@
             }
           },
           {
+            "name": "deployment",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "one station's detections, as `source:deploymentId` (the `deployment` property of a feature, e.g. `wildnetwork-base:29ab78f229b9`). Delay rules apply as usual. With that station's own device key (`Authorization: Bearer <key>`), a test station's detections are included too, marked `test: true`; such responses are never cached. Not available for BirdWeather or sources that hide stations."
+          },
+          {
             "name": "group",
             "in": "query",
             "schema": {
@@ -181,7 +189,7 @@
         ],
         "responses": {
           "200": {
-            "description": "GeoJSON FeatureCollection; properties: id, t, sci, common, rank, conf (machine detections with a published score), human (human observations, no conf), model (a model that publishes no score), count (animals, when reported), trusted (the source's own verification flag), unmapped (common name not mapped to a species), credit and creditUrl (required credit), alsoCredit (same occurrence from another aggregator), license, delayed (hours), rounded (degrees), source, group, media, mediaType. Orcasound and Acartia killer whale records appear once 24 hours old."
+            "description": "GeoJSON FeatureCollection; properties: id, t, sci, common, rank, conf (machine detections with a published score), human (human observations, no conf), model (a model that publishes no score), count (animals, when reported), trusted (the source's own verification flag), unmapped (common name not mapped to a species), credit and creditUrl (required credit), alsoCredit (same occurrence from another aggregator), license, delayed (hours), rounded (degrees), source, group, media, mediaType, deployment (station, `source:deploymentId`), test (a test station's detection, only for its owner). Orcasound and Acartia killer whale records appear once 24 hours old."
           }
         }
       },

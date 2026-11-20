@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { isTestEvent, normalizeHealth } from "./baseDevices";
+import "./testDbUrl";
+import { isTestEvent, normalizeHealth, testEventFeature } from "./baseDevices";
 import type { WdxEvent } from "./wdx/types";
 
 const now = Date.parse("2026-11-19T12:00:00Z");
@@ -45,4 +46,19 @@ test("after test mode is switched off, only detections made after the switch cou
   const d = { test: false, field_since: new Date("2026-11-19T08:00:00Z") };
   assert.equal(isTestEvent(d, ev("2026-11-19T07:59:00Z")), true);
   assert.equal(isTestEvent(d, ev("2026-11-19T08:01:00Z")), false);
+});
+
+test("a test station's detection becomes a feature marked test, keyed by its deployment", () => {
+  const e = {
+    wdx: "0.4", eventId: "birdnet-go:29ab78f229b9:d432", eventStart: "2026-11-20T05:10:00Z",
+    source: { system: "birdnet-go", sourceRecordId: "d432" },
+    deployment: { deploymentId: "29ab78f229b9", latitude: 51.5, longitude: -0.12 },
+    detection: { scientificName: "Erithacus rubecula", vernacularName: "European Robin", confidence: 0.91 },
+  } as unknown as WdxEvent;
+  const f = testEventFeature(e);
+  assert.equal(f.properties.test, true);
+  assert.equal(f.properties.id, "birdnet-go:29ab78f229b9:d432");
+  assert.equal(f.properties.deployment, "birdnet-go:29ab78f229b9");
+  assert.equal(f.properties.sci, "Erithacus rubecula");
+  assert.deepEqual(f.geometry.coordinates, [-0.12, 51.5]);
 });
