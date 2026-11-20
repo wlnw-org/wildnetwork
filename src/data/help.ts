@@ -3,7 +3,7 @@
 
 /** Studio version the Studio guides were last checked against. .github/workflows/help-check.yml opens an issue when a newer
  * Studio release is out; update the guides, then raise this. */
-export const HELP_CHECKED_STUDIO = "0.1.17";
+export const HELP_CHECKED_STUDIO = "0.1.18";
 
 export type Block =
   | { p: string }
@@ -47,7 +47,7 @@ const studio: Guide[] = [
       { steps: [
         "Open Studio and choose New project. Give it a name and choose where to save it.",
         "On the Recordings screen choose Add a folder or drive. Pick the folder or SD card copy. Subfolders are searched too.",
-        "Studio lists each recorder it found (one per folder, or per AudioMoth or Song Meter). WAV, FLAC and MP3 recordings are read, and JPEG and PNG camera-trap photos.",
+        "Studio lists each recorder it found (one per folder, or per AudioMoth or Song Meter). WAV, FLAC, MP3 and AAC (.m4a) recordings are read, and JPEG and PNG camera-trap photos.",
         "For each recorder, give the place: type latitude and longitude, or choose Map and click where it was. Then choose Save.",
         "Check the time zone (Times are UTC +). AudioMoths usually record in UTC, Song Meters in local time.",
       ] },
@@ -198,6 +198,7 @@ const studio: Guide[] = [
       { steps: ["Make sure the computer is on the same network as the station (the same Wi-Fi, or the Base's own Wi-Fi).", "On the Recordings screen choose Add a live station, type the station's address (for example the Base's address, or http://<station>:8080 for BirdNET-Go) and pick the days to read.", "Studio adds the detections to the project. In Review, each clip is fetched from the station the first time you play it and then kept with the project, so it plays later without the station.", "Choose Refresh later to add only the detections made since the last time. Nothing is added twice."] },
       { list: ["Works with a Wildlife Network Base and with BirdNET-Go. BirdNET-Pi has no stable way to read its detections over the network: copy its files and use [Import results](/help/studio/import).", "Studio only reads from the station and never changes anything on it. It works only while the station can be reached on the network.", "Detections that came from a Wildlife Network Base are not published to Wildlife Network again, because the Base already shares them. Exports (Darwin Core, CSV and the others) include them as usual.", "If a BirdNET-Go station also sends to Wildlife Network itself (with wdx-agent) or to BirdWeather, do not publish its detections from Studio, or they would count twice."] },
       { tip: "If clips do not play, the station may require a login for audio or save clips as Opus. Studio explains which: switch BirdNET-Go's clip format to WAV, FLAC or AAC." },
+      { tip: "Moved a Base more than about 1 km? The next refresh files new detections under a new recorder named after the station with \"(moved <date>)\", and the Recordings screen says when it moved. Earlier detections and their exports keep the old place." },
     ],
   },
   {
