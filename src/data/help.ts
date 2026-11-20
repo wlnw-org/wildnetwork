@@ -408,6 +408,28 @@ const site: Guide[] = [
     ],
   },
   {
+    slug: "station-pages",
+    title: "Station pages and group links",
+    summary: "See what one station hears right now, or follow several stations on one page.",
+    body: [
+      { p: "Every station that sends its detections straight to Wildlife Network (a Base, BirdNET-Pi, BirdNET-Go and others) has its own page. Open the [stations list](/stations#direct) and choose a station's name." },
+      { h: "What a station page shows" },
+      { list: [
+        "The name its owner gave it, the kind of station, and its position rounded to about 1 km, with links to the map and to a report for the area.",
+        "When it was last heard from.",
+        "Its newest detections, which update every minute while the page is open. Each species links to its own page.",
+        "Each species with how often it was heard in the last 24 hours, 7 days and 30 days.",
+        "The busiest hours of the day, in the station's local time when we can tell it.",
+      ] },
+      { p: "We keep a station's detections for 30 days (7 days for some partner hydrophones), so the page covers that time. Older history goes into the weekly totals used by [site reports](/report)." },
+      { h: "Follow several stations at once" },
+      { steps: ["Open the [stations list](/stations#direct).", "Tick the stations you want, up to 20.", "Choose Open the ticked stations as a group.", "Copy the link under Share this group and send it to anyone. The page shows one combined list of detections, labelled with each station's name."] },
+      { h: "What is never shown" },
+      { list: ["Test stations, and anything a station sent while it was in test mode.", "Device health such as battery, storage, temperature or microphone. Only the time a station was last heard from is public.", "The names of sensitive species. They are counted but shown only as, for example, a sensitive bird species.", "BirdWeather stations and people's own observations (iNaturalist, GBIF): their sources do not publish station pages."] },
+      { tip: "Station pages are kept out of search engines. Anyone with the link can open them." },
+    ],
+  },
+  {
     slug: "data",
     title: "Download data and cite it",
     summary: "Open records, data releases and the API.",

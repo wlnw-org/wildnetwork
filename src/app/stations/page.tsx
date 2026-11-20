@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 import { TR } from "@/components/TR";
 import { sql } from "@/lib/db";
 import { roundTo } from "@/lib/optin";
+import { stationSlug } from "@/lib/stationIds";
+import { KIND_LABEL as KIND } from "@/app/stations/labels";
 
 export const revalidate = 600;
 
@@ -15,8 +17,6 @@ export const metadata: Metadata = {
 
 const LABEL: Record<string, ReactNode> = { birdweather: <TR k="BirdWeather stations" />, inaturalist: <TR k="iNaturalist observers" />, gbif: <TR k="GBIF datasets (live)" /> };
 
-const KIND: Record<string, ReactNode> = { "acoustic-recorder": <TR k="Sound recorder" />, "bat-detector": <TR k="Bat detector" />, "camera-trap": <TR k="Camera trap" />, "ultrasonic-recorder": <TR k="Bat detector" /> };
-
 export default async function Stations() {
   const [bySource, direct, optins, devices] = await Promise.all([
     sql<{ source_system: string; active: number; total: number }[]>`
@@ -24,7 +24,7 @@ export default async function Stations() {
       FROM deployments GROUP BY 1 ORDER BY 2 DESC`,
     sql<{ id: string; name: string | null; sensor_type: string | null; sensor_model: string | null; lat: number; lon: number; last_seen: string | null; n: number }[]>`
       SELECT d.id, d.name, d.sensor_type, d.sensor_model, ROUND(d.latitude::numeric, 1)::float AS lat, ROUND(d.longitude::numeric, 1)::float AS lon, d.last_seen::text,
-             (SELECT COUNT(*) FROM events e WHERE e.deployment_id = d.id)::int AS n
+             (SELECT COUNT(*) FROM events e WHERE e.source_system = d.source_system AND e.deployment_id = d.id)::int AS n
       FROM deployments d WHERE d.source_system NOT IN ('birdweather', 'inaturalist', 'gbif', 'acartia', 'obis', 'orcasound')
       ORDER BY d.last_seen DESC NULLS LAST LIMIT 200`,
     sql<{ station_id: number; display_name: string | null; station_type: string | null; lat: number | null; lon: number | null; precision_km: number; license: string; species: number; days: number }[]>`
@@ -84,16 +84,19 @@ export default async function Stations() {
 
         {direct.length > 0 && (
           <>
-        <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="Stations sending directly" /></h2>
+        <h2 id="direct" className="mt-10 text-xl font-semibold text-slate-100"><TR k="Stations sending directly" /></h2>
         <p className="mt-2">
           <TR k="These owners run our free station program (wdx-agent) on a BirdNET-Pi, BirdNET-Go, bat detector or camera trap. Their detections are published under the licence they choose, so they can go into the [open data releases](/data). Coordinates are rounded to about 1 km on the device." />
         </p>
+        <p className="mt-2 text-sm text-slate-400"><TR k="Open a station to see what it hears now. To follow several at once, tick them and open them as a group: the group page has a link you can share." /></p>
+          <form action="/stations/group" method="get">
           <table className="mt-4 w-full text-sm">
-            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="py-1.5 font-medium"><TR k="Station" /></th><th className="font-medium"><TR k="Kind of station" /></th><th className="font-medium"><TR k="Where" /></th><th className="font-medium text-right"><TR k="Detections" /></th></tr></thead>
+            <thead><tr className="text-left text-slate-400 border-b border-white/10"><th className="w-6"><span className="sr-only"><TR k="Pick" /></span></th><th className="py-1.5 font-medium"><TR k="Station" /></th><th className="font-medium"><TR k="Kind of station" /></th><th className="font-medium"><TR k="Where" /></th><th className="font-medium text-right"><TR k="Detections" /></th></tr></thead>
             <tbody>
               {direct.map((d) => (
                 <tr key={d.id} className="border-b border-white/5">
-                  <td className="py-1.5">{d.name ?? d.id.split(":").slice(1).join(":")}</td>
+                  <td><input type="checkbox" name="ids" value={stationSlug(d.id)} aria-label={d.name ?? d.id} className="accent-cyan-500" /></td>
+                  <td className="py-1.5"><Link href={`/stations/${stationSlug(d.id)}`} className="text-cyan-400 hover:underline">{d.name ?? d.id.split(":").slice(1).join(":")}</Link></td>
                   <td>{KIND[d.sensor_type ?? ""] ?? <TR k="Station" />}</td>
                   <td>{d.lat}°, {d.lon}°</td>
                   <td className="text-right">{d.n.toLocaleString("en-GB")}</td>
@@ -101,6 +104,8 @@ export default async function Stations() {
               ))}
             </tbody>
           </table>
+          <button type="submit" className="mt-3 rounded-md border border-cyan-500/50 px-3 py-1.5 text-sm text-cyan-200 hover:bg-cyan-500/10"><TR k="Open the ticked stations as a group" /></button>
+          </form>
           </>
         )}
         {devices.length > 0 && (

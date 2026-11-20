@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "What Wildlife Network collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
 };
 
-const UPDATED = "19 November 2026";
+const UPDATED = "21 November 2026";
 
 export default function Privacy() {
   return (
@@ -40,6 +40,7 @@ export default function Privacy() {
           <li><TR k="**Registering a device** stores the name you give it, its type, an optional contact email, and a keyed hash of your IP address to limit sign-ups. The API key itself is stored only as a hash. A device registered through the device registry also stores its hardware serial number, which is never shown publicly." /></li>
           <li><TR k="**Device health reports** (battery, storage, temperature, uptime and number of starts, whether the microphone is working and when it last detected something, connection type and signal, detections waiting to be sent, software versions) are kept for 90 days and are private: only the holder of the device key can read them. The stations page shows only the device name, type and when it last reported. They contain no audio, no detections and no location." /></li>
           <li><TR k="**Detections your device sends** (species, time, confidence, location rounded to about 1 km on the device, and the station name you chose) are shown on the map and in the API, kept as individual records for 30 days, and after that as counts per species, 5 degree area and week, and as counts per species, station and week, which are public in site reports ([/report](/report)). Sensitive species are counted there but not named. They may be included in open data releases under the licence you chose (CC BY 4.0 by default). No recordings are uploaded." /></li>
+          <li><TR k="**Station pages** ([/stations](/stations)) show a station's name, kind, position rounded to about 1 km, its detections from the last 30 days and when it was last heard from. They are kept out of search engines. Test stations never get a page, device health is never shown, and sensitive species are not named." /></li>
           <li><TR k="**Test stations.** While a device is marked as a test station, its detections are kept apart for 90 days, are never shown or published, and can be read only with the device key." /></li>
           <li><TR k="**BirdWeather stations that opt in** (at [/stations/join](/stations/join)) give their station token, which is checked with BirdWeather, stored encrypted and used only to read that station's daily species counts; plus the name, licence, location precision and optional email they choose. Withdrawing, or revoking the token at BirdWeather, deletes the token and the station's data." /></li>
           <li><TR k="**Marine records** from OBIS (up to 12 months), Orcasound and Acartia (7 days each) are kept with the species, count, time, position and the dataset, hydrophone or platform that published them. The names, usernames, signatures, photos and comments of the people who reported Acartia sightings are not stored. Killer whale positions from Acartia, and sensitive species from OBIS, are rounded to 0.1 degree." /></li>
