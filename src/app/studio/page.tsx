@@ -54,6 +54,7 @@ export default function Studio() {
           ))}
         </div>
         <p className="mt-4"><TR k="Video guides: [your first project, from recordings to results](https://youtu.be/vDXEllkJIJM) (3 minutes), [find more of a sound and teach Studio your local species](https://youtu.be/wjGv_3yQeBk) (2 minutes), [find the animals in your camera trap photos](https://youtu.be/4oAlzlFbEHM) (2 minutes), and [bring in your BirdNET-Pi or BirdNET-Go results](https://youtu.be/sbfrETlYG44) (1 minute)." /></p>
+        <p className="mt-2"><TR k="More video guides: [share your results with GBIF and Wildlife Network](https://youtu.be/ktfrbYzKsRI) (2 minutes) and [check a live station without taking its memory card out](https://youtu.be/CT6yEPsOC1c) (2 minutes)." /></p>
         <p className="mt-3 text-xs text-slate-500"><TR k="The recordings in these clips are CC0 bird recordings shared by iNaturalist users." /></p>
 
         <h2 className="mt-10 mb-2 text-xl font-semibold text-slate-100"><TR k="Installing" /></h2>
