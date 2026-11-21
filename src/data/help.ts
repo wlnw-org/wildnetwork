@@ -3,7 +3,7 @@
 
 /** Studio version the Studio guides were last checked against. .github/workflows/help-check.yml opens an issue when a newer
  * Studio release is out; update the guides, then raise this. */
-export const HELP_CHECKED_STUDIO = "0.1.19";
+export const HELP_CHECKED_STUDIO = "0.1.20";
 
 export type Block =
   | { p: string }
@@ -31,6 +31,7 @@ const studio: Guide[] = [
       { p: "IT departments can use the MSI package instead, linked on the [Studio page](/studio)." },
       { h: "Linux" },
       { p: "Use the AppImage (make it executable, then run it) or the .deb package on Debian and Ubuntu. Ubuntu 22.04 or newer, 64-bit." },
+      { tip: "If the window freezes or stays blank on Linux, start Studio from a terminal with WEBKIT_DISABLE_COMPOSITING_MODE=1 in front of the command, and tell us through the feedback form." },
       { h: "Updates" },
       { p: "Each time Studio starts it checks for a new version. When one is out, a box in the corner says so: choose Install and restart, or Later. Your projects are kept." },
       { tip: "The update check sends only the app version and your system. See [what Studio sends](/help/studio/privacy)." },
@@ -53,6 +54,7 @@ const studio: Guide[] = [
       ] },
       { p: "The place matters: it decides which species are expected there and which model runs first. The date and time come from the file name (for example SMM01234_20250601_053000.wav) or from the recorder's own data." },
       { tip: "Adding the same folder again is safe: files already in the project are skipped. Add new SD card copies as the season goes on." },
+      { tip: "Added the wrong folder? From Studio 0.1.20, choose Remove on its row on the Recordings screen, or on a single recording on the Files screen. Studio says how many recordings and detections will go; the files stay on your disk." },
       { p: "Next: [find the species](/help/studio/find-species)." },
     ],
   },
@@ -404,7 +406,7 @@ const site: Guide[] = [
       { steps: ["Download the newest Wildlife Network Base image and its checksum from the [releases page](https://github.com/arunrajiah/wildnetwork-base/releases), and check the checksum.", "Write the image to the microSD card with Raspberry Pi Imager (choose Use custom, and skip Imager's customisation).", "Put the card in the Pi and power it on. The first start takes about 2 minutes.", "On your phone, join the Wi-Fi Wildlife Network-XXXX with the password on the label. No label? The name, password and setup code are in the file wildnetwork-setup.txt on the card.", "Open the BirdEcho app and add a Base, or open http://10.42.0.1 in a browser. Give the station a name and its location, and choose how it reaches the internet.", "Tick Test station while you try it out at home. Its detections stay off the public map. Untick it once the Base is in its real place."] },
       { tip: "Already running Raspberry Pi OS? You can install the Base software with one command instead of flashing the image: see the [Base guide on GitHub](https://github.com/arunrajiah/wildnetwork-base#install-on-a-stock-raspberry-pi)." },
       { h: "With the BirdEcho app" },
-      { list: ["See what the Base hears in the Feed, and its health on the Base page: microphone, temperature, signal, and a note when it has not reported for over an hour.", "No Wi-Fi or SIM where the Base is? Open its page in BirdEcho, choose Collect detections and join the Base's Wi-Fi. The phone keeps the detections and uploads them once it has internet.", "Away from the Base's Wi-Fi, the Feed shows its detections from Wildlife Network, marked From Wildlife Network. Recordings play only on the same Wi-Fi as the Base.", "Moved the Base? On the same Wi-Fi as the Base (or its own Wi-Fi), open its page in BirdEcho and choose Change location, or use the setup page. Earlier detections keep their old place; new ones use the new location.", "The Base sets its clock's time zone from its location (Base 0.2.2 and later), so detections show local time. To choose another time zone, use Time zone under Advanced on the setup page."] },
+      { list: ["See what the Base hears in the Feed, and its health on the Base page: microphone, temperature, signal, and a note when it has not reported for over an hour.", "No Wi-Fi or SIM where the Base is? Open its page in BirdEcho, choose Collect detections and join the Base's Wi-Fi. The phone keeps the detections and uploads them once it has internet.", "Away from the Base's Wi-Fi, the Feed shows its detections from Wildlife Network, marked From Wildlife Network. Recordings play only on the same Wi-Fi as the Base.", "Moved the Base? On the same Wi-Fi as the Base (or its own Wi-Fi), open its page in BirdEcho and choose Change location, or use the setup page. Earlier detections keep their old place; new ones use the new location.", "The Base sets its clock's time zone from its location (Base 0.2.2 and later), so detections show local time. To choose another time zone, use Time zone under Advanced on the setup page.", "From Base 0.3.0 the Base keeps itself up to date: once a night it installs a newer Base release or station program, and goes back to the old one if the new one does not start. Switch this off under Advanced on the setup page. A Base on 0.2 needs one manual update first: run the install command again, or write the new image to its card.", "Switching the Base off for a while? Choose Alert emails on the setup page, or use My stations, and pause the emails about it."] },
       { h: "From anywhere" },
       { p: "On [My stations](/stations/mine) you can check the Base's health, switch test mode on or off and pause alerts from any browser, without being on its Wi-Fi. Pause alerts while you move, repair or switch off the Base, so nobody is told it went quiet. See [Manage your station from anywhere](/help/site/manage-station)." },
       { h: "Privacy" },
