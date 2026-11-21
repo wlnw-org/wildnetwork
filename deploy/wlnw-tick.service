@@ -1,0 +1,7 @@
+[Unit]
+Description=Background work tick: asks the app for its status, which starts due pulls and refreshes (lock rows stop doubles)
+
+[Service]
+Type=oneshot
+# Either app copy will do; the status route starts pulls, rollups and other jobs in the background when they are due.
+ExecStart=/bin/sh -c 'curl -fsS -o /dev/null --max-time 30 http://127.0.0.1:3000/api/v1/status || curl -fsS -o /dev/null --max-time 30 http://127.0.0.1:3001/api/v1/status'

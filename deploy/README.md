@@ -7,7 +7,7 @@ wlnw.org runs on one Ubuntu 24.04 server (Node 24, Caddy). Nothing in this folde
 - `deploy.sh` + `wlnw-deploy.timer`: every 2 minutes the server fetches `main` from this public repository; a new commit is built
   in `/srv/wlnw/releases/<sha>` and swapped in. No deploy keys or server credentials exist in GitHub.
   Logs: `/srv/wlnw/logs/deploy.log`, `/srv/wlnw/logs/build-<sha>.log`. Force a rebuild: `sudo -u wlnw /srv/wlnw/deploy.sh --force`.
-- Background work runs inside the app (status route `after()` jobs), triggered by the cron-job.org call to `/api/v1/status`.
+- Background work runs inside the app (status route `after()` jobs), triggered every 5 minutes by `wlnw-tick.timer` (a local call to `/api/v1/status`, added 2026-11-21 after a missed hour of pulls) and also by the cron-job.org call to the same route. Lock rows in `pull_state` stop the two from doubling work.
 - `geoip-update.sh` + `wlnw-geoip.timer`: monthly download of DB-IP City Lite (CC BY 4.0) to `/var/lib/wlnw/geoip`, read locally by `/api/v1/near` (env `GEOIP_DB`).
 
 The files here are installed on the server by hand (copy to /srv/wlnw, /etc/systemd/system, /etc/caddy); a push does not update them, only the app.
