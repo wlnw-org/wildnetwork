@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 const LABEL: Record<string, ReactNode> = { birdweather: <TR k="BirdWeather stations" />, inaturalist: <TR k="iNaturalist observers" />, gbif: <TR k="GBIF datasets (live)" /> };
 
 export default async function Stations() {
-  const [bySource, direct, optins, devices] = await Promise.all([
+  const [bySource, direct, optins, devices, hydrophones] = await Promise.all([
     sql<{ source_system: string; active: number; total: number }[]>`
       SELECT source_system, COUNT(*) FILTER (WHERE last_seen > now() - interval '7 days')::int AS active, COUNT(*)::int AS total
       FROM deployments GROUP BY 1 ORDER BY 2 DESC`,
@@ -35,6 +35,12 @@ export default async function Stations() {
     sql<{ id: string; name: string; model: string; last_status_at: string | null }[]>`
       SELECT id, name, model, last_status, last_status_at::text FROM devices
       WHERE last_status_at > now() - interval '30 days' ORDER BY last_status_at DESC LIMIT 200`.catch(() => []),
+    // Orcasound hydrophones: public stations in the Salish Sea, kept 7 days (src/config/sources.json).
+    sql<{ id: string; name: string | null; lat: number; lon: number; n: number }[]>`
+      SELECT d.id, d.name, ROUND(d.latitude::numeric, 1)::float AS lat, ROUND(d.longitude::numeric, 1)::float AS lon,
+             (SELECT COUNT(*) FROM events e WHERE e.source_system = 'orcasound' AND e.deployment_id = d.id)::int AS n
+      FROM deployments d WHERE d.source_system = 'orcasound' AND d.last_seen > now() - interval '7 days'
+      ORDER BY d.name`.catch(() => []),
   ]);
   return (
     <main className="flex-1 bg-slate-950 text-slate-300">
@@ -106,6 +112,17 @@ export default async function Stations() {
           </table>
           <button type="submit" className="mt-3 rounded-md border border-cyan-500/50 px-3 py-1.5 text-sm text-cyan-200 hover:bg-cyan-500/10"><TR k="Open the ticked stations as a group" /></button>
           </form>
+          </>
+        )}
+        {hydrophones.length > 0 && (
+          <>
+        <h2 id="hydrophones" className="mt-10 text-xl font-semibold text-slate-100"><TR k="Underwater listening stations" /></h2>
+        <p className="mt-2"><TR k="Orcasound hydrophones listen for killer whales and other marine mammals in the waters around Seattle and Vancouver Island. Whale detections appear 24 hours after they are made, to protect the animals." /></p>
+          <ul className="mt-3 grid gap-1 text-sm sm:grid-cols-2">
+            {hydrophones.map((h) => (
+              <li key={h.id}><Link href={`/stations/${stationSlug(h.id)}`} className="text-cyan-400 hover:underline">{h.name ?? h.id.split(":").slice(1).join(":")}</Link> <span className="text-slate-500">{h.lat}°, {h.lon}° · <TR k="{n} detections" v={{ n: h.n.toLocaleString("en-GB") }} /></span></li>
+            ))}
+          </ul>
           </>
         )}
         {devices.length > 0 && (

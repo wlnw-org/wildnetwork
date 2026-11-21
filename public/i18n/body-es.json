@@ -927,5 +927,8 @@
  "Station pages are kept out of search engines. Anyone with the link can open them.": "Las páginas de estación no aparecen en los buscadores. Cualquiera con el enlace puede abrirlas.",
  "More video guides: [share your results with GBIF and Wildlife Network](https://youtu.be/ktfrbYzKsRI) (2 minutes) and [check a live station without taking its memory card out](https://youtu.be/CT6yEPsOC1c) (2 minutes).": "Más guías en vídeo: [comparte tus resultados con GBIF y Wildlife Network](https://youtu.be/ktfrbYzKsRI) (2 minutos) y [revisa una estación en directo sin sacar su tarjeta de memoria](https://youtu.be/CT6yEPsOC1c) (2 minutos).",
  "Video guide: [share your results with GBIF and Wildlife Network](https://youtu.be/ktfrbYzKsRI) (2 minutes).": "Guía en vídeo: [comparte tus resultados con GBIF y Wildlife Network](https://youtu.be/ktfrbYzKsRI) (2 minutos).",
- "Video guide: [check a live station without taking its memory card out](https://youtu.be/CT6yEPsOC1c) (2 minutes).": "Guía en vídeo: [revisa una estación en directo sin sacar su tarjeta de memoria](https://youtu.be/CT6yEPsOC1c) (2 minutos)."
+ "Video guide: [check a live station without taking its memory card out](https://youtu.be/CT6yEPsOC1c) (2 minutes).": "Guía en vídeo: [revisa una estación en directo sin sacar su tarjeta de memoria](https://youtu.be/CT6yEPsOC1c) (2 minutos).",
+ "Underwater listening stations": "Estaciones de escucha submarina",
+ "{n} detections": "{n} detecciones",
+ "Orcasound hydrophones listen for killer whales and other marine mammals in the waters around Seattle and Vancouver Island. Whale detections appear 24 hours after they are made, to protect the animals.": "Los hidrófonos de Orcasound escuchan orcas y otros mamíferos marinos en las aguas de Seattle y la isla de Vancouver. Las detecciones de ballenas aparecen 24 horas después de producirse, para proteger a los animales."
 }

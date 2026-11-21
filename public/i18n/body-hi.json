@@ -927,5 +927,8 @@
  "Station pages are kept out of search engines. Anyone with the link can open them.": "स्टेशन पेज सर्च इंजन में नहीं आते। लिंक वाला कोई भी उन्हें खोल सकता है।",
  "More video guides: [share your results with GBIF and Wildlife Network](https://youtu.be/ktfrbYzKsRI) (2 minutes) and [check a live station without taking its memory card out](https://youtu.be/CT6yEPsOC1c) (2 minutes).": "और वीडियो गाइड: [अपने नतीजे GBIF और Wildlife Network के साथ साझा करें](https://youtu.be/ktfrbYzKsRI) (2 मिनट) और [मेमोरी कार्ड निकाले बिना किसी लाइव स्टेशन को जाँचें](https://youtu.be/CT6yEPsOC1c) (2 मिनट)।",
  "Video guide: [share your results with GBIF and Wildlife Network](https://youtu.be/ktfrbYzKsRI) (2 minutes).": "वीडियो गाइड: [अपने नतीजे GBIF और Wildlife Network के साथ साझा करें](https://youtu.be/ktfrbYzKsRI) (2 मिनट)।",
- "Video guide: [check a live station without taking its memory card out](https://youtu.be/CT6yEPsOC1c) (2 minutes).": "वीडियो गाइड: [मेमोरी कार्ड निकाले बिना किसी लाइव स्टेशन को जाँचें](https://youtu.be/CT6yEPsOC1c) (2 मिनट)।"
+ "Video guide: [check a live station without taking its memory card out](https://youtu.be/CT6yEPsOC1c) (2 minutes).": "वीडियो गाइड: [मेमोरी कार्ड निकाले बिना किसी लाइव स्टेशन को जाँचें](https://youtu.be/CT6yEPsOC1c) (2 मिनट)।",
+ "Underwater listening stations": "पानी के नीचे सुनने वाले स्टेशन",
+ "{n} detections": "{n} पहचानें",
+ "Orcasound hydrophones listen for killer whales and other marine mammals in the waters around Seattle and Vancouver Island. Whale detections appear 24 hours after they are made, to protect the animals.": "Orcasound के हाइड्रोफ़ोन सिएटल और वैंकूवर द्वीप के आसपास के पानी में किलर व्हेल और दूसरे समुद्री स्तनधारियों को सुनते हैं। जानवरों की सुरक्षा के लिए व्हेल की पहचानें 24 घंटे बाद दिखती हैं।"
 }

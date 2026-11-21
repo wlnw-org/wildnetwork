@@ -927,5 +927,8 @@
  "Station pages are kept out of search engines. Anyone with the link can open them.": "Stationsseiten werden von Suchmaschinen nicht erfasst. Jeder mit dem Link kann sie öffnen.",
  "More video guides: [share your results with GBIF and Wildlife Network](https://youtu.be/ktfrbYzKsRI) (2 minutes) and [check a live station without taking its memory card out](https://youtu.be/CT6yEPsOC1c) (2 minutes).": "Weitere Videoanleitungen: [Ergebnisse mit GBIF und Wildlife Network teilen](https://youtu.be/ktfrbYzKsRI) (2 Minuten) und [eine Live-Station prüfen, ohne die Speicherkarte herauszunehmen](https://youtu.be/CT6yEPsOC1c) (2 Minuten).",
  "Video guide: [share your results with GBIF and Wildlife Network](https://youtu.be/ktfrbYzKsRI) (2 minutes).": "Videoanleitung: [Ergebnisse mit GBIF und Wildlife Network teilen](https://youtu.be/ktfrbYzKsRI) (2 Minuten).",
- "Video guide: [check a live station without taking its memory card out](https://youtu.be/CT6yEPsOC1c) (2 minutes).": "Videoanleitung: [eine Live-Station prüfen, ohne die Speicherkarte herauszunehmen](https://youtu.be/CT6yEPsOC1c) (2 Minuten)."
+ "Video guide: [check a live station without taking its memory card out](https://youtu.be/CT6yEPsOC1c) (2 minutes).": "Videoanleitung: [eine Live-Station prüfen, ohne die Speicherkarte herauszunehmen](https://youtu.be/CT6yEPsOC1c) (2 Minuten).",
+ "Underwater listening stations": "Unterwasser-Hörstationen",
+ "{n} detections": "{n} Erkennungen",
+ "Orcasound hydrophones listen for killer whales and other marine mammals in the waters around Seattle and Vancouver Island. Whale detections appear 24 hours after they are made, to protect the animals.": "Die Hydrofone von Orcasound lauschen nach Schwertwalen und anderen Meeressäugern in den Gewässern um Seattle und Vancouver Island. Erkennungen von Walen erscheinen erst nach 24 Stunden, um die Tiere zu schützen."
 }
