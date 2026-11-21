@@ -4,7 +4,7 @@ import { delayFilter } from "@/lib/delay";
 import { HIDDEN_DEPLOYMENT_SOURCES } from "@/lib/sources";
 import { toFeature } from "@/lib/eventFeature";
 import { ingestEvents } from "@/lib/wdx/ingest";
-import { divertTestEvents, ownerTestEvents } from "@/lib/baseDevices";
+import { divertTestEvents, linkDeviceDeployment, ownerTestEvents } from "@/lib/baseDevices";
 import type { WdxEvent } from "@/lib/wdx/types";
 import { parseEventsBody, validateWdx } from "@/lib/wdx/validate";
 
@@ -40,6 +40,7 @@ export async function POST(req: Request) {
 
   // Test stations' detections are kept apart (src/lib/baseDevices.ts) and never reach the public tables.
   const { events: publicEvents, test } = await divertTestEvents(key.deviceId, valid);
+  await linkDeviceDeployment(key.deviceId, valid);
   const result = await ingestEvents(publicEvents);
   return Response.json({ ...result, received: valid.length, ...(test ? { test } : {}), rejected: rejected.length, rejectedDetails: rejected.slice(0, 20) });
 }

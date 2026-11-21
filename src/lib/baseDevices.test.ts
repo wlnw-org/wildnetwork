@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import "./testDbUrl";
-import { isTestEvent, normalizeHealth, testEventFeature } from "./baseDevices";
+import { batchDeployment, isTestEvent, normalizeHealth, testEventFeature } from "./baseDevices";
 import type { WdxEvent } from "./wdx/types";
 
 const now = Date.parse("2026-11-19T12:00:00Z");
@@ -61,4 +61,10 @@ test("a test station's detection becomes a feature marked test, keyed by its dep
   assert.equal(f.properties.deployment, "birdnet-go:29ab78f229b9");
   assert.equal(f.properties.sci, "Erithacus rubecula");
   assert.deepEqual(f.geometry.coordinates, [-0.12, 51.5]);
+});
+
+test("a device's batch is filed under the station of its newest event", () => {
+  const ev = (id: string, at: string) => ({ eventId: id, eventStart: at, source: { system: "wildnetwork-base" }, deployment: { deploymentId: id, latitude: 0, longitude: 0 }, detection: {} }) as unknown as WdxEvent;
+  assert.equal(batchDeployment([ev("old", "2026-11-20T10:00:00Z"), ev("new", "2026-11-21T10:00:00Z")]), "wildnetwork-base:new");
+  assert.equal(batchDeployment([]), null);
 });

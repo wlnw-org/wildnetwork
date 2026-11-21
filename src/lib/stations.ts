@@ -28,7 +28,8 @@ export interface Station {
 }
 
 /**
- * Stations that may be shown, with their kept range. Test stations (a device of the same source and name in test mode) and
+ * Stations that may be shown, with their kept range. Test stations (the device that sends to this station, or before it has
+ * sent with its key, a device of the same source and name, in test mode) and
  * stations with nothing kept that have not reported within the kept window are left out.
  */
 export async function loadStations(ids: string[]): Promise<Station[]> {
@@ -41,7 +42,8 @@ export async function loadStations(ids: string[]): Promise<Station[]> {
            v.test, v.last_status_at, s.first, s.last, COALESCE(s.n, 0)::int AS n
     FROM deployments d
     LEFT JOIN LATERAL (SELECT bool_or(test) AS test, MAX(last_status_at) AS last_status_at FROM devices
-                       WHERE source_system = d.source_system AND name = d.name) v ON true
+                       WHERE deployment_id = d.id
+                          OR (deployment_id IS NULL AND source_system = d.source_system AND name = d.name)) v ON true
     LEFT JOIN (
       SELECT e.deployment_id, MIN(e.event_start) AS first, MAX(e.event_start) AS last, COUNT(*) AS n FROM events e
       WHERE e.source_system = ANY(${sources}) AND e.deployment_id = ANY(${ok}) AND e.review_status <> 'rejected' ${delayFilter("e")}

@@ -149,3 +149,17 @@ export async function ownerTestEvents(deviceId: string, deployment: string, from
     ORDER BY event_start DESC LIMIT ${limit}`;
   return rows.map((r) => testEventFeature(r.event));
 }
+
+/** The station (source:deploymentId) a device's batch is filed under: the newest event's. Pure. */
+export function batchDeployment(events: WdxEvent[]): string | null {
+  let best: WdxEvent | null = null;
+  for (const e of events) if (!best || Date.parse(e.eventStart) > Date.parse(best.eventStart)) best = e;
+  return best ? eventRow(best).deployment_id : null;
+}
+
+/** Remembers which station a device sends to, so station pages can link them reliably. */
+export async function linkDeviceDeployment(deviceId: string | null, events: WdxEvent[]) {
+  const dep = deviceId ? batchDeployment(events) : null;
+  if (!dep) return;
+  await sql`UPDATE devices SET deployment_id = ${dep} WHERE id = ${deviceId} AND deployment_id IS DISTINCT FROM ${dep}`;
+}
