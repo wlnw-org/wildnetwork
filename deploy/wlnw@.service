@@ -10,6 +10,9 @@ Environment=NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=%i HOSTNAME=127.0
 ExecStart=/usr/bin/node node_modules/next/dist/bin/next start -p %i -H 127.0.0.1
 Restart=always
 RestartSec=5
+# Next.js waits for open connections and background work before exiting; a deploy should not wait the default 90 s
+# (the other copy keeps serving meanwhile, and background jobs resume from their lock rows).
+TimeoutStopSec=20
 # Background jobs (pulls, rollups, recomputes) run inside the app after responses; keep the box responsive.
 Nice=5
 MemoryMax=900M
