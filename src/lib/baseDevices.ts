@@ -14,6 +14,7 @@ import { STATUS_KEEP_DAYS, STATUS_MIN_SECONDS } from "@/lib/devices";
 import type { WdxEvent } from "@/lib/wdx/types";
 import { eventRow } from "@/lib/wdx/ingest";
 import { toFeature } from "@/lib/eventFeature";
+import { alertsWanted } from "@/lib/stationClaims";
 
 export const HEALTH_ALERT = { QUIET_HOURS: 6, MAX_TEMP_C: 75, FORGET_DAYS: 30 };
 export const TEST_EVENTS_KEEP_DAYS = 90;
@@ -86,13 +87,26 @@ export async function deviceHealth(deviceId: string, days = 7) {
   return { latest: d?.last_status ?? null, history: rows.map((r) => r.status) };
 }
 
-/** Problems worth an email: Bases quiet for QUIET_HOURS, without an active microphone, or hotter than MAX_TEMP_C. */
+export interface HealthRow { id: string; name: string; at: Date; quiet: boolean; s: Record<string, unknown> | null; test: boolean; alerts_paused_until: Date | null }
+
+/**
+ * Problems worth an email: Bases quiet for QUIET_HOURS, without an active microphone, or hotter than MAX_TEMP_C.
+ * Test stations and Bases whose owner paused alerts are skipped.
+ */
 export async function healthProblems(): Promise<string[]> {
-  const rows = await sql<{ id: string; name: string; at: Date; quiet: boolean; s: Record<string, unknown> }[]>`
-    SELECT id, name, last_status_at AS at, last_status_at < now() - make_interval(hours => ${HEALTH_ALERT.QUIET_HOURS}) AS quiet, last_status AS s
-    FROM devices WHERE model = 'wildnetwork-base' AND NOT test AND last_status_at > now() - make_interval(days => ${HEALTH_ALERT.FORGET_DAYS})`;
+  const rows = await sql<HealthRow[]>`
+    SELECT id, name, last_status_at AS at, last_status_at < now() - make_interval(hours => ${HEALTH_ALERT.QUIET_HOURS}) AS quiet, last_status AS s,
+           test, alerts_paused_until
+    FROM devices WHERE model = 'wildnetwork-base' AND NOT test AND (alerts_paused_until IS NULL OR alerts_paused_until <= now())
+      AND last_status_at > now() - make_interval(days => ${HEALTH_ALERT.FORGET_DAYS})`;
+  return problemLines(rows);
+}
+
+/** The email lines for these devices (test and paused ones skipped again here). Pure. */
+export function problemLines(rows: HealthRow[], now = Date.now()): string[] {
   const out: string[] = [];
   for (const r of rows) {
+    if (!alertsWanted(r, now)) continue;
     const who = `Base ${r.name} (${r.id})`;
     if (r.quiet) { out.push(`${who}: no heartbeat since ${r.at.toISOString().slice(0, 16).replace("T", " ")} UTC`); continue; }
     const mic = r.s?.microphone as { active?: boolean } | undefined;
@@ -162,4 +176,11 @@ export async function linkDeviceDeployment(deviceId: string | null, events: WdxE
   const dep = deviceId ? batchDeployment(events) : null;
   if (!dep) return;
   await sql`UPDATE devices SET deployment_id = ${dep} WHERE id = ${deviceId} AND deployment_id IS DISTINCT FROM ${dep}`;
+}
+
+/** Pause the server monitor's emails for a device until a time, or resume them (null). */
+export async function setAlertPause(deviceId: string, until: Date | null) {
+  const [d] = await sql<{ alerts_paused_until: Date | null }[]>`
+    UPDATE devices SET alerts_paused_until = ${until} WHERE id = ${deviceId} RETURNING alerts_paused_until`;
+  return d ? { alertsPausedUntil: d.alerts_paused_until } : null;
 }

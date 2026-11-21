@@ -102,7 +102,8 @@ export default async function StationPage({ params }: Props) {
         <h2 className="mt-10 text-xl font-semibold text-slate-100"><TR k="Share this station" /></h2>
         <CopyBlock wrap>{`${SITE}/stations/${st.slug}`}</CopyBlock>
         <p className="text-sm text-slate-400"><TR k="Want one page for several stations? Pick them on the [stations list](/stations#direct) and copy the group link." /></p>
-        <p className="mt-6 text-sm text-slate-500"><TR k="Station pages show the name the owner gave, a position rounded to about 1 km and what the station detected. Test stations and device health are never shown, and sensitive species are not named." /></p>
+        <p className="mt-6 text-sm text-slate-400"><TR k="Is this your station? Check its health, test mode and alerts on [My stations](/stations/mine)." /></p>
+        <p className="mt-2 text-sm text-slate-500"><TR k="Station pages show the name the owner gave, a position rounded to about 1 km and what the station detected. Test stations and device health are never shown, and sensitive species are not named." /></p>
       </div>
     </main>
   );

@@ -829,7 +829,7 @@
             "bearer": []
           }
         ],
-        "summary": "Switch test mode. Body {\"test\": true|false}. While on, the device's detections are kept apart and never public; switching off counts only detections made after the switch.",
+        "summary": "Switch test mode and/or pause health alerts. Body {\"test\": true|false, \"alertsPausedUntil\": \"<ISO time>\"|null}, either field alone. While test is on, the device's detections are kept apart and never public; switching off counts only detections made after the switch. alertsPausedUntil stops the server monitor's health emails for this device until then (at most about 100 years ahead); null resumes them.",
         "parameters": [
           {
             "name": "id",
@@ -843,7 +843,7 @@
         ],
         "responses": {
           "200": {
-            "description": "{ test, fieldSince }"
+            "description": "{ test, fieldSince, alertsPausedUntil }"
           }
         }
       },
@@ -853,7 +853,7 @@
             "bearer": []
           }
         ],
-        "summary": "Current settings: { test, fieldSince }",
+        "summary": "Current settings: { test, fieldSince, alertsPausedUntil }",
         "parameters": [
           {
             "name": "id",
@@ -867,7 +867,7 @@
         ],
         "responses": {
           "200": {
-            "description": "{ test, fieldSince }"
+            "description": "{ test, fieldSince, alertsPausedUntil }"
           }
         }
       }

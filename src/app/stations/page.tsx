@@ -47,6 +47,7 @@ export default async function Stations() {
       <div className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100"><TR k="Stations" /></h1>
         <p className="mt-3"><TR k="Everything on the map comes from people: station owners, camera trappers and observers. Active means seen in the last seven days." /></p>
+        <p className="mt-2 text-sm"><TR k="Run a station? [Manage it here](/stations/mine), from anywhere." /></p>
 
         <dl className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {bySource.filter((s) => LABEL[s.source_system]).map((s) => (

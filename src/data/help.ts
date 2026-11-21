@@ -405,8 +405,33 @@ const site: Guide[] = [
       { tip: "Already running Raspberry Pi OS? You can install the Base software with one command instead of flashing the image: see the [Base guide on GitHub](https://github.com/arunrajiah/wildnetwork-base#install-on-a-stock-raspberry-pi)." },
       { h: "With the BirdEcho app" },
       { list: ["See what the Base hears in the Feed, and its health on the Base page: microphone, temperature, signal, and a note when it has not reported for over an hour.", "No Wi-Fi or SIM where the Base is? Open its page in BirdEcho, choose Collect detections and join the Base's Wi-Fi. The phone keeps the detections and uploads them once it has internet.", "Away from the Base's Wi-Fi, the Feed shows its detections from Wildlife Network, marked From Wildlife Network. Recordings play only on the same Wi-Fi as the Base.", "Moved the Base? On the same Wi-Fi as the Base (or its own Wi-Fi), open its page in BirdEcho and choose Change location, or use the setup page. Earlier detections keep their old place; new ones use the new location.", "The Base sets its clock's time zone from its location (Base 0.2.2 and later), so detections show local time. To choose another time zone, use Time zone under Advanced on the setup page."] },
+      { h: "From anywhere" },
+      { p: "On [My stations](/stations/mine) you can check the Base's health, switch test mode on or off and pause alerts from any browser, without being on its Wi-Fi. Pause alerts while you move, repair or switch off the Base, so nobody is told it went quiet. See [Manage your station from anywhere](/help/site/manage-station)." },
       { h: "Privacy" },
       { p: "The Base rounds its location to about 1 km before anything leaves it. Its health reports (temperature, storage, microphone, signal) are private to you and carry no audio. BirdNET-Go's settings on the Base are protected by a password; reading detections stays open on the Base's own network, so the BirdEcho app can show them." },
+    ],
+  },
+  {
+    slug: "manage-station",
+    title: "Manage your station from anywhere",
+    summary: "Check your station's health, switch test mode and pause alerts from any browser, with its device key.",
+    body: [
+      { p: "[My stations](/stations/mine) lets you look after a station that sends to Wildlife Network (a Wildlife Network Base, or another station registered as a device) from anywhere, without being on the same Wi-Fi and without the BirdEcho app." },
+      { h: "Add your station" },
+      { steps: [
+        "Find the station's device key. It starts with wn_ and is kept on the station in the file /etc/wdx-agent.ini, on the line that starts with api_key. On the station, the command sudo grep api_key /etc/wdx-agent.ini shows it. If you registered the station yourself, it is the key you were shown then.",
+        "Open [My stations](/stations/mine), paste the key and choose Add my station.",
+        "The key is checked once and not kept. This browser remembers only which station you added, for 180 days. Add the station again on each browser or phone you use.",
+      ] },
+      { h: "What you can do there" },
+      { list: [
+        "See when the station was last heard from and its latest health report: microphone, temperature, storage, how long it has been running, its connection and how many detections are waiting to be sent.",
+        "Open its public station page.",
+        "Switch test mode on or off. While it is on, the station's detections stay off the public map, reports and open data. When you switch it off, only detections made after that count.",
+        "Pause alerts for 1 day, 1 week, 1 month or until you turn them back on. When a station goes quiet, loses its microphone or runs hot, the Wildlife Network team is emailed so they can help; pause this while you move, repair or switch off the station. A Wildlife Network Base can also pause alerts itself.",
+        "Forget the station on this browser. This changes nothing on the station.",
+      ] },
+      { tip: "Treat the key like a password: anyone who has it can send detections as your station. If you think someone else has it, [tell us](/feedback) and we will replace it." },
     ],
   },
   {
