@@ -420,6 +420,7 @@ const site: Guide[] = [
     body: [
       { p: "[My stations](/stations/mine) lets you look after a station that sends to Wildlife Network (a Wildlife Network Base, or another station registered as a device) from anywhere, without being on the same Wi-Fi and without the BirdEcho app." },
       { h: "Add your station" },
+      { tip: "Set up your Base with the BirdEcho app? Open the Base in the app and tap Manage from anywhere. The app opens My stations in your browser with the station already added, so you never need to find the key. The link it opens works for 10 minutes." },
       { steps: [
         "Find the station's device key. It starts with wn_ and is kept on the station in the file /etc/wdx-agent.ini, on the line that starts with api_key. On the station, the command sudo grep api_key /etc/wdx-agent.ini shows it. If you registered the station yourself, it is the key you were shown then.",
         "Open [My stations](/stations/mine), paste the key and choose Add my station.",

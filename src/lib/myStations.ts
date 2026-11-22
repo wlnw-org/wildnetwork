@@ -1,7 +1,9 @@
 import { cookies } from "next/headers";
 import { sql } from "@/lib/db";
 import { loadStations, stationSlug } from "@/lib/stations";
-import { CLAIM_COOKIE, CLAIM_DAYS, claimSecret, decodeClaims, encodeClaims, pausedForever } from "@/lib/stationClaims";
+import { hashIp } from "@/lib/auth";
+import { clientIp } from "@/lib/devices";
+import { CLAIM_COOKIE, CLAIM_DAYS, CLAIMS_PER_HOUR, claimSecret, decodeClaims, encodeClaims, pausedForever } from "@/lib/stationClaims";
 
 /** Server side of /stations/mine: the claimed device ids from the signed cookie, and what the owner sees for each. */
 
@@ -9,10 +11,25 @@ export async function getClaims(): Promise<string[]> {
   return decodeClaims((await cookies()).get(CLAIM_COOKIE)?.value, claimSecret());
 }
 
+/**
+ * Counts one key check from this address (wrong keys included, so key checks cannot be used to guess keys).
+ * False when the address is over CLAIMS_PER_HOUR.
+ */
+export async function countClaimAttempt(req: Request): Promise<boolean> {
+  const ipHash = hashIp("station-claim", clientIp(req));
+  await sql`DELETE FROM station_claim_attempts WHERE at < now() - interval '1 day'`;
+  const [{ n }] = await sql<{ n: number }[]>`SELECT COUNT(*)::int AS n FROM station_claim_attempts WHERE ip_hash = ${ipHash} AND at > now() - interval '1 hour'`;
+  if (n >= CLAIMS_PER_HOUR) return false;
+  await sql`INSERT INTO station_claim_attempts (ip_hash) VALUES (${ipHash})`;
+  return true;
+}
+
+export const claimCookieOptions = { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: CLAIM_DAYS * 86_400 } as const;
+
 export async function setClaims(ids: string[]) {
   const c = await cookies();
   if (!ids.length) { c.delete(CLAIM_COOKIE); return; }
-  c.set(CLAIM_COOKIE, encodeClaims(ids, claimSecret()), { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: CLAIM_DAYS * 86_400 });
+  c.set(CLAIM_COOKIE, encodeClaims(ids, claimSecret()), claimCookieOptions);
 }
 
 export interface MyDevice {

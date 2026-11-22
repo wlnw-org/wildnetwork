@@ -47,6 +47,34 @@ export function decodeClaims(raw: string | undefined, secret: Buffer, now = Date
   } catch { return []; }
 }
 
+/**
+ * One-time-ish link from the BirdEcho app: the app proves the key to /api/v1/stations/mine/link and gets back
+ * /stations/mine/link?t=<token>, which adds that device to the browser's cookie. The token holds only the device id and
+ * expires after LINK_MINUTES, signed with its own label so it can never pass as a claims cookie.
+ */
+export const LINK_MINUTES = 10;
+export const linkSecret = (base = process.env.SESSION_SECRET ?? `session:${process.env.CRON_SECRET ?? ""}`) =>
+  createHash("sha256").update(`station-link:${base}`).digest();
+
+export function encodeLink(deviceId: string, secret: Buffer, now = Date.now()): string {
+  const data = Buffer.from(JSON.stringify({ l: deviceId, exp: now + LINK_MINUTES * 60_000 })).toString("base64url");
+  return `${data}.${mac(data, secret)}`;
+}
+
+/** The device id in a link token, or null when it is tampered with, expired or not a device. Pure. */
+export function decodeLink(raw: string | null | undefined, secret: Buffer, now = Date.now()): string | null {
+  if (!raw || raw.length > 400) return null;
+  const [data, sig] = raw.split(".");
+  if (!data || !sig) return null;
+  const want = Buffer.from(mac(data, secret)), got = Buffer.from(sig);
+  if (want.length !== got.length || !timingSafeEqual(want, got)) return null;
+  try {
+    const c = JSON.parse(Buffer.from(data, "base64url").toString()) as { l?: unknown; exp?: unknown };
+    if (typeof c.exp !== "number" || c.exp <= now) return null;
+    return validDeviceId(c.l) ? c.l : null;
+  } catch { return null; }
+}
+
 /** Adds a device (newest first); the oldest drops off past MAX_CLAIMS. Pure. */
 export const addClaim = (ids: string[], id: string) => cleanIds([id, ...ids.filter((x) => x !== id)]);
 export const removeClaim = (ids: string[], id: string) => ids.filter((x) => x !== id);

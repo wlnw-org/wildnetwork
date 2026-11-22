@@ -1,10 +1,8 @@
-import { authenticate, hashIp } from "@/lib/auth";
+import { authenticate } from "@/lib/auth";
 import { setAlertPause, setTestMode } from "@/lib/baseDevices";
-import { sql } from "@/lib/db";
-import { clientIp } from "@/lib/devices";
-import { getClaims, setClaims } from "@/lib/myStations";
+import { countClaimAttempt, getClaims, setClaims } from "@/lib/myStations";
 import { sameOrigin } from "@/lib/orcid";
-import { CLAIMS_PER_HOUR, PAUSE_CHOICES, addClaim, pauseUntil, removeClaim, validDeviceId, type PauseChoice } from "@/lib/stationClaims";
+import { PAUSE_CHOICES, addClaim, pauseUntil, removeClaim, validDeviceId, type PauseChoice } from "@/lib/stationClaims";
 
 export const dynamic = "force-dynamic";
 
@@ -25,12 +23,7 @@ export async function POST(req: Request) {
 
   if (b.action === "claim") {
     const key = typeof b.key === "string" ? b.key.trim() : "";
-    const ipHash = hashIp("station-claim", clientIp(req));
-    // Every attempt counts, wrong keys included, so the form cannot be used to guess keys.
-    await sql`DELETE FROM station_claim_attempts WHERE at < now() - interval '1 day'`;
-    const [{ n }] = await sql<{ n: number }[]>`SELECT COUNT(*)::int AS n FROM station_claim_attempts WHERE ip_hash = ${ipHash} AND at > now() - interval '1 hour'`;
-    if (n >= CLAIMS_PER_HOUR) return no("too-many", 429);
-    await sql`INSERT INTO station_claim_attempts (ip_hash) VALUES (${ipHash})`;
+    if (!(await countClaimAttempt(req))) return no("too-many", 429);
     if (!/^wn_[A-Za-z0-9_-]{16,80}$/.test(key)) return no("bad-key");
     const info = await authenticate(new Request("http://local/", { headers: { "x-api-key": key } }));
     if (!info) return no("bad-key");

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import "./testDbUrl";
-import { addClaim, alertsWanted, claimSecret, decodeClaims, encodeClaims, MAX_CLAIMS, parsePause, pausedForever, pauseUntil, removeClaim } from "./stationClaims";
+import { addClaim, alertsWanted, claimSecret, decodeClaims, decodeLink, encodeClaims, encodeLink, LINK_MINUTES, linkSecret, MAX_CLAIMS, parsePause, pausedForever, pauseUntil, removeClaim } from "./stationClaims";
 import { problemLines } from "./baseDevices";
 
 const now = Date.parse("2026-11-21T12:00:00Z");
@@ -57,4 +57,16 @@ test("health emails skip test stations and paused alerts", () => {
   assert.equal(lines.length, 2);
   assert.ok(lines[0].includes("wnd_on") && lines[1].includes("wnd_ended"));
   assert.ok(!alertsWanted({ test: false, alerts_paused_until: new Date(now + 1) }, now));
+});
+
+test("app link tokens", () => {
+  const sec = linkSecret("x"), other = claimSecret("x");
+  const t = encodeLink("wnd_abc", sec, now);
+  assert.equal(decodeLink(t, sec, now + 60_000), "wnd_abc");
+  assert.equal(decodeLink(t, sec, now + LINK_MINUTES * 60_000 + 1), null);
+  assert.equal(decodeLink(t, other, now), null);
+  assert.equal(decodeLink(t.slice(0, -2) + "xx", sec, now), null);
+  assert.equal(decodeLink(encodeClaims(["wnd_abc"], sec, now), sec, now), null);
+  assert.equal(decodeLink(encodeLink("bad id", sec, now), sec, now), null);
+  assert.equal(decodeLink(undefined, sec, now), null);
 });
