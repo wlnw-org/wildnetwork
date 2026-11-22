@@ -1,4 +1,5 @@
 import { sql } from "@/lib/db";
+import { memoJson } from "@/lib/memo";
 import { delayFilter } from "@/lib/delay";
 import { toFeature } from "@/lib/eventFeature";
 
@@ -19,6 +20,8 @@ export async function GET(req: Request) {
   const bbox = p.get("bbox")?.split(",").map(Number);
   const box = bbox?.length === 4 && bbox.every(Number.isFinite) ? bbox : null;
   const cell = box ? 1 : 5;
+  const pub = new URLSearchParams([...p.entries()].sort(([x], [y]) => x.localeCompare(y))).toString();
+  return memoJson(`marine|${pub}`, 10 * 60_000, 50 * 60_000, async () => {
   const rows = await sql`
     SELECT * FROM (
       SELECT e.event_id, e.event_start, e.scientific_name, e.vernacular_name, e.taxon_rank, e.confidence, e.latitude, e.longitude,
@@ -35,6 +38,6 @@ export async function GET(req: Request) {
     ORDER BY event_start DESC
     LIMIT 20000
   `;
-  return Response.json({ type: "FeatureCollection", features: rows.map(toFeature) },
-    { headers: { "cache-control": "public, s-maxage=600, stale-while-revalidate=3600" } });
+  return { type: "FeatureCollection", features: rows.map(toFeature) };
+  }, { "cache-control": "public, s-maxage=600, stale-while-revalidate=3600" });
 }

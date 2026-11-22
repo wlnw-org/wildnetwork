@@ -1,6 +1,7 @@
 import { after } from "next/server";
 import { pullAll } from "@/lib/connectors";
 import { sql } from "@/lib/db";
+import { every, memo } from "@/lib/memo";
 import { refreshRange } from "@/lib/range";
 import { recomputePhenology } from "@/lib/phenology";
 import { refreshRollups } from "@/lib/rollups";
@@ -21,17 +22,21 @@ export const maxDuration = 300;
 const BACKGROUND_WRITES = process.env.VERCEL_ENV !== "preview";
 
 export async function GET() {
+  // Totals scan the whole species_daily table: shared for 5 minutes. Pull times for 20 seconds.
   const [pulls, totals] = await Promise.all([
-    sql`SELECT connector, last_run_at, last_count, last_error FROM pull_state WHERE connector NOT LIKE '!_%' ESCAPE '!' ${BIRDWEATHER_PAUSED ? sql`AND connector <> 'birdweather'` : sql``} ORDER BY connector`,
-    sql`SELECT (SELECT COUNT(*) FROM events WHERE event_start > now() - interval '1 hour') AS events_1h,
+    memo("status|pulls", 20_000, 20_000, () => sql`SELECT connector, last_run_at, last_count, last_error FROM pull_state WHERE connector NOT LIKE '!_%' ESCAPE '!' ${BIRDWEATHER_PAUSED ? sql`AND connector <> 'birdweather'` : sql``} ORDER BY connector`),
+    memo("status|totals", 5 * 60_000, 10 * 60_000, () => sql`SELECT (SELECT COUNT(*) FROM events WHERE event_start > now() - interval '1 hour') AS events_1h,
                (SELECT COUNT(*) FROM deployments) AS sensors,
                (SELECT SUM(count) FROM species_daily) AS detections,
-               (SELECT COUNT(DISTINCT scientific_name) FROM species_daily) AS species`,
+               (SELECT COUNT(DISTINCT scientific_name) FROM species_daily) AS species`),
   ]);
+  // Background jobs: a visit checks their locks at most once a minute per app copy (the server's own timer also runs
+  // them every 5 minutes), instead of about eight lock writes on every visit.
+  const bg = BACKGROUND_WRITES && every("status-bg", 60_000);
   const newest = pulls.reduce<number>((m, p) => Math.max(m, p.last_run_at ? new Date(p.last_run_at).getTime() : 0), 0);
   // Self-healing ingest: if no scheduler has pulled recently, a visit triggers one in the background.
   // The conditional UPDATE is the lock, so concurrent visitors start at most one pull.
-  if (BACKGROUND_WRITES && newest < Date.now() - 4 * 60_000) {
+  if (bg && newest < Date.now() - 4 * 60_000) {
     after(async () => {
       const claimed = await sql`
         INSERT INTO pull_state (connector, last_run_at) VALUES ('_visit_lock', now())
@@ -41,7 +46,7 @@ export async function GET() {
     });
   }
   // Hourly rollups ride on the same trigger, with their own lock, so any uptime pinger keeps insights fresh.
-  if (BACKGROUND_WRITES) after(async () => {
+  if (bg) after(async () => {
     const claimed = await sql`
       INSERT INTO pull_state (connector, last_run_at) VALUES ('_rollup_lock', now())
       ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '55 minutes'
@@ -64,7 +69,7 @@ export async function GET() {
     if (rx) console.log(`weekly reindex: ${rx.beforeMb} MB -> ${rx.afterMb} MB`);
   });
   // Opted-in BirdWeather stations: their own daily counts, every 30 minutes, in their own background task.
-  if (BACKGROUND_WRITES) after(async () => {
+  if (bg) after(async () => {
     const oi = await sql`
       INSERT INTO pull_state (connector, last_run_at) VALUES ('_optin_lock', now())
       ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '30 minutes'
@@ -90,7 +95,7 @@ export async function GET() {
     if (ln.length) await notifyLostFlags().catch((e) => console.error("lost notify", e));
   });
   // Past-period map summaries (7d / 30d / 12m per class): hourly check, each summary renewed after 3.5 hours (src/lib/history.ts).
-  if (BACKGROUND_WRITES) after(async () => {
+  if (bg) after(async () => {
     const hl = await sql`
       INSERT INTO pull_state (connector, last_run_at) VALUES ('_history_lock', now())
       ON CONFLICT (connector) DO UPDATE SET last_run_at = now() WHERE pull_state.last_run_at < now() - interval '1 hour'

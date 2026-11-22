@@ -1,3 +1,4 @@
+import { memo } from "@/lib/memo";
 import { authenticate } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { delayFilter } from "@/lib/delay";
@@ -71,6 +72,8 @@ export async function GET(req: Request) {
   // ?merge=1 (used by the map): BirdWeather detections share 1 degree positions, so the same species in the same place within
   // 15 minutes becomes one point with a count n, the latest time and the highest confidence. Other sources stay one point each.
   const merge = p.get("merge") === "1";
+  const authed = !!(deployment && (req.headers.get("authorization") || req.headers.get("x-api-key")));
+  const query = async () => {
   const rows = merge ? await sql`
     WITH base AS (
     SELECT e.event_id, 1 AS n, e.event_start, e.scientific_name, e.vernacular_name, e.confidence,
@@ -123,9 +126,14 @@ export async function GET(req: Request) {
     LIMIT ${limit}
   `;
 
-  const features: ReturnType<typeof toFeature>[] = rows.map(toFeature);
+  return rows.map(toFeature);
+  };
+  // Public answers (no owner key) are shared for a minute: the map asks this every time it loads. Without from/to the
+  // window ends now, so a cached answer is at most a minute (plus a short stale refresh) behind.
+  const pub = new URLSearchParams([...p.entries()].sort(([x], [y]) => x.localeCompare(y))).toString();
+  const features: ReturnType<typeof toFeature>[] = authed ? await query() : [...await memo(`events|${pub}`, 60_000, 60_000, query)];
   // The owner's test-station detections: only with a deployment filter and that device's own key, never cached.
-  const key = deployment && (req.headers.get("authorization") || req.headers.get("x-api-key")) ? await authenticate(req) : null;
+  const key = authed ? await authenticate(req) : null;
   if (key?.deviceId) {
     const test = await ownerTestEvents(key.deviceId, deployment!, from, to, limit);
     if (test.length) {
