@@ -1,6 +1,24 @@
 {
 	# Admin API on a socket only the caddy user (and root) can open instead of localhost:2019, so the app's user cannot reconfigure the proxy.
 	admin unix//var/lib/caddy/admin.sock|0600
+	# wlnw.org sits behind Cloudflare: trust its addresses (www.cloudflare.com/ips) and take the visitor's IP from CF-Connecting-IP.
+	# Requests from anywhere else keep their own address, so the header cannot be faked by going around Cloudflare.
+	servers {
+		trusted_proxies static 173.245.48.0/20 103.21.244.0/22 103.22.200.0/22 103.31.4.0/22 141.101.64.0/18 108.162.192.0/18 190.93.240.0/20 188.114.96.0/20 197.234.240.0/22 198.41.128.0/17 162.158.0.0/15 104.16.0.0/13 104.24.0.0/14 172.64.0.0/13 131.0.72.0/22 2400:cb00::/32 2606:4700::/32 2803:f800::/32 2405:b500::/32 2405:8100::/32 2a06:98c0::/29 2c0f:f248::/32
+		client_ip_headers CF-Connecting-IP
+	}
+}
+
+# Both app copies. X-Forwarded-For is exactly the visitor's IP (the app reads its first entry for rate limits).
+(app) {
+	reverse_proxy 127.0.0.1:3000 127.0.0.1:3001 {
+		lb_policy first
+		lb_try_duration 20s
+		health_uri /robots.txt
+		health_interval 5s
+		fail_duration 10s
+		header_up X-Forwarded-For {client_ip}
+	}
 }
 
 (secure) {
@@ -18,13 +36,7 @@
 # Two copies of the app (wlnw@3000, wlnw@3001): deploys restart one at a time, Caddy sends traffic to whichever is up.
 wlnw.org {
 	import secure
-	reverse_proxy 127.0.0.1:3000 127.0.0.1:3001 {
-		lb_policy first
-		lb_try_duration 20s
-		health_uri /robots.txt
-		health_interval 5s
-		fail_duration 10s
-	}
+	import app
 }
 www.wlnw.org {
 	redir https://wlnw.org{uri} permanent
@@ -32,21 +44,16 @@ www.wlnw.org {
 # Old host: pages redirect to wlnw.org in next.config.ts; /api/ and /agent/ are still served for installed agents and BirdEcho.
 wildnetwork.arunrajiah.com {
 	import secure
-	reverse_proxy 127.0.0.1:3000 127.0.0.1:3001 {
-		lb_policy first
-		lb_try_duration 20s
-		health_uri /robots.txt
-		health_interval 5s
-		fail_duration 10s
+	# Being retired: count who still uses it (no IPs kept beyond the log's rotation).
+	log {
+		output file /var/lib/caddy/oldhost.log {
+			roll_size 10MiB
+			roll_keep 2
+		}
 	}
+	import app
 }
 # Plain HTTP on the bare IP, for checks before DNS moves.
 :80 {
-	reverse_proxy 127.0.0.1:3000 127.0.0.1:3001 {
-		lb_policy first
-		lb_try_duration 20s
-		health_uri /robots.txt
-		health_interval 5s
-		fail_duration 10s
-	}
+	import app
 }
