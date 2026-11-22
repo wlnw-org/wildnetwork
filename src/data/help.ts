@@ -209,7 +209,7 @@ const studio: Guide[] = [
     title: "Export and publish your results",
     summary: "Darwin Core for GBIF, Camtrap DP, CSV, Raven, Kaleidoscope, or publish to Wildlife Network.",
     body: [
-      { tip: "Video guide: [share your results with GBIF and Wildlife Network](https://youtu.be/ktfrbYzKsRI) (2 minutes)." },
+      { tip: "Video guide: [share your results with GBIF and Wildlife Network](https://youtu.be/_JcTv45YZdo) (2 minutes)." },
       { p: "Only accepted detections leave Studio: in range for their place and week, at or above each species' reviewed threshold, and not marked wrong. Detections you marked yes are always included." },
       { steps: ["Open Export and publish.", "Fill in About this dataset: title, institution, people to credit, how it was collected, and the licence.", "Choose a format and where to save it."] },
       { list: [
