@@ -388,6 +388,7 @@ const site: Guide[] = [
       { list: [
         "Have a BirdWeather station? [Join here](/stations/join) with its token: no extra software needed.",
         "Run BirdNET-Pi, BirdNET-Go or another recorder? Install the small wdx-agent: see [Contribute](/contribute). With the BirdEcho Android app, open Share with Wildlife Network to get the install command; from BirdEcho 0.13 the same screen shows whether your Pi is sending and when it last reported.",
+        "Run BirdNET-Go and do not want to install anything? From BirdEcho 0.19, open Share with Wildlife Network and choose Share from this phone. The app sends new detections whenever your phone is on the same Wi-Fi as the station and you open it (starting with the last 7 days). For sending around the clock, install wdx-agent later: the app's install command makes it carry on where the phone stopped, so nothing is counted twice.",
         "Have a folder of recordings or camera-trap photos? Process them with [Studio](/studio) and publish from there.",
         "Have results in a spreadsheet? Upload them as a [dataset](/datasets/new).",
       ] },
