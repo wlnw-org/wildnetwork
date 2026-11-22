@@ -25,7 +25,7 @@ export async function POST(req: Request) {
   const [{ id }] = await sql<{ id: number }[]>`INSERT INTO feedback (kind, product, message, email_enc, context, ip_hash)
     VALUES (${kind}, ${product}, ${message}, ${email ? encryptToken(email) : null}, ${context}, ${ipHash}) RETURNING id`;
   const sent = await sendMail("feedback", MAINTAINER.email, `${LABEL[kind]} about ${LABEL[product]}: ${message.slice(0, 60).replace(/\s+/g, " ")}`,
-    `${LABEL[kind]} about ${LABEL[product]}\nFrom: ${email || "no email given"}\n${context ? `Context: ${context}\n` : ""}\n${message}\n\n(feedback #${id})`).catch(() => false);
+    `${LABEL[kind]} about ${LABEL[product]}\nFrom: ${email || "no email given"}\n${context ? `Context: ${context}\n` : ""}\n${message}\n\n(feedback #${id})${email ? "\n\nReply to this email to answer them." : ""}`, undefined, undefined, email ? { replyTo: email } : {}).catch(() => false);
   if (sent) await sql`UPDATE feedback SET emailed = true WHERE id = ${id}`;
   return Response.json({ ok: true, message: email ? "Thank you. We read every message and will reply by email if we need more detail." : "Thank you. We read every message." });
 }

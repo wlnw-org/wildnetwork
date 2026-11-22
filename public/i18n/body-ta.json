@@ -229,7 +229,6 @@
  "What is it about?": "இது எதைப் பற்றியது?",
  "Which part of Wildlife Network?": "Wildlife Network-இன் எந்தப் பகுதி?",
  "Your message": "உங்கள் செய்தி",
- "Email (optional, only if you would like a reply)": "மின்னஞ்சல் (விருப்பத்தேர்வு, பதில் வேண்டுமென்றால் மட்டும்)",
  "Sent with your message: {context}": "உங்கள் செய்தியுடன் அனுப்பப்படுவது: {context}",
  "Sending...": "அனுப்புகிறது...",
  "Send": "அனுப்பு",
@@ -1013,5 +1012,7 @@
  "Station added from the BirdEcho app. This browser now remembers it.": "BirdEcho செயலியிலிருந்து நிலையம் சேர்க்கப்பட்டது. இந்த உலாவி இனி அதை நினைவில் வைத்திருக்கும்.",
  "That link from the BirdEcho app has expired (links last 10 minutes). Tap Manage from anywhere in the app again.": "BirdEcho செயலியின் அந்த இணைப்பு காலாவதியாகிவிட்டது (இணைப்புகள் 10 நிமிடங்கள் செல்லும்). செயலியில் மீண்டும் Manage from anywhere ஐத் தட்டவும்.",
  "Set up your Base with the BirdEcho app? Open the Base in the app and tap **Manage from anywhere**: it adds the station here without showing the key.": "உங்கள் Base ஐ BirdEcho செயலியில் அமைத்தீர்களா? செயலியில் Base ஐத் திறந்து **Manage from anywhere** ஐத் தட்டவும்: சாவியைக் காட்டாமலேயே நிலையம் இங்கே சேர்க்கப்படும்.",
- "Set up your Base with the BirdEcho app? Open the Base in the app and tap Manage from anywhere. The app opens My stations in your browser with the station already added, so you never need to find the key. The link it opens works for 10 minutes.": "உங்கள் Base ஐ BirdEcho செயலியில் அமைத்தீர்களா? செயலியில் Base ஐத் திறந்து Manage from anywhere ஐத் தட்டவும். செயலி உங்கள் உலாவியில் என் நிலையங்கள் பக்கத்தை, நிலையம் ஏற்கனவே சேர்க்கப்பட்ட நிலையில் திறக்கும், எனவே சாவியைத் தேட வேண்டியதில்லை. திறக்கும் இணைப்பு 10 நிமிடங்கள் வேலை செய்யும்."
+ "Set up your Base with the BirdEcho app? Open the Base in the app and tap Manage from anywhere. The app opens My stations in your browser with the station already added, so you never need to find the key. The link it opens works for 10 minutes.": "உங்கள் Base ஐ BirdEcho செயலியில் அமைத்தீர்களா? செயலியில் Base ஐத் திறந்து Manage from anywhere ஐத் தட்டவும். செயலி உங்கள் உலாவியில் என் நிலையங்கள் பக்கத்தை, நிலையம் ஏற்கனவே சேர்க்கப்பட்ட நிலையில் திறக்கும், எனவே சாவியைத் தேட வேண்டியதில்லை. திறக்கும் இணைப்பு 10 நிமிடங்கள் வேலை செய்யும்.",
+ "Your email, so we can thank you and reply (optional)": "உங்கள் மின்னஞ்சல், நன்றி சொல்லவும் பதில் அளிக்கவும் (விருப்பத்தேர்வு)",
+ "Without it we can read your message but cannot answer you.": "அது இல்லாமல் உங்கள் செய்தியைப் படிக்க முடியும், ஆனால் பதில் அளிக்க முடியாது."
 }

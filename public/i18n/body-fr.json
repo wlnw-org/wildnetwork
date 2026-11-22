@@ -229,7 +229,6 @@
  "What is it about?": "De quoi s'agit-il ?",
  "Which part of Wildlife Network?": "Quelle partie de Wildlife Network ?",
  "Your message": "Votre message",
- "Email (optional, only if you would like a reply)": "E-mail (facultatif, seulement si vous souhaitez une réponse)",
  "Sent with your message: {context}": "Envoyé avec votre message : {context}",
  "Sending...": "Envoi...",
  "Send": "Envoyer",
@@ -1013,5 +1012,7 @@
  "Station added from the BirdEcho app. This browser now remembers it.": "Station ajoutée depuis l'appli BirdEcho. Ce navigateur s'en souvient désormais.",
  "That link from the BirdEcho app has expired (links last 10 minutes). Tap Manage from anywhere in the app again.": "Ce lien de l'appli BirdEcho a expiré (les liens durent 10 minutes). Touchez à nouveau Manage from anywhere dans l'appli.",
  "Set up your Base with the BirdEcho app? Open the Base in the app and tap **Manage from anywhere**: it adds the station here without showing the key.": "Vous avez configuré votre Base avec l'appli BirdEcho ? Ouvrez la Base dans l'appli et touchez **Manage from anywhere** : la station est ajoutée ici sans afficher la clé.",
- "Set up your Base with the BirdEcho app? Open the Base in the app and tap Manage from anywhere. The app opens My stations in your browser with the station already added, so you never need to find the key. The link it opens works for 10 minutes.": "Vous avez configuré votre Base avec l'appli BirdEcho ? Ouvrez la Base dans l'appli et touchez Manage from anywhere. L'appli ouvre Mes stations dans votre navigateur avec la station déjà ajoutée, vous n'avez donc jamais besoin de chercher la clé. Le lien ouvert fonctionne pendant 10 minutes."
+ "Set up your Base with the BirdEcho app? Open the Base in the app and tap Manage from anywhere. The app opens My stations in your browser with the station already added, so you never need to find the key. The link it opens works for 10 minutes.": "Vous avez configuré votre Base avec l'appli BirdEcho ? Ouvrez la Base dans l'appli et touchez Manage from anywhere. L'appli ouvre Mes stations dans votre navigateur avec la station déjà ajoutée, vous n'avez donc jamais besoin de chercher la clé. Le lien ouvert fonctionne pendant 10 minutes.",
+ "Your email, so we can thank you and reply (optional)": "Votre e-mail, pour vous remercier et vous répondre (facultatif)",
+ "Without it we can read your message but cannot answer you.": "Sans lui, nous pouvons lire votre message mais pas vous répondre."
 }

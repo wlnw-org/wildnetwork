@@ -42,8 +42,9 @@ export default function FeedbackForm({ product, context }: { product: string; co
           placeholder={tb("What happened, or what you would like. For a problem: what you did, what you expected and what you saw. For a wrong record: the species, place and date.")} />
       </label>
       <label className="grid gap-1 text-sm font-medium text-slate-200">
-        <TR k="Email (optional, only if you would like a reply)" />
-        <input name="email" type="email" autoComplete="email" className={input} />
+        <TR k="Your email, so we can thank you and reply (optional)" />
+        <input name="email" type="email" autoComplete="email" placeholder="you@example.com" className={input} />
+        <span className="text-xs font-normal text-slate-400"><TR k="Without it we can read your message but cannot answer you." /></span>
       </label>
       <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
       {context && <p className="text-xs text-slate-400"><TR k="Sent with your message: {context}" v={{ context }} /></p>}

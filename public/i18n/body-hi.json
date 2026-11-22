@@ -229,7 +229,6 @@
  "What is it about?": "यह किस बारे में है?",
  "Which part of Wildlife Network?": "Wildlife Network का कौन सा हिस्सा?",
  "Your message": "आपका संदेश",
- "Email (optional, only if you would like a reply)": "ईमेल (वैकल्पिक, केवल अगर आप जवाब चाहते हैं)",
  "Sent with your message: {context}": "आपके संदेश के साथ भेजा गया: {context}",
  "Sending...": "भेजा जा रहा है...",
  "Send": "भेजें",
@@ -1013,5 +1012,7 @@
  "Station added from the BirdEcho app. This browser now remembers it.": "BirdEcho ऐप से स्टेशन जोड़ दिया गया। यह ब्राउज़र अब इसे याद रखेगा।",
  "That link from the BirdEcho app has expired (links last 10 minutes). Tap Manage from anywhere in the app again.": "BirdEcho ऐप का वह लिंक समाप्त हो गया है (लिंक 10 मिनट तक चलते हैं)। ऐप में फिर से Manage from anywhere पर टैप करें।",
  "Set up your Base with the BirdEcho app? Open the Base in the app and tap **Manage from anywhere**: it adds the station here without showing the key.": "क्या आपने अपना Base BirdEcho ऐप से सेट किया था? ऐप में Base खोलें और **Manage from anywhere** पर टैप करें: स्टेशन यहाँ जुड़ जाएगा, कुंजी दिखाए बिना।",
- "Set up your Base with the BirdEcho app? Open the Base in the app and tap Manage from anywhere. The app opens My stations in your browser with the station already added, so you never need to find the key. The link it opens works for 10 minutes.": "क्या आपने अपना Base BirdEcho ऐप से सेट किया था? ऐप में Base खोलें और Manage from anywhere पर टैप करें। ऐप आपके ब्राउज़र में मेरे स्टेशन खोलता है, जिसमें स्टेशन पहले से जुड़ा होता है, इसलिए आपको कुंजी ढूँढने की ज़रूरत नहीं पड़ती। खुलने वाला लिंक 10 मिनट तक काम करता है।"
+ "Set up your Base with the BirdEcho app? Open the Base in the app and tap Manage from anywhere. The app opens My stations in your browser with the station already added, so you never need to find the key. The link it opens works for 10 minutes.": "क्या आपने अपना Base BirdEcho ऐप से सेट किया था? ऐप में Base खोलें और Manage from anywhere पर टैप करें। ऐप आपके ब्राउज़र में मेरे स्टेशन खोलता है, जिसमें स्टेशन पहले से जुड़ा होता है, इसलिए आपको कुंजी ढूँढने की ज़रूरत नहीं पड़ती। खुलने वाला लिंक 10 मिनट तक काम करता है।",
+ "Your email, so we can thank you and reply (optional)": "आपका ईमेल, ताकि हम धन्यवाद कह सकें और जवाब दे सकें (वैकल्पिक)",
+ "Without it we can read your message but cannot answer you.": "इसके बिना हम आपका संदेश पढ़ सकते हैं, पर जवाब नहीं दे सकते।"
 }

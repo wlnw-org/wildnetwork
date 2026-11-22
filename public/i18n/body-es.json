@@ -229,7 +229,6 @@
  "What is it about?": "¿De qué se trata?",
  "Which part of Wildlife Network?": "¿Qué parte de Wildlife Network?",
  "Your message": "Tu mensaje",
- "Email (optional, only if you would like a reply)": "Correo (opcional, solo si quieres respuesta)",
  "Sent with your message: {context}": "Se envía con tu mensaje: {context}",
  "Sending...": "Enviando...",
  "Send": "Enviar",
@@ -1013,5 +1012,7 @@
  "Station added from the BirdEcho app. This browser now remembers it.": "Estación añadida desde la app BirdEcho. Este navegador ahora la recuerda.",
  "That link from the BirdEcho app has expired (links last 10 minutes). Tap Manage from anywhere in the app again.": "Ese enlace de la app BirdEcho ha caducado (los enlaces duran 10 minutos). Vuelve a tocar Manage from anywhere en la app.",
  "Set up your Base with the BirdEcho app? Open the Base in the app and tap **Manage from anywhere**: it adds the station here without showing the key.": "¿Configuraste tu Base con la app BirdEcho? Abre la Base en la app y toca **Manage from anywhere**: añade la estación aquí sin mostrar la clave.",
- "Set up your Base with the BirdEcho app? Open the Base in the app and tap Manage from anywhere. The app opens My stations in your browser with the station already added, so you never need to find the key. The link it opens works for 10 minutes.": "¿Configuraste tu Base con la app BirdEcho? Abre la Base en la app y toca Manage from anywhere. La app abre Mis estaciones en tu navegador con la estación ya añadida, así que nunca necesitas buscar la clave. El enlace que abre funciona durante 10 minutos."
+ "Set up your Base with the BirdEcho app? Open the Base in the app and tap Manage from anywhere. The app opens My stations in your browser with the station already added, so you never need to find the key. The link it opens works for 10 minutes.": "¿Configuraste tu Base con la app BirdEcho? Abre la Base en la app y toca Manage from anywhere. La app abre Mis estaciones en tu navegador con la estación ya añadida, así que nunca necesitas buscar la clave. El enlace que abre funciona durante 10 minutos.",
+ "Your email, so we can thank you and reply (optional)": "Tu correo, para darte las gracias y responderte (opcional)",
+ "Without it we can read your message but cannot answer you.": "Sin él podemos leer tu mensaje, pero no responderte."
 }

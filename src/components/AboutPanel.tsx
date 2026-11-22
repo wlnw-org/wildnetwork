@@ -1,3 +1,4 @@
+import NextLink from "next/link";
 import GbifCredits from "@/components/GbifCredits";
 import { track } from "@/components/Analytics";
 import { LANGS, setLang, useLang, useT, type Lang } from "@/lib/i18n";
@@ -104,7 +105,7 @@ export default function AboutPanel() {
         <pre className="mt-2 text-[11px] bg-black/50 border border-white/10 rounded p-2 overflow-x-auto text-slate-200"><code>curl -fsSL https://wlnw.org/agent/install.sh | bash</code></pre>
         <p className="mt-2">
           Camera traps and bat detectors work too, and if you have no device yet, the guide shows what to get and how to build it:{" "}
-          <a href="/contribute" className="text-cyan-400 hover:underline">Contribute data</a>. Researchers: <a href="/data" className="text-cyan-400 hover:underline">open data releases</a>, <a href="/developers" className="text-cyan-400 hover:underline">the API</a> and <a href="/stations" className="text-cyan-400 hover:underline">the station network</a>. Stations already on BirdWeather are included automatically.
+          <a href="/contribute" className="text-cyan-400 hover:underline">Contribute data</a>. Researchers: <a href="/data" className="text-cyan-400 hover:underline">open data releases</a>, <a href="/developers" className="text-cyan-400 hover:underline">the API</a> and <NextLink href="/stations" className="text-cyan-400 hover:underline">the station network</NextLink>. Stations already on BirdWeather are included automatically.
         </p>
       </section>
     </div>
