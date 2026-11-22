@@ -3,7 +3,8 @@
  *
  * Health: POST /api/v1/devices/{id}/health (the device's own key) stores a heartbeat as a WDX device-status record in
  * device_status (STATUS_KEEP_DAYS of history) and as the device's latest status. Owners read it back with the same key.
- * Health data is never public. The server monitor emails when a Base goes quiet, loses its microphone or runs hot.
+ * Health data is never public. A Base that stops reporting is not a problem: owners switch stations off on purpose.
+ * Only a running Base without an active microphone, or running hot, is reported (owners see on/off on My stations).
  *
  * Test stations: while a device is in test mode (devices.test, or a top-level `test: true` on an event), its
  * detections go to test_events instead of events, so the map, history, reports, rollups and open data never see them.
@@ -90,7 +91,8 @@ export async function deviceHealth(deviceId: string, days = 7) {
 export interface HealthRow { id: string; name: string; at: Date; quiet: boolean; s: Record<string, unknown> | null; test: boolean; alerts_paused_until: Date | null }
 
 /**
- * Problems worth an email: Bases quiet for QUIET_HOURS, without an active microphone, or hotter than MAX_TEMP_C.
+ * Problems worth an email: a reporting Base without an active microphone, or hotter than MAX_TEMP_C. Bases quiet for
+ * QUIET_HOURS are skipped (switched off by their owner, or no power or internet).
  * Test stations and Bases whose owner paused alerts are skipped.
  */
 export async function healthProblems(): Promise<string[]> {
@@ -108,7 +110,8 @@ export function problemLines(rows: HealthRow[], now = Date.now()): string[] {
   for (const r of rows) {
     if (!alertsWanted(r, now)) continue;
     const who = `Base ${r.name} (${r.id})`;
-    if (r.quiet) { out.push(`${who}: no heartbeat since ${r.at.toISOString().slice(0, 16).replace("T", " ")} UTC`); continue; }
+    // Not reporting (switched off, no power or no internet) is never a problem: its last health report is also stale.
+    if (r.quiet) continue;
     const mic = r.s?.microphone as { active?: boolean } | undefined;
     if (mic && mic.active === false) out.push(`${who}: microphone not active`);
     const t = Number(r.s?.temperatureC);

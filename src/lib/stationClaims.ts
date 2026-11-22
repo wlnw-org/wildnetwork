@@ -120,3 +120,12 @@ export const alertsPaused = (until: Date | string | null, now = Date.now()) => !
 /** Which Bases get a monitor email: never test stations, never while alerts are paused. Pure. */
 export const alertsWanted = (d: { test: boolean; alerts_paused_until: Date | null }, now = Date.now()) =>
   !d.test && !alertsPaused(d.alerts_paused_until, now);
+
+/** A Base reports every 15 minutes: within this many minutes of the last report it counts as online. */
+export const ONLINE_MINUTES = 45;
+export type OnlineState = "online" | "off" | "never";
+/** Online, off (no report for a while: switched off, no power or no internet) or never reported. Pure. */
+export function onlineState(lastReport: Date | string | null, now = Date.now()): OnlineState {
+  if (!lastReport) return "never";
+  return now - new Date(lastReport).getTime() <= ONLINE_MINUTES * 60_000 ? "online" : "off";
+}

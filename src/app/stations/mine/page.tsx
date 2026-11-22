@@ -39,8 +39,15 @@ export default async function MyStationsPage({ searchParams }: { searchParams: P
           </p>
         )}
 
+        {devices.some((d) => d.state !== "never") && (
+          <p className="mt-6 text-sm text-slate-300">
+            {devices.every((d) => d.state !== "off")
+              ? <TR k="All your stations that report their health are online." />
+              : <TR k="Online: {on}. Off: {off}." v={{ on: String(devices.filter((d) => d.state === "online").length), off: String(devices.filter((d) => d.state === "off").length) }} />}
+          </p>
+        )}
         {devices.length > 0 && (
-          <ul className="mt-6 space-y-4">
+          <ul className="mt-4 space-y-4">
             {devices.map((d) => <DeviceCard key={d.id} d={d} />)}
           </ul>
         )}

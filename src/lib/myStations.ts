@@ -3,7 +3,7 @@ import { sql } from "@/lib/db";
 import { loadStations, stationSlug } from "@/lib/stations";
 import { hashIp } from "@/lib/auth";
 import { clientIp } from "@/lib/devices";
-import { CLAIM_COOKIE, CLAIM_DAYS, CLAIMS_PER_HOUR, claimSecret, decodeClaims, encodeClaims, pausedForever } from "@/lib/stationClaims";
+import { CLAIM_COOKIE, CLAIM_DAYS, CLAIMS_PER_HOUR, claimSecret, decodeClaims, encodeClaims, onlineState, pausedForever, type OnlineState } from "@/lib/stationClaims";
 
 /** Server side of /stations/mine: the claimed device ids from the signed cookie, and what the owner sees for each. */
 
@@ -35,6 +35,8 @@ export async function setClaims(ids: string[]) {
 export interface MyDevice {
   id: string; name: string; model: string; test: boolean; alertsPausedUntil: string | null; alertsPausedForever: boolean;
   lastHeard: string | null; stationUrl: string | null; health: Record<string, unknown> | null; healthAt: string | null;
+  /** online, off (no health report for a while) or never reported. Devices without health reports count as never. */
+  state: OnlineState;
 }
 
 export async function loadMyDevices(ids: string[]): Promise<MyDevice[]> {
@@ -52,7 +54,7 @@ export async function loadMyDevices(ids: string[]): Promise<MyDevice[]> {
     return {
       id: r.id, name: r.name, model: r.model, test: r.test, alertsPausedUntil: r.paused?.toISOString() ?? null, alertsPausedForever: pausedForever(r.paused),
       lastHeard: heard?.toISOString() ?? null, stationUrl: st ? `/stations/${stationSlug(st.id)}` : null,
-      health: r.s, healthAt: r.last_status_at?.toISOString() ?? null,
+      health: r.s, healthAt: r.last_status_at?.toISOString() ?? null, state: onlineState(r.last_status_at),
     };
   });
   return out.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));

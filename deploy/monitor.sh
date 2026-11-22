@@ -27,7 +27,8 @@ for unit in wlnw-deploy wlnw-rollup wlnw-tick wlnw-geoip wlnw-radar wlnw-nexrad 
   systemctl is-failed -q "$unit.service" && problems+=("$unit.service failed: $(journalctl -u "$unit.service" -n 3 --no-pager -o cat | tr '\n' ' ' | head -c 300)")
 done
 
-# Wildlife Network Bases: no heartbeat for 6 hours, microphone not active, or above 75 C (src/lib/baseDevices.ts).
+# Wildlife Network Bases that are running: microphone not active, or above 75 C (src/lib/baseDevices.ts). A Base that
+# is switched off is not reported.
 if [ -n "${CRON_SECRET:-}" ]; then
   while IFS= read -r line; do [ -n "$line" ] && problems+=("$line"); done < <(
     curl -fs --max-time 30 -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/devices 2>/dev/null |

@@ -107,7 +107,14 @@ export function DeviceCard({ d }: { d: MyDevice }) {
   const date = until?.toLocaleString(lang === "en" ? "en-GB" : lang, { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
   return (
     <li className="rounded-lg border border-white/10 bg-slate-900/60 p-4">
-      <h2 className="text-lg font-semibold text-slate-100 [overflow-wrap:anywhere]">{d.name}</h2>
+      <div className="flex flex-wrap items-center gap-2">
+        <h2 className="text-lg font-semibold text-slate-100 [overflow-wrap:anywhere]">{d.name}</h2>
+        {d.state === "online" && <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-medium text-emerald-300">{tb("Online")}</span>}
+        {d.state === "off" && <span className="rounded-full bg-slate-500/20 px-2 py-0.5 text-xs font-medium text-slate-300">{tb("Off")}</span>}
+      </div>
+      {d.state === "off" && d.healthAt && (
+        <p className="mt-1 text-sm text-slate-400">{tb("Not reporting since {ago}. If you switched it off, there is nothing to do: nobody is alerted. Otherwise check its power and internet.", { ago: ago(d.healthAt) || d.healthAt.slice(0, 16).replace("T", " ") + " UTC" })}</p>
+      )}
       <p className="mt-1 text-sm text-slate-400">
         {d.lastHeard ? tb("Last heard from {ago}.", { ago: ago(d.lastHeard) || d.lastHeard.slice(0, 16).replace("T", " ") + " UTC" }) : tb("Nothing heard from this station yet.")}
         {" "}
@@ -129,7 +136,7 @@ export function DeviceCard({ d }: { d: MyDevice }) {
 
       <h3 className="mt-4 text-sm font-semibold text-slate-200">{tb("Alerts")}</h3>
       <p className="mt-1 text-sm">
-        {!until ? tb("On: when this station goes quiet, loses its microphone or runs hot, the Wildlife Network team is emailed so they can help. Pause alerts while you move, repair or switch off the station.")
+        {!until ? tb("On: if this station loses its microphone or runs hot while it is running, the Wildlife Network team is emailed so they can help. Switching it off is your choice and is never reported. Pause alerts while you repair it.")
           : forever ? tb("Paused until you turn them back on.")
           : tb("Paused until {date}.", { date: date ?? "" })}
       </p>

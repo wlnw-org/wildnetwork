@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import "./testDbUrl";
-import { addClaim, alertsWanted, claimSecret, decodeClaims, decodeLink, encodeClaims, encodeLink, LINK_MINUTES, linkSecret, MAX_CLAIMS, parsePause, pausedForever, pauseUntil, removeClaim } from "./stationClaims";
+import { ONLINE_MINUTES, onlineState, addClaim, alertsWanted, claimSecret, decodeClaims, decodeLink, encodeClaims, encodeLink, LINK_MINUTES, linkSecret, MAX_CLAIMS, parsePause, pausedForever, pauseUntil, removeClaim } from "./stationClaims";
 import { problemLines } from "./baseDevices";
 
 const now = Date.parse("2026-11-21T12:00:00Z");
@@ -46,7 +46,7 @@ test("pause validation", () => {
 });
 
 test("health emails skip test stations and paused alerts", () => {
-  const base = { name: "Hill", at: new Date(now - 10 * 3600_000), quiet: true, s: null };
+  const base = { name: "Hill", at: new Date(now - 600_000), quiet: false, s: { microphone: { active: false } } };
   const rows = [
     { ...base, id: "wnd_on", test: false, alerts_paused_until: null },
     { ...base, id: "wnd_test", test: true, alerts_paused_until: null },
@@ -57,6 +57,16 @@ test("health emails skip test stations and paused alerts", () => {
   assert.equal(lines.length, 2);
   assert.ok(lines[0].includes("wnd_on") && lines[1].includes("wnd_ended"));
   assert.ok(!alertsWanted({ test: false, alerts_paused_until: new Date(now + 1) }, now));
+});
+
+test("a switched-off station is never reported, and shows as off to its owner", () => {
+  const off = { id: "wnd_off", name: "Hill", at: new Date(now - 10 * 3600_000), quiet: true, s: { microphone: { active: false }, temperatureC: 90 }, test: false, alerts_paused_until: null };
+  assert.deepEqual(problemLines([off], now), []);
+  const hot = { ...off, id: "wnd_hot", at: new Date(now - 600_000), quiet: false, s: { temperatureC: 80 } };
+  assert.equal(problemLines([hot], now).length, 1);
+  assert.equal(onlineState(new Date(now - 10 * 60_000), now), "online");
+  assert.equal(onlineState(new Date(now - (ONLINE_MINUTES + 1) * 60_000), now), "off");
+  assert.equal(onlineState(null, now), "never");
 });
 
 test("app link tokens", () => {
