@@ -367,6 +367,7 @@ const site: Guide[] = [
       { steps: ["Open [Your patch](/patch).", "Search a town or choose Use my area. You can follow up to 5 places; the buttons at the top switch between them.", "The list shows every bird recorded around the place this year, newest first, with the date it was first recorded. New this week lists the ones first recorded in the latest week.", "Tick the birds you saw or heard yourself. Still to find shows the ones you have not ticked yet."] },
       { p: "Around a place means its area of about 550 km across, the same area as the place pages. Records come from recording stations, observers and research datasets, so some species may be far from the town itself. A bird needs at least 3 records this year, and one heard only by automatic sound identification is listed only when people have also recorded it around the area, because sound identification sometimes names birds from other continents." },
       { tip: "Your places and ticks are kept only in this browser. Nothing is sent to Wildlife Network and there is no sign-up. A new list starts each January." },
+      { tip: "Video guide: [a bird sound a day, your patch and guess the arrival](https://youtu.be/_AW9uWrQNxA) (2 minutes)." },
     ],
   },
   {
@@ -378,6 +379,7 @@ const site: Guide[] = [
       { list: ["Spot on: within 7 days.", "Close: within 14 days.", "Not bad: within 28 days."] },
       { p: "Arrival dates are measured by week, from recording stations and observers (see [Methods](/methods)), so they are best in Europe and North America for now. Spring arrivals start from February." },
       { tip: "Your guesses are kept only in this browser. Nothing is sent to Wildlife Network and there is no sign-up." },
+      { tip: "Video guide: [a bird sound a day, your patch and guess the arrival](https://youtu.be/_AW9uWrQNxA) (2 minutes)." },
     ],
   },
   {
