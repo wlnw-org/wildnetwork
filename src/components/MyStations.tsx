@@ -117,7 +117,7 @@ function Milestones({ id, m }: { id: string; m: MS }) {
   const join = (els: React.ReactNode[]) => els.flatMap((e, i) => (i ? [", ", e] : [e]));
   return (
     <>
-      <p className="mt-1 text-sm">{tb("{s} species heard over {w} weeks of recording.", { s: m.species, w: m.weeks })}</p>
+      <p className="mt-1 text-sm">{m.weeks === 1 ? tb("{s} species heard in its first week of recording.", { s: m.species }) : tb("{s} species heard over {w} weeks of recording.", { s: m.species, w: m.weeks })}</p>
       <ul className="mt-2 flex flex-wrap gap-2">
         {m.badges.map((b) => (
           <li key={badgeKey(b)} className={`rounded-full border px-2.5 py-1 text-xs ${fresh.includes(badgeKey(b)) ? "border-amber-300 bg-amber-300/15 text-amber-100" : "border-emerald-400/40 bg-emerald-400/10 text-emerald-100"}`}>
