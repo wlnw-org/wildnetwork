@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TR, useBodyT } from "@/components/TR";
 import { useAgo } from "@/components/StationFeed";
 import { useLang } from "@/lib/i18n";
 import type { MyDevice } from "@/lib/myStations";
+import type { Badge, Milestones as MS } from "@/lib/milestones";
+import { speciesSlug } from "@/lib/site";
 
 const field = "w-full rounded-md bg-slate-900 border border-white/15 px-3 py-2 text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-cyan-500";
 const btn = "rounded-md border border-white/15 px-3 py-1.5 text-sm text-slate-100 hover:border-cyan-500 disabled:opacity-50";
@@ -88,6 +90,67 @@ function Health({ h }: { h: Record<string, unknown> | null }) {
   );
 }
 
+const SEEN_KEY = "wn_milestones_seen";
+const badgeKey = (b: Badge) => `${b.kind}:${b.n}`;
+
+/** Private milestones for one station. Badges earned since this browser last showed them are marked New. */
+function Milestones({ id, m }: { id: string; m: MS }) {
+  const tb = useBodyT();
+  const lang = useLang();
+  const [fresh, setFresh] = useState<string[]>([]);
+  useEffect(() => {
+    let off = false;
+    Promise.resolve().then(() => {
+      let seen: Record<string, string[]> = {};
+      try { seen = JSON.parse(localStorage.getItem(SEEN_KEY) ?? "{}") ?? {}; } catch { /* ignore */ }
+      const had = seen[id];
+      const keys = m.badges.map(badgeKey);
+      // The first time, nothing is new: the owner just sees what the station has done so far.
+      if (!off && had) setFresh(keys.filter((k) => !had.includes(k)));
+      try { localStorage.setItem(SEEN_KEY, JSON.stringify({ ...seen, [id]: keys })); } catch { /* ignore */ }
+    });
+    return () => { off = true; };
+  }, [id, m.badges]);
+  const date = (w: string) => new Date(w + "T12:00:00Z").toLocaleDateString(lang === "en" ? "en-GB" : lang, { day: "numeric", month: "short", year: "numeric" });
+  const label = (b: Badge) => b.kind === "first" ? tb("First detection") : b.kind === "species" ? tb("{n} species heard", { n: b.n }) : tb("{n} weeks recording", { n: b.n });
+  const sp = (x: { sci: string; name: string | null }) => <Link key={x.sci} href={`/species/${speciesSlug(x.sci)}`} className="text-cyan-400 hover:underline">{x.name ?? x.sci}</Link>;
+  const join = (els: React.ReactNode[]) => els.flatMap((e, i) => (i ? [", ", e] : [e]));
+  return (
+    <>
+      <p className="mt-1 text-sm">{tb("{s} species heard over {w} weeks of recording.", { s: m.species, w: m.weeks })}</p>
+      <ul className="mt-2 flex flex-wrap gap-2">
+        {m.badges.map((b) => (
+          <li key={badgeKey(b)} className={`rounded-full border px-2.5 py-1 text-xs ${fresh.includes(badgeKey(b)) ? "border-amber-300 bg-amber-300/15 text-amber-100" : "border-emerald-400/40 bg-emerald-400/10 text-emerald-100"}`}>
+            {fresh.includes(badgeKey(b)) && <strong className="mr-1">{tb("New")}</strong>}{label(b)} <span className="text-slate-400">· {date(b.at)}</span>
+          </li>
+        ))}
+      </ul>
+      {m.next.map((g) => (
+        <div key={g.kind} className="mt-2 text-sm">
+          <p className="text-slate-400">{g.kind === "species" ? tb("Next: {n} species heard ({have} so far)", { n: g.n, have: g.have }) : tb("Next: {n} weeks recording ({have} so far)", { n: g.n, have: g.have })}</p>
+          <div className="mt-1 h-1.5 w-full rounded bg-white/10" role="progressbar" aria-valuemin={0} aria-valuemax={g.n} aria-valuenow={g.have}>
+            <div className="h-1.5 rounded bg-cyan-400" style={{ width: `${Math.min(100, (100 * g.have) / g.n)}%` }} />
+          </div>
+        </div>
+      ))}
+      {m.newest && (
+        <p className="mt-3 text-sm">
+          {tb("New to your station in the week of {date}:", { date: date(m.newest.week) })}{" "}
+          {join(m.newest.names.map(sp))}
+          {m.newest.hidden > 0 && <>{m.newest.names.length ? " " : ""}{tb("({n} sensitive species, not named here)", { n: m.newest.hidden })}</>}
+        </p>
+      )}
+      {m.early.length > 0 && (
+        <p className="mt-3 text-sm">
+          {tb("Heard before the usual arrival date in your area:")}{" "}
+          {join(m.early.map((e) => <span key={e.sci}>{sp(e)} {e.weeksEarly > 1 ? tb("({n} weeks early)", { n: e.weeksEarly }) : e.weeksEarly === 1 ? tb("(1 week early)") : tb("(the same week)")}</span>))}
+        </p>
+      )}
+      <p className="mt-2 text-xs text-slate-500">{tb("Only you see these. They count species and weeks of recording, never the number of detections.")}</p>
+    </>
+  );
+}
+
 export function DeviceCard({ d }: { d: MyDevice }) {
   const tb = useBodyT();
   const err = useErrorText();
@@ -122,6 +185,11 @@ export function DeviceCard({ d }: { d: MyDevice }) {
           ? <Link href={d.stationUrl} className="text-cyan-400 hover:underline">{tb("Public station page")}</Link>
           : <span>{d.test ? tb("Test stations have no public page.") : tb("Its public page appears once it has sent detections.")}</span>}
       </p>
+
+      {d.milestones && <>
+        <h3 className="mt-4 text-sm font-semibold text-slate-200">{tb("Milestones")}</h3>
+        <Milestones id={d.id} m={d.milestones} />
+      </>}
 
       <h3 className="mt-4 text-sm font-semibold text-slate-200">{tb("Health")}</h3>
       <div className="mt-1"><Health h={d.health} /></div>
