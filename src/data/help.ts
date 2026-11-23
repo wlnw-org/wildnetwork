@@ -440,6 +440,7 @@ const site: Guide[] = [
     summary: "An open listening station on a Raspberry Pi: flash the card, power on, set it up from your phone.",
     body: [
       { p: "A Wildlife Network Base is an open station you build yourself: a Raspberry Pi 4 or 5 with a USB microphone (optionally a 4G modem and a solar battery) in a weatherproof box. It identifies birds on the spot with BirdNET-Go and sends what it hears to Wildlife Network. Without internet it keeps its detections until it can send them, or until a phone carries them out. It is still in testing." },
+      { tip: "Video guide: [build your own listening station with a Raspberry Pi](https://youtu.be/Cmg2bY7uJ3A) (2 minutes)." },
       { h: "What you need" },
       { list: ["A Raspberry Pi 4 or 5 and its power supply.", "A microSD card of 32 GB or more.", "A USB microphone. The Base picks the first USB microphone it finds.", "For outdoors: a weatherproof box, and a 4G modem or a Wi-Fi network in reach."] },
       { h: "Set it up" },
