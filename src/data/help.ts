@@ -296,6 +296,7 @@ const site: Guide[] = [
     summary: "What the dots mean, the time slider, classes and the side panels.",
     body: [
       { p: "The [map](/) shows where birds, bats, frogs, insects and other animals were detected, from sound recorders, observers and research datasets around the world." },
+      { tip: "Video guide: [find the birds around you on the live map](https://youtu.be/vkVJQbgUHQU) (2 minutes)." },
       { list: [
         "Each dot is a recent detection: light blue was heard by a sound recorder, orange was seen by people, purple comes from an ocean survey. Click one to see the species and its source.",
         "The slider at the bottom picks the time: the last hour or 3 hours live, or the last 7 days, 30 days or 12 months.",
