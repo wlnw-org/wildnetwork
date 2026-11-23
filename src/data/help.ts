@@ -359,6 +359,27 @@ const site: Guide[] = [
     ],
   },
   {
+    slug: "patch",
+    title: "Your patch: follow a place through the year",
+    summary: "See every bird recorded around a place this year, what is new this week, and tick off the ones you saw or heard.",
+    body: [
+      { steps: ["Open [Your patch](/patch).", "Search a town or choose Use my area. You can follow up to 5 places; the buttons at the top switch between them.", "The list shows every bird recorded around the place this year, newest first, with the date it was first recorded. New this week lists the ones first recorded in the latest week.", "Tick the birds you saw or heard yourself. Still to find shows the ones you have not ticked yet."] },
+      { p: "Around a place means its area of about 550 km across, the same area as the place pages. Records come from recording stations, observers and research datasets, so some species may be far from the town itself." },
+      { tip: "Your places and ticks are kept only in this browser. Nothing is sent to Wildlife Network and there is no sign-up. A new list starts each January." },
+    ],
+  },
+  {
+    slug: "guess",
+    title: "Guess the arrival",
+    summary: "Guess when migrants will reach your place, then see how close you were.",
+    body: [
+      { steps: ["Open [Guess the arrival](/guess) and choose a place.", "The list shows migrants that arrived there last year in the coming months, with last year's date.", "Pick a date for any of them and choose Guess.", "When the birds come back and our arrival date for the new season is in, the page shows how many days off you were."] },
+      { list: ["Spot on: within 7 days.", "Close: within 14 days.", "Not bad: within 28 days."] },
+      { p: "Arrival dates are measured by week, from recording stations and observers (see [Methods](/methods)), so they are best in Europe and North America for now. Spring arrivals start from February." },
+      { tip: "Your guesses are kept only in this browser. Nothing is sent to Wildlife Network and there is no sign-up." },
+    ],
+  },
+  {
     slug: "lost-species",
     title: "Lost species, and how to help find them",
     summary: "Animals not confirmed in the wild for 10 years or more, and what happens when a record of one reaches us.",

@@ -7,6 +7,8 @@ export const NAV: { label: string; links: { label: string; href: string; footer?
     { label: "Migration last night", href: "/migration" },
     { label: "Places", href: "/places" },
     { label: "Daily bird sound", href: "/quiz" },
+    { label: "Your patch", href: "/patch" },
+    { label: "Guess the arrival", href: "/guess" },
     { label: "Lost species", href: "/lost-species" },
   ] },
   { label: "Reports and alerts", links: [

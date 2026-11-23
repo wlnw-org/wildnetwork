@@ -9,9 +9,11 @@ export interface Update { date: string; title: string; items: UpdateItem[] }
 export const UPDATES: Update[] = [
   {
     date: "2026-11-23",
-    title: "A bird sound a day, and milestones for your station",
+    title: "A bird sound a day, your patch, and guess the arrival",
     items: [
       { text: "Station milestones: on My stations, see how many species your station has heard and how many weeks it has been recording, what is new this week, and which migrants it heard before they usually arrive in your area. Only you see them.", href: "/help/site/manage-station" },
+      { text: "Your patch: follow your town or a place you love and see every bird recorded around it this year, what is new this week, and tick off the ones you saw or heard.", href: "/patch" },
+      { text: "Guess the arrival: guess when swallows, swifts and other migrants will reach your place, and see how close you were when they come back.", href: "/guess" },
       { text: "Daily bird sound: every day, one recording of a bird people are recording a lot in your part of the world. Listen, pick it from four names and keep your run of days going. Free, no sign-up, and your results stay in your browser.", href: "/quiz" },
     ],
   },

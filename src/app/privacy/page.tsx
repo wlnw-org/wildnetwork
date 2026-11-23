@@ -107,6 +107,9 @@ export default function Privacy() {
           <TR k="Reference recordings in species panels are streamed straight from xeno-canto.org, and only when you press play (the sonogram image loads with the panel). Your browser then contacts xeno-canto, which sees your IP address. To pick the recordings, this site sends xeno-canto the species name and, for most species, the continent in view. Never your location or a detection's coordinates. Your browser also sends this site the centre of the map rounded to whole degrees (about 100 km), used only to put recordings from that country first; it is not passed to xeno-canto, and it is not sent for sensitive species." />
         </p>
 
+        <p id="patch">
+          <TR k="**Your patch and Guess the arrival** ([/patch](/patch), [/guess](/guess)) keep the places you follow, your ticks and your guesses only in your browser's local storage. To show a place, the page asks this site for the species recorded around it or the arrival dates there, by its coordinates; nothing about you is stored. Visit statistics count when a place is followed, a species ticked or a guess made." />
+        </p>
         <p id="quiz">
           <TR k="**The daily bird sound quiz** ([/quiz](/quiz)) keeps your results (which sounds you answered, how many were right, your run of days and the area you chose) only in your browser's local storage. Nothing about your answers is sent to this site. To pick your area the first time, the page asks this site for your approximate location (whole degrees, not stored). Visit statistics count when a sound is played, answered (right or not, and the area) or shared." />
         </p>
