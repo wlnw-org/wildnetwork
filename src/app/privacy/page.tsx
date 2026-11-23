@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "What Wildlife Network collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
 };
 
-const UPDATED = "21 November 2026";
+const UPDATED = "23 November 2026";
 
 export default function Privacy() {
   return (
@@ -105,6 +105,10 @@ export default function Privacy() {
         </p>
         <p>
           <TR k="Reference recordings in species panels are streamed straight from xeno-canto.org, and only when you press play (the sonogram image loads with the panel). Your browser then contacts xeno-canto, which sees your IP address. To pick the recordings, this site sends xeno-canto the species name and, for most species, the continent in view. Never your location or a detection's coordinates. Your browser also sends this site the centre of the map rounded to whole degrees (about 100 km), used only to put recordings from that country first; it is not passed to xeno-canto, and it is not sent for sensitive species." />
+        </p>
+
+        <p id="quiz">
+          <TR k="**The daily bird sound quiz** ([/quiz](/quiz)) keeps your results (which sounds you answered, how many were right, your run of days and the area you chose) only in your browser's local storage. Nothing about your answers is sent to this site. To pick your area the first time, the page asks this site for your approximate location (whole degrees, not stored). Visit statistics count when a sound is played, answered (right or not, and the area) or shared." />
         </p>
 
         <H2><TR k="Removal and your rights" /></H2>

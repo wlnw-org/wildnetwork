@@ -6,6 +6,7 @@ export const NAV: { label: string; links: { label: string; href: string; footer?
     { label: "Arrivals by region", href: "/arrivals" },
     { label: "Migration last night", href: "/migration" },
     { label: "Places", href: "/places" },
+    { label: "Daily bird sound", href: "/quiz" },
     { label: "Lost species", href: "/lost-species" },
   ] },
   { label: "Reports and alerts", links: [

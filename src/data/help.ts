@@ -344,6 +344,19 @@ const site: Guide[] = [
     ],
   },
   {
+    slug: "quiz",
+    title: "Daily bird sound quiz",
+    summary: "One bird sound a day: listen, pick the bird from four, keep your run going.",
+    body: [
+      { p: "The [daily bird sound](/quiz) plays one recording of a bird that people are recording a lot in your part of the world right now. Everyone in the same area gets the same sound that day." },
+      { steps: ["Open the [quiz](/quiz). It starts with your part of the world; the buttons at the top switch to another one.", "Press play and listen. Play it as often as you like.", "Pick the bird from the four names. The right answer turns green, and you can open the species page or see it on the map.", "Share your result if you like, and come back tomorrow."] },
+      { p: "A new sound comes for every area at midnight UTC. Each area has its own sound, so you can play up to five a day." },
+      { h: "Your results" },
+      { p: "Played, how many you got right, days in a row with a right answer and your best run are kept only in this browser. Nothing is sent to Wildlife Network, and there is no sign-up. Clearing the site's data in your browser resets them." },
+      { tip: "The recordings come from [xeno-canto](https://xeno-canto.org), a shared collection of wildlife sounds. They are streamed from xeno-canto and each one names its recordist and licence; after you answer, the XC number links to the recording there." },
+    ],
+  },
+  {
     slug: "lost-species",
     title: "Lost species, and how to help find them",
     summary: "Animals not confirmed in the wild for 10 years or more, and what happens when a record of one reaches us.",
