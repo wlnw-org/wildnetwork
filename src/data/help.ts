@@ -3,7 +3,7 @@
 
 /** Studio version the Studio guides were last checked against. .github/workflows/help-check.yml opens an issue when a newer
  * Studio release is out; update the guides, then raise this. */
-export const HELP_CHECKED_STUDIO = "0.1.21";
+export const HELP_CHECKED_STUDIO = "0.1.22";
 
 export type Block =
   | { p: string }
@@ -102,10 +102,12 @@ const studio: Guide[] = [
       { steps: [
         "Open Review and pick a species from the list. Clips are chosen from every confidence level, from sure to doubtful.",
         "Listen (the clip plays with its spectrogram) and answer.",
-        "After 8 answers Studio sets that species' threshold so that what is kept is right at least 90% of the time.",
+        "After 8 yes or no answers Studio sets that species' threshold so that what is kept is right at least 90% of the time. Until then the list shows how far along it is, for example 5 of 8 checked (not sure answers do not count). The answer that sets it tells you how many detections the species now keeps and how often they are estimated to be right.",
       ] },
       { keys: [["Y", "Yes, it is this species"], ["N", "No"], ["U", "Not sure"], ["Space", "Play or pause"], ["Arrow keys", "Move between clips"]] },
       { p: "Detections you answer yes to are always kept. Those you answer no to are never exported." },
+      { h: "Your reviewing" },
+      { p: "The card at the top of the species list shows how many answers you have given (today, and how many days in a row), how many species have their own threshold out of those with enough detections to get one, and what your answers changed: how many detections the default threshold would have kept that are now left out, most of them likely wrong, and how many it would have dropped that are now kept. It appears once you have given your first answer (Studio 0.1.22 and later)." },
       { h: "Unusual for the area" },
       { p: "When Studio is online, species with few or no records near the recorder are marked with a question mark, and the Wildlife Network box under the clip shows how often the species is recorded nearby. Check those clips first: they are the likeliest mistakes. You can turn this off in Settings." },
       { h: "Wrong or unknown sounds" },
