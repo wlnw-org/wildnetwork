@@ -11,6 +11,7 @@ import { speciesSlug } from "@/lib/site";
 
 const KEY = "wn_guesses";
 const PLACE_KEY = "wn_guess_place";
+const SCORED_KEY = "wn_guess_scored";
 interface OpenItem { sci: string; name: string | null; week: string; usual: string; usualLow: string | null; usualHigh: string | null }
 interface GuessData { cell: { lat: number; lon: number }; today: string; open: OpenItem[]; arrivals: Record<string, string> }
 /** One guess, kept in this browser. `previous` is the arrival week we had when the guess was made. */
@@ -53,11 +54,16 @@ export default function Guess() {
       .then((res: (GuessData | null)[]) => {
         if (off) return;
         const out: Record<string, Score | null> = {};
+        // Each guess counts once in analytics when it is first scored in this browser.
+        const seen = new Set(read<string[]>(SCORED_KEY, []));
         guesses.forEach((g) => {
           const d = res[spots.findIndex((s) => s.lat === g.lat && s.lon === g.lon)];
           const s = score(g.date, g.previous, d?.arrivals[g.sci] ?? null);
           out[`${g.sci}|${g.lat},${g.lon}`] = s;
+          const id = `${g.sci}|${g.lat},${g.lon}|${g.made}`;
+          if (s && !seen.has(id)) { seen.add(id); track("guess_scored", { verdict: s.verdict, days_off: s.daysOff }); }
         });
+        write(SCORED_KEY, [...seen].slice(-100));
         setScores(out);
       });
     return () => { off = true; };
