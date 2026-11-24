@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import HelpLink from "@/components/HelpLink";
 import Patch from "@/components/Patch";
 import { TR } from "@/components/TR";
+import WatchForm from "@/components/WatchForm";
 
 export const metadata: Metadata = {
   title: "Your patch: this year's birds around your place",
@@ -17,6 +18,7 @@ export default function PatchPage() {
         <p className="mt-2"><HelpLink to="/help/site/patch" /></p>
         <p className="mt-3"><TR k="Follow a place and watch its year: every bird recorded around it this year, what turned up this week, and your own list of the ones you saw or heard." /></p>
         <Patch />
+        <div className="mt-8"><WatchForm /></div>
       </div>
     </main>
   );

@@ -1,12 +1,13 @@
 import { hashIp } from "@/lib/auth";
 import { sql } from "@/lib/db";
-import { ALERTS_ENABLED, ROLES, cellOf, emailHash, encryptEmail, geocode, newToken, sendConfirmation } from "@/lib/alerts";
+import { ALERTS_ENABLED, ROLES, WATCH_MARK, cellOf, emailHash, encryptEmail, geocode, newToken, sendConfirmation, sendWatchConfirmation } from "@/lib/alerts";
 
 const PER_IP_PER_DAY = 10;
 const PER_EMAIL = 25;
 
 /**
- * Species arrival alerts. Body: { action: "subscribe", email, species, place, role? } or { action: "unsubscribe", token }.
+ * Species arrival alerts. Body: { action: "subscribe", email, species, place, role? }, { action: "watch", email, place } (weekly
+ * migration watch for a place) or { action: "unsubscribe", token }.
  * Subscribing sends a confirmation email; nothing else is sent until it is confirmed.
  * Also accepts the one-click unsubscribe POST mail clients send (?token=... with a form body).
  */
@@ -29,7 +30,8 @@ export async function POST(req: Request) {
   const place = (b.place ?? "").trim().slice(0, 80);
   if (place.length < 2) return Response.json({ error: "Please enter a town or city." }, { status: 400 });
   const role = ROLES.includes(b.role ?? "") ? b.role! : null;
-  const [sp] = await sql<{ scientific_name: string; vernacular_name: string | null }[]>`
+  const watch = b.action === "watch";
+  const [sp] = watch ? [{ scientific_name: WATCH_MARK, vernacular_name: null }] : await sql<{ scientific_name: string; vernacular_name: string | null }[]>`
     SELECT g.scientific_name, (SELECT MIN(vernacular_name) FROM phenology p WHERE p.scientific_name = g.scientific_name) AS vernacular_name
     FROM species_group g WHERE g.scientific_name = ${(b.species ?? "").trim()} AND g.is_species LIMIT 1`;
   if (!sp) return Response.json({ error: "Unknown species." }, { status: 400 });
@@ -51,8 +53,9 @@ export async function POST(req: Request) {
     VALUES (${encryptEmail(email)}, ${hash}, ${sp.scientific_name}, ${geo.label}, ${cell.lat}, ${cell.lon}, ${role}, ${token}, ${ipHash})
     ON CONFLICT (email_hash, scientific_name, cell_lat, cell_lon) DO UPDATE SET role = COALESCE(EXCLUDED.role, alert_subs.role)
     RETURNING token, confirmed_at IS NOT NULL AS confirmed`;
-  if (row.confirmed) return Response.json({ ok: true, place: geo.label, message: `You already have this alert for ${geo.label}.` });
-  const sent = await sendConfirmation(email, row.token, sp.vernacular_name ?? sp.scientific_name, geo.label, sp.scientific_name);
+  if (row.confirmed) return Response.json({ ok: true, place: geo.label, message: watch ? `You already have a migration watch for ${geo.label}.` : `You already have this alert for ${geo.label}.` });
+  const sent = watch ? await sendWatchConfirmation(email, row.token, geo.label)
+    : await sendConfirmation(email, row.token, sp.vernacular_name ?? sp.scientific_name, geo.label, sp.scientific_name);
   if (!sent) return Response.json({ error: "Could not send the confirmation email right now. Please try again later." }, { status: 503 });
   return Response.json({ ok: true, place: geo.label, message: `Almost done: check your inbox and confirm. Your area is the 5 degree square around ${geo.label}.` });
 }

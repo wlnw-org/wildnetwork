@@ -48,3 +48,32 @@ export function score(guess: string, previous: string, current: string | null): 
   const verdict: Verdict = daysOff <= 7 ? "spot-on" : daysOff <= 14 ? "close" : daysOff <= 28 ? "not-bad" : "off";
   return { arrived, daysOff, verdict };
 }
+
+/** Migration watch email: what arrived around a place lately and what is due soon. Sent weekly only when it has news. */
+export const WATCH = { ARRIVED_DAYS: 14, DUE_DAYS: 21, MAX_ITEMS: 8, MIN_ITEMS: 2 };
+
+export interface WatchArrival { sci: string; name: string | null; week: string; n: number }
+export interface WatchItem { sci: string; name: string | null; date: string; possible?: true }
+export interface WatchDigest { arrived: WatchItem[]; due: WatchItem[] }
+
+/**
+ * Arrived: this season's arrival week within the last ARRIVED_DAYS, plus "possibly arriving" candidates in that window.
+ * Due: last season's arrival a year on (364 days, same weekday) within the next DUE_DAYS, for species not yet arrived this season.
+ */
+export function watchDigest(arrivals: WatchArrival[], candidates: WatchArrival[], today: string): WatchDigest {
+  const recent = (w: string) => { const d = daysBetween(w, today); return d >= 0 && d <= WATCH.ARRIVED_DAYS; };
+  const arrived: WatchItem[] = arrivals.filter((a) => recent(a.week)).sort((a, b) => (a.week < b.week ? 1 : a.week > b.week ? -1 : b.n - a.n))
+    .map((a) => ({ sci: a.sci, name: a.name, date: a.week }));
+  for (const c of [...candidates].sort((a, b) => b.n - a.n)) {
+    if (recent(c.week) && !arrived.some((a) => a.sci === c.sci)) arrived.push({ sci: c.sci, name: c.name, date: c.week, possible: true });
+  }
+  const due: WatchItem[] = arrivals
+    .filter((a) => daysBetween(a.week, today) >= GUESS.NEW_SEASON_DAYS)
+    .map((a) => ({ sci: a.sci, name: a.name, date: addDays(a.week, 364), n: a.n }))
+    .filter((a) => { const d = daysBetween(today, a.date); return d >= 0 && d <= WATCH.DUE_DAYS; })
+    .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : b.n - a.n))
+    .map(({ sci, name, date }) => ({ sci, name, date }));
+  return { arrived: arrived.slice(0, WATCH.MAX_ITEMS), due: due.slice(0, WATCH.MAX_ITEMS) };
+}
+
+export const worthSending = (d: WatchDigest) => d.arrived.length + d.due.length >= WATCH.MIN_ITEMS;

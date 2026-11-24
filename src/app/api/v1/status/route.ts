@@ -9,7 +9,7 @@ import { BIRDWEATHER_PAUSED } from "@/lib/sources";
 import { refreshGbifWeekly } from "@/lib/gbif";
 import { refreshOptins } from "@/lib/optin";
 import { weeklyReindex } from "@/lib/storage";
-import { ALERTS_ENABLED, checkAlerts } from "@/lib/alerts";
+import { ALERTS_ENABLED, checkAlerts, sendWatches } from "@/lib/alerts";
 import { warmHistory } from "@/lib/history";
 import { sendDigests } from "@/lib/studies";
 import { notifyLostFlags } from "@/lib/lostNotify";
@@ -86,6 +86,9 @@ export async function GET() {
       // Study-area digests ride on the same 6-hourly slot; each study gets at most one a week (src/lib/studies.ts).
       const dg = await sendDigests(60_000).catch((e) => { console.error("digests", e); return 0; });
       if (dg) console.log(`study digests: ${dg} sent`);
+      // Weekly migration watch emails, only in weeks with news (src/lib/alerts.ts sendWatches).
+      const mw = await sendWatches(60_000).catch((e) => { console.error("migration watch", e); return null; });
+      if (mw?.sent) console.log(`migration watch: ${mw.sent} sent of ${mw.checked} due`);
     }
     // Held lost species records: one email to the maintainer at most every hour (src/lib/lostNotify.ts).
     const ln = await sql`

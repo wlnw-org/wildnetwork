@@ -381,6 +381,8 @@ const site: Guide[] = [
       { steps: ["Open [Guess the arrival](/guess) and choose a place.", "The list shows migrants that arrived there last year in the coming months, with last year's date.", "Pick a date for any of them and choose Guess.", "When the birds come back and our arrival date for the new season is in, the page shows how many days off you were."] },
       { list: ["Spot on: within 7 days.", "Close: within 14 days.", "Not bad: within 28 days."] },
       { p: "Arrival dates are measured by week, from recording stations and observers (see [Methods](/methods)), so they are best in Europe and North America for now. Spring arrivals start from February." },
+      { h: "Migration watch by email" },
+      { p: "Prefer a reminder? At the bottom of [Guess the arrival](/guess) and [Your patch](/patch), enter your email and town for the weekly migration watch. In weeks with news it lists the migrants that arrived lately around your town and those due in the next three weeks; in quiet weeks nothing is sent. Confirm it from the email we send, and stop it with the link in any email." },
       { tip: "Your guesses are kept only in this browser. Nothing is sent to Wildlife Network and there is no sign-up." },
       { tip: "Video guide: [a bird sound a day, your patch and guess the arrival](https://youtu.be/_AW9uWrQNxA) (2 minutes)." },
     ],

@@ -105,3 +105,43 @@ export function confirmHtml(o: { name: string; place: string; confirmUrl: string
 Not you? Ignore this email. Nothing is sent without confirmation, and the request is deleted after 7 days.</td></tr></table>`;
   return shell(`Confirm your ${o.name} alert for ${o.place}.`, inner, `<a href="${SITE}" style="color:${C.muted};text-decoration:underline">${esc(SITE_NAME)}</a> &middot; <a href="${SITE}/privacy#alerts" style="color:${C.muted};text-decoration:underline">Privacy</a>`);
 }
+
+export interface WatchEmail {
+  place: string; week: string;
+  arrived: { name: string; url: string; date: string; possible?: boolean }[];
+  due: { name: string; url: string; date: string }[];
+  guessUrl: string; patchUrl: string; unsubscribeUrl: string;
+}
+
+/** Weekly migration watch for one place: recent arrivals and migrants due soon. */
+export function watchHtml(e: WatchEmail): string {
+  const row = (x: { name: string; url: string; date: string; possible?: boolean }, note: string) =>
+    `<tr><td style="padding:9px 0;border-bottom:1px solid ${C.line};font-family:${FONT};font-size:16px;line-height:22px">
+<a href="${esc(x.url)}" style="color:${C.ink};font-weight:700;text-decoration:none">${esc(x.name)}</a>
+<span style="color:${C.muted};font-size:13px"> &middot; ${esc(note)}</span></td></tr>`;
+  const list = (title: string, rows: string) => rows ? `<tr><td style="padding:18px 30px 0">
+<h2 style="margin:0 0 4px;font-family:${FONT};font-size:18px;line-height:24px;font-weight:800;color:${C.ink}">${esc(title)}</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${rows}</table></td></tr>` : "";
+  const inner = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td style="padding:30px 30px 0">
+<h1 style="margin:0 0 8px;font-family:${FONT};font-size:26px;line-height:32px;font-weight:800;color:${C.ink}">Migration watch: ${esc(e.place)}</h1>
+<p style="margin:0;font-family:${FONT};font-size:15px;line-height:24px;color:${C.body}">The week of ${esc(e.week)}, in the wider area around ${esc(e.place)} (about 550 km across).</p></td></tr>
+${list("Arrived lately", e.arrived.map((x) => row(x, x.possible ? `possibly arriving, week of ${x.date}` : `week of ${x.date}`)).join(""))}
+${list("Due in the next three weeks", e.due.map((x) => row(x, `last year around ${x.date}`)).join(""))}
+<tr><td style="padding:22px 30px 8px">${button(e.guessUrl, "Guess the next arrival")}${button(e.patchUrl, "Your patch", false)}</td></tr>
+<tr><td style="padding:4px 30px 26px;font-family:${FONT};font-size:13px;line-height:20px;color:${C.muted}">
+Dates come from recording stations and open records, by week, and automatic identification makes mistakes. You get this email only in weeks with news.</td></tr></table>`;
+  return shell(`Migration watch for ${e.place}, week of ${e.week}.`, inner,
+    `<a href="${esc(e.unsubscribeUrl)}" style="color:${C.muted};text-decoration:underline">Stop these emails</a> &middot; <a href="${SITE}/privacy#alerts" style="color:${C.muted};text-decoration:underline">Privacy</a>`);
+}
+
+export function watchConfirmHtml(o: { place: string; confirmUrl: string }): string {
+  const inner = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td style="padding:30px 30px 8px">
+<h1 style="margin:0 0 10px;font-family:${FONT};font-size:28px;line-height:34px;font-weight:800;color:${C.ink}">One click and you are set</h1>
+<p style="margin:0;font-family:${FONT};font-size:16px;line-height:26px;color:${C.body}">Confirm that you want the weekly migration watch for <b>${esc(o.place)}</b>: which migrants arrived lately and which are due soon, only in weeks with news.</p></td></tr>
+<tr><td style="padding:18px 30px 8px">${button(o.confirmUrl, "Yes, start my migration watch")}</td></tr>
+<tr><td style="padding:4px 30px 28px;font-family:${FONT};font-size:13px;line-height:20px;color:${C.muted}">
+Not you? Ignore this email. Nothing is sent without confirmation, and the request is deleted after 7 days.</td></tr></table>`;
+  return shell(`Confirm your migration watch for ${o.place}.`, inner, `<a href="${SITE}" style="color:${C.muted};text-decoration:underline">${esc(SITE_NAME)}</a> &middot; <a href="${SITE}/privacy#alerts" style="color:${C.muted};text-decoration:underline">Privacy</a>`);
+}

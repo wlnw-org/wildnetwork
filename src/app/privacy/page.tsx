@@ -54,6 +54,9 @@ export default function Privacy() {
         <p>
           <TR k="If you ask to be emailed when a species arrives near you, the site stores your email address (encrypted), the species, the place name you typed and the 5 degree square it falls in, the optional answer to “I am a...”, and a keyed hash of your IP address to limit sign-ups. The place name is looked up once with the Open-Meteo geocoder; no coordinates are kept. Emails are sent through Resend (United States), which processes your address to deliver them. Nothing is sent until you confirm; unconfirmed requests are deleted after 7 days. Every email has a link that deletes the alert at once. Your address is used for nothing else and never shared. The anonymous counts of alerts per species and per “I am a...” answer may be reported to funders." />
         </p>
+        <p className="mt-3">
+          <TR k="The **migration watch** email (signed up on [/guess](/guess) or [/patch](/patch)) is stored the same way, with the place instead of a species, and the week it was last sent. It is sent at most once a week, only in weeks with news." />
+        </p>
 
         <h2 id="areas" className="mt-8 mb-2 text-xl font-semibold text-slate-100"><TR k="Area reports" /></h2>
         <p>

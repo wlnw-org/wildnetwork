@@ -9,8 +9,9 @@ export interface Update { date: string; title: string; items: UpdateItem[] }
 export const UPDATES: Update[] = [
   {
     date: "2026-11-24",
-    title: "The daily bird sound for a class",
+    title: "The daily bird sound for a class, and a migration watch email",
     items: [
+      { text: "Migration watch by email: enter your town and get one email in weeks with news, listing the migrants that arrived lately around you and those due in the next three weeks. Nothing is sent in quiet weeks.", href: "/guess" },
       { text: "Teachers can now make one link for a class: everyone gets the same bird sound each day, you play it to the room, pupils answer on their own phones or computers, and you reveal how the class answered. No accounts and no names.", href: "/quiz/class" },
     ],
   },

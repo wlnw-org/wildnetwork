@@ -3,6 +3,7 @@ import Link from "next/link";
 import { TR } from "@/components/TR";
 import { sql } from "@/lib/db";
 import { speciesSlug } from "@/lib/site";
+import { WATCH_MARK } from "@/lib/alerts";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Alert confirmed", robots: { index: false, follow: false } };
@@ -16,7 +17,13 @@ export default async function Confirm({ searchParams }: { searchParams: Promise<
   return (
     <main className="flex-1 bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-xl px-5 py-16 text-[15px] leading-relaxed">
-        {row ? (
+        {row && row.scientific_name === WATCH_MARK ? (
+          <>
+            <h1 className="text-2xl font-semibold text-slate-100"><TR k="Migration watch confirmed" /></h1>
+            <p className="mt-3"><TR k="Each week with news, we will email you which migrants arrived lately in the wider area around {place} (about 550 km across) and which are due in the next three weeks. Every email has a link to stop it." v={{ place: row.place }} /></p>
+            <p className="mt-4"><Link href="/guess" className="text-cyan-400 hover:underline"><TR k="Guess the next arrival" /></Link></p>
+          </>
+        ) : row ? (
           <>
             <h1 className="text-2xl font-semibold text-slate-100"><TR k="Alert confirmed" /></h1>
             <p className="mt-3">
