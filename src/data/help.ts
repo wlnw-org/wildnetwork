@@ -302,7 +302,7 @@ const site: Guide[] = [
         "The slider at the bottom picks the time: the last hour or 3 hours live, or the last 7 days, 30 days or 12 months.",
         "The class buttons show one group, for example only bats or only frogs.",
         "The search box finds a place or a species.",
-        "The side rail opens Now: a short summary, what is arriving and the most heard and seen species (More trends shows the rest). Feed, Research, Contribute and more are there too.",
+        "The side rail opens Now: a short summary, what is arriving and the most heard and seen species (More trends shows the rest). Feed, Research, Contribute and more are there too. Menu lists every part of the site (on phones it is under More).",
         "Open the Legend to show one extra thing on the map: Wind, Birds migrating at night or Sea life. Wind shows where the wind blows about 1.5 km up, where most migrating birds fly, with the temperature on the ground, updated every 3 hours.",
         "Birds migrating at night shows how many birds were in the air above each weather radar in Europe and the US, and which way they flew. It runs about two days behind.",
         "For the same night in plain words, open [Bird migration last night](/migration): how busy Europe and the US were, which way most birds flew, and the busiest and most unusual radars.",

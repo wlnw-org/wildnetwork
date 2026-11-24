@@ -8,6 +8,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { ICON_IMAGE, registerIcons } from "@/lib/mapIcons";
 import AboutPanel from "./AboutPanel";
+import MenuPanel from "./MenuPanel";
 import AskPanel from "./AskPanel";
 import { track } from "./Analytics";
 import SpeciesPanel, { type SpeciesDetail } from "./SpeciesPanel";
@@ -134,7 +135,7 @@ export default function WorldMap() {
   const [playhead, setPlayhead] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [thumbs, setThumbs] = useState<Record<string, string | null>>({});
-  const [tab, setTab] = useState<"now" | "feed" | "ask" | "about" | "place" | null>("now");
+  const [tab, setTab] = useState<"now" | "feed" | "ask" | "about" | "menu" | "place" | null>("now");
   const [place, setPlace] = useState<PickedPlace | null>(null);
   // Search answers are kept with the query they answer, so a pending search shows "Searching" and never a stale or empty list.
   const [placeHits, setPlaceHits] = useState<{ q: string; list: (PickedPlace & { key: string })[] }>({ q: "", list: [] });
@@ -1025,11 +1026,20 @@ export default function WorldMap() {
         <RailButton label={t("Feed")} active={tab === "feed" && !species} onClick={() => { setTab("feed"); selectSpecies(null); setMoreOpen(false); }} icon={<><path d="M4 6h16M4 12h16M4 18h10" /></>} />
         {status?.ask && <RailButton label={t("Ask")} active={tab === "ask" && !species} onClick={() => { setTab("ask"); selectSpecies(null); setMoreOpen(false); }} icon={<><path d="M4 5h16v11H9l-5 4z" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.4M12 15.5h.01" /></>} />}
         <RailButton label={t("About")} active={tab === "about" && !species} onClick={() => { setTab("about"); selectSpecies(null); setMoreOpen(false); }} icon={<><circle cx="12" cy="12" r="9" /><path d="M12 8h.01M11 12h1v4h1" /></>} />
+        {/* Every site section (the footer of the other pages); on phones it sits in the More list below. */}
+        <div className="max-md:hidden">
+          <RailButton label={t("Menu")} active={tab === "menu" && !species} onClick={() => { setTab("menu"); selectSpecies(null); track("open_menu", {}); }} icon={<><rect x="4" y="4" width="6" height="6" rx="1" /><rect x="14" y="4" width="6" height="6" rx="1" /><rect x="4" y="14" width="6" height="6" rx="1" /><rect x="14" y="14" width="6" height="6" rx="1" /></>} />
+        </div>
         <div className="md:hidden relative">
           <RailButton label={t("More")} active={moreOpen} onClick={() => setMoreOpen((v) => !v)} icon={<><circle cx="5" cy="12" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></>} expanded={moreOpen} />
         </div>
         <div className="w-10 h-px bg-white/15 my-1 max-md:hidden" role="separator" aria-hidden />
         <div className={`flex flex-col items-center gap-1 max-md:absolute max-md:bottom-full max-md:right-1 max-md:mb-1 max-md:w-48 max-md:items-stretch max-md:rounded-lg max-md:bg-slate-900 max-md:border max-md:border-white/15 max-md:shadow-2xl max-md:p-1 ${moreOpen ? "" : "max-md:hidden"}`}>
+          <button onClick={() => { setTab("menu"); selectSpecies(null); setMoreOpen(false); track("open_menu", {}); }}
+            className={`${RAIL_ITEM} md:hidden text-slate-300 hover:bg-white/5 hover:text-white max-md:w-full max-md:h-11 max-md:flex-row max-md:justify-start max-md:gap-3 max-md:px-3 max-md:text-sm`}>
+            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden><><rect x="4" y="4" width="6" height="6" rx="1" /><rect x="14" y="4" width="6" height="6" rx="1" /><rect x="4" y="14" width="6" height="6" rx="1" /><rect x="14" y="14" width="6" height="6" rx="1" /></></svg>
+            {t("Menu")}
+          </button>
           <RailLink tour="contribute" href="/contribute" label={t("Add data")} icon={<><path d="M12 5v14M5 12h14" /><circle cx="12" cy="12" r="9" /></>} />
           <RailLink tour="research" href="/research" label={t("Research")} icon={<><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3" /><path d="M7.5 15h9" /></>} />
           <RailLink tour="report" href="/report" label={t("Report")} icon={<path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />}
@@ -1064,6 +1074,8 @@ export default function WorldMap() {
             <HistoryPanel data={historyData} loading={!historyData} onPick={pick} onBack={() => setPeriod(null)} scopeLabel={scopeLabel} />
           ) : tab === "about" ? (
             <AboutPanel />
+          ) : tab === "menu" ? (
+            <MenuPanel />
           ) : tab === "ask" ? (
             <AskPanel onPick={pick} city={home?.city ?? null} region={home ? regionOf(Math.floor(home.lat / 5) * 5, Math.floor(home.lon / 5) * 5) : null} />
           ) : tab === "feed" ? (
