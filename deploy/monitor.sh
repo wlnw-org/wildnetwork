@@ -11,7 +11,10 @@ problems=()
 # A deploy restarts the two copies one after the other, so one being down for a minute then is expected: skip the
 # per-copy checks while it runs (the public health check below still catches a site that is really down).
 # wlnw-deploy is a oneshot service: while it runs its state is "activating", which is-active does not count as active.
-if [[ "$(systemctl show -p ActiveState --value wlnw-deploy)" != activating ]] && ! systemctl is-active -q wlnw-deploy; then
+# A build also takes most of the memory for a few minutes, so the memory check is skipped then too.
+deploying=0
+{ [[ "$(systemctl show -p ActiveState --value wlnw-deploy)" == activating ]] || systemctl is-active -q wlnw-deploy; } && deploying=1
+if [ "$deploying" = 0 ]; then
   for port in 3000 3001; do
     systemctl is-active -q "wlnw@$port" || problems+=("app copy wlnw@$port is not running")
     curl -fs -o /dev/null --max-time 15 "http://127.0.0.1:$port/robots.txt" || problems+=("app copy on port $port does not answer")
@@ -42,7 +45,7 @@ disk=$(df --output=pcent / | tail -1 | tr -dc 0-9)
 [ "$disk" -ge 85 ] && problems+=("disk is ${disk}% full")
 avail=$(awk '/MemAvailable/ {print int($2/1024)}' /proc/meminfo)
 swap=$(free -m | awk '/Swap/ {print $3}')
-[ "$avail" -lt 150 ] && problems+=("only ${avail} MB of memory available (swap in use ${swap} MB)")
+[ "$deploying" = 0 ] && [ "$avail" -lt 150 ] && problems+=("only ${avail} MB of memory available (swap in use ${swap} MB)")
 
 days=$(echo | timeout 15 openssl s_client -connect 127.0.0.1:443 -servername wlnw.org 2>/dev/null \
   | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2)
