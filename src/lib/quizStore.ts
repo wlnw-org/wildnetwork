@@ -52,3 +52,9 @@ export async function getPuzzle(area: XcArea, day = quizDay()): Promise<Puzzle |
     return row?.data ?? build(day, area);
   });
 }
+
+/** A stored puzzle only (never builds one): for earlier days in class results. */
+export async function storedPuzzle(area: XcArea, day: string): Promise<Puzzle | null> {
+  const [row] = await sql<{ data: Puzzle }[]>`SELECT data FROM history_cache WHERE key = ${`quiz|${day}|${area}`}`;
+  return row?.data ?? null;
+}

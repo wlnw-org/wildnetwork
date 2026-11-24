@@ -8,6 +8,13 @@ export interface Update { date: string; title: string; items: UpdateItem[] }
 
 export const UPDATES: Update[] = [
   {
+    date: "2026-11-24",
+    title: "The daily bird sound for a class",
+    items: [
+      { text: "Teachers can now make one link for a class: everyone gets the same bird sound each day, you play it to the room, pupils answer on their own phones or computers, and you reveal how the class answered. No accounts and no names.", href: "/quiz/class" },
+    ],
+  },
+  {
     date: "2026-11-23",
     title: "A bird sound a day, your patch, and guess the arrival",
     items: [

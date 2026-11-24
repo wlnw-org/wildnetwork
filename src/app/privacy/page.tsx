@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "What Wildlife Network collects about visitors and station owners, why, how long it is kept, and how to have it removed.",
 };
 
-const UPDATED = "23 November 2026";
+const UPDATED = "24 November 2026";
 
 export default function Privacy() {
   return (
@@ -111,7 +111,7 @@ export default function Privacy() {
           <TR k="**Your patch and Guess the arrival** ([/patch](/patch), [/guess](/guess)) keep the places you follow, your ticks and your guesses only in your browser's local storage. To show a place, the page asks this site for the species recorded around it or the arrival dates there, by its coordinates; nothing about you is stored. Visit statistics count when a place is followed, a species ticked or a guess made." />
         </p>
         <p id="quiz">
-          <TR k="**The daily bird sound quiz** ([/quiz](/quiz)) keeps your results (which sounds you answered, how many were right, your run of days and the area you chose) only in your browser's local storage. Nothing about your answers is sent to this site. To pick your area the first time, the page asks this site for your approximate location (whole degrees, not stored). Visit statistics count when a sound is played, answered (right or not, and the area) or shared." />
+          <TR k="**The daily bird sound quiz** ([/quiz](/quiz)) keeps your results (which sounds you answered, how many were right, your run of days and the area you chose) only in your browser's local storage. Nothing about your answers is sent to this site. To pick your area the first time, the page asks this site for your approximate location (whole degrees, not stored). Visit statistics count when a sound is played, answered (right or not, and the area) or shared. For a class made on [/quiz/class](/quiz/class), the site keeps the class code, its area and, for each day, how many answers chose each name: no names and nothing about who answered. A keyed hash of the address that made the class is kept to limit it to 20 classes a day. Classes and their counts are deleted after 6 months." />
         </p>
 
         <H2><TR k="Removal and your rights" /></H2>

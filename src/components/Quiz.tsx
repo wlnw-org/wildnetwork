@@ -8,6 +8,7 @@ import { useLocalNames } from "@/lib/i18n";
 import type { Puzzle } from "@/lib/quiz";
 import { speciesSlug } from "@/lib/site";
 import { areaFor, creditLine, isArea, XC_AREAS, type XcArea } from "@/lib/xenocanto";
+import { cleanCode } from "@/lib/quizClassCode";
 
 // Area names go through tb() below; listed here for the translation scan: tb("Europe") tb("Asia") tb("Africa") tb("The Americas") tb("Australia and Oceania")
 const LABEL: Record<XcArea, string> = { europe: "Europe", asia: "Asia", africa: "Africa", america: "The Americas", australia: "Australia and Oceania" };
@@ -39,11 +40,21 @@ export default function Quiz() {
   const [failed, setFailed] = useState(false);
   const [copied, setCopied] = useState(false);
   const [now, setNow] = useState(() => Date.now());
+  // Class mode (/quiz?class=CODE): the class's area is fixed and each answer is also counted, anonymously, for the class.
+  const [klass, setKlass] = useState<{ code: string; area: XcArea } | null>(null);
+  const [classMissing, setClassMissing] = useState(false);
 
   // Area: the one picked last time, else the visitor's continent (/api/v1/near, whole degrees), else Europe.
   useEffect(() => {
     let off = false;
     Promise.resolve().then(async () => {
+      const code = cleanCode(new URL(window.location.href).searchParams.get("class"));
+      if (code) {
+        const c = await fetch(`/api/v1/quiz/class/${code}`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+        if (off) return;
+        if (c && isArea(c.area)) { setKlass({ code, area: c.area }); setStats(readStats()); setArea(c.area); return; }
+        setClassMissing(true);
+      }
       let saved: string | null = null;
       try { saved = localStorage.getItem(AREA_KEY); } catch { /* ignore */ }
       let a: XcArea = "europe";
@@ -86,6 +97,10 @@ export default function Quiz() {
     setStats(s);
     saveStats(s);
     track("quiz_answer", { area: puzzle.area, correct: ok ? 1 : 0 });
+    if (klass) {
+      fetch(`/api/v1/quiz/class/${klass.code}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ pick: name }) }).catch(() => {});
+      track("quiz_class_answer", { area: puzzle.area });
+    }
   }
 
   function pickArea(a: XcArea) {
@@ -115,6 +130,12 @@ export default function Quiz() {
 
   return (
     <div className="mt-6">
+      {classMissing && <p className="mb-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-200">{tb("That class link has expired or is not right. You can still play on your own.")}</p>}
+      {klass ? (
+        <p className="rounded-lg border border-cyan-400/30 bg-cyan-400/10 p-3 text-sm text-cyan-100">
+          {tb("Class {code}: everyone gets the same {area} sound today. Your answer is counted for the class without your name.", { code: klass.code, area: tb(LABEL[klass.area]) })}
+        </p>
+      ) : (
       <div role="tablist" aria-label={tb("Area")} className="flex flex-wrap gap-2">
         {ORDER.filter((a) => XC_AREAS.includes(a)).map((a) => (
           <button key={a} role="tab" aria-selected={a === area} onClick={() => pickArea(a)}
@@ -123,6 +144,7 @@ export default function Quiz() {
           </button>
         ))}
       </div>
+      )}
 
       <section className="mt-5 rounded-xl border border-white/10 bg-white/5 p-5" aria-live="polite">
         {!area || (!data && !failed) ? (
@@ -204,6 +226,7 @@ export default function Quiz() {
       <p className="mt-2 text-xs text-slate-500">
         <TR k="Recordings courtesy of [xeno-canto.org](https://xeno-canto.org), streamed from xeno-canto and credited to each recordist." />
       </p>
+      {!klass && <p className="mt-4 text-sm"><TR k="Teaching a class? [Make a class link](/quiz/class): everyone hears the same sound, and you see how the class answered." /></p>}
     </div>
   );
 }

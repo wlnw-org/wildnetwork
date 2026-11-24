@@ -39,6 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE}/arrivals/india`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE}/lost-species`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE}/quiz`, changeFrequency: "daily", priority: 0.6 },
+    { url: `${SITE}/quiz/class`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${SITE}/patch`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE}/guess`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE}/research`, changeFrequency: "weekly", priority: 0.8 },
