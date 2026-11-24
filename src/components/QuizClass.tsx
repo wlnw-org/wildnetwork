@@ -93,7 +93,7 @@ export function ClassView({ code }: { code: string }) {
             <p className="mt-1 text-sm text-slate-400">{tb("Play it to the room, as often as you like.")}</p>
             <audio controls preload="none" src={p.clip.file} className="mt-3 w-full" aria-label={tb("Play today's sound")} />
             <p className="mt-2 text-xs text-slate-400">{creditLine(p.clip)} · XC{p.clip.id} · <a href={p.clip.license.url} target="_blank" rel="noreferrer license" className="text-cyan-500 hover:underline">{p.clip.license.name}</a></p>
-            <p className="mt-4 text-3xl font-semibold tabular-nums text-slate-100">{today.answered} <span className="text-base font-normal text-slate-400">{tb("answers so far")}</span></p>
+            <p className="mt-4 text-3xl font-semibold tabular-nums text-slate-100">{today.answered} <span className="text-base font-normal text-slate-400">{today.answered === 1 ? tb("answer so far") : tb("answers so far")}</span></p>
             <ul className="mt-3 space-y-2">
               {p.options.map((o) => {
                 const n = today.picks[o.scientificName] ?? 0, isAns = o.scientificName === p.answer;
