@@ -1027,7 +1027,7 @@ export default function WorldMap() {
         {status?.ask && <RailButton label={t("Ask")} active={tab === "ask" && !species} onClick={() => { setTab("ask"); selectSpecies(null); setMoreOpen(false); }} icon={<><path d="M4 5h16v11H9l-5 4z" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.4M12 15.5h.01" /></>} />}
         <RailButton label={t("About")} active={tab === "about" && !species} onClick={() => { setTab("about"); selectSpecies(null); setMoreOpen(false); }} icon={<><circle cx="12" cy="12" r="9" /><path d="M12 8h.01M11 12h1v4h1" /></>} />
         {/* Every site section (the footer of the other pages); on phones it sits in the More list below. */}
-        <div className="max-md:hidden">
+        <div data-tour="menu" className="max-md:hidden">
           <RailButton label={t("Menu")} active={tab === "menu" && !species} onClick={() => { setTab("menu"); selectSpecies(null); track("open_menu", {}); }} icon={<><rect x="4" y="4" width="6" height="6" rx="1" /><rect x="14" y="4" width="6" height="6" rx="1" /><rect x="4" y="14" width="6" height="6" rx="1" /><rect x="14" y="14" width="6" height="6" rx="1" /></>} />
         </div>
         <div className="md:hidden relative">

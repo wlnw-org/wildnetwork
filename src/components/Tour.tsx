@@ -37,7 +37,8 @@ export function tourSteps(askEnabled: boolean, role: Role | null): Step[] {
     { target: "slider", place: "top", title: "Live or the past",
       text: ["1h and 3h show single detections as they come in. 7d, 30d and 12m show the past week, month or year per area: click an area's icon for its top species. With a species open, Play year shows its movement week by week."] },
     { target: "rail", place: "right", title: "Now, Feed, Research and more",
-      text: ["Now shows what is changing: species moving, surging or fading, and the latest arrivals. Feed lists the newest detections.", ...(askEnabled ? [" Ask answers questions in plain words from the same data."] : []), " Research and Methods explain how every number is made. About has the sources, credits and privacy notes."] },
+      text: ["Now shows what is changing: species moving, surging or fading, and the latest arrivals. Feed lists the newest detections.", ...(askEnabled ? [" Ask answers questions in plain words from the same data."] : []), " Research and Methods explain how every number is made. About has the sources, credits and privacy notes."] },    { target: "menu", place: "right", keep: true, title: "Everything in one menu",
+      text: ["Menu lists every part of Wildlife Network: the daily bird sound, Your patch, Guess the arrival, arrival dates by region, reports, alerts, open data and more. On phones it is under More."] },
   ];
   const byRole: Record<Role | "none", Step[]> = {
     nature: [
