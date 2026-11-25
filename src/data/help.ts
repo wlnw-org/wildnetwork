@@ -54,6 +54,7 @@ const studio: Guide[] = [
       ] },
       { p: "The place matters: it decides which species are expected there and which model runs first. The date and time come from the file name (for example SMM01234_20250601_053000.wav) or from the recorder's own data." },
       { tip: "Adding the same folder again is safe: files already in the project are skipped. Add new SD card copies as the season goes on." },
+      { tip: "From Studio 0.1.23, MP4, MOV and AVI videos are read too: see [camera-trap photos and videos](/help/studio/camera-traps)." },
       { tip: "Added the wrong folder? From Studio 0.1.20, choose Remove on its row on the Recordings screen, or on a single recording on the Files screen. Studio says how many recordings and detections will go; the files stay on your disk." },
       { p: "Next: [find the species](/help/studio/find-species)." },
     ],
@@ -165,8 +166,8 @@ const studio: Guide[] = [
   },
   {
     slug: "camera-traps",
-    title: "Camera-trap photos",
-    summary: "Find animals in photos with SpeciesNet and check them in a grid.",
+    title: "Camera-trap photos and videos",
+    summary: "Find animals in photos and videos with SpeciesNet and check them in a grid.",
     body: [
       { p: "Studio finds JPEG and PNG photos in the folders you add, next to or instead of recordings. Each camera is listed like a recorder." },
       { steps: [
@@ -177,6 +178,16 @@ const studio: Guide[] = [
       { keys: [["Y", "Yes, the box is right"], ["N", "No"], ["U", "Not sure"], ["Arrow keys", "Move between photos"], ["Enter", "Enlarge"]] },
       { p: "Photos with people in them stay on your computer: they are never exported or published. Photos without a date in their EXIF data are kept out of publishing." },
       { p: "Export camera-trap results as Camtrap DP for GBIF or Agouti, see [export](/help/studio/export)." },
+      { h: "Camera-trap videos" },
+      { p: "From Studio 0.1.23, Studio also reads MP4, MOV and AVI videos in the folders you add. Each video's sound goes through the sound models like a recording, timed from the first frame, and its frames go through MegaDetector and SpeciesNet." },
+      { steps: [
+        "Studio reads videos with FFmpeg, a free program. If it is not on your computer, choose Download FFmpeg on the Recordings screen (about 29 MB on a Mac, 119 MB on Windows). The download is checked against a fixed checksum before use.",
+        "On Find species, choose how many frames a second to read (1 by default). More frames catch fast animals but take longer; changing it runs the videos again.",
+        "Choose Start. Studio follows each animal from frame to frame, so one animal passing the camera is one sighting, named by what most of its frames agree on.",
+        "Open Images. A sighting from a video shows Video and the seconds it was in view. Enlarge it (Enter) to play its clip; Y, N and U work as for photos.",
+      ] },
+      { p: "For each sighting Studio keeps the sharpest frame as a picture and cuts a short clip, both in a folder next to the project file named after the project with \" media\" added. Your videos are never changed." },
+      { p: "Exports name the video and when the animal was in view: the CSV gives the video's path with start_s and end_s and the media column says video, Darwin Core gives the time as an interval with the video's file name, WDX marks the media as video with its start and length, and Camtrap DP lists the sharpest frame with a note naming the video." },
     ],
   },
   {
@@ -221,6 +232,7 @@ const studio: Guide[] = [
         "Raven and Audacity: selection tables and labels next to each recording.",
         "Kaleidoscope id.csv, and WDX (one event per line, the format Wildlife Network uses).",
         "From Studio 0.1.13 every export names the model and the paper to cite. The CSV has a model_reference column, Darwin Core fills in identificationReferences, and Raven, Audacity and Kaleidoscope files get a CITATION.txt beside them.",
+        "From Studio 0.1.23, sightings from camera-trap videos are in every camera-trap export with the video's file name and the seconds the animal was in view (see [camera-trap photos and videos](/help/studio/camera-traps)).",
         "Occupancy by day or by week (from Studio 0.1.11): one row per species and site, one column per day or week. 1 = detected, 0 = recorded and analysed but not detected, NA = nothing recorded. A second file, ending in -effort.csv, gives the minutes recorded per site in the same columns.",
       ] },
       { h: "Occupancy tables in R" },
