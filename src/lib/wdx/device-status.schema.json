@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/arunrajiah/wildlife-detection-exchange/schema/device-status.schema.json",
+  "$id": "https://raw.githubusercontent.com/arunrajiah/wildlife-detection-exchange/v0.4.0/schema/device-status.schema.json",
   "title": "WDX Device Status",
-  "description": "A health report from a monitoring device: battery, storage, temperature, connectivity and backlog. Wildlife Detection Exchange (WDX) v0.2. Carries no detections and no location unless the operator chooses to send one.",
+  "description": "A health report from a monitoring device: battery, storage, temperature, connectivity and backlog. Wildlife Detection Exchange (WDX) device status record, added in v0.2 and unchanged in v0.4. Carries no detections and no location unless the operator chooses to send one.",
   "type": "object",
   "required": ["wdx", "kind", "deviceId", "at"],
   "properties": {

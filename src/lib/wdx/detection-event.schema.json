@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/arunrajiah/wildlife-detection-exchange/schema/detection-event.schema.json",
-  "title": "WDX Detection Event",
-  "description": "A single wildlife detection event, machine-generated or (v0.3) a human observation. Wildlife Detection Exchange (WDX) v0.3 draft; v0.1 and v0.2 events remain valid.",
+  "$id": "https://raw.githubusercontent.com/arunrajiah/wildlife-detection-exchange/v0.4.0/schema/detection-event.schema.json",
+  "title": "WDX Detection Event v0.4",
+  "description": "A single wildlife detection event, machine-generated or (since v0.3) a human observation. Wildlife Detection Exchange (WDX) v0.4 draft; v0.1, v0.2 and v0.3 events remain valid.",
   "type": "object",
   "required": ["wdx", "eventId", "eventStart", "deployment", "detection", "source"],
   "properties": {
