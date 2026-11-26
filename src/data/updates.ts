@@ -8,6 +8,14 @@ export interface Update { date: string; title: string; items: UpdateItem[] }
 
 export const UPDATES: Update[] = [
   {
+    date: "2026-11-26",
+    title: "Camera-trap videos in Studio, and version 0.4 of the WDX format",
+    items: [
+      { text: "Studio 0.1.23 reads camera-trap videos: it listens to their sound, follows each animal from frame to frame so one animal is one sighting, and keeps the sharpest picture and a short clip of each, ready to review and export.", href: "/help/studio/camera-traps" },
+      { text: "WDX 0.4, the open format stations and tools use to send detections, is released with its own DOI (10.5281/zenodo.24548567). It adds a dataset block so the title, people and citation of a dataset travel with every record, and every older record stays valid. The Darwin Core mapping now covers human observations too.", href: "https://github.com/arunrajiah/wildlife-detection-exchange/releases/tag/v0.4.0", forResearchers: true },
+    ],
+  },
+  {
     date: "2026-11-24",
     title: "The daily bird sound for a class, and a migration watch email",
     items: [
