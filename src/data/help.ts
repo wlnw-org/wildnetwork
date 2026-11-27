@@ -3,7 +3,7 @@
 
 /** Studio version the Studio guides were last checked against. .github/workflows/help-check.yml opens an issue when a newer
  * Studio release is out; update the guides, then raise this. */
-export const HELP_CHECKED_STUDIO = "0.1.24";
+export const HELP_CHECKED_STUDIO = "0.1.25";
 
 export type Block =
   | { p: string }
@@ -190,6 +190,7 @@ const studio: Guide[] = [
       { p: "For each sighting Studio keeps the sharpest frame as a picture and cuts a short clip, both in a folder next to the project file named after the project with \" media\" added. Your videos are never changed." },
       { p: "From Studio 0.1.24 a clip is at most 10 seconds long, cut around the sharpest frame, even when the animal stays in view for the whole video. Choose 5 to 60 seconds on Find species. Exports still give the full time the animal was in view." },
       { p: "Exports name the video and when the animal was in view: the CSV gives the video's path with start_s and end_s and the media column says video, Darwin Core gives the time as an interval with the video's file name, WDX marks the media as video with its start and length, and Camtrap DP lists the sharpest frame with a note naming the video." },
+      { p: "From Studio 0.1.25 exports also group sightings into sequences: photos from one camera taken a minute or less apart are one sequence, and all sightings from one video are one. WDX gives each record its sequence as a group and Camtrap DP fills in eventID, so a burst of photos can be counted as one visit." },
     ],
   },
   {
