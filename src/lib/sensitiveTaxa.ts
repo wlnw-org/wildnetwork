@@ -19,3 +19,9 @@ function list(): Set<string> {
 export function isSensitiveTaxon(names: (string | null | undefined)[], taxa: Set<string> = list()): boolean {
   return names.some((n) => !!n && taxa.has(n.trim().toLowerCase()));
 }
+
+/** True when a scientific name (or its genus) is on the list. */
+export const isSensitiveName = (sci: string | null | undefined): boolean => !!sci && isSensitiveTaxon([sci, sci.trim().split(/\s+/)[0]]);
+
+/** Protected species are never shown or stored finer than whole degrees (about 110 km). */
+export const SENSITIVE_ROUND_DEGREES = 1;

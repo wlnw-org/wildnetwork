@@ -2,6 +2,7 @@ import { sql } from "@/lib/db";
 import { dedupeKey, splitDuplicates } from "@/lib/dedupe";
 import { holdEvents } from "@/lib/lost";
 import { creditFor } from "@/lib/sources";
+import { isSensitiveName } from "@/lib/sensitiveTaxa";
 import type { WdxEvent } from "./types";
 
 export interface IngestResult {
@@ -37,6 +38,8 @@ export async function upsertDeployments(rows: { id: string; source_system: strin
  */
 /** The events row for one WDX event (without raw). Pure, so tests can check that no field is lost. */
 export function eventRow(e: WdxEvent) {
+  // Protected species (scripts/sensitive_species.txt): the record is kept at whole degrees, never at the station's position.
+  const hide = isSensitiveName(e.detection.scientificName);
   return {
     event_id: e.eventId,
     deployment_id: `${e.source.system}:${e.deployment.deploymentId}`,
@@ -62,8 +65,8 @@ export function eventRow(e: WdxEvent) {
     media_file: e.media?.fileName ? String(e.media.fileName).slice(0, 200) : null,
     review_status: e.review?.status ?? "unreviewed",
     license: e.license ?? null,
-    latitude: e.deployment.latitude,
-    longitude: e.deployment.longitude,
+    latitude: hide ? Math.round(e.deployment.latitude) : e.deployment.latitude,
+    longitude: hide ? Math.round(e.deployment.longitude) : e.deployment.longitude,
   };
 }
 

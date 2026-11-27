@@ -96,7 +96,7 @@ curl -X POST ${SITE}/api/v1/events \\
         <ul className="list-disc pl-5 space-y-1">
           <li>Every measure works on 5 degree cells (about 550 km). Exact points are never needed to take part.</li>
           <li>The wdx-agent rounds station coordinates to about 1 km. Dataset owners choose the precision of their public download (1, 10, 25 or 50 km).</li>
-          <li>Sensitive species on our <A href="https://github.com/wlnw-org/wildnetwork/blob/main/scripts/sensitive_species.txt">published list</A> are rounded to 1 degree in dataset downloads and are never named against a station in site reports. Tell us which species are sensitive in your country and we add them.</li>
+          <li>Sensitive species on our <A href="https://github.com/wlnw-org/wildnetwork/blob/main/scripts/sensitive_species.txt">published list</A> are rounded to 1 degree on the live map, in the events API and in dataset downloads, and are never named against a station on station pages or in site reports. Tell us which species are sensitive in your country and we add them.</li>
           <li>Station owners and institutions can ask for a species, a station or a place to be hidden: email arunrajiah@gmail.com and it is done within two days.</li>
           <li>What the site itself collects about visitors is on the <A href="/privacy">privacy page</A>.</li>
         </ul>

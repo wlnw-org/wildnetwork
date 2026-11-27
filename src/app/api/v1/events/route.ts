@@ -4,6 +4,7 @@ import { sql } from "@/lib/db";
 import { delayFilter } from "@/lib/delay";
 import { HIDDEN_DEPLOYMENT_SOURCES } from "@/lib/sources";
 import { toFeature } from "@/lib/eventFeature";
+import { isSensitiveName } from "@/lib/sensitiveTaxa";
 import { ingestEvents } from "@/lib/wdx/ingest";
 import { divertTestEvents, linkDeviceDeployment, ownerTestEvents } from "@/lib/baseDevices";
 import type { WdxEvent } from "@/lib/wdx/types";
@@ -126,7 +127,8 @@ export async function GET(req: Request) {
     LIMIT ${limit}
   `;
 
-  return rows.map(toFeature);
+  // One station's list would place a protected species at that station, so those records are left out of it.
+  return rows.map(toFeature).filter((f) => !deployment || !isSensitiveName(f.properties.sci as string));
   };
   // Public answers (no owner key) are shared for a minute: the map asks this every time it loads. Without from/to the
   // window ends now, so a cached answer is at most a minute (plus a short stale refresh) behind.
