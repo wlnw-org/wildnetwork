@@ -27,6 +27,7 @@ import { commonsThumb } from "@/lib/commonsThumb";
 import PLACES from "@/data/places.json";
 import { citiesFor } from "@/components/CityBirds";
 import { ukArrival, ukSeason } from "@/lib/ukSeasons";
+import { isSensitiveTaxon } from "@/lib/sensitiveTaxa";
 
 // Daily: the page's numbers change with the daily recompute, and an hourly refresh made every crawler visit re-render it.
 export const revalidate = 86400;
@@ -274,6 +275,12 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
             <li><Link href="/data" className="text-cyan-400 hover:underline"><T k="Every species: open data releases and the API" /></Link></li>
             {d.arrivals.length > 0 && <li><Link href={`/species/${speciesSlug(d.name)}/review`} className="text-cyan-400 hover:underline"><T k="Review these arrival dates" /></Link> <span className="text-slate-400"><T k="(researchers, ORCID sign-in)" /></span></li>}
           </ul>
+          {isSensitiveTaxon([d.name, d.name.split(" ")[0]]) && (
+            <p className="mt-3 text-xs text-slate-400">
+              <T k="Locations hidden: this is a protected species, so stations that recorded it are not named and downloads never place its records closer than about 110 km." />{" "}
+              <Link href="/institutions#privacy" className="text-cyan-400 hover:underline"><T k="Methods" /></Link>
+            </p>
+          )}
         </section>
 
         {d.contributed.length > 0 && (

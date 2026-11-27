@@ -54,6 +54,8 @@ export interface PeriodSummary {
   /** watched (area mode only): the cell-week reached the coverage threshold of the class, by recordings or by observers. */
   weeks: { week: string; detections: number; species: number; stations: number; watched?: boolean }[];
   top: SpeciesRow[];
+  /** Stations mode: protected species counted in `species` but not listed in `top`. */
+  hidden?: number;
 }
 export interface SiteReport {
   q: ReportQuery;
@@ -118,6 +120,7 @@ async function summarise(ids: string[], group: string, p: Period): Promise<Perio
     period: p, weeks, top: top.filter((x) => nameable(x.scientific_name)),
     detections: weeks.reduce((s, w) => s + w.detections, 0),
     species: top.length, // includes sensitive taxa, which are not listed
+    hidden: top.length - top.filter((x) => nameable(x.scientific_name)).length,
     stationWeeks: weeks.reduce((s, w) => s + w.stations, 0),
   };
 }

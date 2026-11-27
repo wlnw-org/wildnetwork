@@ -213,6 +213,7 @@ function Period({ title, p, area = false }: { title: string; p: PeriodSummary; a
         </>
       )}
       <SpeciesTable rows={p.top.slice(0, 40)} area={area} />
+      {(p.hidden ?? 0) > 0 && <p className="mt-2 text-xs text-slate-400">{p.hidden} <T k="sensitive species are counted but not named." /></p>}
     </>
   );
 }
