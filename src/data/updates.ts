@@ -8,6 +8,13 @@ export interface Update { date: string; title: string; items: UpdateItem[] }
 
 export const UPDATES: Update[] = [
   {
+    date: "2026-11-28",
+    title: "Protected species are never shown at a station",
+    items: [
+      { text: "Records of protected species, such as sea turtles, pangolins, rhinos, elephants and big cats, are now shown on the live map and in the API only at about 110 km, never at the place they were recorded, and never linked to the station that recorded them. Records already stored were rounded too.", href: "/institutions#privacy" },
+    ],
+  },
+  {
     date: "2026-11-26",
     title: "Camera-trap videos in Studio, and version 0.4 of the WDX format",
     items: [
