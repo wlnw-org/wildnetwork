@@ -3,7 +3,7 @@
 
 /** Studio version the Studio guides were last checked against. .github/workflows/help-check.yml opens an issue when a newer
  * Studio release is out; update the guides, then raise this. */
-export const HELP_CHECKED_STUDIO = "0.1.23";
+export const HELP_CHECKED_STUDIO = "0.1.24";
 
 export type Block =
   | { p: string }
@@ -181,12 +181,14 @@ const studio: Guide[] = [
       { h: "Camera-trap videos" },
       { p: "From Studio 0.1.23, Studio also reads MP4, MOV and AVI videos in the folders you add. Each video's sound goes through the sound models like a recording, timed from the first frame, and its frames go through MegaDetector and SpeciesNet." },
       { steps: [
-        "Studio reads videos with FFmpeg, a free program. If it is not on your computer, choose Download FFmpeg on the Recordings screen (about 29 MB on a Mac, 119 MB on Windows). The download is checked against a fixed checksum before use.",
+        "Studio reads videos with FFmpeg, a free program. If it is not on your computer, choose Download FFmpeg on the Recordings screen (about 30 MB on a Mac or Linux, 120 MB on Windows; Intel Macs and Linux from Studio 0.1.24, Linux needs Ubuntu 22.04, Debian 12 or newer). The download is checked against a fixed checksum before use.",
+        "On Recordings, set the country of each camera that has videos, as for photos, so SpeciesNet rules out species that do not live there. Changing it runs that camera's videos again.",
         "On Find species, choose how many frames a second to read (1 by default). More frames catch fast animals but take longer; changing it runs the videos again.",
         "Choose Start. Studio follows each animal from frame to frame, so one animal passing the camera is one sighting, named by what most of its frames agree on.",
         "Open Images. A sighting from a video shows Video and the seconds it was in view. Enlarge it (Enter) to play its clip; Y, N and U work as for photos.",
       ] },
       { p: "For each sighting Studio keeps the sharpest frame as a picture and cuts a short clip, both in a folder next to the project file named after the project with \" media\" added. Your videos are never changed." },
+      { p: "From Studio 0.1.24 a clip is at most 10 seconds long, cut around the sharpest frame, even when the animal stays in view for the whole video. Choose 5 to 60 seconds on Find species. Exports still give the full time the animal was in view." },
       { p: "Exports name the video and when the animal was in view: the CSV gives the video's path with start_s and end_s and the media column says video, Darwin Core gives the time as an interval with the video's file name, WDX marks the media as video with its start and length, and Camtrap DP lists the sharpest frame with a note naming the video." },
     ],
   },
